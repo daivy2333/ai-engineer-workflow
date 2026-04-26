@@ -63,7 +63,7 @@ ai-engineer-workflow/
 Claude Code 使用完整版 `ai-engineer-workflow-v4` 技能:
 
 ```
-/ai-engineer-workflow-v4-ulw
+/ai-engineer-workflow-v4
 ```
 
 **Phase 流程:**
@@ -88,7 +88,7 @@ Phase 5 (COMPLETE) → finishing-a-development-branch → [Gate 5] → END
 OpenCode 使用 `ai-engineer-workflow-v4-ulw` 配合 omo 插件:
 
 ```
-/ai-engineer-workflow-v4
+/ai-engineer-workflow-v4-ulw
 ```
 
 **OpenCode 专用工作流:**
