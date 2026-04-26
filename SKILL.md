@@ -159,3 +159,5 @@ omo workflow --mode ultrawork --project ./my-project
 ❌ 3次相同修复失败未反思 (3-Failure violation)
 ❌ 用"实现简单"偷换"需求满足" (Requirements Integrity violation)
 ```
+
+部署的时候请按照需求部署里面的skill，从父文件夹取出，然后删除多余部分
