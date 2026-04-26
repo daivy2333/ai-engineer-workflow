@@ -3,7 +3,7 @@ name: ai-engineer-workflow-v4-ulw
 description: UltraWork mode workflow. Mandatory explore, Plan Agent, deep delegation, manual QA, zero compromise. Auto-mode aware for unattended execution.
 ---
 
-# AI Engineer Workflow V3 — UltraWork Mode
+# AI Engineer Workflow V4 — UltraWork Mode
 
 **完整版：Requirements Completeness Gate 内嵌，Simplicity/Integrity 原则分离**
 
