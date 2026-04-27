@@ -2,6 +2,7 @@
 
 **Optimized AI Engineer workflow with evidence-based verification, surgical changes detection, and requirements integrity gate.**
 
+你所热爱的就是你的项目
 ---
 
 ## 项目简介
@@ -23,7 +24,9 @@ ai-engineer-workflow/
 │   └── SKILL.md
 ├── ai-engineer-workflow-v4/         # 标准优化版
 │   └── SKILL.md
-└── README.md
+├── precision-work/         # 另一个工具
+│   └── SKILL.md
+└── SKILL.md
 ```
 
 ---
@@ -161,3 +164,9 @@ omo workflow --mode ultrawork --project ./my-project
 ```
 
 部署的时候请按照需求部署里面的skill，从父文件夹取出，然后删除多余部分
+此workflow是我基于superpower优化的，安装的时候记得把sp装了
+
+opencoder记得下载omo，有ulw专门适配的，一个你直接/ai-*-*-ulw 就能触发两个skill，真香兄弟
+
+precision-work skill依赖我独立开发的另一个小工具，在这里https://github.com/daivy2333/air
+但是现在因为是自己用，不是很适配所有类型的项目（java什么时候死啊），不需要的直接删掉就好
