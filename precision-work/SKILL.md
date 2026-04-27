@@ -45,8 +45,8 @@ air . --name precision
 Agent 行为：
 1. 执行 `air . --name precision`
 2. Read `precision.pir`
-3. 检查 `<units>` 区块，Units=0 → 回退传统探查
-4. 理解 PIR 内容（直接阅读，无需解析）
+3. 理解 PIR 内容（直接阅读，无需解析）
+4. 对于不支持语言的文件，用 find/grep 补充信息
 
 ### grep — 定位符号
 
@@ -100,8 +100,8 @@ Read pirgen.py offset=70 limit=20
 1. 自动执行语言检测（find 命令）
 2. 检测通过 → 执行 `air . --name precision`
 3. Read `precision.pir`
-4. 检查 `<units>` 区块：Units=0 → 回退传统探查
-5. 理解项目结构，构建心理地图
+4. 理解项目结构，构建心理地图
+5. 对于不支持语言的文件，用 find/grep 补充信息
 6. 分析任务 → 决定目标符号/文件
 7. 输出：目标清单（内化，不报告用户）
 
@@ -196,7 +196,6 @@ Scout 规则：
 - 不读取 PIR 中无相关依赖的文件
 - 禁止"顺便看看"相邻文件
 - grep 输出控制在 ≤20行
-- PIR Units=0 时必须回退传统探查
 
 ## 与其他 Skill 关系
 
@@ -211,4 +210,3 @@ Scout 规则：
 - 不读取非目标文件
 - 不使用"顺便看看"逻辑
 - 不在没有 PIR 定位的情况下直接 Read 文件
-- 不忽略 PIR Units=0 的空项目情况
