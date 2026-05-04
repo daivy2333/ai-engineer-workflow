@@ -1,6 +1,6 @@
 ---
 name: ai-engineer-workflow-v5-ulw
-description: 强化验证、防止蔓延、架构反思。UltraWork 模式：Agent 并行执行、Wave-Based 验证。Phase 序列 1→2→3→4，按需技能部署。
+description: 强化验证、防止蔓延、架构反思。UltraWork 模式：Agent 并行执行、Wave-Based 验证。七门控（含 Gate 0 前置检查）五循环，Phase 序列 1→2→3→4，按需技能部署。
 ---
 
 # AI Engineer Workflow V5 — UltraWork Mode
@@ -45,28 +45,112 @@ description: 强化验证、防止蔓延、架构反思。UltraWork 模式：Age
 
 ---
 
-## 六门控（GATES）
+## 七门控（GATES）
 
-### Gate 1: Design Approval
+### Gate 0: Skill Prep Check
+**进入 Loop 1 前强制执行**
+```
+❌ 直接调用 Agent(Explore) 或 brainstorming
+❌ 假设 "skill 已加载就已知"
+❌ 主观判断 "熟悉" 跳过检测
+✅ 显式执行命令 → 记录输出 → 向用户报告
+```
+
+**必须执行步骤**：
+```
+步骤 0a: 查看 plugin-loader skill
+  → Skill: plugin-loader 获取 marketplace/插件信息
+  
+步骤 0b: 执行命令获取当前状态
+  → claude plugin marketplace list（记录输出摘要）
+  → claude plugin list（记录已安装技能）
+  
+步骤 0c: 向用户报告前置检查结果
+  格式：
+  ┌─────────────────────────────────────┐
+  │ SKILL PREP CHECK                    │
+  │─────────────────────────────────────│
+  │ Marketplace: X 个已配置             │
+  │ Installed: Y 个技能                 │
+  │ Tech Detection: 待执行              │
+  │─────────────────────────────────────│
+  │ Gate 0: ✅ PASS → 继续 Loop 1       │
+  └─────────────────────────────────────┘
+```
+
+**未通过条件**：
+```
+❌ 未输出 marketplace 状态
+❌ 未输出已安装技能列表
+❌ 直接跳到 Agent(Explore) 或 brainstorming
+❌ 输出包含 "假设已知" / "已熟悉" 等表述
+```
+
+### Gate 1: Requirements List Approval
 **Phase 1 → Phase 2**
 ```
 ❌ 写代码/创建结构
-✅ 探索 codebase/提问/Requirements List
-触发："approved"/"继续"/"开始计划"
+❌ 模糊批准（"全部执行"无具体勾选）
+✅ 输出 Requirements List 表格 → 用户逐项勾选批准
 ```
 
-### Gate 2: Requirements Completeness
+**必须输出格式**：
+```
+┌─────────────────────────────────────┐
+│ REQUIREMENTS LIST                   │
+│─────────────────────────────────────│
+│ ID | Requirement | Scope | Success  │
+│ R1 | 配置 ESLint | 全项目 | 0 errors │
+│ R2 | 添加测试   | core/  | ≥80% cov │
+│─────────────────────────────────────│
+│ Total: N items                      │
+└─────────────────────────────────────┘
+```
+
+**批准规则**：
+- 用户必须逐项勾选：`"A-R1,R2,R3 执行"`
+- 或明确声明 `"全部执行（含 R1-R3）"`
+- 禁止：单独 `"全部执行"` 作为批准（无范围确认）
+
+**触发条件**：Requirements List 展示 → 用户明确勾选 → 进入 Phase 2
+
+### Gate 2: Traceability Matrix Approval
 **Phase 2 → Phase 3**
 ```
 ❌ 开始实现/执行 task
-✅ PLAN → Lite Check → Completeness → User approve
+❌ Coverage < 100% 无用户 explicit approval
+✅ Traceability Matrix 100% Ready → 用户批准 → Phase 3
 ```
-**Traceability Matrix**：
-| Requirement | Tasks | Coverage | Status |
-|-------------|-------|----------|--------|
-| R1 | T1,T2 | 100% | ✅ |
-| R2 | T3 | 80% | ⚠️（需 approval） |
-| R3 | - | 0% | ❌（必须修复） |
+
+**必须输出格式**：
+```
+┌───────────────────────────────────────────────┐
+│ TRACEABILITY MATRIX                           │
+│───────────────────────────────────────────────│
+│ Req | Tasks      | Coverage | Status         │
+│ R1  | T1,T2,T3   | 100%     | ✅ Ready       │
+│ R2  | T4,T5      | 100%     | ✅ Ready       │
+│───────────────────────────────────────────────│
+│ Coverage: 100% | Uncovered: 0                 │
+│ User Approval: [签名]                         │
+└───────────────────────────────────────────────┘
+```
+
+**禁止通过条件**：
+```
+❌ Coverage < 100%
+❌ 存在 Uncovered requirements
+❌ Status 包含 ⚠️ 或 ❌
+❌ "简化实现"覆盖缺口 → 必须用户 explicit approval
+```
+
+**Coverage 缺口处理**：
+```
+缺口类型 | 处理方式
+需求裁剪 | STOP → 用户 explicit approval："同意裁剪 R3"
+技术限制 | STOP → 用户选择：放宽标准/换方案/保留缺口
+时间约束 | STOP → 用户选择：优先级排序/分批执行
+```
 
 **Lite Plan Check**：`TBD|TODO|implement later|fill in details` → 立即修复
 
@@ -136,35 +220,76 @@ Timeout ≠ 失败 → spot-check: SUMMARY.md/git log
 ## 五循环（LOOPS）
 
 ### Loop 1: Clarification + Skill Prep
-`Explore → Scope → Ask (+ Skill Deploy if gap identified) → Spec → [Gate 1]`
+`[Gate 0 Prep] → Explore → Tech Detection → Skill Deploy → [Gate 1]`
 
-**技能部署触发与流程**：
+**【强制执行】Gate 0 Prep 必须先于所有步骤**：
 ```
-触发条件：澄清过程中发现缺乏专业知识，可能导致问题描述不准确或遗漏关键细节
-执行流程：
-  1. 发现知识缺口（对某领域不熟悉，无法提出精准问题）
-  2. 匹配 plugin-loader 中的相关插件（见下方匹配表）
-  3. 向用户说明需要该技能的原因
-  4. 用户确认后调用 Skill: plugin-loader 执行安装
-  5. 验证安装成功（claude plugin list 确认）
-  6. 继续澄清
-时机：在澄清完成前部署，不等到 Gate 1 之后
+执行顺序（禁止跳过）：
+  Gate 0 Prep → 才能继续 → Explore/Tech Detection/Skill Deploy
+  
+禁止行为：
+  ❌ 看到 brainstorming 或 Agent(Explore) 指令就直接执行
+  ❌ 假设 "skill 内容已加载，不需要再查看"
+  ❌ 主观判断 "我之前用过，知道配置"
+  ❌ 跳过显式命令执行，直接开始探索代码库
+  
+必须行为：
+  ✅ 先调用 Skill: plugin-loader 获取信息
+  ✅ 执行 claude plugin marketplace list → 记录输出
+  ✅ 执行 claude plugin list → 记录输出
+  ✅ 向用户报告前置检查结果
+  ✅ 用户确认 "Gate 0 PASS" → 才能启动 Agent(Explore)
 ```
 
-**插件匹配规则**：
-| 需求关键词 | 推荐插件 |
-|------------|----------|
-| Python/fastapi/django | `python-development`, `pyright-lsp` |
-| React/Next.js/前端 | `frontend-mobile-development`, `typescript-lsp` |
-| API/后端/微服务 | `backend-development` |
-| K8s/Kubernetes/Docker | `kubernetes-operations` |
-| 安全/审计/合规 | `security-scanning`, `comprehensive-review` |
-| LLM/AI/Agent | `llm-application-dev`, `agent-orchestration` |
-| 测试/TDD | `tdd-workflows`, `unit-testing` |
-| 数据库/SQL | `database-design` |
-| Rust/系统编程 | `systems-programming`, `rust-analyzer-lsp` |
+**技能强制部署（无主观判断）**：
+```
+触发规则：检测到技术栈关键词 → 强制部署对应技能
+禁止："自认为熟悉" → 不部署
+
+检测流程：
+  0. Phase 1 开始时先查看 plugin-loader skill：
+     - 了解 marketplace 配置状态
+     - 确认正确的 marketplace 名称和插件名
+     - 了解 scope 层级选择方法（user/project/local）
+  1. 执行技术栈检测：
+     - glob: **/*.vue, **/*.ts, **/*.py, **/requirements.txt
+     - grep: import fastapi, import react, useQuery
+     - 目录结构: src/, api/, components/
+  2. 匹配强制映射表 → 列出必需技能
+  3. 向用户确认："检测到 X 技术栈，需要部署 Y 技能"
+  4. 用户确认 → Skill: plugin-loader 执行安装
+  5. 验证成功（claude plugin list）→ 继续
+```
+
+**前置检查（plugin-loader）**：
+```
+检查项：
+  ✅ marketplace 已添加 → claude plugin marketplace list
+  ❌ marketplace 缺失 → 先添加再安装
+  ✅ 了解插件完整名（含 marketplace）→ 避免安装失败
+  ✅ 选择正确 scope → git 仓库用 project，无 git 用 local
+```
+
+**强制映射表（检测即部署）**：
+| 检测关键词（文件/import/目录） | 强制部署技能 |
+|-------------------------------|-------------|
+| `.vue` / `pinia` / `vite.config` | `frontend-design` |
+| `.ts` / `.tsx` / `tsconfig.json` | `frontend-design` |
+| `fastapi` / `pydantic` / `.py` | `python-development` |
+| `pytest` / `unittest` / `.spec.ts` | `superpowers:test-driven-development` |
+| `.sql` / `database/` / `models.py` | `developer-essentials:sql-optimization` |
+| `docker` / `k8s` / `.yaml` (k8s) | `kubernetes-operations` |
+| `api/` / `routes/` / `endpoints` | `backend-development` |
+| `react` / `next` / `app router` | `frontend-mobile-development:nextjs-app-router-patterns` |
 
 **Scope 选择**：git 仓库 → `--scope project`，否则 → `--scope local`
+
+**关键原则**：
+```
+✅ 有相关技能 → 必须部署（即使"熟悉")
+✅ 部署后技能知识增强准确性和完整性
+❌ 主观判断"熟悉"跳过部署 → Red Flag
+```
 
 ### Loop 2: Plan Revision
 `Plan → Lite Check → Completeness → Self-review → User review → [Gate 2]`
@@ -242,7 +367,7 @@ Agent(subagent_type="general-purpose", prompt="finish...")
 
 **执行方式**：Agent 并行（Explore background）
 
-**技能部署**：见 Loop 1，发现知识缺口时立即部署。
+**技能部署**：见 Loop 1，Phase 1 开始时强制检测部署。
 
 ### Phase 2: PLAN
 `PLAN → Lite Check → Completeness → User approve → [Gate 2] → Phase 3`
@@ -341,6 +466,10 @@ Phase 4: 测试通过 → Keep branch（不自动 merge）
 
 ```
 Gate 违规：
+  ❌ Gate 0 未通过就启动 Agent(Explore) → 前置检查缺失
+  ❌ 未输出 marketplace/已安装技能状态 → Gate 0
+  ❌ 直接执行 brainstorming 或 Agent(Explore) 指令 → Gate 0
+  ❌ 假设 "skill 已加载就已知" → Gate 0
   ❌ 无 failing test 写代码 → Gate 3
   ❌ Gate 5 未通过就 Review → Gate 4
   ❌ 等全部完成才验证单个 → Wave-Based
@@ -358,9 +487,17 @@ Gate 违规：
 
 需求违规：
   ❌ 需求裁剪无 approval → Requirements Integrity
+  ❌ Gate 1 模糊批准（"全部执行"无勾选）
+  ❌ Gate 2 Coverage < 100% 无 explicit approval
+
+技能违规：
+  ❌ Gate 0 未通过就开始技能部署
+  ❌ 未先查看 plugin-loader skill 就开始部署
+  ❌ "自认为熟悉"跳过技能部署
+  ❌ 未检测技术栈就开始澄清
 
 Auto 违规：
-  ❌ 跳过 Gate 3/4/5
+  ❌ 跳过 Gate 0/3/4/5
   ❌ timeout 当失败不 spot-check
 ```
 
@@ -373,14 +510,19 @@ Gate 控制 Phase 进入
 Loop 控制 Phase 内完成
 
 Phase 序列：1(Clarify) → 2(Plan) → 3(Execute) → 4(Complete)
-技能部署：发现知识缺口时立即部署，不等规划阶段
+
+Gate 0：前置检查 → 显式执行命令 → 输出状态 → 用户确认
+Gate 1：Requirements List 表格 → 用户逐项勾选
+Gate 2：Traceability Matrix → Coverage 100% 或 explicit approval
+
+技能部署：Gate 0 → plugin-loader → 技术栈检测 → 强制部署（禁止主观跳过）
 
 验证铁律：≥3行输出 / timeout→spot-check / 不等全部完成
 Review 顺序：Gate 5 → Spec → Quality
-Auto 边界：跳过等待 / 禁止跳过验证
+Auto 边界：跳过等待 / 禁止跳过 Gate 0/3/4/5
 三次失败：架构反思 (Gate 6)
 范围确认：对比 git status
-Agent 优先：并行执行 / Wave-Based 验证
+Agent 优先：Gate 0 PASS → 并行执行 / Wave-Based 验证
 ```
 
 ---
