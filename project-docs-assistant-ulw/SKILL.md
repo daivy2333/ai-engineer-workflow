@@ -44,6 +44,10 @@ description: 项目文档助手 - 日常开发中按需读取 .claude/docs/ 文�
 2. 根据当前任务类型（新功能/修复/重构）提取相关铁律
 3. 必要时提醒 Red Flags 检查
 
+**协作说明**: workflow 技能也通过相同的 rules.md 章节引用获取原则定义（如 Karpathy Guidelines、Requirements Integrity）。assistant 与此共享单一事实来源。
+
+**协作说明**: workflow 技能也通过相同的 rules.md 章节引用获取原则定义（如 Karpathy Guidelines、Requirements Integrity）。assistant 与此共享单一事实来源。
+
 ### Pattern 3: 架构查询（Architecture Lookup）
 
 **触发**: 设计新功能、重构、评估影响范围

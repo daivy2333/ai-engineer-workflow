@@ -162,6 +162,15 @@ description: 项目文档生成器 - 为项目初始化完整的 .claude/ 文档
 - 强成功标准 → 可独立循环
 - 不局限于单一功能测试，而是模块，甚至项目级别的端到端测试
 - 避免模块测试通过，但是项目完全不能跑通的情况
+
+### 5. Requirements Integrity（需求完整性）
+**需求完整性优先于实现简化。所有需求裁剪必须用户明确 approval。**
+
+- 模型不得用"实现简单"偷换"需求满足"
+- 需求范围的简化必须用户 explicit approval
+- 功能约束的裁剪必须用户 explicit approval
+- "Simplicity First" 不能用于需求约束
+- 违规处理：发现未经用户确认的需求裁剪 → 立即报告 → 用户未 approve 前不得进入实现阶段
 ---
 
 ## 二、务实编码原则（代码质量）
@@ -240,6 +249,21 @@ description: 项目文档生成器 - 为项目初始化完整的 .claude/ 文档
 
 ---
 
+## 四、核心执行约束（8 条）
+
+```
+1. 不探索清楚不实现
+2. 不计划清楚不实现
+3. 不完整覆盖需求不实现
+4. 不测试通过不提交
+5. 不验证成功不声明
+6. 三次失败必须反思
+7. 不见见证不变更（TDD Iron Law）
+8. 不见场景缺口不进设计（BDD 智能缺口）
+```
+
+---
+
 ## 检查清单
 
 每次提交前确认：
@@ -265,7 +289,167 @@ description: 项目文档生成器 - 为项目初始化完整的 .claude/ 文档
 ❌ 无测试变更代码 → Iron Law 违规
 ❌ 顺手添加功能 → Karpathy 违规
 ❌ Gate BLOCK 不记录 → Workflow 违规
+❌ 用"实现简单"偷换"需求满足" → Requirements Integrity 违规
+❌ 需求裁剪未经用户 approval → Requirements Integrity 违规
+❌ 继续第 4 次相同修复尝试 → 3-Failure 违规
+❌ 不记录失败历史盲盲目 retry → 3-Failure 违规
+❌ 跳过 Verify 直接声声明完成 → Verification 违规
+❌ 使用"应该/大概/似乎" → Verification 违规
 ```
+```
+
+## 五、BDD 方法论（场景驱动设计）
+
+> BDD 方法论定义，供 workflow Phase 1 引用
+
+### 核心原则
+
+| 原则 | 定义 | 用途 |
+|------|------|------|
+| **Gap Scan** | 自动扫描需求文本，识别 Happy Path / Sad Path / Edge 缺口 | 需求分析 |
+| **One-Ask Choice** | 一次性 AskUserQuestion 给用户选择：用默认假设 / 手动补充 / 跳过 | 用户交互 |
+| **Scenario Sketch** | 模型自动生成场景描述（不要求 Given-When-Then 表格） | 场景文档 |
+| **Default Assumptions** | 用户选择后用标准假设自动填充缺口 | Auto Mode |
+
+### 缺口扫描规则
+
+```
+扫描需求文本，检查关键词：
+
+Sad Path 检测：
+  - "失败" / "错误" / "异常" / "错误码" / "返回空"
+  - 无这些关键词 → 缺口："缺少失败场景"
+
+Edge Case 检测：
+  - "边界" / "空" / "最大" / "最小" / "超出"
+  - 无这些关键词 → 缺口："缺少边界异常"
+
+Error Handling 检测：
+  - "超时" / "网络" / "中断" / "重试" / "fallback"
+  - 无这些关键词 → 缺口："缺少异常处理"
+```
+
+### 标准默认假设
+
+```
+Sad Path 默认：
+  - API 调用失败 → 返回错误信息，不崩溃
+  - 数据不存在 → 返回空结果或 None
+  - 权限不足 → 返回权限错误
+
+Edge Case 默认：
+  - 空输入 → 返回空结果或默认值
+  - 超大输入 → 截断或拒绝
+  - 边界值 → 正常处理
+
+Error Handling 默认：
+  - 网络 timeout → 返回超时错误
+  - 服务不可用 → 返回服务错误，不阻塞
+
+记录：所有默认假设必须写入 PLAN.md 前言的 "Scenario Assumptions" 部分
+```
+
+---
+
+## 六、TDD 方法论（测试驱动开发）
+
+> TDD 方法论定义，供 workflow Phase 3 引用
+
+### Iron Law（核心铁律）
+
+```
+NO CHANGE WITHOUT TEST WITNESS
+
+核心：任何代码变更必须有测试见证状态变化
+
+三场景统一：
+  New Feature：测试定义期望 → RED → 实现 → GREEN
+  Bug Fix：测试复现问题 → RED → 修复 → GREEN
+  Refactor：测试记录行为 → GREEN → 重构 → 保持 GREEN
+
+禁止：
+❌ 无测试直接变更代码
+❌ 跳过 Verify Current/New State
+❌ 测试范围超出变更范围（除非用户要求）
+❌ "太简单不用测"
+❌ "先写代码再补测试"
+❌ "手动测过了"
+```
+
+### Red-Green-Refactor 循环
+
+```
+RED → Verify RED → GREEN → Verify GREEN → REFACTOR → 保持绿色 → 下一行为
+         ↓                    ↓
+    展示失败输出            展示通过输出
+```
+
+### Verify RED（强制）
+
+```
+执行测试 → 展示失败输出片段 → 确认：
+  ✅ 失败（不是 error）
+  ✅ 失败消息预期
+  ✅ 失败因为 feature missing（不是 typo）
+
+不通过 → 修测试，不写代码
+```
+
+### Verify GREEN（强制）
+
+```
+执行测试 → 展示通过输出片段 → 确认：
+  ✅ 测试通过
+  ✅ 其他测试仍然通过
+  ✅ 输出干净（无 error/warning）
+
+不通过 → 修代码，不修测试
+```
+
+**REFACTOR**：保持绿色、不添加新行为、只移除重复/改进命名
+
+### 测试质量标准
+
+| 指标 | ✅ 好 | ❌ 坏 |
+|------|-------|-------|
+| 粒度 | 单一行为 | name 含 "and" |
+| 命名 | 描述行为 | `test1`, `test2` |
+| 内容 | 真实代码 | mock 一切 |
+
+### 常见借口（自动驳回）
+
+```
+"太简单不用测"       → 简单代码也会坏，测试只需 30 秒
+"先写代码再补测试"   → 测试立即通过 = 证明不了任何事
+"手动测过了"         → 无记录、不可重复、遗漏边界
+"保留参考再写测试"   → 会"适配"现有代码，不是真 TDD
+"测试难写 = 设计问题" → 听测试的，简化接口
+"这次情况特殊"       → 没有"特殊情况"，删除重来
+```
+
+---
+
+## 七、Auto Mode 行为准则
+
+> Auto Mode 基本规则，供 workflow 引用
+
+### 定义与触发
+
+**触发**："自动运行" / "离开一下" / "不用问我" / "继续跑" / "等我回来"
+
+### 核心规则
+
+```
+Auto Mode 不改变以下约束：
+  ❌ 不能跳过用户 approval 的 Simplification
+  ❌ 不能跳过 Verify RED/GREEN
+  ❌ 不能跳过 AskUserQuestion（场景缺口）
+  ✅ 用户选择 "用默认假设/跳过" 后可自动继续
+
+BDD 缺口询问：AskUserQuestion 必须执行，但选择后可自动继续
+  - "用默认假设" → 自动生成 Sketch → 自动继续
+  - "跳过" → 记录缺口 → 自动继续
+  - "手动补充" → STOP → 等待（非 Auto Mode 行为）
 ```
 
 ### 3. .claude/docs/architecture.md

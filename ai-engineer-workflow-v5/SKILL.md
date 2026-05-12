@@ -1,75 +1,137 @@
 ---
-name: ai-engineer-workflow-v4
-description: Optimized workflow with evidence-based verification, surgical changes detection, 3-failure reflection, and requirements integrity gate.
+name: ai-engineer-workflow-v5
+description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、智能场景澄清。
 ---
 
-# AI Engineer Workflow V4
+# AI Engineer Workflow V5
 
-**强化验证、防止蔓延、架构反思、需求完整性**
+**强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口**
 
 ---
 
 ## 核心约束
 
+完整定义见 `.claude/docs/rules.md → 四、核心执行约束（8 条）`
+
+本 workflow 在此约束下执行：
+
 ```
-1. 不探索清楚不实现
-2. 不计划清楚不实现
-3. 不完整覆盖需求不实现
-4. 不测试通过不提交
-5. 不验证成功不声明
-6. 三次失败必须反思
+1. 不探索清楚不实现（Gate 1/BDD）
+2. 不计划清楚不实现（Gate 2）
+3. 不完整覆盖需求不实现（Gate 2/Requirements Integrity）
+4. 不测试通过不提交（Gate 5）
+5. 不验证成功不声明（Gate 5）
+6. 三次失败必须反思（Gate 6）
+7. 不见见证不变更（TDD Iron Law / Gate 3）
+8. 不见场景缺口不进设计（BDD智能缺口 / Gate 1）
 ```
 
 ---
 
-## 三系统分工
+## 四系统分工
 
-| 系统 | 角色 | 职责 |
-|------|------|------|
-| **本 workflow** | 主执行 | brainstorm → plan → execute → review → complete |
-| **记忆层**（可选） | 持久化 | GSD/milestone/context 跨 session 存储 |
-| **Karpathy** | 监察层 | 原则 1-4（见下方） |
+| 系统 | 角色 | 职责 | 激活时机 |
+|------|------|------|----------|
+| **本 workflow** | 主执行 | brainstorm → plan → execute → review → complete | 全流程 |
+| **Karpathy** | 监察层 | 原则监察 | 全流程 |
+| **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
+| **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
-- 记忆层负责**状态持久化**，跨 session 恢复（无 GSD 则由 session 管理）
 - Karpathy 负责**原则监察**，违规即报
+- BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
+- TDD 负责**测试铁律**，Phase 3 强制执行
 
 ---
 
 ## Karpathy 监察（全流程自动激活）
 
-| 原则 | 约束对象 | 决策权 |
-|------|----------|--------|
-| **Think Before Coding** | 所有 Phase | 不假设，不清楚就问 |
-| **Implementation Simplicity** | 实现方式、代码结构、技术选型 | 模型自主 |
+**原则定义**：见 `.claude/docs/rules.md → 一、Karpathy Guidelines`
+
+本 workflow 全程监控以下 4 项原则的遵守情况：
+
+| 原则 | 在 workflow 中的约束对象 | 特殊决策权 |
+|------|--------------------------|-----------|
+| **Think Before Coding** | 所有 Phase | — |
+| **Implementation Simplicity** | 实现方式、代码结构、技术选型 | — |
 | **Requirements Integrity** | 需求范围、功能约束 | **必须用户 approval** |
-| **Surgical Changes** | Phase 3 | 只改必须改，不顺手 |
+| **Surgical Changes** | Phase 3 | — |
 
-### Requirements Integrity（关键原则）
+**违规处理流程**：检测到违反任一原则 → 立即报告 → 用户未 approve 前不得进入下一 Phase。
+
+### Requirements Integrity 违规处理
+
+**原则定义**：见 `.claude/docs/rules.md → 一.5 Requirements Integrity`
+
+本 workflow 的违规处理流程：
 
 ```
-❌ 模型不得用"实现简单"偷换"需求满足"
-❌ 需求范围的简化必须用户 explicit approval
-❌ 功能约束的裁剪必须用户 explicit approval
-❌ "Simplicity First" 不能用于需求约束
-
-✅ "Simplicity First" 只适用于：实现方式、代码结构、技术选型
-
-违规处理：发现未经用户确认的需求裁剪 → 立即报告 → 用户未 approve 前不得进入 Phase 3
+发现未经用户确认的需求裁剪
+  → 立即报告
+  → 用户未 approve 前不得进入 Phase 3
 ```
+
+---
+
+## BDD 智能缺口（Phase 1 自动激活）
+
+**方法论定义**：见 `.claude/docs/rules.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设）
+
+本 workflow 中 BDD 的执行流程：
+
+```
+Step 1：需求扫描（自动）
+  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules.md）
+
+Step 2：缺口发现 → AskUserQuestion（一次）
+  选项: "用默认假设补充" / "手动补充具体场景" / "跳过，需求已足够清晰"
+
+Step 3：用户选择处理
+  "用默认假设" → 按 rules.md 标准默认假设自动生成场景草图 → 继续
+  "手动补充" → 询问具体缺口 → 补充 → 继续
+  "跳过" → 记录缺口到 PLAN.md 前言 → 继续
+
+Step 4：生成场景草图（模型生成，用户确认）
+  格式见 rules.md → 五、BDD 方法论，不要求 Given-When-Then 表格
+```
+
+---
+
+## TDD 监察（Phase 3 自动激活）
+
+**方法论定义**：见 `.claude/docs/rules.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、测试质量标准、常见借口）
+
+本 workflow 中 TDD 的执行绑定：
+
+```
+Phase 3 遵循 TDD Iron Law（定义见 rules.md）
+
+本 workflow 执行铁律：
+  1. 确定变更范围
+  2. 建立测试覆盖变更范围
+  3. Verify Current State → 展示输出
+  4. Make Change
+  5. Verify New State → 展示输出
+  6. Done
+```
+
+循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules.md）
 
 ---
 
 ## 六个门控（GATES）
 
-### Gate 1: Design Approval
+### Gate 1: Design Approval + BDD Check
 
 **位置**：Phase 1 结束 → Phase 2 前
 
 ```
-❌ 不写代码、不创建项目结构、不调用 plan skill
-✅ brainstorming skill、探索 codebase、提问澄清
+检查项：
+  ✅ brainstorming skill 完成
+  ✅ AskUserQuestion 已询问（场景缺口）
+  ✅ 用户已回答
+  ✅ 生成了 Scenario Sketch（模型生成）
 
 触发：用户说 "approved" / "继续" / "开始计划"
 ```
@@ -102,28 +164,21 @@ Status：
 Gate 2 通过：所有 ✅、所有 ⚠️ 已获 approval、无 ❌
 ```
 
-**Lite Plan Check（正则扫描）**：
-
-```
-扫描模式：TBD|TODO|implement later|fill in details|Add.*without code|handle edge cases|Write tests for the above（无代码）|Similar to Task N|步骤描述无代码块|引用未定义的类型/函数
-
-发现匹配 → 立即修复 → 重新扫描 → 通过后继续
-```
-
 ---
 
-### Gate 3: Test-First
+### Gate 3: Test Witness
 
 **位置**：每个 task 开始前
 
 ```
-NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+遵循 TDD Iron Law（见 TDD 监察）
 
-✅ 存在针对此 task 的测试
-✅ 测试当前状态是 FAIL
-✅ 失败原因是 feature missing
+✅ 确定变更范围
+✅ 存在测试覆盖变更范围
+✅ Verify Current State 已展示输出
+✅ 当前状态符合预期（RED/GREEN）
 
-不符合 → 必须先写/修正测试
+不符合 → 必须先建立测试
 ```
 
 ---
@@ -171,16 +226,6 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 | 测试 | cargo test | "32 passed, 0 failed" | ✅ |
 | Clippy | cargo clippy | "0 warnings" | ✅ |
 
-**Manual QA（必须执行）**：
-
-| 场景 | 必须做什么 |
-|------|-----------|
-| CLI 命令 | Bash 实际运行，展示输出 |
-| 构建产物 | 运行构建，验证输出 |
-| API 行为 | 调用 endpoint，展示响应 |
-| UI 渲染 | 浏览器验证 |
-| 配置 | 加载并验证解析 |
-
 **禁止**：只说 "tests pass" 无输出证据、使用 "应该/大概/似乎"
 
 ---
@@ -192,7 +237,10 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 | 障碍 | 检测点 | 行为 |
 |------|--------|------|
 | 缺失依赖 | GREEN 编译失败 | STOP → 报告 → 提供安装命令 |
-| 测试 errors | Verify RED | STOP → 报告 → 分析原因 |
+| 测试 errors | Verify Current/New | STOP → 报告 → 分析原因 |
+| 跳过 Verify | 任何变更 | STOP → 补充验证 |
+| "太简单不用测" | 任何阶段 | STOP → 违反 Iron Law |
+| 无测试变更代码 | Phase 3 | STOP → 建立测试 |
 | 指令不清晰 | 任何阶段 | STOP → 问用户澄清 |
 | 计划缺口 | task 无法完成 | STOP → 回 Phase 2 补充 |
 | 验证失败 3次 | 同一验证点 | STOP → 问用户决策 |
@@ -226,9 +274,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### Loop 1: Clarification（Phase 1）
 
 ```
-Explore → Scope check → Ask Q → Propose → Present → Write Spec → User review → [Gate 1]
-
-约束：一次一个问题、多个子系统立即 flag → decompose
+Explore → Decompose → Gap Scan → AskUserQuestion（一次）→ Scenario Sketch → [Gate 1]
 ```
 
 ---
@@ -239,44 +285,13 @@ Explore → Scope check → Ask Q → Propose → Present → Write Spec → Use
 Plan Agent → Lite Plan Check → Requirements Completeness Check → Task Mapping → Self-review → User review → [Gate 2]
 ```
 
-**Self-review Checklist**：
-
-```
-1. Requirements coverage：每个 Requirement 有对应 Task？
-2. Completeness：所有 Status 是 ✅ 或 ⚠️（已获 approval）？
-3. Lite Plan Check：正则扫描通过
-4. Type consistency：前后类型签名一致？
-```
-
 ---
 
 ### Loop 3: Red-Green-Refactor（每个 task）
 
 ```
-[变更范围确认] → [Gate 3] → RED → Verify RED → GREEN → Verify GREEN → REFACTOR → [Gate 5] → [Gate 4]
+[变更范围确认] → [Gate 3] → TDD 循环（见 TDD 监察）→ [Gate 5] → [Gate 4]
 ```
-
-**变更范围确认**：
-
-```
-步骤：
-  1. 读取 PLAN 中此 task 的 Files 列表
-  2. 对比当前 git status
-  3. 超出声明的变更？
-     - YES → STOP → 报告差异 → 等待用户批准
-     - NO → 继续
-
-禁止：
-❌ 修改文件数 > PLAN 中声明的
-❌ 新增功能不在 success criteria 中
-❌ "顺手" refactor adjacent code
-```
-
-**Verify RED**：测试失败（不是 error）、失败消息预期、因为 feature missing
-
-**Verify GREEN**：测试通过、其他测试仍然通过、输出干净
-
-**REFACTOR**：保持绿色、不添加新行为、只移除重复/改进命名
 
 ---
 
@@ -314,8 +329,7 @@ Run test → [Gate 5] → 0 failures → 声明 → 4 options → Execute
 ```
 调用：brainstorming skill
 Announce："Using brainstorming skill."
-输出：Approved Requirements List
-流程：brainstorming → Requirements List → User approve → [Gate 1] → Phase 2
+输出：Approved Requirements List + Scenario Sketch
 ```
 
 ### Phase 2: PLAN
@@ -340,13 +354,12 @@ Announce："Using writing-plans skill."
   For each task:
     1. [变更范围确认]
     2. Mark in_progress
-    3. [Gate 3] 检查测试
-    4. [Loop 3] TDD
-    5. [Gate 5] 验证（展示输出片段）
+    3. [Gate 3] 建立测试 + Verify Current State
+    4. [Loop 3] TDD 循环（Iron Law + 状态见证）
+    5. [Gate 5] Verify New State（展示输出片段）
     6. [Gate 4 + Loop 4] Review
     7. Mark completed（仅 Gate 5 通过后）
 
-  Context > 70% → checkpoint → /clear → 恢复
   All tasks → Phase 5
 ```
 
@@ -362,7 +375,9 @@ Announce："Using finishing-a-development-branch skill."
 
 ## Auto Mode
 
-**触发**："自动运行" / "离开一下" / "不用问我" / "继续跑" / "等我回来"
+**行为准则**：见 `.claude/docs/rules.md → 七、Auto Mode 行为准则`（触发词、核心规则）
+
+本 workflow 下各场景的行为映射：
 
 | 场景 | Interactive | Auto Mode |
 |------|-------------|-----------|
@@ -370,24 +385,21 @@ Announce："Using finishing-a-development-branch skill."
 | Review 发现问题 | STOP → 等待修复 | 自动修复 → 继续 |
 | 测试失败 | STOP → 报告 | 自动调试 → 继续 |
 | 用户 approval | 等待 | 自动继续 |
-
-**注意**：Auto Mode 不改变 Requirements Integrity 约束
-- ❌ 不能跳过用户 approval 的 Simplification
-- ✅ 只能跳过"等待用户 decision"的环节
+| **BDD 缺口选择** | STOP → 等待选择 | **用户选择后自动继续** |
 
 ---
 
 ## Skill Mapping
 
-| Phase | Skill | 控制 | 记忆层参与 |
-|-------|-------|------|-----------|
-| 1 | brainstorming | Gate 1 + Requirements List | 记录需求 |
-| 2 | Plan Agent + writing-plans | Gate 2 + Lite Plan Check | 保存 PLAN.md |
-| 3 Inline | executing-plans | Gate 3/4/5/6 + Loop 3/4 | checkpoint |
-| 3 Subagent | subagent-driven-development | Gate 3/4/5/6 + 并行 | checkpoint |
-| 5 | finishing-a-development-branch | Gate 5 + Loop 5 | 归档 |
+| Phase | Skill | 控制 |
+|-------|-------|------|
+| 1 | brainstorming | Gate 1 + Gap Scan + AskUserQuestion + Scenario Sketch |
+| 2 | Plan Agent + writing-plans | Gate 2 + Lite Plan Check + Scenario Assumptions |
+| 3 Inline | executing-plans | Gate 3/4/5/6 + Loop 3/4 + Iron Law |
+| 3 Subagent | subagent-driven-development | Gate 3/4/5/6 + 并行 + Iron Law |
+| 5 | finishing-a-development-branch | Gate 5 + Loop 5 |
 
-**Karpathy 监察**：全 Phase 激活，违规即报
+**监察层**：Karpathy 全 Phase、BDD Phase 1（缺口发现）、TDD Phase 3，违规即报
 
 ---
 
@@ -397,39 +409,26 @@ Announce："Using finishing-a-development-branch skill."
 Phase 1:
 ❌ "Too simple to need design" → Gate 1 violation
 ❌ Code before design approved → Gate 1 violation
+❌ 未询问场景缺口 → BDD violation
 
 Phase 2:
 ❌ TBD/TODO in plan → Lite Plan Check violation
 ❌ Requirements Traceability Matrix 未完成 → Gate 2 violation
-❌ Simplification 未经用户 approval → Requirements Integrity violation
-❌ 用户 approve "plan 格式" 而非 "Completeness" → Gate 2 violation
+❌ Simplification 未经用户 approval → Gate 2 violation
 
 Phase 3:
-❌ Code before test → Gate 3 violation
-❌ Test passes immediately → Wrong test
+❌ 无测试变更代码 → Iron Law violation
+❌ 跳过 Verify Current State → Iron Law violation
+❌ 跳过 Verify New State → Iron Law violation
 ❌ "Tests pass" without running → Gate 5 violation
 ❌ "Tests pass" without 输出片段 → Gate 5 violation
+❌ "太简单不用测" → Iron Law violation
 ❌ 变更超出 PLAN 范围 → Surgical Changes violation
 ❌ 继续第 4 次相同修复 → 3-Failure violation
-❌ Blockers without stopping → Gate 6 violation
-
-REVIEW:
-❌ Code quality before spec compliance → Gate 4 violation
-❌ Moving to next task with open Critical/Important → Gate 4 violation
-❌ "Task complete" without fresh verification evidence → Gate 5 violation
-
-Phase 5:
-❌ Proceeding with failing tests → Gate 5 violation
-❌ No typed confirmation for discard → Process violation
 
 General:
 ❌ "Should/probably" → Verification violation
-❌ "顺手" adding features → Karpathy violation
-❌ 用"实现简单"偷换"需求满足" → Requirements Integrity violation
-
-Auto Mode:
-❌ Auto Mode 说"等待用户决策" → 应该继续
-❌ Auto Mode 跳过用户需要的 approval → Requirements Integrity violation
+❌ Gate BLOCK 不记录 → Workflow 违规（见 rules.md）
 ```
 
 ---
@@ -437,22 +436,22 @@ Auto Mode:
 ## Key Principles
 
 ```
-三系统协作：
-  workflow（执行）→ 记忆层（持久化）→ Karpathy（监察）
+四系统协作：
+  workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
   权责清晰，违规即报
 
-Requirements Integrity 优先于 Simplicity
+Requirements Integrity 优先于 Simplicity（定义见 rules.md）
+Iron Law 优先于 所有借口
+Gap Scan 优先于 手动填写表格
 
 Gate 控制 Phase 进入
 Loop 控制 Phase 内完成
 
-验证铁律不可违反：必须展示输出片段
+验证铁律：必须展示输出片段
+TDD 铁律：变更必须有测试见证
 遇阻即停不猜测
 三次失败必须反思：禁止继续第4次修复
-变更必须范围确认：对比 git status
-证据必须展示片段：验证格式表强制
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
 Auto Mode 适配
-顺手必须报告
 ```
