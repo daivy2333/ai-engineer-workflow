@@ -293,9 +293,8 @@ description: 项目文档生成器 - 为项目初始化完整的 .claude/ 文档
 ❌ 需求裁剪未经用户 approval → Requirements Integrity 违规
 ❌ 继续第 4 次相同修复尝试 → 3-Failure 违规
 ❌ 不记录失败历史盲盲目 retry → 3-Failure 违规
-❌ 跳过 Verify 直接声声明完成 → Verification 违规
+❌ 跳过 Verify 直接声明完成 → Verification 违规
 ❌ 使用"应该/大概/似乎" → Verification 违规
-```
 ```
 
 ## 五、BDD 方法论（场景驱动设计）

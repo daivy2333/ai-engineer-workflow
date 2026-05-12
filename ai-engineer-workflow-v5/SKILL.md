@@ -324,6 +324,8 @@ Run test → [Gate 5] → 0 failures → 声明 → 4 options → Execute
 
 ## Phase 流程
 
+> **Phase 编号说明**：无 Phase 4（预留位，用于未来可能的 Post-Execute 阶段）。
+
 ### Phase 1: CLARIFY
 
 ```

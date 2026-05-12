@@ -438,6 +438,8 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 | 非常规方案 | artistry |
 | 简单修改 | quick |
 
+**冲突解决**：同时匹配多个 category 时，优先级 ultrabrain > deep > visual-engineering > artistry > quick
+
 **load_skills 必填**：有相关 skill 就 INCLUDE
 
 ---
@@ -477,28 +479,13 @@ General:
 
 ```
 四系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
+权责清晰，违规即报
 
 原生 Agent 核心能力：
   explore/librarian：并行探索（FREE）
   Metis/Momus/oracle：阻塞咨询（EXPENSIVE）
   plan agent：MANDATORY
   category delegation：深度委托
-
-Gate 控制 Phase 进入
-Loop 控制 Phase 内完成
-
-验证铁律：必须展示输出片段
-TDD 铵律：变更必须有测试见证
-委托铁律：不委托直接自己写代码
-遇阻即停不猜测
-三次失败必须反思
-Task Complete 条件：Gate 5 通过后才能 Mark completed
-
-Auto Mode 适配
-```
-四系统协作：
-  workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
-  权责清晰，违规即报
 
 UltraWork 特性：
   Plan Agent MANDATORY
@@ -512,6 +499,7 @@ Loop 控制 Phase 内完成
 BDD 精简铁律：缺口扫描 → 用户选择 → 模型生成草图 → 不强制填写
 验证铁律：必须展示输出片段
 TDD 铁律：变更必须有测试见证
+委托铁律：不委托直接自己写代码
 遇阻即停不猜测
 三次失败必须反思：禁止继续第4次修复
 变更必须范围确认：对比 git status
