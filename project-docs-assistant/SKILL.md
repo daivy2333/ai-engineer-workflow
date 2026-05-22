@@ -6,7 +6,9 @@ description: 项目文档助手 - 日常开发中按需读取 .claude/docs/ 文�
 ## Project Docs Assistant
 
 **日常开发的文档管家，按需取用，精准更新，主动学习。**
-
+此技能负责提醒agent更新和维护记忆，和工作流skill是协作关系，两者并不冲突。
+superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要求冲突，生成位置以这个为准，路径是.claude/docs/superpowers/，在这里生成plan和spec文件夹）
+在plan阶段进行计划write plan写入的时候如果计划太长请分步写入，避免一次性思考和输出太长导致被截断
 ---
 
 ## 功能概述
@@ -20,6 +22,7 @@ description: 项目文档助手 - 日常开发中按需读取 .claude/docs/ 文�
 6. **状态更新**：修改 `tasks.md`、`snapshot.md` 以反映最新进度
 7. **知识积累**：向 `architecture.md`、`learned.md`、`references.md`、`optimization.md` 追加新内容
 8. **保持稳定**：修改文档时遵循 surgical changes 原则，只动必要部分
+9. **知识索取**：遇到无法自行解决的知识盲区时，主动向用户提问索取
 
 ---
 
@@ -127,6 +130,28 @@ description: 项目文档助手 - 日常开发中按需读取 .claude/docs/ 文�
 2. 追加新条目：描述问题、当前影响、建议方案
 3. 写入文件
 
+### Pattern 11: 知识索取（Knowledge Request）
+
+**触发**: 遇到无法自行解决的知识盲区（最新领域知识、项目特有约定、外部系统信息等）
+
+**判断标准（提问前必须检查）**:
+- 已检查 learned.md 无记录
+- 已尝试 grep/read 代码无结果
+- 已尝试 WebSearch 无效（除非是项目特有知识）
+- 该知识确实阻塞当前任务进度
+
+**动作**:
+1. 构造精准提问：说明需要什么知识、为什么需要、当前任务目标
+2. 使用 AskUserQuestion 向用户索取
+3. 用户返回信息后确认理解，继续工作
+4. 完成后更新 learned.md，记录新知识及来源
+
+**不应索取的情况**:
+- 通用编程知识 → 自己搜索
+- 可从代码推断 → grep/read
+- 已在 learned.md → 直接使用
+- 可先用假设方案 → 失败后再问
+
 ---
 
 ## 按需读取策略（避免上下文污染）
@@ -145,6 +170,51 @@ description: 项目文档助手 - 日常开发中按需读取 .claude/docs/ 文�
 | 记录学习发现 | learned.md | learned.md |
 | 记录参考 | references.md | references.md |
 | 记录优化点 | optimization.md | optimization.md |
+| 遇到知识盲区 | learned.md → 判断 → AskUserQuestion | learned.md |
+
+---
+
+## 知识快速索引技巧（Grep Search）
+
+**核心思想**：Markdown 文档是文本，grep 搜索比完整读取更快、更精准。
+
+### 适用场景
+
+| 场景 | grep 命令 | 效果 |
+|------|-----------|------|
+| 查 API 路径 | `grep "API" .claude/docs/learned.md` | 1 秒定位，无需读全文 |
+| 找踩坑记录 | `grep -i "坑" .claude/docs/learned.md` | 快速跳到相关条目 |
+| 搜索决策 | `grep -i "决定" .claude/docs/architecture.md` | 瞬间定位 ADR |
+| 查某模块 | `grep "模块名" .claude/docs/snapshot.md` | 找关键文件位置 |
+
+### grep 搜索优于读取的情况
+
+- **文档已分类/表格化** → learned.md、references.md 的表格结构，grep 直接命中
+- **关键词明确** → 知道要找 "认证"、"缓存"、"XXX API"，grep 瞬间定位
+- **快速验证** → "之前有没有记录过这个？" → grep 确认有无
+- **跨文档搜索** → `grep -r "关键词" .claude/docs/` 全目录搜索
+
+### 何时仍需完整读取
+
+- **上下文恢复** → 新会话开始，需要综合了解项目状态
+- **浏览决策历史** → architecture.md 的决策列表需要通读理解脉络
+- **学习未知领域** → 不确定关键词时，先读文档结构
+
+### 实用 grep 模式
+
+```bash
+# 搜索 API 路径（learned.md 表格结构）
+grep "| .*\| .*\|" .claude/docs/learned.md | grep "关键词"
+
+# 搜索踩坑档案标题
+grep "^###" .claude/docs/learned.md
+
+# 搜索决策日期
+grep -E "^\d{4}-\d{2}-\d{2}" .claude/docs/architecture.md
+
+# 全文档目录搜索
+grep -rn "关键词" .claude/docs/
+```
 
 ---
 
@@ -171,6 +241,7 @@ Agent 在以下情况应主动更新 learned.md：
 ✅ 学到新技巧 → 记录技巧模式
 ✅ 理清依赖关系 → 更新依赖图
 ✅ 发现未知领域 → 记录待探索
+✅ 用户提供的知识 → 记录内容及来源（Pattern 11 索取后）
 
 每次更新：
   1. 更新 "最后更新" 时间戳
@@ -191,4 +262,5 @@ Agent 在以下情况应主动更新 learned.md：
 主动学习，探索发现即时记录
 所有更新均保留历史轨迹
 不重复探索已发现的知识
+知识索取，实在无法解决才提问，提问必须精准说明原因
 ```

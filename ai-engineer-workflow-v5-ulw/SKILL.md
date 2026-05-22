@@ -58,6 +58,11 @@ description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Ag
 | **Requirements Integrity** | 需求范围、功能约束 | **必须用户 approval** |
 | **Surgical Changes** | Phase 3 | — |
 
+**与 code-refactoring plugin 协调**：
+- 用户明确说"重构" → 调用 plugin，Surgical Changes 暂停
+- 用户说"修复"/"添加功能" → Surgical Changes 生效，不调用 plugin
+- 发现需重构 → 先报告获 approval → 再调用
+
 **违规处理流程**：检测到违反任一原则 → 立即报告 → 用户未 approve 前不得进入下一 Phase。
 
 ### Requirements Integrity 违规处理
@@ -377,11 +382,25 @@ Announce："Phase 2: plan agent + Momus 评审"
 流程：Load plan → Create TodoWrite → For each task: [Gate 3] → 委托 → [Gate 5] → Review → Mark completed
 ```
 
-### Phase 5: COMPLETE
+**Skill 知识传递规则**：
+
+```
+skill() 仅主 agent 可调。子 agent 所需知识全部写入 prompt。
+
+✓ 主 agent → skill("xxx") 读取 → 提炼关键知识 → 写进 prompt
+✓ task(category="deep", load_skills=[], prompt="<含知识>")
+✗ task(load_skills=["superpowers:brainstorming"])  — 插件 skill 不支持
+✗ 期望子 agent 自己 skill() 加载未知知识
+
+理由：子 agent 无 skill() 权限，load_skills 仅支持 6 个 builtin skill。
+主 agent 读一次写进 prompt = 一次读取，无限复用。
+```
+
+### Phase 4: COMPLETE
 
 ```
 调用：review-work（5 parallel）+ git-master
-Announce："Phase 5: review-work + git-master"
+Announce："Phase 4: review-work + git-master"
 流程：[Loop 5] → Manual QA → END
 ```
 
@@ -422,25 +441,34 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 | 1 | explore（并行）+ librarian（并行）+ Metis（阻塞） | 并行探索 + 预规划 + 需求澄清 |
 | 2 | plan agent（MANDATORY）+ Momus（阻塞） | 任务分解 + 计划评审 |
 | 3 | category delegation + oracle（阻塞） | 深度委托 + 架构决策 |
-| 5 | review-work + git-master | Review + Git 操作 |
+| 4 | review-work + git-master | Review + Git 操作 |
 
 **监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3，违规即报
 
 ---
 
-## Category Domain（MANDATORY 匹配）
+## Category Domain + 委托规范（MANDATORY 匹配）
 
-| Task Domain | Category |
-|-------------|----------|
-| UI/样式/动画 | visual-engineering |
-| 硬逻辑/算法 | ultrabrain |
-| 自主研究+实现 | deep |
-| 非常规方案 | artistry |
-| 简单修改 | quick |
+| Task Domain | Category | 说明 |
+|-------------|----------|------|
+| UI/样式/动画 | visual-engineering | 前端视觉类工作 |
+| 硬逻辑/算法 | ultrabrain | 复杂推理、架构决策 |
+| 自主研究+实现 | deep | 需要深入调研再实现的任务 |
+| 非常规方案 | artistry | 需要跳出常规思维的问题 |
+| 简单修改 | quick | 单文件修改、简单变更 |
 
-**冲突解决**：同时匹配多个 category 时，优先级 ultrabrain > deep > visual-engineering > artistry > quick
+**load_skills 规则**：
 
-**load_skills 必填**：有相关 skill 就 INCLUDE
+```
+load_skills 统一传 []。
+
+子 agent 所需知识 → 主 agent 用 skill() 读取后写进 prompt。
+
+例外（仅 6 个 builtin skill 可放 load_skills）：
+  playwright, frontend-ui-ux, git-master, dev-browser, review-work, ai-slop-remover
+
+插件 skill（superpowers:xxx 等）一律不准放 load_skills。
+```
 
 ---
 
@@ -464,13 +492,15 @@ Phase 3:
 ❌ 无测试变更代码 → Iron Law violation
 ❌ "Tests pass" without 输出片段 → Gate 5 violation
 
-Phase 5:
+Phase 4:
 ❌ Skip Manual QA → UltraWork violation
 ❌ 未调用 review-work/git-master → Review violation
 
 General:
 ❌ "Should/probably" → Verification violation
 ❌ 未使用 task_id follow-up → Session Continuity violation
+❌ load_skills 传入插件 skill（superpowers:xxx 等）→ Skill 隔离 violation
+❌ 子 agent prompt 中缺失关键知识，期望它自己 skill() 加载 → 委托 violation
 ```
 
 ---
@@ -479,7 +509,6 @@ General:
 
 ```
 四系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
-权责清晰，违规即报
 
 原生 Agent 核心能力：
   explore/librarian：并行探索（FREE）
@@ -487,23 +516,15 @@ General:
   plan agent：MANDATORY
   category delegation：深度委托
 
-UltraWork 特性：
-  Plan Agent MANDATORY
-  深度委托
-  Manual QA 零妥协
-  Auto-mode aware
-
 Gate 控制 Phase 进入
 Loop 控制 Phase 内完成
 
-BDD 精简铁律：缺口扫描 → 用户选择 → 模型生成草图 → 不强制填写
 验证铁律：必须展示输出片段
-TDD 铁律：变更必须有测试见证
+TDD 铵律：变更必须有测试见证
 委托铁律：不委托直接自己写代码
+Skill 隔离铁律：skill() 仅限主 agent 调用，子 agent 所需知识全部写入 prompt
 遇阻即停不猜测
-三次失败必须反思：禁止继续第4次修复
-变更必须范围确认：对比 git status
+三次失败必须反思
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
 Auto Mode 适配
-```

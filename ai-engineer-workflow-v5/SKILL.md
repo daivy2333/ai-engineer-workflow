@@ -58,6 +58,11 @@ description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、�
 | **Requirements Integrity** | 需求范围、功能约束 | **必须用户 approval** |
 | **Surgical Changes** | Phase 3 | — |
 
+**与 code-refactoring plugin 协调**：
+- 用户明确说"重构" → 调用 plugin，Surgical Changes 暂停
+- 用户说"修复"/"添加功能" → Surgical Changes 生效，不调用 plugin
+- 发现需重构 → 先报告获 approval → 再调用
+
 **违规处理流程**：检测到违反任一原则 → 立即报告 → 用户未 approve 前不得进入下一 Phase。
 
 ### Requirements Integrity 违规处理
@@ -324,8 +329,6 @@ Run test → [Gate 5] → 0 failures → 声明 → 4 options → Execute
 
 ## Phase 流程
 
-> **Phase 编号说明**：无 Phase 4（预留位，用于未来可能的 Post-Execute 阶段）。
-
 ### Phase 1: CLARIFY
 
 ```
@@ -341,7 +344,7 @@ Announce："Using brainstorming skill."
 Announce："Using writing-plans skill."
 流程：Plan Agent → Lite Plan Check → Requirements Completeness Check → Self-review → User review → [Gate 2] → Phase 3
 ```
-
+如果计划太长请分步写入
 ### Phase 3: EXECUTE
 
 ```
@@ -362,10 +365,10 @@ Announce："Using writing-plans skill."
     6. [Gate 4 + Loop 4] Review
     7. Mark completed（仅 Gate 5 通过后）
 
-  All tasks → Phase 5
+  All tasks → Phase 4
 ```
 
-### Phase 5: COMPLETE
+### Phase 4: COMPLETE
 
 ```
 调用：finishing-a-development-branch skill
@@ -388,7 +391,7 @@ Announce："Using finishing-a-development-branch skill."
 | 测试失败 | STOP → 报告 | 自动调试 → 继续 |
 | 用户 approval | 等待 | 自动继续 |
 | **BDD 缺口选择** | STOP → 等待选择 | **用户选择后自动继续** |
-
+自动模式ultra：当用户说，进入完全自动模式的时候则进入完全自动模式，此时所有原本需要停止等待决策的地方不需要停止，按照方案自动进行，需要进行抉择决策的时候自动选择方案全局最优解
 ---
 
 ## Skill Mapping
@@ -399,7 +402,7 @@ Announce："Using finishing-a-development-branch skill."
 | 2 | Plan Agent + writing-plans | Gate 2 + Lite Plan Check + Scenario Assumptions |
 | 3 Inline | executing-plans | Gate 3/4/5/6 + Loop 3/4 + Iron Law |
 | 3 Subagent | subagent-driven-development | Gate 3/4/5/6 + 并行 + Iron Law |
-| 5 | finishing-a-development-branch | Gate 5 + Loop 5 |
+| 4 | finishing-a-development-branch | Gate 5 + Loop 5 |
 
 **监察层**：Karpathy 全 Phase、BDD Phase 1（缺口发现）、TDD Phase 3，违规即报
 
