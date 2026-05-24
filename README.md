@@ -6,10 +6,10 @@
 
 ## 概述
 
-本项目包含 5 个 Claude Code 技能（Skills），用于：
+本项目包含 6 个 Claude Code 技能（Skills），用于：
 
 1. **开发流程管理** — AI Engineer Workflow V5（TDD监察、BDD智能缺口、零妥协验证）
-2. **项目文档管理** — 文档生成器 + 日常助手
+2. **项目文档管理** — 文档生成器 + 日常助手 + 智能归档
 3. **插件生态** — 管理 3 个 marketplace 的专业插件
 
 ---
@@ -141,6 +141,33 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
+### 6. project-archivist
+
+**描述**：项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），生成审核计划后执行，所有移动留墓碑标记可追溯。
+
+**触发**：用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"。
+
+**核心特性**：
+- 七类判断框架：Archive / Simplify-Keep / Keep / Delete / Stale-Warn / Promote / Merge
+- 两阶段工作流：Phase 1 分析产出 ARCHIVE-PLAN.md → Gate 1 用户审批 → Phase 2 执行
+- 分文档判断标准：每个 `.claude/docs/` 文件有专属的判定规则
+- 墓碑标记：所有归档条目原位留 `> Archived to archive.md §{文档} #{编号} {日期}` 可追溯
+- 交叉引用检查：归档前自动扫描其他文档引用，防止断链
+- 提升机制：learned.md 中 ≥2 次出现的模式自动建议提升到 rules.md
+- rules.md 保护：永不自驱归档，仅标记建议审查
+
+**与 project-docs-assistant 协调**：assistant 负责日常增改（只增不改），archivist 负责周期性清理（只减不增），两者互补。
+
+**Phase 流程**：
+```
+Phase 1: ANALYZE → 读取全部文档 → 逐条目判断 → 交叉引用扫描 → 生成 ARCHIVE-PLAN.md
+Gate 1: 用户审批（支持全部/按置信度/按类型/按文档/逐条目调整）
+Phase 2: EXECUTE → Promote → Merge → Archive → Simplify → Delete → Stale-Warn
+Gate 2: 验证（Tombstone 数量匹配、源文档无损坏）
+```
+
+---
+
 ## 安装
 
 将 skill 目录复制到 `~/.claude/skills/`：
@@ -152,6 +179,7 @@ cp -r ai-engineer-workflow-v5-ulw ~/.claude/skills/
 cp -r plugin-loader ~/.claude/skills/
 cp -r project-docs-assistant-ulw ~/.claude/skills/
 cp -r project-docs-generator-ulw ~/.claude/skills/
+cp -r project-archivist ~/.claude/skills/
 
 # 验证安装
 claude skill list
@@ -165,6 +193,7 @@ ln -s /path/to/ai-engineer-workflow/ai-engineer-workflow-v5-ulw ~/.claude/skills
 ln -s /path/to/ai-engineer-workflow/plugin-loader ~/.claude/skills/plugin-loader
 ln -s /path/to/ai-engineer-workflow/project-docs-assistant-ulw ~/.claude/skills/project-docs-assistant-ulw
 ln -s /path/to/ai-engineer-workflow/project-docs-generator-ulw ~/.claude/skills/project-docs-generator-ulw
+ln -s /path/to/ai-engineer-workflow/project-archivist ~/.claude/skills/project-archivist
 ```
 
 ---
@@ -193,6 +222,14 @@ ai-engineer-workflow-v5 → 基础 workflow + TDD/BDD
 
 ```
 plugin-loader → 安装专业插件（Python/前端/K8s/安全等）
+```
+
+### 文档维护
+
+```
+project-docs-assistant-ulw → 日常增改（只增不改）
+             ↓ 文档膨胀时
+project-archivist → 智能归档清理（只减不增，审核先行）
 ```
 
 ---
