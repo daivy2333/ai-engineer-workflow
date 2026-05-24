@@ -1,6 +1,6 @@
 ---
 name: project-archivist
-description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 snapshot"、"清理 references"、"整理归档"。
+description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 SNAPSHOT"、"清理 references"、"整理归档"。
 ---
 
 # Project Archivist — 项目归档器
@@ -112,7 +112,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 **不适用**：单次出现、领域特定知识、仍快速变化的模式
 
-**标记格式**：`> Promoted to rules.md §错误处理 2026-05-22`
+**标记格式**：`<!-- promoted: learned #05 → rules --> Promoted to rules.md §错误处理 2026-05-22`
 
 ### 7. Merge（合并）
 
@@ -209,7 +209,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 rules.md 的清理需要用户显式编辑，archivist 只做标记。
 
-### snapshot.md
+### SNAPSHOT.md
 
 | 内容 | 判定 |
 |------|------|
@@ -235,34 +235,42 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
 
 ```
 条目边界:
+  - HTML 注释 <!-- L{编号} --> → 条目标记，编号用于 tombstone 引用
   - H3 标题 `### [{标题}]` → 踩坑档案条目
   - 表格行 `| 名称 | 路径 | 用途 | 时间 |` → API/命令/技巧条目
-  - 多段落踩坑档案 → 从 `### [{标题}]` 到下一个 `###` 或 `---` 为止
+  - 多段落踩坑档案 → 从 <!-- L{编号} --> 或 `### [{标题}]` 到下一个标记或 `---` 为止
+  - 无 <!-- L{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
 ### optimization.md 条目解析
 
 ```
 条目边界:
+  - HTML 注释 <!-- O{编号} --> → 条目标记，编号用于 tombstone 引用
   - 列表项 `- {描述}` → 独立条目
-  - 多段落条目 → 从 `- {描述}` 到下一个 `-` 或空白隔行为止
+  - 多段落条目 → 从 <!-- O{编号} --> 或 `- {描述}` 到下一个标记或空白隔行为止
+  - 无 <!-- O{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
 ### tasks.md 条目解析
 
 ```
 条目边界:
+  - HTML 注释 <!-- T{编号} --> → 条目标记，编号用于 tombstone 引用
   - `- [x] {描述}` → 已完成条目
   - `- [ ] {描述}` → 待办条目
   - 按所在区域判断状态：`## 进行中` / `## 待办` / `## 阻塞项`
+  - 无 <!-- T{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
 ### architecture.md 条目解析
 
 ```
 条目边界:
+  - HTML 注释 <!-- A{编号} --> → 条目标记，编号用于 tombstone 引用
   - `### {DATE} - {决策标题}` → ADR 条目
-  - 从 H3 到下一个 H3 或 `---` 为止
+  - 从 <!-- A{编号} --> 或 H3 到下一个标记或 `---` 为止
+  - 无 <!-- A{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
 ---
@@ -285,8 +293,10 @@ Step 3 — Parse:
 
 Step 4 — Cross-Reference Scan:
   对每个候选 Archive/Delete 条目:
-    grep 其他源文档是否引用该条目关键词
-    有引用 → 记录到交叉引用警告列表
+    按交叉引用检查算法提取关键词
+    按分文档 grep 策略搜索其他源文档
+    排除 Tombstone 行和 Promote 行
+    有引用 → 记录到交叉引用警告列表（含命中内容摘要）
     无引用 → 继续
 
 Step 5 — Judge:
@@ -319,7 +329,7 @@ Phase 1 分析完成后，在对话中以下列格式呈现结果：
 | tasks.md | 23 | 7 | 0 | 4 | 2 | 0 | 0 | 10 |
 | architecture.md | 8 | 1 | 0 | 0 | 1 | 0 | 0 | 6 |
 | rules.md | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| snapshot.md | - | 2 | - | 0 | 1 | - | - | - |
+| SNAPSHOT.md | - | 2 | - | 0 | 1 | - | - | - |
 | references.md | 12 | 2 | 1 | 0 | 0 | 0 | 1 | 8 |
 
 ---
@@ -436,39 +446,66 @@ Next: Gate 2
 ### 格式
 
 ```markdown
-> Archived to archive.md §{文档名} #{编号} {日期} — {简短理由}
+<!-- tombstone: L03 --> Archived to archive.md §learned #L03 2026-05-22 — API path stale >90d
 ```
 
 ### 示例
 
 ```markdown
-> Archived to archive.md §learned #03 2026-05-22 — API path stale >90d
-> Archived to archive.md §optimization #07 2026-05-22 — 已完成优化
-> Archived to archive.md §tasks #12 2026-05-22 — 完成 >30d
-> Archived to archive.md §architecture #02 2026-05-22 — 被 ADR-12 替代
-> Archived to archive.md §references #04 2026-05-22 — 链接失效
+<!-- tombstone: L03 --> Archived to archive.md §learned #L03 2026-05-22 — API path stale >90d
+<!-- tombstone: O07 --> Archived to archive.md §optimization #O07 2026-05-22 — 已完成优化
+<!-- tombstone: T12 --> Archived to archive.md §tasks #T12 2026-05-22 — 完成 >30d
+<!-- tombstone: A02 --> Archived to archive.md §architecture #A02 2026-05-22 — 被 ADR-12 替代
+<!-- tombstone: R04 --> Archived to archive.md §references #R04 2026-05-22 — 链接失效
 ```
 
 ### 提升标记格式（Promote）
 
 ```markdown
-> Promoted to rules.md §错误处理 2026-05-22
-> Promoted to architecture.md §ADR-15 2026-05-22
+<!-- promoted: L05 → rules --> Promoted to rules.md §错误处理 2026-05-22
+<!-- promoted: L08 → architecture --> Promoted to architecture.md §ADR-15 2026-05-22
+```
+
+### grep 搜索墓碑
+
+```
+列出所有墓碑:
+  grep "tombstone:" .claude/docs/learned.md
+  grep "tombstone:" .claude/docs/optimization.md
+  grep -rn "tombstone:" .claude/docs/
+
+查找特定归档:
+  grep "tombstone: L03" .claude/docs/learned.md
+
+查找所有提升标记:
+  grep -rn "promoted:" .claude/docs/
 ```
 
 ### 恢复协议
 
 ```
-用户看到 Tombstone → "恢复 §learned #03"
-→ Agent 读取 archive.md 对应条目
-→ 复制回源文档
-→ 删除 Tombstone 标记
-→ 从 archive.md 删除对应条目
+用户看到 Tombstone → "恢复 L03"
+→ grep "archive: L03" .claude/docs/archive.md 定位归档条目
+→ 读取 archive.md 对应条目的原始内容部分
+→ 复制回源文档（Tombstone 标记行位置）
+→ 删除 Tombstone 标记行
+→ 从 archive.md 删除对应条目（从 <!-- archive: ... --> 到下一个 <!-- archive: 或 --- 分隔线）
+→ 验证: grep "tombstone: L03" 源文档 确认无残留
 ```
 
 ---
 
 ## archive.md 格式
+
+### 设计原则
+
+```
+archive.md 必须对 grep 搜索友好:
+  1. 每条归档条目以 <!-- archive: 源文档 #编号 --> 标记开头，支持精确 grep
+  2. 关键信息（标题、关键词、原分类）出现在独立行，不被截断在表格列中
+  3. 搜索某条目: grep "关键词" archive.md 或 grep "源文档 #编号" archive.md
+  4. 搜索某类归档: grep "^## " archive.md 定位文档节，再 grep 关键词
+```
 
 ### 首次创建时的模板
 
@@ -478,61 +515,161 @@ Next: Gate 2
 > 自动归档记录，由 project-archivist 维护。
 > 按源文档分节，每条含日期、编号、置信度、理由、恢复条件。
 > 恢复方式: 用户说"恢复 §{文档名} #{编号}"。
+> 搜索方式: grep "关键词" archive.md 或 grep "编号" archive.md
 
 ---
 
 ## learned.md 归档
 
-| 日期 | # | 条目内容 | 原分类 | 置信度 | 理由 | 恢复条件 |
-|------|---|---------|--------|--------|------|---------|
-| — | — | 暂无归档 | — | — | — | — |
+<!-- learned.md entries below -->
 
 ---
 
 ## optimization.md 归档
 
-| 日期 | # | 条目内容 | 状态 | 置信度 | 理由 | 恢复条件 |
-|------|---|---------|------|--------|------|---------|
-| — | — | 暂无归档 | — | — | — | — |
+<!-- optimization.md entries below -->
 
 ---
 
 ## tasks.md 归档
 
-| 日期 | # | 任务内容 | 完成时间 | 置信度 | 恢复条件 |
-|------|---|---------|---------|--------|---------|
-| — | — | 暂无归档 | — | — | — |
+<!-- tasks.md entries below -->
 
 ---
 
 ## architecture.md 归档
 
-| 日期 | # | ADR | 替代者 | 置信度 | 恢复条件 |
-|------|---|-----|--------|--------|---------|
-| — | — | 暂无归档 | — | — | — |
+<!-- architecture.md entries below -->
 
 ---
 
-## snapshot.md 归档
+## SNAPSHOT.md 归档
 
-| 日期 | # | 快照内容 | 覆盖时间范围 | 置信度 | 恢复条件 |
-|------|---|---------|------------|--------|---------|
-| — | — | 暂无归档 | — | — | — |
+<!-- SNAPSHOT.md entries below -->
 
 ---
 
 ## references.md 归档
 
-| 日期 | # | 依赖 | 失效原因 | 置信度 | 恢复条件 |
-|------|---|------|---------|--------|---------|
-| — | — | 暂无归档 | — | — | — |
+<!-- references.md entries below -->
+```
+
+### 归档条目写入格式
+
+每条归档写入时，按以下格式追加到对应文档节的 `---` 分隔线后：
+
+```markdown
+---
+
+<!-- archive: L03 -->
+**日期**: 2026-05-22
+**条目**: GET /api/v1/users
+**原分类**: API 路径
+**置信度**: HIGH
+**理由**: API 路径 > 90d 未引用
+**恢复条件**: 需要恢复该 API 时
+
+原始内容:
+
+| 名称 | 路径 | 用途 | 时间 |
+|------|------|------|------|
+| 用户列表 | GET /api/v1/users | 获取用户列表 | 2026-01-15 |
+```
+
+```markdown
+---
+
+<!-- archive: O07 -->
+**日期**: 2026-05-22
+**条目**: 数据库查询优化
+**状态**: 已完成
+**置信度**: HIGH
+**理由**: 已完成优化 > 90d
+**恢复条件**: 查询性能再次下降时
+
+原始内容:
+
+- 数据库查询优化 — 已完成，添加了索引和查询重写
+```
+
+```markdown
+---
+
+<!-- archive: T12 -->
+**日期**: 2026-05-22
+**条目**: 添加用户认证
+**完成时间**: 2026-03-01
+**置信度**: HIGH
+**恢复条件**: 需要参考实现细节时
+
+原始内容:
+
+- [x] 添加用户认证
+```
+
+```markdown
+---
+
+<!-- archive: A02 -->
+**日期**: 2026-05-22
+**条目**: ADR-04 数据库选型
+**替代者**: ADR-12
+**置信度**: MEDIUM
+**恢复条件**: 需要回顾选型对比时
+
+原始内容:
+
+### 2026-01-10 - 数据库选型
+
+决策: 选择 PostgreSQL ...
+```
+
+```markdown
+---
+
+<!-- archive: R04 -->
+**日期**: 2026-05-22
+**条目**: Redis
+**失效原因**: 链接 404
+**置信度**: HIGH
+**恢复条件**: 链接恢复时
+
+原始内容:
+
+| 依赖 | 版本 | 链接 | 用途 |
+|------|------|------|------|
+| Redis | 7.0 | https://... | 缓存 |
+```
+
+### grep 搜索示例
+
+```
+搜索某个归档条目:
+  grep "GET /api/v1/users" archive.md
+  → 命中 **条目** 行
+
+搜索某文档的所有归档:
+  grep "archive: L" archive.md
+  → 命中所有 learned.md 归档标记
+
+搜索某编号归档:
+  grep "archive: L03" archive.md
+  → 精确命中单条
+
+搜索某时间段的归档:
+  grep "2026-05" archive.md
+  → 命中该月份的所有 **日期** 行
+
+搜索某置信度归档:
+  grep "置信度: MEDIUM" archive.md
+  → 命中所有 MEDIUM 条目
 ```
 
 ### archive.md 膨胀处理
 
 ```
-当 archive.md > 2000 行时:
-  → 提醒用户: "archive.md 已超过 2000 行，建议手动拆分或清理"
+当 archive.md > 3000 行时:
+  → 提醒用户: "archive.md 已超过 3000 行，建议手动拆分或清理"
   → 不自动归档 archive.md 自身
 ```
 
@@ -542,12 +679,57 @@ Next: Gate 2
 
 ```
 对每个 Archive/Delete 候选条目 E:
-  1. 提取关键词: 函数名 / API 路径 / ADR 编号 / 任务标题
-  2. grep 其他所有 .claude/docs/*.md 搜索该关键词
-  3. 排除 Tombstone 行（已归档的引用不算）
+  1. 提取搜索关键词（按源文档类型差异化）:
+      - learned.md 条目:
+          API 路径 → 提取完整路径（如 GET /api/v1/users）
+          踩坑档案 → 提取标题关键词（如 "异步错误处理"）
+          构建命令 → 提取命令本身（如 cargo build --release）
+          技巧模式 → 提取技巧核心词（如 "缓存"）
+      - optimization.md 条目:
+          提取优化目标关键词（如 "数据库查询"、"日志级别"）
+      - tasks.md 条目:
+          提取任务动作 + 对象（如 "添加 用户认证"）
+      - architecture.md 条目:
+          提取 ADR 编号 + 决策关键词（如 "ADR-04 数据库选型"）
+      - references.md 条目:
+          提取依赖名称（如 "Redis"、"FastAPI"）
+      - SNAPSHOT.md 条目:
+          提取文件/模块名（如 "auth 模块"、"config.yaml"）
+
+  2. 按分文档 grep 策略搜索其他源文档:
+      learned.md:
+        表格条目: grep "| .*\| .*\|" .claude/docs/learned.md | grep "关键词"
+        踩坑档案: grep "^###" .claude/docs/learned.md | grep -i "关键词"
+
+      architecture.md:
+        ADR 条目: grep "^###" .claude/docs/architecture.md | grep "关键词"
+        决策日期: grep -E "^\d{4}-\d{2}-\d{2}" .claude/docs/architecture.md | grep "关键词"
+
+      tasks.md:
+        grep "关键词" .claude/docs/tasks.md
+
+      optimization.md:
+        grep "关键词" .claude/docs/optimization.md
+
+      references.md:
+        grep "关键词" .claude/docs/references.md
+
+      SNAPSHOT.md:
+        grep "关键词" .claude/docs/SNAPSHOT.md
+
+      rules.md:
+        grep "关键词" .claude/docs/rules.md
+
+      跨文档快速扫描（兜底）:
+        grep -rn "关键词" .claude/docs/
+
+  3. 排除已归档引用（Tombstone 行和 Promote 行不算）:
+      grep -rn "关键词" .claude/docs/ | grep -v "Archived to archive.md" | grep -v "Promoted to"
+
   4. 有匹配 → 在模糊条目中作为"交叉引用警告"呈现给用户:
       - 源条目: L12
       - 被引用位置: architecture.md §ADR-05
+      - 命中内容: grep 命中行的摘要
       - 建议: 归档前更新 ADR-05 引用
   5. 无匹配 → 正常处理（按置信度归类）
 
@@ -571,8 +753,10 @@ Phase 2 执行时:
   ✅ 源文档无损坏（结构完整、无多余空白行）
 
 验证命令（按实际执行的文档）:
-  grep "Archived to archive.md" .claude/docs/learned.md | wc -l
+  grep "tombstone:" .claude/docs/learned.md | wc -l
   # 应等于本次执行的 learned.md Archive 数量
+  grep "archive:" .claude/docs/archive.md | wc -l
+  # 应等于 archive.md 中所有归档条目总数
 ```
 
 ---
@@ -608,6 +792,7 @@ rules.md 永不自驱归档，只做标记
 提升机制将记忆转为规范
 首次运行自动初始化 archive.md
 archive.md 自身膨胀仅提醒，不自驱归档
+只能追加写入，禁止直接覆盖
 ```
 
 ---

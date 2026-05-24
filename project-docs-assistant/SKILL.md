@@ -14,12 +14,12 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 ## 功能概述
 
 此 Skill 用于：
-1. **上下文恢复**：读取 `snapshot.md` + `tasks.md` 快速了解当前进度
+1. **上下文恢复**：读取 `SNAPSHOT.md` + `tasks.md` 快速了解当前进度
 2. **规范查询**：读取 `rules.md` 确认编码规范
 3. **架构参考**：读取 `architecture.md` 了解技术决策
 4. **知识回忆**：读取 `learned.md` 获取 API 路径、技巧、踩坑经验
 5. **外部知识**：读取 `references.md` 查找依赖文档
-6. **状态更新**：修改 `tasks.md`、`snapshot.md` 以反映最新进度
+6. **状态更新**：修改 `tasks.md`、`SNAPSHOT.md` 以反映最新进度
 7. **知识积累**：向 `architecture.md`、`learned.md`、`references.md`、`optimization.md` 追加新内容
 8. **保持稳定**：修改文档时遵循 surgical changes 原则，只动必要部分
 9. **知识索取**：遇到无法自行解决的知识盲区时，主动向用户提问索取
@@ -34,7 +34,7 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `CLAUDE.md`（入口）→ 了解文档体系
-2. 读取 `.claude/docs/snapshot.md` → 获取项目状态、结构、最近修改
+2. 读取 `.claude/docs/SNAPSHOT.md` → 获取项目状态、结构、最近修改
 3. 读取 `.claude/docs/tasks.md` → 获取进行中和待办任务
 4. 汇总呈现给用户
 
@@ -47,7 +47,7 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 2. 根据当前任务类型（新功能/修复/重构）提取相关铁律
 3. 必要时提醒 Red Flags 检查
 
-**协作说明**: workflow 技能也通过相同的 rules.md 章节引用获取原则定义（如 Karpathy Guidelines、Requirements Integrity）。assistant 与此共享单一事实来源。
+**协作说明**: CLAUDE.md 只做索引，rules.md 是三大规则的唯一事实来源。workflow 技能也通过 rules.md 章节引用获取原则定义。assistant 与此共享单一事实来源。
 
 ### Pattern 3: 架构查询（Architecture Lookup）
 
@@ -73,7 +73,9 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `.claude/docs/tasks.md`
-2. 根据用户描述修改进行中/待办/阻塞项
+2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: T01, T02, T03...）
+3. 条目以 `<!-- T{编号} -->` 标记开头，支持 grep 精确定位
+4. 根据用户描述修改进行中/待办/阻塞项
 3. 将已完成项移到"最近完成"区域（可选）
 4. 更新"下一步"计划
 5. 写入文件（仅修改变化部分）
@@ -85,7 +87,7 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 **动作**:
 1. 扫描当前项目结构（如果变化不大可直接更新）
 2. 检查 git 状态（分支、最近提交）
-3. 更新 `.claude/docs/snapshot.md` 中的"最近修改"、Git 状态、项目结构等变动部分
+3. 更新 `.claude/docs/SNAPSHOT.md` 中的"最近修改"、Git 状态、项目结构等变动部分
 4. 保留历史记录
 
 ### Pattern 7: 决策记录（Architecture Decision Record）
@@ -94,7 +96,9 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `.claude/docs/architecture.md`
-2. 在决策列表顶部追加新条目，包含：
+2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: A01, A02, A03...）
+3. 条目以 `<!-- A{编号} -->` 标记开头，支持 grep 精确定位
+4. 在决策列表顶部追加新条目，包含：
    - 日期
    - 决策内容
    - 原因
@@ -108,9 +112,11 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `.claude/docs/learned.md`
-2. 添加条目到对应分类：API路径 / 文件速查 / 踩坑记录 / 技巧模式
-3. 更新时间戳，保持表格格式
-4. 复杂踩坑创建详细档案（症状/根因/解决/预防）
+2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: L01, L02, L03...）
+3. 添加条目到对应分类：API路径 / 文件速查 / 踩坑记录 / 技巧模式
+4. 条目以 `<!-- L{编号} -->` 标记开头，支持 grep 精确定位
+5. 更新时间戳，保持表格格式
+6. 复杂踩坑创建详细档案（症状/根因/解决/预防）
 
 ### Pattern 9: 参考添加（Reference Addition）
 
@@ -118,7 +124,9 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `.claude/docs/references.md`
-2. 在适当区域追加新条目（依赖文档或领域知识笔记）
+2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: R01, R02, R03...）
+3. 条目以 `<!-- R{编号} -->` 标记开头，支持 grep 精确定位
+4. 在适当区域追加新条目（依赖文档或领域知识笔记）
 3. 简要总结关键概念（可选）
 
 ### Pattern 10: 优化点记录（Optimization Note）
@@ -127,7 +135,9 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 **动作**:
 1. 读取 `.claude/docs/optimization.md`
-2. 追加新条目：描述问题、当前影响、建议方案
+2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: O01, O02, O03...）
+3. 条目以 `<!-- O{编号} -->` 标记开头，支持 grep 精确定位
+4. 追加新条目：描述问题、当前影响、建议方案
 3. 写入文件
 
 ### Pattern 11: 知识索取（Knowledge Request）
@@ -160,12 +170,12 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 
 | 用户意图 | 应读取的文档 | 可能的写入 |
 |----------|-------------|-----------|
-| 开始新会话 | CLAUDE.md → snapshot.md → tasks.md | - |
+| 开始新会话 | CLAUDE.md → SNAPSHOT.md → tasks.md | - |
 | 写新功能 | rules.md + architecture.md + learned.md | tasks.md, learned.md |
-| 修复 Bug | rules.md + snapshot.md + learned.md | tasks.md, learned.md（踩坑） |
+| 修复 Bug | rules.md + SNAPSHOT.md + learned.md | tasks.md, learned.md（踩坑） |
 | 重构 | architecture.md + optimization.md + rules.md | architecture.md |
 | 查阅 API | learned.md → references.md | - |
-| 更新进度 | tasks.md | tasks.md, snapshot.md |
+| 更新进度 | tasks.md | tasks.md, SNAPSHOT.md |
 | 记录决策 | architecture.md | architecture.md |
 | 记录学习发现 | learned.md | learned.md |
 | 记录参考 | references.md | references.md |
@@ -185,7 +195,7 @@ superpowers的plan和spec文件应当也生成到.claude文件夹下（如果要
 | 查 API 路径 | `grep "API" .claude/docs/learned.md` | 1 秒定位，无需读全文 |
 | 找踩坑记录 | `grep -i "坑" .claude/docs/learned.md` | 快速跳到相关条目 |
 | 搜索决策 | `grep -i "决定" .claude/docs/architecture.md` | 瞬间定位 ADR |
-| 查某模块 | `grep "模块名" .claude/docs/snapshot.md` | 找关键文件位置 |
+| 查某模块 | `grep "模块名" .claude/docs/SNAPSHOT.md` | 找关键文件位置 |
 
 ### grep 搜索优于读取的情况
 
@@ -259,6 +269,7 @@ Agent 在以下情况应主动更新 learned.md：
 精准修改，不碰无关文档
 保持稳定，只更新变化部分
 知识积累，渐进式充实参考和优化
+知识积累只增不减，不允许主动删除文档内容
 主动学习，探索发现即时记录
 所有更新均保留历史轨迹
 不重复探索已发现的知识
