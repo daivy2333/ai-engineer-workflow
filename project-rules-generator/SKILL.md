@@ -371,27 +371,7 @@ description: 项目规则生成器 - 整合 Karpathy Guidelines、务实编码�
 | 重构 | rules.md + architecture.md | architecture.md, learned.md |
 | 更新进度 | tasks.md | tasks.md, SNAPSHOT.md |
 
----
 
-## 项目特定约束
-
-### 技术栈
-
-- 语言: [LANGUAGE]
-- 框架: [FRAMEWORK]
-- 测试: [TEST_TOOL]
-- 格式化: [FORMAT_TOOL]
-
-### 目录结构
-
-[简要目录结构]
-
-### Git 约束
-
-- 提交信息格式: [FORMAT]
-- 分支策略: [STRATEGY]
-
----
 
 ## 检查清单
 
@@ -711,6 +691,27 @@ description: 项目规则生成器 - 整合 Karpathy Guidelines、务实编码�
 ### 提交规范
 
 [根据项目 git 配置生成]
+
+---
+
+
+## 项目特定约束
+
+### 技术栈
+
+- 语言: [LANGUAGE]
+- 框架: [FRAMEWORK]
+- 测试: [TEST_TOOL]
+- 格式化: [FORMAT_TOOL]
+
+### 目录结构
+
+[简要目录结构]
+
+### Git 约束
+
+- 提交信息格式: [FORMAT]
+- 分支策略: [STRATEGY]
 
 ---
 

@@ -369,7 +369,7 @@ Announce："Phase 1: 并行探索 + Metis 分析"
 Announce："Phase 2: plan agent + Momus 评审"
 流程：plan agent → Lite Plan Check → Requirements Completeness → Momus → User review → [Gate 2]
 ```
-
+如果计划太长请分步写入
 ### Phase 3: EXECUTE
 
 ```
