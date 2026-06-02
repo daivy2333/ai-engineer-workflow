@@ -1,17 +1,17 @@
 ---
 name: ai-engineer-workflow-v5
-description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、智能场景澄清。
+description: V5 + OpenSpec 集成。强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口、OpenSpec 变更管理。
 ---
 
-# AI Engineer Workflow V5
+# AI Engineer Workflow V5 — OpenSpec 集成版
 
-**强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口**
+**强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口、OpenSpec 变更管理**
 
 ---
 
 ## 核心约束
 
-完整定义见 `.claude/docs/rules.md → 四、核心执行约束（8 条）`
+完整定义见 `openspec/specs/rules/spec.md → 四、核心执行约束（8 条）`
 
 本 workflow 在此约束下执行：
 
@@ -36,18 +36,20 @@ description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、�
 | **Karpathy** | 监察层 | 原则监察 | 全流程 |
 | **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
 | **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
+| **OpenSpec** | 变更管理 | 变更提案 + 增量规格 + 归档 | Phase 1-4 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
 - Karpathy 负责**原则监察**，违规即报
 - BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
 - TDD 负责**测试铁律**，Phase 3 强制执行
+- OpenSpec 负责**变更管理**，Phase 1 创建变更，Phase 4 归档变更
 
 ---
 
 ## Karpathy 监察（全流程自动激活）
 
-**原则定义**：见 `.claude/docs/rules.md → 一、Karpathy Guidelines`
+**原则定义**：见 `openspec/specs/rules/spec.md → 一、Karpathy Guidelines`
 
 本 workflow 全程监控以下 4 项原则的遵守情况：
 
@@ -67,7 +69,7 @@ description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、�
 
 ### Requirements Integrity 违规处理
 
-**原则定义**：见 `.claude/docs/rules.md → 一.5 Requirements Integrity`
+**原则定义**：见 `openspec/specs/rules/spec.md → 一.5 Requirements Integrity`
 
 本 workflow 的违规处理流程：
 
@@ -81,36 +83,36 @@ description: V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、�
 
 ## BDD 智能缺口（Phase 1 自动激活）
 
-**方法论定义**：见 `.claude/docs/rules.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设）
+**方法论定义**：见 `openspec/specs/rules/spec.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设）
 
 本 workflow 中 BDD 的执行流程：
 
 ```
 Step 1：需求扫描（自动）
-  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules.md）
+  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules/spec.md）
 
 Step 2：缺口发现 → AskUserQuestion（一次）
   选项: "用默认假设补充" / "手动补充具体场景" / "跳过，需求已足够清晰"
 
 Step 3：用户选择处理
-  "用默认假设" → 按 rules.md 标准默认假设自动生成场景草图 → 继续
+  "用默认假设" → 按 rules/spec.md 标准默认假设自动生成场景草图 → 继续
   "手动补充" → 询问具体缺口 → 补充 → 继续
-  "跳过" → 记录缺口到 PLAN.md 前言 → 继续
+  "跳过" → 记录缺口到 OpenSpec proposal.md → 继续
 
 Step 4：生成场景草图（模型生成，用户确认）
-  格式见 rules.md → 五、BDD 方法论，不要求 Given-When-Then 表格
+  格式见 rules/spec.md → 五、BDD 方法论，不要求 Given-When-Then 表格
 ```
 
 ---
 
 ## TDD 监察（Phase 3 自动激活）
 
-**方法论定义**：见 `.claude/docs/rules.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、测试质量标准、常见借口）
+**方法论定义**：见 `openspec/specs/rules/spec.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、测试质量标准、常见借口）
 
 本 workflow 中 TDD 的执行绑定：
 
 ```
-Phase 3 遵循 TDD Iron Law（定义见 rules.md）
+Phase 3 遵循 TDD Iron Law（定义见 rules/spec.md）
 
 本 workflow 执行铁律：
   1. 确定变更范围
@@ -121,7 +123,46 @@ Phase 3 遵循 TDD Iron Law（定义见 rules.md）
   6. Done
 ```
 
-循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules.md）
+循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules/spec.md）
+
+---
+
+## OpenSpec 集成
+
+### 变更生命周期
+
+```
+Phase 1 (CLARIFY) → /opsx:explore 或 /opsx:propose
+  - 探索需求，创建变更提案
+  - 生成 proposal.md + specs/ + design.md + tasks.md
+
+Phase 2 (PLAN) → 细化 OpenSpec 变更
+  - 完善 tasks.md 任务清单
+  - 完善 specs/ 增量规格
+  - 完善 design.md 技术方案
+
+Phase 3 (EXECUTE) → /opsx:apply
+  - 按 tasks.md 任务清单实施
+  - 每个任务完成后勾选
+
+Phase 4 (COMPLETE) → /opsx:archive
+  - 归档完成的变更
+  - 增量规格合并到 specs/
+```
+
+### 与 openspec-assistant 同步
+
+```
+同步时机：
+  - /opsx:propose 后 → assistant 同步任务到 .claude/docs/tasks.md
+  - /opsx:apply 后 → assistant 更新 tasks.md 状态
+  - /opsx:archive 后 → assistant 从 tasks.md 移除已完成任务
+
+同步方式：
+  - assistant 读取 openspec/changes/<name>/tasks.md
+  - 同步到 .claude/docs/tasks.md（标记来源 change）
+  - 保持双向一致性
+```
 
 ---
 
@@ -137,6 +178,7 @@ Phase 3 遵循 TDD Iron Law（定义见 rules.md）
   ✅ AskUserQuestion 已询问（场景缺口）
   ✅ 用户已回答
   ✅ 生成了 Scenario Sketch（模型生成）
+  ✅ OpenSpec 变更已创建（/opsx:propose 或 /opsx:explore）
 
 触发：用户说 "approved" / "继续" / "开始计划"
 ```
@@ -150,6 +192,9 @@ Phase 3 遵循 TDD Iron Law（定义见 rules.md）
 ```
 ❌ 不开始实现、不执行 task、不调用 executing-plans
 ✅ Lite Plan Check → Requirements Completeness Check → 用户 approve Completeness
+✅ OpenSpec tasks.md 已完善
+✅ OpenSpec specs/ 已完善
+✅ OpenSpec design.md 已完善
 ```
 
 **Requirements Traceability Matrix**：
@@ -279,7 +324,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### Loop 1: Clarification（Phase 1）
 
 ```
-Explore → Decompose → Gap Scan → AskUserQuestion（一次）→ Scenario Sketch → [Gate 1]
+Explore → Decompose → Gap Scan → AskUserQuestion（一次）→ Scenario Sketch → /opsx:propose → [Gate 1]
 ```
 
 ---
@@ -319,7 +364,7 @@ Stage 2: Code quality → Issues? → Fix → Re-check
 ### Loop 5: Complete Decision
 
 ```
-Run test → [Gate 5] → 0 failures → 声明 → 4 options → Execute
+Run test → [Gate 5] → 0 failures → 声明 → /opsx:archive → 4 options → Execute
                     → N failures → Fix → Loop
 
 4 Options：Merge locally / Create Pull Request / Keep branch / Discard（需 typed confirmation）
@@ -332,19 +377,21 @@ Run test → [Gate 5] → 0 failures → 声明 → 4 options → Execute
 ### Phase 1: CLARIFY
 
 ```
-调用：brainstorming skill
-Announce："Using brainstorming skill."
-输出：Approved Requirements List + Scenario Sketch
+调用：brainstorming skill + /opsx:explore 或 /opsx:propose
+Announce："Phase 1: 需求探索 + OpenSpec 变更创建"
+输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
 ```
 
 ### Phase 2: PLAN
 
 ```
-调用：Plan Agent → writing-plans skill
-Announce："Using writing-plans skill."
+调用：Plan Agent + writing-plans skill
+Announce："Phase 2: 计划细化 + OpenSpec 完善"
 流程：Plan Agent → Lite Plan Check → Requirements Completeness Check → Self-review → User review → [Gate 2] → Phase 3
 ```
+
 如果计划太长请分步写入
+
 ### Phase 3: EXECUTE
 
 ```
@@ -353,6 +400,7 @@ Announce："Using writing-plans skill."
 调用：
   Inline：executing-plans skill
   Subagent：subagent-driven-development skill
+  OpenSpec：/opsx:apply
 
 流程骨架：
   Load plan → Create TodoWrite
@@ -371,16 +419,16 @@ Announce："Using writing-plans skill."
 ### Phase 4: COMPLETE
 
 ```
-调用：finishing-a-development-branch skill
-Announce："Using finishing-a-development-branch skill."
-流程：[Loop 5] → END
+调用：finishing-a-development-branch skill + /opsx:archive
+Announce："Phase 4: 归档变更 + 完成分支"
+流程：[Loop 5] → /opsx:archive → END
 ```
 
 ---
 
 ## Auto Mode
 
-**行为准则**：见 `.claude/docs/rules.md → 七、Auto Mode 行为准则`（触发词、核心规则）
+**行为准则**：见 `openspec/specs/rules/spec.md → 七、Auto Mode 行为准则`
 
 本 workflow 下各场景的行为映射：
 
@@ -391,18 +439,20 @@ Announce："Using finishing-a-development-branch skill."
 | 测试失败 | STOP → 报告 | 自动调试 → 继续 |
 | 用户 approval | 等待 | 自动继续 |
 | **BDD 缺口选择** | STOP → 等待选择 | **用户选择后自动继续** |
+
 自动模式ultra：当用户说，进入完全自动模式的时候则进入完全自动模式，此时所有原本需要停止等待决策的地方不需要停止，按照方案自动进行，需要进行抉择决策的时候自动选择方案全局最优解
+
 ---
 
 ## Skill Mapping
 
 | Phase | Skill | 控制 |
 |-------|-------|------|
-| 1 | brainstorming | Gate 1 + Gap Scan + AskUserQuestion + Scenario Sketch |
+| 1 | brainstorming + /opsx:explore 或 /opsx:propose | Gate 1 + Gap Scan + AskUserQuestion + Scenario Sketch |
 | 2 | Plan Agent + writing-plans | Gate 2 + Lite Plan Check + Scenario Assumptions |
-| 3 Inline | executing-plans | Gate 3/4/5/6 + Loop 3/4 + Iron Law |
-| 3 Subagent | subagent-driven-development | Gate 3/4/5/6 + 并行 + Iron Law |
-| 4 | finishing-a-development-branch | Gate 5 + Loop 5 |
+| 3 Inline | executing-plans + /opsx:apply | Gate 3/4/5/6 + Loop 3/4 + Iron Law |
+| 3 Subagent | subagent-driven-development + /opsx:apply | Gate 3/4/5/6 + 并行 + Iron Law |
+| 4 | finishing-a-development-branch + /opsx:archive | Gate 5 + Loop 5 |
 
 **监察层**：Karpathy 全 Phase、BDD Phase 1（缺口发现）、TDD Phase 3，违规即报
 
@@ -415,11 +465,13 @@ Phase 1:
 ❌ "Too simple to need design" → Gate 1 violation
 ❌ Code before design approved → Gate 1 violation
 ❌ 未询问场景缺口 → BDD violation
+❌ 未创建 OpenSpec 变更 → 变更管理 violation
 
 Phase 2:
 ❌ TBD/TODO in plan → Lite Plan Check violation
 ❌ Requirements Traceability Matrix 未完成 → Gate 2 violation
 ❌ Simplification 未经用户 approval → Gate 2 violation
+❌ OpenSpec tasks.md 未完善 → 变更管理 violation
 
 Phase 3:
 ❌ 无测试变更代码 → Iron Law violation
@@ -431,9 +483,13 @@ Phase 3:
 ❌ 变更超出 PLAN 范围 → Surgical Changes violation
 ❌ 继续第 4 次相同修复 → 3-Failure violation
 
+Phase 4:
+❌ 未归档 OpenSpec 变更 → 变更管理 violation
+❌ 未调用 finishing-a-development-branch → Review violation
+
 General:
 ❌ "Should/probably" → Verification violation
-❌ Gate BLOCK 不记录 → Workflow 违规（见 rules.md）
+❌ Gate BLOCK 不记录 → Workflow 违规（见 rules/spec.md）
 ```
 
 ---
@@ -442,10 +498,10 @@ General:
 
 ```
 四系统协作：
-  workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
+  workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）
   权责清晰，违规即报
 
-Requirements Integrity 优先于 Simplicity（定义见 rules.md）
+Requirements Integrity 优先于 Simplicity（定义见 rules/spec.md）
 Iron Law 优先于 所有借口
 Gap Scan 优先于 手动填写表格
 
@@ -458,5 +514,6 @@ TDD 铁律：变更必须有测试见证
 三次失败必须反思：禁止继续第4次修复
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
+OpenSpec 集成：变更生命周期管理
 Auto Mode 适配
 ```

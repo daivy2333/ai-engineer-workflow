@@ -1,17 +1,17 @@
 ---
 name: ai-engineer-workflow-v5-ulw
-description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Agent、深度委托、Manual QA、零妥协、Auto-mode aware。
+description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强制探索、Plan Agent、深度委托、Manual QA、零妥协、Auto-mode aware。
 ---
 
-# AI Engineer Workflow V5 — UltraWork Mode
+# AI Engineer Workflow V5 — UltraWork Mode + OpenSpec
 
-**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协**
+**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协，OpenSpec 变更管理**
 
 ---
 
 ## 核心约束
 
-完整定义见 `.claude/docs/rules.md → 四、核心执行约束（8 条）`
+完整定义见 `openspec/specs/rules/spec.md → 四、核心执行约束（8 条）`
 
 本 workflow 在此约束下执行：
 
@@ -28,7 +28,7 @@ description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Ag
 
 ---
 
-## 四系统分工
+## 五系统分工
 
 | 系统 | 角色 | 职责 | 激活时机 |
 |------|------|------|----------|
@@ -36,18 +36,20 @@ description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Ag
 | **Karpathy** | 监察层 | 原则监察 | 全流程 |
 | **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
 | **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
+| **OpenSpec** | 变更管理 | 变更提案 + 增量规格 + 归档 | Phase 1-4 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
 - Karpathy 负责**原则监察**，违规即报
 - BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
 - TDD 负责**测试铁律**，Phase 3 强制执行
+- OpenSpec 负责**变更管理**，Phase 1 创建变更，Phase 4 归档变更
 
 ---
 
 ## Karpathy 监察（全流程自动激活）
 
-**原则定义**：见 `.claude/docs/rules.md → 一、Karpathy Guidelines`
+**原则定义**：见 `openspec/specs/rules/spec.md → 一、Karpathy Guidelines`
 
 本 workflow 全程监控以下 4 项原则的遵守情况：
 
@@ -67,7 +69,7 @@ description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Ag
 
 ### Requirements Integrity 违规处理
 
-**原则定义**：见 `.claude/docs/rules.md → 一.5 Requirements Integrity`
+**原则定义**：见 `openspec/specs/rules/spec.md → 一.5 Requirements Integrity`
 
 本 workflow 的违规处理流程：
 
@@ -81,24 +83,24 @@ description: UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Ag
 
 ## BDD 智能缺口（Phase 1 自动激活）
 
-**方法论定义**：见 `.claude/docs/rules.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设、Auto Mode 协调）
+**方法论定义**：见 `openspec/specs/rules/spec.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设、Auto Mode 协调）
 
 本 workflow 中 BDD 的执行流程：
 
 ```
 Step 1：需求扫描（自动）
-  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules.md）
+  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules/spec.md）
 
 Step 2：缺口发现 → AskUserQuestion（一次）
   选项: "用默认假设补充" / "手动补充具体场景" / "跳过，需求已足够清晰"
 
 Step 3：用户选择处理
-  "用默认假设" → 按 rules.md 标准默认假设自动生成场景草图 → 继续
+  "用默认假设" → 按 rules/spec.md 标准默认假设自动生成场景草图 → 继续
   "手动补充" → 询问具体缺口 → 补充 → 继续
-  "跳过" → 记录缺口到 PLAN.md 前言 → 继续
+  "跳过" → 记录缺口到 OpenSpec proposal.md → 继续
 
 Step 4：生成场景草图（模型生成，用户确认）
-  格式见 rules.md → 五、BDD 方法论，不要求 Given-When-Then 表格
+  格式见 rules/spec.md → 五、BDD 方法论，不要求 Given-When-Then 表格
 ```
 
 ### 与 Auto Mode 协调
@@ -120,12 +122,12 @@ Step 4：生成场景草图（模型生成，用户确认）
 
 ## TDD 监察（Phase 3 自动激活）
 
-**方法论定义**：见 `.claude/docs/rules.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、REFACTOR、测试质量标准、常见借口）
+**方法论定义**：见 `openspec/specs/rules/spec.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、REFACTOR、测试质量标准、常见借口）
 
 本 workflow 中 TDD 的执行绑定：
 
 ```
-Phase 3 遵循 TDD Iron Law（定义见 rules.md）
+Phase 3 遵循 TDD Iron Law（定义见 rules/spec.md）
 
 本 workflow 执行铁律：
   1. 确定变更范围
@@ -136,7 +138,46 @@ Phase 3 遵循 TDD Iron Law（定义见 rules.md）
   6. Done
 ```
 
-循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules.md）
+循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules/spec.md）
+
+---
+
+## OpenSpec 集成
+
+### 变更生命周期
+
+```
+Phase 1 (CLARIFY) → /opsx:explore 或 /opsx:propose
+  - 探索需求，创建变更提案
+  - 生成 proposal.md + specs/ + design.md + tasks.md
+
+Phase 2 (PLAN) → 细化 OpenSpec 变更
+  - 完善 tasks.md 任务清单
+  - 完善 specs/ 增量规格
+  - 完善 design.md 技术方案
+
+Phase 3 (EXECUTE) → /opsx:apply
+  - 按 tasks.md 任务清单实施
+  - 每个任务完成后勾选
+
+Phase 4 (COMPLETE) → /opsx:archive
+  - 归档完成的变更
+  - 增量规格合并到 specs/
+```
+
+### 与 openspec-assistant 同步
+
+```
+同步时机：
+  - /opsx:propose 后 → assistant 同步任务到 .claude/docs/tasks.md
+  - /opsx:apply 后 → assistant 更新 tasks.md 状态
+  - /opsx:archive 后 → assistant 从 tasks.md 移除已完成任务
+
+同步方式：
+  - assistant 读取 openspec/changes/<name>/tasks.md
+  - 同步到 .claude/docs/tasks.md（标记来源 change）
+  - 保持双向一致性
+```
 
 ---
 
@@ -152,12 +193,13 @@ Phase 3 遵循 TDD Iron Law（定义见 rules.md）
   ✅ AskUserQuestion 已询问（场景缺口）
   ✅ 用户已回答
   ✅ 生成了 Scenario Sketch（模型生成）
+  ✅ OpenSpec 变更已创建（/opsx:propose 或 /opsx:explore）
 
 不强制：
   ❌ Coverage Matrix 表格全部填写
   ❌ Given-When-Then 格式检查
 
-Phase 1 输出：Approved Requirements List + Scenario Sketch
+Phase 1 输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
 触发：用户说 "approved" / "继续" / "开始计划"
 附加：展示 Scenario Sketch 供确认
 ```
@@ -171,6 +213,9 @@ Phase 1 输出：Approved Requirements List + Scenario Sketch
 ```
 ❌ 不开始实现、不执行 task、不调用 executing-plans
 ✅ Plan Agent（MANDATORY）→ Requirements Completeness Check → 用户 approve Completeness
+✅ OpenSpec tasks.md 已完善
+✅ OpenSpec specs/ 已完善
+✅ OpenSpec design.md 已完善
 ```
 
 **Requirements Traceability Matrix**：
@@ -311,7 +356,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### Loop 1: Clarification（Phase 1）
 
 ```
-explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch → [Gate 1]
+explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch → /opsx:propose → [Gate 1]
 ```
 
 ---
@@ -345,7 +390,7 @@ Spec compliance（review-work/Momus）→ Issues? → Fix → Code quality → I
 ### Loop 5: Complete Decision
 
 ```
-Run test → [Gate 5] → review-work → git-master → 4 options → Execute
+Run test → [Gate 5] → review-work → git-master → /opsx:archive → 4 options → Execute
 
 4 Options：Merge locally / Create Pull Request / Keep branch / Discard（需 typed confirmation）
 ```
@@ -357,19 +402,21 @@ Run test → [Gate 5] → review-work → git-master → 4 options → Execute
 ### Phase 1: CLARIFY
 
 ```
-调用：explore（并行）+ librarian（并行）+ Metis（阻塞）
-Announce："Phase 1: 并行探索 + Metis 分析"
-输出：Approved Requirements List + Scenario Sketch
+调用：explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose
+Announce："Phase 1: 并行探索 + Metis 分析 + OpenSpec 变更创建"
+输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
 ```
 
 ### Phase 2: PLAN
 
 ```
 调用：plan agent（MANDATORY）+ Momus（阻塞）
-Announce："Phase 2: plan agent + Momus 评审"
+Announce："Phase 2: plan agent + Momus 评审 + OpenSpec 细化"
 流程：plan agent → Lite Plan Check → Requirements Completeness → Momus → User review → [Gate 2]
 ```
+
 如果计划太长请分步写入
+
 ### Phase 3: EXECUTE
 
 ```
@@ -378,6 +425,7 @@ Announce："Phase 2: plan agent + Momus 评审"
 调用：
   - category delegation（并行）→ deep/ultrabrain/visual-engineering/artistry/quick
   - oracle（阻塞）→ 架构决策/复杂 debug
+  - /opsx:apply → 按任务清单实施
 
 流程：Load plan → Create TodoWrite → For each task: [Gate 3] → 委托 → [Gate 5] → Review → Mark completed
 ```
@@ -399,16 +447,16 @@ skill() 仅主 agent 可调。子 agent 所需知识全部写入 prompt。
 ### Phase 4: COMPLETE
 
 ```
-调用：review-work（5 parallel）+ git-master
-Announce："Phase 4: review-work + git-master"
-流程：[Loop 5] → Manual QA → END
+调用：review-work（5 parallel）+ git-master + /opsx:archive
+Announce："Phase 4: review-work + git-master + OpenSpec 归档"
+流程：[Loop 5] → Manual QA → /opsx:archive → END
 ```
 
 ---
 
 ## Auto Mode
 
-**行为准则**：见 `.claude/docs/rules.md → 七、Auto Mode 行为准则`（触发词、核心规则）
+**行为准则**：见 `openspec/specs/rules/spec.md → 七、Auto Mode 行为准则`
 
 本 workflow 下各场景的行为映射：
 
@@ -438,10 +486,10 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 
 | Phase | Agent | 控制 |
 |-------|-------|------|
-| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞） | 并行探索 + 预规划 + 需求澄清 |
-| 2 | plan agent（MANDATORY）+ Momus（阻塞） | 任务分解 + 计划评审 |
-| 3 | category delegation + oracle（阻塞） | 深度委托 + 架构决策 |
-| 4 | review-work + git-master | Review + Git 操作 |
+| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose | 并行探索 + 预规划 + 需求澄清 + 变更创建 |
+| 2 | plan agent（MANDATORY）+ Momus（阻塞） | 任务分解 + 计划评审 + OpenSpec 细化 |
+| 3 | category delegation + oracle（阻塞）+ /opsx:apply | 深度委托 + 架构决策 + 任务实施 |
+| 4 | review-work + git-master + /opsx:archive | Review + Git 操作 + 变更归档 |
 
 **监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3，违规即报
 
@@ -479,12 +527,14 @@ Phase 1:
 ❌ 未并行启动 explore/librarian → 效率 violation
 ❌ Metis 未调用 → 预规划 violation
 ❌ 未询问场景缺口 → BDD violation
+❌ 未创建 OpenSpec 变更 → 变更管理 violation
 
 Phase 2:
 ❌ TBD/TODO in plan → Lite Plan Check violation
 ❌ Requirements Traceability Matrix 未完成 → Gate 2 violation
 ❌ 跳过 plan agent → UltraWork violation
 ❌ Momus 未调用 → 计划评审 violation
+❌ OpenSpec 未完善 → 变更管理 violation
 
 Phase 3:
 ❌ 不委托直接自己写代码 → 委托 violation
@@ -495,6 +545,7 @@ Phase 3:
 Phase 4:
 ❌ Skip Manual QA → UltraWork violation
 ❌ 未调用 review-work/git-master → Review violation
+❌ 未归档 OpenSpec 变更 → 变更管理 violation
 
 General:
 ❌ "Should/probably" → Verification violation
@@ -508,7 +559,7 @@ General:
 ## Key Principles
 
 ```
-四系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
+五系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）
 
 原生 Agent 核心能力：
   explore/librarian：并行探索（FREE）
@@ -520,11 +571,13 @@ Gate 控制 Phase 进入
 Loop 控制 Phase 内完成
 
 验证铁律：必须展示输出片段
-TDD 铵律：变更必须有测试见证
+TDD 铁律：变更必须有测试见证
 委托铁律：不委托直接自己写代码
 Skill 隔离铁律：skill() 仅限主 agent 调用，子 agent 所需知识全部写入 prompt
 遇阻即停不猜测
 三次失败必须反思
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
+OpenSpec 集成：变更生命周期管理
 Auto Mode 适配
+```

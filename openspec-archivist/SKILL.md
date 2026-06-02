@@ -1,9 +1,9 @@
 ---
-name: project-archivist
-description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 SNAPSHOT"、"清理 references"、"整理归档"。
+name: openspec-archivist
+description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 SNAPSHOT"、"清理 references"、"整理归档"。
 ---
 
-# Project Archivist — 项目归档器
+# OpenSpec Archivist — 项目归档器
 
 **按条目级别智能清理文档膨胀，审核先行，不可逆操作留墓碑可追溯。**
 
@@ -12,13 +12,38 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 ## 功能概述
 
 此 Skill 用于：
-1. **分析** `.claude/docs/` 全部文档，逐条目判断膨胀程度
+1. **分析** `openspec/specs/` 和 `.claude/docs/` 全部文档，逐条目判断膨胀程度
 2. **审核** 展示分析摘要 + 模糊条目，用户判定后直接执行
 3. **执行** 归档/简化/删除/提升/合并，所有移动留 Tombstone 标记
-4. **首次运行** 若 `archive.md` 不存在，自动创建带各文档分节的归档文件
+4. **OpenSpec 集成** 利用 `openspec archive` 命令管理变更归档
 5. **可追溯** 每条归档记录含日期、理由、置信度、交叉引用、恢复条件
 
 **触发方式**：仅用户显式调用（说"归档"等），不基于文件大小自动触发。
+
+---
+
+## 文档体系映射
+
+### 清理目标
+
+| 文档 | 路径 | 编号格式 | 清理策略 |
+|------|------|----------|----------|
+| 架构决策 | `openspec/specs/architecture/spec.md` | <!-- A{编号} --> | 按 ADR 判断框架 |
+| 编码规范 | `openspec/specs/rules/spec.md` | 无编号 | 永不自驱归档，只标记 |
+| 学习记忆 | `openspec/specs/learned/spec.md` | <!-- L{编号} --> | 按 learned 判断框架 |
+| 外部参考 | `openspec/specs/references/spec.md` | <!-- R{编号} --> | 按 references 判断框架 |
+| 优化记录 | `openspec/specs/optimization/spec.md` | <!-- O{编号} --> | 按 optimization 判断框架 |
+| 项目快照 | `.claude/docs/SNAPSHOT.md` | 无编号 | 按 SNAPSHOT 判断框架 |
+| 任务追踪 | `.claude/docs/tasks.md` | <!-- T{编号} --> | 按 tasks 判断框架 |
+| OpenSpec 变更 | `openspec/changes/` | 目录名 | 用 `openspec archive` 归档 |
+
+### 归档目标
+
+| 归档方式 | 目标 | 说明 |
+|----------|------|------|
+| 内部归档 | `openspec/specs/*/spec.md` 历史区 | 保留原文件，移到"已完成"或"历史"区域 |
+| OpenSpec 归档 | `openspec archive` | 用 OpenSpec CLI 归档变更 |
+| 墓碑标记 | 原位 | 留 `<!-- tombstone: ... -->` 标记可追溯 |
 
 ---
 
@@ -28,17 +53,22 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 1. 用户显式触发，不自动建议 — 不基于文件大小或条目数自动触发
 2. 审核先行 — 分析结果必须展示给用户审阅，模糊条目需用户判定
 3. 确认后执行 — 用户 approve 前不执行任何删除/移动
-4. 移动留碑 — 所有移动到 archive.md 的条目留 Tombstone 标记
+4. 移动留碑 — 所有归档条目留 Tombstone 标记
 5. 交叉引用必查 — 归档前扫描其他文档是否引用该条目，防断链
-6. 规则不动 — rules.md 从不自驱归档，仅可标记"建议审查"
-7. 首次启动 — archive.md 不存在时自动创建模板
+6. 规则不动 — rules/spec.md 从不自驱归档，仅可标记"建议审查"
+7. OpenSpec 优先 — OpenSpec 变更用 `openspec archive` 归档，不手动操作
 8. 禁止全量覆盖 — 更新已有文档时必须使用 Edit（精准替换）而非 Write（全文覆盖），确保未被涉及的内容不被丢弃。只有创建全新文件（如首次创建 archive.md）才使用 Write
 ```
 
-**与 project-docs-assistant 协调**：
-- assistant 负责**日常增改**（11 种行为模式）
+**与 openspec-assistant 协调**：
+- assistant 负责**日常增改**（12 种行为模式）
 - archivist 负责**周期性清理**（判断 + 归档 + 精简）
 - 两者互不冲突：assistant 只增不改，archivist 只减不增
+
+**与 OpenSpec CLI 协调**：
+- OpenSpec 变更（changes/）用 `openspec archive` 归档
+- archivist 不手动操作 changes/ 目录
+- archivist 只清理 specs/ 和 .claude/docs/
 
 ---
 
@@ -46,7 +76,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 ### 1. Archive（归档）
 
-**动作**：条目内容从源文档移动到 `archive.md`，原位留 Tombstone。
+**动作**：条目内容从源文档移动到文档内的"已完成"/"历史"区域，原位留 Tombstone。
 
 **适用**：
 - 过期信息（API 路径 > 90 天未用、依赖版本已升级）
@@ -56,7 +86,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 - 失效链接
 - 历史快照
 
-**不适用**：进行中任务、活跃 API、未解决的优化点、rules.md 内容
+**不适用**：进行中任务、活跃 API、未解决的优化点、rules/spec.md 内容
 
 ### 2. Simplify-Keep（简化保留）
 
@@ -64,7 +94,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 **适用**：
 - 仍相关但过于冗长的条目（> 200 字纯描述）
-- 踩坑档案中过细的步骤可精简为"症状→根因→解
+- 踩坑档案中过细的步骤可精简为"症状→根因→解决"
 - 技巧模式中冗余示例可合并
 
 **不适用**：规则内容、ADR 正文、任务描述（需完整保留意图）
@@ -77,12 +107,12 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 - 活跃条目（最近 30 天有使用/引用）
 - 进行中任务（`- [ ]` 在"进行中"区域）
 - 未解决的优化点
-- 所有 rules.md 内容
+- 所有 rules/spec.md 内容
 - 当前有效的 ADR
 
 ### 4. Delete（删除）
 
-**动作**：直接删除，不归档到 archive.md。
+**动作**：直接删除，不归档。
 
 **适用**：
 - 从未启动且创建 > 90 天的任务
@@ -101,19 +131,19 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 - 踩坑记录中症状可能已修复但未确认
 - 近期可能仍需参考但明显在变旧的条目
 
-**标记格式**：`⚠️ STALE [2026-05-22] — 建议在 30 天内归档或更新`
+**标记格式**：`⚠️ STALE [2026-06-02] — 建议在 30 天内归档或更新`
 
 ### 6. Promote（提升）
 
-**动作**：从 `learned.md` 提升到 `rules.md` 或 `architecture.md`，原条目留提升标记。
+**动作**：从 `learned/spec.md` 提升到 `rules/spec.md` 或 `architecture/spec.md`，原条目留提升标记。
 
 **触发**：
-- 同一模式在 learned.md 中出现 ≥ 2 次
+- 同一模式在 learned/spec.md 中出现 ≥ 2 次
 - 已足够稳定可作为规范（如 API 调用模式、错误处理惯例）
 
 **不适用**：单次出现、领域特定知识、仍快速变化的模式
 
-**标记格式**：`<!-- promoted: learned #05 → rules --> Promoted to rules.md §错误处理 2026-05-22`
+**标记格式**：`<!-- promoted: learned #05 → rules --> Promoted to rules/spec.md §错误处理 2026-06-02`
 
 ### 7. Merge（合并）
 
@@ -130,7 +160,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 ## 分文档判断标准
 
-### learned.md
+### learned/spec.md
 
 | 内容类型 | 判断信号 | 阈值 | 默认判定 |
 |----------|---------|------|---------|
@@ -150,11 +180,11 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 **特殊规则**：
 - Promote 的两种目标：
-  - 编码/测试/错误处理模式 → `rules.md`（对应章节）
-  - 架构级模式/设计惯例 → `architecture.md`（新 ADR）
+  - 编码/测试/错误处理模式 → `rules/spec.md`（对应章节）
+  - 架构级模式/设计惯例 → `architecture/spec.md`（新 ADR）
 - 踩坑档案按 `### [{问题标题}]` 条目头解析
 
-### optimization.md
+### optimization/spec.md
 
 | 条目状态 | 判断信号 | 判定 |
 |----------|---------|------|
@@ -187,7 +217,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 
 **永不归档**：`## 进行中` 下的任何条目。
 
-### architecture.md
+### architecture/spec.md
 
 | 决策状态 | 判断信号 | 判定 |
 |----------|---------|------|
@@ -196,11 +226,11 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 | 过时 | 技术栈变更导致不再适用 | Archive |
 | 被替代但新 ADR 未引用 | 手动判断 | Stale-Warn + flag |
 
-**归档格式**：`Archived: 被 [ADR-XX] 替代 — 2026-05-22`
+**归档格式**：`Archived: 被 [ADR-XX] 替代 — 2026-06-02`
 
-### rules.md
+### rules/spec.md
 
-**铁律**：rules.md 内容永不自驱归档。
+**铁律**：rules/spec.md 内容永不自驱归档。
 
 | 情况 | 动作 |
 |------|------|
@@ -208,7 +238,7 @@ description: 项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条�
 | 规则冗余 | 标记 `💡 SUGGEST-MERGE`（指明显可合并的规则） |
 | 规则正确 | Keep |
 
-rules.md 的清理需要用户显式编辑，archivist 只做标记。
+rules/spec.md 的清理需要用户显式编辑，archivist 只做标记。
 
 ### SNAPSHOT.md
 
@@ -219,7 +249,7 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
 | 过时的关键文件表格 | Stale-Warn |
 | 当前状态（阶段/分支） | Keep |
 
-### references.md
+### references/spec.md
 
 | 链接状态 | 判定 |
 |----------|------|
@@ -228,11 +258,22 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
 | 冗余引用（同一依赖多次记录） | Merge |
 | 已不再使用的依赖 | Archive |
 
+### OpenSpec 变更（changes/）
+
+| 变更状态 | 判定 |
+|----------|------|
+| 活跃变更 | Keep |
+| 已完成变更 | 用 `openspec archive` 归档 |
+| 过时变更（> 90d 未活动） | 提示用户归档或删除 |
+| 空变更（无实质内容） | 提示用户删除 |
+
+**注意**：archivist 不手动操作 changes/，只提示用户使用 `openspec archive`。
+
 ---
 
 ## 条目边界解析规则
 
-### learned.md 条目解析
+### learned/spec.md 条目解析
 
 ```
 条目边界:
@@ -243,7 +284,7 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
   - 无 <!-- L{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
-### optimization.md 条目解析
+### optimization/spec.md 条目解析
 
 ```
 条目边界:
@@ -264,7 +305,7 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
   - 无 <!-- T{编号} --> 标记的旧条目 → 归档时自动分配编号
 ```
 
-### architecture.md 条目解析
+### architecture/spec.md 条目解析
 
 ```
 条目边界:
@@ -279,15 +320,21 @@ rules.md 的清理需要用户显式编辑，archivist 只做标记。
 ## Phase 1: ANALYZE（分析阶段）
 
 ```
-Entry: 用户调用 skill + .claude/docs/ 目录存在
+Entry: 用户调用 skill + openspec/specs/ 和 .claude/docs/ 目录存在
 
-Step 1 — Bootstrap:
-  检查 .claude/docs/archive.md 是否存在
-  → 不存在: 创建 archive.md 模板（含各文档 H2 section）
-  → 存在: 读取当前内容供后续追加
+Step 1 — Read:
+  并行读取所有源文档：
+  - openspec/specs/architecture/spec.md
+  - openspec/specs/rules/spec.md
+  - openspec/specs/learned/spec.md
+  - openspec/specs/references/spec.md
+  - openspec/specs/optimization/spec.md
+  - .claude/docs/SNAPSHOT.md
+  - .claude/docs/tasks.md
 
-Step 2 — Read:
-  并行读取全部 7 个 .claude/docs/ 源文档
+Step 2 — Check OpenSpec Changes:
+  运行 openspec list → 获取活跃变更列表
+  对每个变更检查状态（活跃/过时/空）
 
 Step 3 — Parse:
   按分文档解析规则逐条目提取内容、分类、时间信息
@@ -318,38 +365,37 @@ Next: Gate 1
 
 ### 分析报告展示格式（对话中呈现）
 
-Phase 1 分析完成后，在对话中以下列格式呈现结果：
-
 ```
 ##  归档分析报告
 
 | 文档 | 分析条目 | Archive | Simplify | Delete | Stale | Promote | Merge | Keep |
 |------|---------|---------|----------|--------|-------|---------|-------|------|
-| learned.md | 52 | 8 | 4 | 1 | 3 | 2 | 3 | 31 |
-| optimization.md | 15 | 5 | 2 | 0 | 1 | 0 | 1 | 6 |
-| tasks.md | 23 | 7 | 0 | 4 | 2 | 0 | 0 | 10 |
-| architecture.md | 8 | 1 | 0 | 0 | 1 | 0 | 0 | 6 |
-| rules.md | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| SNAPSHOT.md | - | 2 | - | 0 | 1 | - | - | - |
-| references.md | 12 | 2 | 1 | 0 | 0 | 0 | 1 | 8 |
+| specs/architecture/ | 8 | 1 | 0 | 0 | 1 | 0 | 0 | 6 |
+| specs/rules/ | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| specs/learned/ | 52 | 8 | 4 | 1 | 3 | 2 | 3 | 31 |
+| specs/references/ | 12 | 2 | 1 | 0 | 0 | 0 | 1 | 8 |
+| specs/optimization/ | 15 | 5 | 2 | 0 | 1 | 0 | 1 | 6 |
+| .claude/docs/SNAPSHOT.md | - | 2 | - | 0 | 1 | - | - | - |
+| .claude/docs/tasks.md | 23 | 7 | 0 | 4 | 2 | 0 | 0 | 10 |
+| OpenSpec changes/ | 5 | - | - | - | - | - | - | 5 |
 
 ---
 
 ### ✅ 确定性操作（HIGH 置信度，共 18 条）
 
-#### learned.md — Archive（5 条）
+#### specs/learned/ — Archive（5 条）
 - L03 `GET /api/v1/users` — API 路径 > 90d 未引用
 - L07 `cargo build --release` — 构建命令 > 30d 未用
 - L12 异步错误处理踩坑 — 问题已于 v2.3 修复，> 180d
 - L18 旧 API 迁移笔记 — 迁移已完成
 - L22 `docker-compose up -d` — 已在其他条目记录
 
-#### optimization.md — Archive（3 条）
+#### specs/optimization/ — Archive（3 条）
 - O02 数据库查询优化 — 已完成 > 90d
 - O05 日志级别调整 — 已完成
 - O11 缓存策略 — 已标记 done
 
-#### tasks.md — Archive（4 条）
+#### .claude/docs/tasks.md — Archive（4 条）
 - T03 添加用户认证 — `- [x]` 完成 > 60d
 - T08 优化首页加载 — `- [x]` 完成 > 45d
 - T15 重构配置模块 — `- [x]` 完成 > 90d
@@ -368,12 +414,16 @@ Phase 1 分析完成后，在对话中以下列格式呈现结果：
 - **A04** ADR-04 数据库选型 — MEDIUM Archive — 部分被 ADR-11 替代，但仍有部分建议被沿用。归档还是合并到 ADR-11？
 
 #### 交叉引用警告（2 条）
-- **L14** 被 architecture.md §ADR-05 引用 — 归档前需更新 ADR-05。确认归档 + 更新引用？
+- **L14** 被 architecture/spec.md §ADR-05 引用 — 归档前需更新 ADR-05。确认归档 + 更新引用？
 - **O07** 被 tasks.md T12 提及（T12 已完成）— 无功能影响。确认归档？
 
 #### 模糊状态（2 条，Stale-Warn 候选）
 - **T19** 待办 > 60d — 既不确定要归档也不确定要继续。标记 Stale 还是直接 Delete？
 - **L35** 某踩坑记录 — 症状疑似仍存在但无法确认。标记 Stale 还是保留？
+
+#### OpenSpec 变更提示（2 条）
+- **change-auth** 已完成 > 30d — 建议运行 `openspec archive change-auth`
+- **change-old-feature** 已 90d 未活动 — 建议归档或删除
 ```
 
 ---
@@ -391,6 +441,7 @@ Phase 1 分析完成后，在对话中以下列格式呈现结果：
   - 逐条判定: "L28 归档，O09 保留，A04 合并到 ADR-11"
   - 按类型: "所有 Archive 执行，Delete 跳过"
   - 追加条件: "确认全部，但交叉引用警告的先更新引用再归档"
+  - OpenSpec: "change-auth 归档，change-old-feature 删除"
 
 模糊条目处理（根据用户判定）:
   - 用户判定为执行 → 加入执行队列
@@ -401,6 +452,7 @@ Phase 1 分析完成后，在对话中以下列格式呈现结果：
   → 进入 Loop: Plan Revision（最多 3 轮）
   → 用户指定修改 → 更新判断 → 重新展示受影响的条目
 ```
+
 ---
 
 ## Phase 2: EXECUTE（执行阶段）
@@ -411,9 +463,10 @@ Entry: Gate 1 通过（用户已判定所有模糊条目）
 执行队列 = HIGH 置信度操作 + 用户确认的模糊条目操作
 
 执行顺序（确保安全）:
+  0. OPENSPEC ARCHIVE — 先处理 OpenSpec 变更归档
   1. PROMOTE — 先提升（源条目保留，目标文档追加）
   2. MERGE   — 合并重复（保留一条，删除其余）
-  3. ARCHIVE — 移动条目到 archive.md，留 Tombstone
+  3. ARCHIVE — 移动条目到文档内"已完成"/"历史"区，留 Tombstone
   4. SIMPLIFY — 浓缩原地保留的冗长条目
   5. DELETE  — 直接删除无价值条目
   6. STALE-WARN — 添加 ⚠️ 标记
@@ -421,15 +474,15 @@ Entry: Gate 1 通过（用户已判定所有模糊条目）
 对队列中每条条目:
   1. 读取源文档（最新副本）
   2. 执行操作:
-      - Archive: 复制到 archive.md → 源文档删除 → 插入 Tombstone
+      - OpenSpec Archive: 运行 `openspec archive <name>`
+      - Archive: 复制到文档内"已完成"区 → 源位置删除 → 插入 Tombstone
       - Simplify: 浓缩 → 替换原条目
       - Delete: 直接删除
       - Promote: 追加到目标文档 → 源文档留提升标记
       - Merge: 创建合并条目 → 删除重复条目
       - Stale-Warn: 在条目旁插入 ⚠️ 标记行
   3. 写回源文档
-  4. 写回 archive.md（如有 Archive 操作）
-  5. 验证 Tombstone 存在（如有 Archive 操作）
+  4. 验证 Tombstone 存在（如有 Archive 操作）
 
 安全规则:
   - 逐条目执行，不批量操作（便于部分回滚）
@@ -447,231 +500,51 @@ Next: Gate 2
 ### 格式
 
 ```markdown
-<!-- tombstone: L03 --> Archived to archive.md §learned #L03 2026-05-22 — API path stale >90d
+<!-- tombstone: L03 --> Archived in learned/spec.md #L03 2026-06-02 — API path stale >90d
 ```
 
 ### 示例
 
 ```markdown
-<!-- tombstone: L03 --> Archived to archive.md §learned #L03 2026-05-22 — API path stale >90d
-<!-- tombstone: O07 --> Archived to archive.md §optimization #O07 2026-05-22 — 已完成优化
-<!-- tombstone: T12 --> Archived to archive.md §tasks #T12 2026-05-22 — 完成 >30d
-<!-- tombstone: A02 --> Archived to archive.md §architecture #A02 2026-05-22 — 被 ADR-12 替代
-<!-- tombstone: R04 --> Archived to archive.md §references #R04 2026-05-22 — 链接失效
+<!-- tombstone: L03 --> Archived in learned/spec.md #L03 2026-06-02 — API path stale >90d
+<!-- tombstone: O07 --> Archived in optimization/spec.md #O07 2026-06-02 — 已完成优化
+<!-- tombstone: T12 --> Archived in tasks.md #T12 2026-06-02 — 完成 >30d
+<!-- tombstone: A02 --> Archived in architecture/spec.md #A02 2026-06-02 — 被 ADR-12 替代
+<!-- tombstone: R04 --> Archived in references/spec.md #R04 2026-06-02 — 链接失效
 ```
 
 ### 提升标记格式（Promote）
 
 ```markdown
-<!-- promoted: L05 → rules --> Promoted to rules.md §错误处理 2026-05-22
-<!-- promoted: L08 → architecture --> Promoted to architecture.md §ADR-15 2026-05-22
+<!-- promoted: L05 → rules --> Promoted to rules/spec.md §错误处理 2026-06-02
+<!-- promoted: L08 → architecture --> Promoted to architecture/spec.md §ADR-15 2026-06-02
 ```
 
 ### grep 搜索墓碑
 
 ```
 列出所有墓碑:
-  grep "tombstone:" .claude/docs/learned.md
-  grep "tombstone:" .claude/docs/optimization.md
+  grep "tombstone:" openspec/specs/learned/spec.md
+  grep "tombstone:" openspec/specs/optimization/spec.md
+  grep -rn "tombstone:" openspec/specs/
   grep -rn "tombstone:" .claude/docs/
 
 查找特定归档:
-  grep "tombstone: L03" .claude/docs/learned.md
+  grep "tombstone: L03" openspec/specs/learned/spec.md
 
 查找所有提升标记:
-  grep -rn "promoted:" .claude/docs/
+  grep -rn "promoted:" openspec/specs/
 ```
 
 ### 恢复协议
 
 ```
 用户看到 Tombstone → "恢复 L03"
-→ grep "archive: L03" .claude/docs/archive.md 定位归档条目
-→ 读取 archive.md 对应条目的原始内容部分
-→ 复制回源文档（Tombstone 标记行位置）
+→ grep "L03" openspec/specs/learned/spec.md 定位归档条目
+→ 读取对应条目的原始内容部分
+→ 复制回原位置（Tombstone 标记行位置）
 → 删除 Tombstone 标记行
-→ 从 archive.md 删除对应条目（从 <!-- archive: ... --> 到下一个 <!-- archive: 或 --- 分隔线）
 → 验证: grep "tombstone: L03" 源文档 确认无残留
-```
-
----
-
-## archive.md 格式
-
-### 设计原则
-
-```
-archive.md 必须对 grep 搜索友好:
-  1. 每条归档条目以 <!-- archive: 源文档 #编号 --> 标记开头，支持精确 grep
-  2. 关键信息（标题、关键词、原分类）出现在独立行，不被截断在表格列中
-  3. 搜索某条目: grep "关键词" archive.md 或 grep "源文档 #编号" archive.md
-  4. 搜索某类归档: grep "^## " archive.md 定位文档节，再 grep 关键词
-```
-
-### 首次创建时的模板
-
-```markdown
-# archive.md — 文档归档
-
-> 自动归档记录，由 project-archivist 维护。
-> 按源文档分节，每条含日期、编号、置信度、理由、恢复条件。
-> 恢复方式: 用户说"恢复 §{文档名} #{编号}"。
-> 搜索方式: grep "关键词" archive.md 或 grep "编号" archive.md
-
----
-
-## learned.md 归档
-
-<!-- learned.md entries below -->
-
----
-
-## optimization.md 归档
-
-<!-- optimization.md entries below -->
-
----
-
-## tasks.md 归档
-
-<!-- tasks.md entries below -->
-
----
-
-## architecture.md 归档
-
-<!-- architecture.md entries below -->
-
----
-
-## SNAPSHOT.md 归档
-
-<!-- SNAPSHOT.md entries below -->
-
----
-
-## references.md 归档
-
-<!-- references.md entries below -->
-```
-
-### 归档条目写入格式
-
-每条归档写入时，按以下格式追加到对应文档节的 `---` 分隔线后：
-
-```markdown
----
-
-<!-- archive: L03 -->
-**日期**: 2026-05-22
-**条目**: GET /api/v1/users
-**原分类**: API 路径
-**置信度**: HIGH
-**理由**: API 路径 > 90d 未引用
-**恢复条件**: 需要恢复该 API 时
-
-原始内容:
-
-| 名称 | 路径 | 用途 | 时间 |
-|------|------|------|------|
-| 用户列表 | GET /api/v1/users | 获取用户列表 | 2026-01-15 |
-```
-
-```markdown
----
-
-<!-- archive: O07 -->
-**日期**: 2026-05-22
-**条目**: 数据库查询优化
-**状态**: 已完成
-**置信度**: HIGH
-**理由**: 已完成优化 > 90d
-**恢复条件**: 查询性能再次下降时
-
-原始内容:
-
-- 数据库查询优化 — 已完成，添加了索引和查询重写
-```
-
-```markdown
----
-
-<!-- archive: T12 -->
-**日期**: 2026-05-22
-**条目**: 添加用户认证
-**完成时间**: 2026-03-01
-**置信度**: HIGH
-**恢复条件**: 需要参考实现细节时
-
-原始内容:
-
-- [x] 添加用户认证
-```
-
-```markdown
----
-
-<!-- archive: A02 -->
-**日期**: 2026-05-22
-**条目**: ADR-04 数据库选型
-**替代者**: ADR-12
-**置信度**: MEDIUM
-**恢复条件**: 需要回顾选型对比时
-
-原始内容:
-
-### 2026-01-10 - 数据库选型
-
-决策: 选择 PostgreSQL ...
-```
-
-```markdown
----
-
-<!-- archive: R04 -->
-**日期**: 2026-05-22
-**条目**: Redis
-**失效原因**: 链接 404
-**置信度**: HIGH
-**恢复条件**: 链接恢复时
-
-原始内容:
-
-| 依赖 | 版本 | 链接 | 用途 |
-|------|------|------|------|
-| Redis | 7.0 | https://... | 缓存 |
-```
-
-### grep 搜索示例
-
-```
-搜索某个归档条目:
-  grep "GET /api/v1/users" archive.md
-  → 命中 **条目** 行
-
-搜索某文档的所有归档:
-  grep "archive: L" archive.md
-  → 命中所有 learned.md 归档标记
-
-搜索某编号归档:
-  grep "archive: L03" archive.md
-  → 精确命中单条
-
-搜索某时间段的归档:
-  grep "2026-05" archive.md
-  → 命中该月份的所有 **日期** 行
-
-搜索某置信度归档:
-  grep "置信度: MEDIUM" archive.md
-  → 命中所有 MEDIUM 条目
-```
-
-### archive.md 膨胀处理
-
-```
-当 archive.md > 3000 行时:
-  → 提醒用户: "archive.md 已超过 3000 行，建议手动拆分或清理"
-  → 不自动归档 archive.md 自身
 ```
 
 ---
@@ -681,62 +554,63 @@ archive.md 必须对 grep 搜索友好:
 ```
 对每个 Archive/Delete 候选条目 E:
   1. 提取搜索关键词（按源文档类型差异化）:
-      - learned.md 条目:
+      - learned/spec.md 条目:
           API 路径 → 提取完整路径（如 GET /api/v1/users）
           踩坑档案 → 提取标题关键词（如 "异步错误处理"）
           构建命令 → 提取命令本身（如 cargo build --release）
           技巧模式 → 提取技巧核心词（如 "缓存"）
-      - optimization.md 条目:
+      - optimization/spec.md 条目:
           提取优化目标关键词（如 "数据库查询"、"日志级别"）
       - tasks.md 条目:
           提取任务动作 + 对象（如 "添加 用户认证"）
-      - architecture.md 条目:
+      - architecture/spec.md 条目:
           提取 ADR 编号 + 决策关键词（如 "ADR-04 数据库选型"）
-      - references.md 条目:
+      - references/spec.md 条目:
           提取依赖名称（如 "Redis"、"FastAPI"）
       - SNAPSHOT.md 条目:
           提取文件/模块名（如 "auth 模块"、"config.yaml"）
 
   2. 按分文档 grep 策略搜索其他源文档:
-      learned.md:
-        表格条目: grep "| .*\| .*\|" .claude/docs/learned.md | grep "关键词"
-        踩坑档案: grep "^###" .claude/docs/learned.md | grep -i "关键词"
+      learned/spec.md:
+        表格条目: grep "| .*\| .*\|" openspec/specs/learned/spec.md | grep "关键词"
+        踩坑档案: grep "^###" openspec/specs/learned/spec.md | grep -i "关键词"
 
-      architecture.md:
-        ADR 条目: grep "^###" .claude/docs/architecture.md | grep "关键词"
-        决策日期: grep -E "^\d{4}-\d{2}-\d{2}" .claude/docs/architecture.md | grep "关键词"
+      architecture/spec.md:
+        ADR 条目: grep "^###" openspec/specs/architecture/spec.md | grep "关键词"
+        决策日期: grep -E "^\d{4}-\d{2}-\d{2}" openspec/specs/architecture/spec.md | grep "关键词"
 
       tasks.md:
         grep "关键词" .claude/docs/tasks.md
 
-      optimization.md:
-        grep "关键词" .claude/docs/optimization.md
+      optimization/spec.md:
+        grep "关键词" openspec/specs/optimization/spec.md
 
-      references.md:
-        grep "关键词" .claude/docs/references.md
+      references/spec.md:
+        grep "关键词" openspec/specs/references/spec.md
 
       SNAPSHOT.md:
         grep "关键词" .claude/docs/SNAPSHOT.md
 
-      rules.md:
-        grep "关键词" .claude/docs/rules.md
+      rules/spec.md:
+        grep "关键词" openspec/specs/rules/spec.md
 
       跨文档快速扫描（兜底）:
+        grep -rn "关键词" openspec/specs/
         grep -rn "关键词" .claude/docs/
 
   3. 排除已归档引用（Tombstone 行和 Promote 行不算）:
-      grep -rn "关键词" .claude/docs/ | grep -v "Archived to archive.md" | grep -v "Promoted to"
+      grep -rn "关键词" openspec/specs/ | grep -v "Archived in" | grep -v "Promoted to"
 
   4. 有匹配 → 在模糊条目中作为"交叉引用警告"呈现给用户:
       - 源条目: L12
-      - 被引用位置: architecture.md §ADR-05
+      - 被引用位置: architecture/spec.md §ADR-05
       - 命中内容: grep 命中行的摘要
       - 建议: 归档前更新 ADR-05 引用
   5. 无匹配 → 正常处理（按置信度归类）
 
 警告条目仍可归档，但需用户明确批准。
 Phase 2 执行时:
-  - 如用户要求"更新引用" → 将引用处的文本改为指向 archive.md 条目
+  - 如用户要求"更新引用" → 将引用处的文本改为指向归档位置
   - 如用户说"不管" → 直接归档，引用处手动处理
 ```
 
@@ -750,14 +624,14 @@ Phase 2 执行时:
 检查项:
   ✅ 执行队列中所有条目已处理
   ✅ 所有 Archive 条目留有 Tombstone
-  ✅ archive.md 已更新对应节
+  ✅ OpenSpec 变更已用 `openspec archive` 归档
   ✅ 源文档无损坏（结构完整、无多余空白行）
 
 验证命令（按实际执行的文档）:
-  grep "tombstone:" .claude/docs/learned.md | wc -l
-  # 应等于本次执行的 learned.md Archive 数量
-  grep "archive:" .claude/docs/archive.md | wc -l
-  # 应等于 archive.md 中所有归档条目总数
+  grep "tombstone:" openspec/specs/learned/spec.md | wc -l
+  # 应等于本次执行的 learned Archive 数量
+  openspec list | wc -l
+  # 应等于剩余活跃变更数
 ```
 
 ---
@@ -787,11 +661,11 @@ Phase 2 执行时:
 逐条目判断，非全文草率操作
 Tombstone 标记保障可追溯可恢复
 交叉引用检查防止断链
-rules.md 永不自驱归档，只做标记
+rules/spec.md 永不自驱归档，只做标记
 置信度标注辅助用户决策
 模糊条目交用户判定，不擅自决定
 提升机制将记忆转为规范
-首次运行自动初始化 archive.md
+OpenSpec 变更用 openspec archive 归档
 archive.md 自身膨胀仅提醒，不自驱归档
 只能追加写入，禁止直接覆盖
 禁止全量覆盖写入，更新已有文档必须用 Edit 而非 Write，保护原有内容不被意外丢失
@@ -810,14 +684,14 @@ Phase 1:
 
 Phase 2:
 ❌ 归档后未留 Tombstone → 可追溯性 violation
-❌ 自动归档 rules.md 内容 → 规则保护 violation
+❌ 自动归档 rules/spec.md 内容 → 规则保护 violation
 ❌ 删除被其他文档引用的条目（未更新引用）→ 交叉引用 violation
 ❌ 归档进行中任务 → tasks.md 保护 violation
 ❌ 批量操作无逐条验证 → 安全 violation
+❌ 手动操作 changes/ 目录 → OpenSpec CLI violation（应用 openspec archive）
 
 General:
 ❌ 用户未确认即执行 → Gate 1 violation
 ❌ 4 轮判断修订仍未一致 → 3-Failure 模式，跳过争议条目
-❌ archive.md 模板创建失败仍继续 → 阻塞未处理
 ❌ 使用 Write 全量覆盖已有文档 → 内容丢失 violation（必须用 Edit 精准替换）
 ```
