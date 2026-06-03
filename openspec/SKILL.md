@@ -47,13 +47,15 @@ npm install -g @fission-ai/openspec@latest
 
 # 2. 在项目中初始化
 cd your-project
-openspec init
+openspec init --tools claude --force
+# 注意：使用 --tools 指定 AI 工具（不是 --ai）
+# 使用 --force 跳过交互式选择
 
 # 3. 验证安装
 openspec --version
 ```
 
-初始化时选择你的 AI 工具（Claude Code、Cursor、Windsurf 等 30+ 种），生成 skills/commands 配置文件。
+初始化时使用 `--tools` 参数指定 AI 工具（Claude Code、Cursor、Windsurf 等 30+ 种），生成 skills/commands 配置文件。
 
 ---
 
@@ -213,16 +215,35 @@ Schema 优先级：CLI flag → 修改元数据 → 项目 config → 默认 `sp
 ## 十、CLI 常用命令
 
 ```bash
-openspec list                    # 列出活跃修改
-openspec list --specs            # 列出规格
-openspec show add-dark-mode      # 查看修改详情
-openspec validate --changes      # 验证所有修改
-openspec status --change <name>  # 查看产物进度
-openspec schemas                 # 列出可用 schema
-openspec archive <name>          # 归档修改
-openspec config profile          # 配置工作流 profile
-openspec update                  # 刷新 AI 工具配置文件
+# 初始化
+openspec init --tools claude --force    # 初始化项目（--tools 指定 AI 工具，--force 跳过交互）
+
+# 查看状态
+openspec list                           # 列出活跃修改
+openspec list --specs                   # 列出规格
+openspec show add-dark-mode             # 查看修改详情
+openspec status --change <name>         # 查看产物进度
+openspec schemas                        # 列出可用 schema
+
+# 验证
+openspec validate --specs               # 验证所有规格
+openspec validate --changes             # 验证所有修改
+openspec validate --all                 # 验证全部
+openspec validate architecture          # 验证单个 spec（不带 spec/ 前缀）
+
+# 归档
+openspec archive <name>                 # 归档修改
+
+# 配置
+openspec config profile                 # 配置工作流 profile
+openspec update                         # 刷新 AI 工具配置文件
 ```
+
+**⚠️ 常见错误**：
+- `openspec init --ai claude` → 错误，应该用 `--tools claude`
+- `openspec validate` → 错误，必须带子参数：`--specs`、`--changes` 或 `--all`
+- `openspec validate spec/architecture` → 错误，应该用 `openspec validate architecture`
+- `openspec validate --verbose` → 错误，没有 `--verbose` 选项
 
 ---
 
