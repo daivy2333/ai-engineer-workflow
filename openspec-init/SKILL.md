@@ -693,17 +693,30 @@ rules:
 
 ```
 - 变更必须用 /opsx:propose 创建，不用手动操作 changes/
-- 验证用 openspec validate --specs
-- 归档用 openspec archive <name>
+- 验证规格：openspec validate --specs
+- 验证变更：openspec validate --changes
+- 归档变更：openspec archive <name>
+- 查看活跃变更：openspec list
 - 与 openspec-assistant 双向同步：changes/ ↔ tasks.md
+```
+
+### 5b. 与 openspec-assistant 同步
+
+```
+- /opsx:propose 后 → assistant 同步任务到 .claude/docs/tasks.md
+- /opsx:apply 后 → assistant 更新 tasks.md 状态
+- /opsx:archive 后 → assistant 从 tasks.md 移除已完成任务
+- 同步方式：assistant 读取 openspec/changes/<name>/tasks.md → 同步到 .claude/docs/tasks.md（标记来源 change）→ 保持双向一致性
 ```
 
 ### 6. 文件编辑铁律
 
+> 以下规则被所有 openspec-* skill 引用，修改时同步更新。
+
 ```
-- 更新已有文档用 Edit（精准替换），不用 Write（全量覆盖）
-- 创建全新文件才用 Write
-- 禁止全量覆盖导致内容丢失
+- 禁止全量覆盖写入 — 更新已有文档时必须使用 Edit（精准替换）而非 Write（全文覆盖），确保未被涉及的内容不被丢弃
+- 只有创建全新文件时才使用 Write
+- 修改文档时遵循 surgical changes 原则，只动必要部分，不"顺手"调整无关内容
 ```
 
 ---
@@ -738,6 +751,9 @@ rules:
 ❌ "Should/probably" → 验证违规
 ❌ Gate BLOCK 不记录 → Workflow 违规
 ❌ 强假设推断（看到部分就推断完成）→ 自审违规
+❌ 看到一处已存在就推断全部已检查（必须逐项独立运行检查命令）→ Self-audit violation
+❌ 用 "基本/大致/应该" 代替实际输出（必须贴输出摘录）→ Self-audit violation
+❌ 5 问自審用 "Phase 0~5 全部覆盖" 泛化掩盖空洞 → Self-audit violation
 ```
 ```
 

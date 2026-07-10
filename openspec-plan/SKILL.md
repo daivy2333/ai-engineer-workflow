@@ -48,35 +48,16 @@ description: 需求探索、BDD缺口扫描、计划制定、OpenSpec变更创�
 
 ## Karpathy 监察（全流程自动激活）
 
-**原则定义**：见 `CLAUDE.md → 一、Karpathy Guidelines`
-
-本 workflow 全程监控以下 4 项原则的遵守情况：
-
-| 原则 | 在 workflow 中的约束对象 | 特殊决策权 |
-|------|--------------------------|-----------|
-| **Think Before Coding** | 所有 Phase | — |
-| **Implementation Simplicity** | 实现方式、代码结构、技术选型 | — |
-| **Requirements Integrity** | 需求范围、功能约束 | **必须用户 approval** |
-| **Surgical Changes** | Phase 3 | — |
-
-**与 code-refactoring plugin 协调**：
-- 用户明确说"重构" → 调用 plugin，Surgical Changes 暂停
-- 用户说"修复"/"添加功能" → Surgical Changes 生效，不调用 plugin
-- 发现需重构 → 先报告获 approval → 再调用
+> 原则定义 + 监控表 + 违规处理流程 → 见 `CLAUDE.md → 一、Karpathy Guidelines`
+> 本 skill 重点：**Requirements Integrity**（需求完整性优先于实现简化）
 
 **违规处理流程**：检测到违反任一原则 → 立即报告 → 用户未 approve 前不得进入下一 Phase。
 
 ### Requirements Integrity 违规处理
 
-**原则定义**：见 `CLAUDE.md → 一.5 Requirements Integrity`
+> 见 `CLAUDE.md → 一.5 Requirements Integrity`
 
-本 workflow 的违规处理流程：
-
-```
-发现未经用户确认的需求裁剪
-  → 立即报告
-  → 用户未 approve 前不得进入 Phase 3
-```
+发现未经用户确认的需求裁剪 → 立即报告 → 用户未 approve 前不得进入 Phase 3。
 
 ---
 
@@ -121,17 +102,11 @@ Phase 2 (PLAN) → 细化 OpenSpec 变更
 
 ### 与 openspec-assistant 同步
 
-```
-同步时机：
-  - /opsx:propose 后 → assistant 同步任务到 .claude/docs/tasks.md
-  - /opsx:apply 后 → assistant 更新 tasks.md 状态
-  - /opsx:archive 后 → assistant 从 tasks.md 移除已完成任务
+> 同步规则见 `CLAUDE.md → 五.5b、与 openspec-assistant 同步`
 
-同步方式：
-  - assistant 读取 openspec/changes/<name>/tasks.md
-  - 同步到 .claude/docs/tasks.md（标记来源 change）
-  - 保持双向一致性
-```
+- /opsx:propose 后 → assistant 同步任务
+- /opsx:apply 后 → assistant 更新状态
+- /opsx:archive 后 → assistant 移除任务
 
 ### 归档位置
 
@@ -364,16 +339,18 @@ Phase 2:
 ❌ OpenSpec tasks.md 未完善 → 变更管理 violation
 
 General:
+> 完整列表见 `CLAUDE.md → Red Flags`
+
 ❌ "Should/probably" → Verification violation
-❌ Gate BLOCK 不记录 → Workflow 违规（见 CLAUDE.md）
-❌ 看到一处已存在就推断全部已检查（必须逐项独立运行检查命令）→ Self-audit violation
-❌ 用 "基本/大致/应该" 代替实际输出（必须贴输出摘录）→ Self-audit violation
-❌ 5 问自审用 "Phase 0~5 全部覆盖" 泛化掩盖空洞 → Self-audit violation
+❌ Gate BLOCK 不记录 → Workflow 违规
+❌ 自我审计三项（逐项检查/贴输出/5问覆盖）→ Self-audit violation
 ```
 
 ---
 
 ## Key Principles
+
+> 通用原则详见 `CLAUDE.md → 规则`。以下为 Phase 1-2 侧重。
 
 ```
 五系统协作：

@@ -65,7 +65,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 8. 深度优先 — 优先深入理解核心路径，而非广度覆盖所有细节
 9. 交叉引用 — 生成的文档之间如有关联，在文档头部标注 See also 交叉引用
 10. 来源标注 — 每份分析文档头部标注来源（项目名、分支、分析日期）
-11. 禁止全量覆盖 — 更新已有文档（references/spec.md、learned/spec.md、分析文档等）时必须使用 Edit（精准替换）而非 Write（全文覆盖），确保未被涉及的内容不被丢弃。只有创建全新文件时才使用 Write
+11. 禁止全量覆盖 — 见 `CLAUDE.md → 五.7、文件编辑铁律`
 12. 归档感知 — 探究时遇到 Lxx/Rxx/Axx 标记，先 `grep "<!-- arc:" <源文件>` 检查是否已归档；已归档条目跳到 `openspec/archive/<日期>-arc-XXX/specs/<源域>/spec.md`。
 ```
 
@@ -810,7 +810,7 @@ grep -E "^\d{4}-\d{2}-\d{2}" openspec/specs/architecture/spec.md
 来源标注，分析文档头部标注项目和分支
 交叉引用，关联文档互相引用
 外科手术式更新，写入 references/learned/architecture 时只追加必要内容
-禁止全量覆盖，更新已有文档必须用 Edit 而非 Write，保护原有内容不被意外丢失
+禁止全量覆盖 — 见 `CLAUDE.md → 五.7、文件编辑铁律`
 grep 友好，所有条目有编号标记，支持精确搜索
 与 assistant/archivist 各司其职，互不冲突
 与 OpenSpec CLI 无缝集成

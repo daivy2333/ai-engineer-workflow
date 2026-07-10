@@ -59,7 +59,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 5. 交叉引用必查 — 归档前扫描其他文档是否引用该条目，防断链
 6. 规则不动 — CLAUDE.md 从不自驱归档，仅可标记"建议审查"
 7. OpenSpec 优先 — OpenSpec 变更用 `openspec archive` 归档，不手动操作
-8. 禁止全量覆盖 — 更新已有文档时必须使用 Edit（精准替换）而非 Write（全文覆盖），确保未被涉及的内容不被丢弃。只有创建全新文件（如首次创建 archive.md）才使用 Write
+8. 禁止全量覆盖 — 见 `CLAUDE.md → 五.7、文件编辑铁律`
 9. 禁止手工把归档条目写回原文档（不绕过 carrier spec）— 一律走恢复协议（grep proposal.md → 复制回 → 计数 -1）
 10. 禁止跨 carrier spec 合并（每次清理独立保留）— 防止一次清理污染另一次清理的恢复路径
 ```
@@ -777,7 +777,7 @@ OpenSpec 变更用 openspec archive 归档
 分析文档用 Analysis-Archive 独立通道，不走 carrier spec
 archive.md 自身膨胀仅提醒，不自驱归档
 只能追加写入，禁止直接覆盖
-禁止全量覆盖写入，更新已有文档必须用 Edit 而非 Write，保护原有内容不被意外丢失
+禁止全量覆盖 — 见 `CLAUDE.md → 五.7、文件编辑铁律`
 ```
 
 ---
