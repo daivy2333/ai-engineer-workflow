@@ -170,6 +170,68 @@ Phase 4 (COMPLETE) → /opsx:archive
 
 ---
 
+## 轻量模式（Light Mode）
+
+**触发条件**（全部满足）：
+
+```
+✅ 改动 < 3 文件
+✅ 核心代码 < 60 行
+✅ 不涉及跨模块影响
+✅ 不涉及架构决策
+✅ 不涉及安全/数据/性能关键路径
+```
+
+**轻量模式行为**：
+
+```
+Phase 1 简化：
+  - 可跳过 explore/librarian 并行探索
+  - 仍需 BDD 缺口扫描 + AskUserQuestion
+  - 仍需 Scenario Sketch
+  - 仍需 /opsx:propose 创建 OpenSpec 变更
+
+Phase 2 大幅简化：
+  - plan agent 可选
+  - Requirements Traceability Matrix 可选
+  - OpenSpec tasks.md 简化（不需要完整 design.md）
+
+Phase 3-4 完整保留：
+  - TDD 铁律仍生效
+  - Gate 5 验证仍必需
+  - /opsx:apply 仍按 tasks.md 实施
+  - /opsx:archive 仍归档
+
+为什么这样设计：
+  - 避免对小任务"过度杀伤"导致流程被整体跳过
+  - 保留核心约束（OpenSpec 追溯、Gate 5 验证）
+  - 跳过的是"分析规划"层级，不是"执行验证"层级
+```
+
+**判定示例**：
+
+```
+✅ "修这个 5 行 bug" → 轻量模式
+   - 1 文件，5 行改动
+   - 跳过 plan agent
+   - 仍需 /opsx:propose + Gate 5 验证
+
+✅ "改一个函数签名" → 轻量模式
+   - 1-2 文件，< 20 行
+   - 跳过 plan agent
+   - 仍需 OpenSpec 变更（签名变化是 breaking change）
+
+❌ "重构认证模块" → 标准模式
+   - 多文件，架构改动
+   - 走完整 Phase 1/2 流程
+
+❌ "修复内存泄漏" → 标准模式
+   - 性能关键路径
+   - 涉及架构决策（要不要重写）
+```
+
+---
+
 ## 六个门控（GATES）
 
 ### Gate 1: Design Approval + BDD Check
@@ -185,6 +247,24 @@ Phase 4 (COMPLETE) → /opsx:archive
   ✅ OpenSpec 变更已创建（/opsx:propose 或 /opsx:explore）
 
 触发：用户说 "approved" / "继续" / "开始计划"
+```
+
+**Gate 1 豁免条款**：
+
+```
+⚠️ 关键：即使任务"看起来清晰"也必须过 Gate 1
+  ❌ 错误："用户给了 4 个具体子任务，够清晰了，跳过 Phase 1"
+  ✅ 正确：任务清晰是好事，但仍要 BDD 缺口扫描（可能有未暴露的边角）
+
+豁免机制（仅两种情况允许跳过 Gate 1）：
+  1. 用户显式说："跳过 Gate 1" / "直接做" / "不用 clarify"
+     → 记录在 OpenSpec 变更的 proposal.md 中："用户显式豁免 Gate 1"
+  2. 进入轻量模式（见上文）
+     → 仍需 BDD 缺口扫描，但探索可简化
+
+agent 自主判断豁免 → 不允许
+  - "我判断任务够清晰" / "用户描述够具体" → 这些不构成豁免
+  - 必须用户原话显式 approve 才行
 ```
 
 ---
@@ -216,6 +296,24 @@ Status：
   ❌ = Missing（必须修复）
 
 Gate 2 通过：所有 ✅、所有 ⚠️ 已获 approval、无 ❌
+```
+
+**Gate 2 豁免条款**：
+
+```
+⚠️ 关键：即使有完整任务清单（T1-T4）也必须过 Gate 2
+  ❌ 错误："用户给了 T1-T4，够具体了，跳过 plan agent 和 RTM 矩阵"
+  ✅ 正确：任务清单是输入，但 plan agent 的"完整性检查"和"简化标注"是 Gate 2 的核心价值
+
+豁免机制（仅两种情况允许跳过 Gate 2）：
+  1. 用户显式说："跳过 Gate 2" / "不用 plan" / "直接做"
+     → 记录在 OpenSpec 变更的 proposal.md 中："用户显式豁免 Gate 2"
+  2. 进入轻量模式 + < 2 文件 + 纯机械改动
+     → plan agent 可选，但 RTM 矩阵仍需（哪怕简化版）
+
+agent 自主判断豁免 → 不允许
+  - "T1-T4 已经够清晰" / "有 OpenSpec 任务清单了" → 这些不构成豁免
+  - Gate 2 的价值是"完整性检查"和"简化标注"，不是"任务细化"
 ```
 
 ---
@@ -281,6 +379,16 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 | Clippy | cargo clippy | "0 warnings" | ✅ |
 
 **禁止**：只说 "tests pass" 无输出证据、使用 "应该/大概/似乎"
+
+**Manual QA（必须执行）**：
+
+| 场景 | 必须做什么 |
+|------|-----------|
+| CLI 命令 | Bash 实际运行，展示输出 |
+| 构建产物 | 运行构建，验证输出 |
+| API 行为 | 调用 endpoint，展示响应 |
+| UI 渲染 | 浏览器验证 |
+| 配置 | 加载并验证解析 |
 
 ---
 

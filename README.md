@@ -6,7 +6,7 @@
 
 ## 概述
 
-本项目包含 6 个 Claude Code 技能（Skills），用于：
+本项目包含 5 个 Claude Code 技能（Skills），用于：
 
 1. **开发流程管理** — AI Engineer Workflow V5（TDD监察、BDD智能缺口、零妥协验证）
 2. **项目文档管理** — 文档生成器 + 日常助手 + 智能归档
@@ -40,30 +40,7 @@ Phase 5: COMPLETE → finishing-a-development-branch → Merge/PR/Keep/Discard
 
 ---
 
-### 2. ai-engineer-workflow-v5-ulw
-
-**描述**：UltraWork V5 + TDD监察 + BDD智能缺口。强制探索、Plan Agent、深度委托、Manual QA、零妥协、Auto-mode aware。
-
-**触发**：复杂任务、需要并行探索、强制委托时。
-
-**UltraWork 特性**（相比 v5）：
-- **强制探索**：Phase 1 必须并行启动 explore + librarian + Metis
-- **Plan Agent MANDATORY**：Phase 2 必须调用 plan agent + Momus 评审
-- **深度委托**：Phase 3 不直接写代码，必须委托到 category（deep/ultrabrain/visual-engineering/artistry/quick）
-- **Manual QA 零妥协**：Gate 5 必须实际运行验证（CLI/构建/API/UI）
-- **阻塞咨询**：oracle 用于架构决策/复杂 debug
-
-**Phase 流程**：
-```
-Phase 1: 并行 explore/librarian → Metis 阻塞 → Gap Scan → AskUserQuestion
-Phase 2: plan agent（MANDATORY）→ Momus 阻塞 → Gate 2
-Phase 3: category delegation（并行）→ oracle（阻塞）→ Gate 5 Manual QA
-Phase 5: review-work（5 parallel）+ git-master → END
-```
-
----
-
-### 3. plugin-loader
+### 2. plugin-loader
 
 **描述**：管理 Claude Code 插件生态。支持三个 marketplace：claude-plugins-official（官方 34 internal + 15 external）、claude-code-workflows（77 个专业领域插件）、claude-hud（状态栏）。提供全局/项目/文件夹三种部署方式。
 
@@ -96,7 +73,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 4. project-docs-generator-ulw
+### 3. project-docs-generator-ulw
 
 **描述**：项目文档生成器 - 为项目初始化完整的 .claude/ 文档体系（7 份单一职责 .md 文件），包含三大规则体系、架构决策、项目快照、任务清单、外部参考、优化方向。
 
@@ -119,7 +96,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 5. project-docs-assistant-ulw
+### 4. project-docs-assistant-ulw
 
 **描述**：项目文档助手 - 日常开发中按需读取 .claude/docs/ 文档，维护任务、快照、架构决策、学习记忆、参考和优化记录。按需加载、精准更新、主动记录学习发现。
 
@@ -141,7 +118,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 6. project-archivist
+### 5. project-archivist
 
 **描述**：项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），生成审核计划后执行，所有移动留墓碑标记可追溯。
 
@@ -175,7 +152,6 @@ Gate 2: 验证（Tombstone 数量匹配、源文档无损坏）
 ```bash
 # 复制到用户 skill 目录
 cp -r ai-engineer-workflow-v5 ~/.claude/skills/
-cp -r ai-engineer-workflow-v5-ulw ~/.claude/skills/
 cp -r plugin-loader ~/.claude/skills/
 cp -r project-docs-assistant-ulw ~/.claude/skills/
 cp -r project-docs-generator-ulw ~/.claude/skills/
@@ -189,7 +165,6 @@ claude skill list
 
 ```bash
 ln -s /path/to/ai-engineer-workflow/ai-engineer-workflow-v5 ~/.claude/skills/ai-engineer-workflow-v5
-ln -s /path/to/ai-engineer-workflow/ai-engineer-workflow-v5-ulw ~/.claude/skills/ai-engineer-workflow-v5-ulw
 ln -s /path/to/ai-engineer-workflow/plugin-loader ~/.claude/skills/plugin-loader
 ln -s /path/to/ai-engineer-workflow/project-docs-assistant-ulw ~/.claude/skills/project-docs-assistant-ulw
 ln -s /path/to/ai-engineer-workflow/project-docs-generator-ulw ~/.claude/skills/project-docs-generator-ulw
@@ -206,13 +181,7 @@ ln -s /path/to/ai-engineer-workflow/project-archivist ~/.claude/skills/project-a
 project-docs-generator-ulw → 初始化文档体系 → project-docs-assistant-ulw → 日常维护
 ```
 
-### 复杂功能开发
-
-```
-ai-engineer-workflow-v5-ulw → 并行探索 + 强制委托 + Manual QA
-```
-
-### 简单功能/修复
+### 功能开发
 
 ```
 ai-engineer-workflow-v5 → 基础 workflow + TDD/BDD
@@ -311,7 +280,6 @@ General:
 | 版本 | 更新内容 |
 |------|----------|
 | v5 | 新增 BDD 智能缺口、Requirements Integrity Gate、Auto Mode 适配 |
-| v5-ulw | UltraWork 版本：强制探索、Plan Agent MANDATORY、深度委托、Manual QA 零妥协 |
 | v4 | 基础 workflow + TDD监察 + 六门控五循环 |
 
 ---
