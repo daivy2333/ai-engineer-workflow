@@ -6,9 +6,9 @@
 
 ## 概述
 
-本项目包含 5 个 Claude Code 技能（Skills），用于：
+本项目包含 6 个 Claude Code 技能（Skills），用于：
 
-1. **开发流程管理** — AI Engineer Workflow V5（TDD监察、BDD智能缺口、零妥协验证）
+1. **开发流程管理** — openspec-plan + openspec-act（需求探索 + TDD 执行，可独立或串联使用）
 2. **项目文档管理** — 文档生成器 + 日常助手 + 智能归档
 3. **插件生态** — 管理 3 个 marketplace 的专业插件
 
@@ -16,31 +16,52 @@
 
 ## 技能列表
 
-### 1. ai-engineer-workflow-v5
+### 1. openspec-plan
 
-**描述**：V4 + TDD监察 + BDD智能缺口。强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、智能场景澄清。
+**描述**：需求探索、BDD 智能缺口扫描、计划制定、OpenSpec 变更创建 — Phase 1-2 的前置工作流。
 
-**触发**：实现功能、修复 bug、重构、需要完整开发流程时。
+**触发**：开始新功能、需要需求澄清、创建开发计划、生成 OpenSpec 变更时。
 
 **核心特性**：
-- 四系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）
-- 六个门控（GATES）：Design Approval → Requirements Completeness → Test Witness → Two-Stage Review → Evidence-Based Verification → Stop-On-Blocker
-- 五个循环（LOOPS）：Clarification → Plan Revision → Red-Green-Refactor → Review-Fix → Complete Decision
 - BDD 智能缺口：自动扫描 Happy/Sad/Edge → 用户选择 → 场景草图
-- TDD Iron Law：NO CHANGE WITHOUT TEST WITNESS
-- Auto Mode 适配
+- Requirements Integrity Gate：需求完整性优先于实现简化
+- 轻量模式：小任务自动简化流程
+- OpenSpec 集成：一键创建变更提案
 
 **Phase 流程**：
 ```
-Phase 1: CLARIFY → brainstorming skill → Approved Requirements + Scenario Sketch
-Phase 2: PLAN → Plan Agent + writing-plans → Gate 2 → Requirements Completeness
-Phase 3: EXECUTE → executing-plans / subagent-driven-development → TDD 循环
-Phase 5: COMPLETE → finishing-a-development-branch → Merge/PR/Keep/Discard
+Phase 1: CLARIFY → BDD 缺口扫描 + /opsx:propose → Approved Requirements + Scenario Sketch
+Phase 2: PLAN → Plan Agent + Requirements Completeness → 完善的 OpenSpec 变更
 ```
+
+完成后进入 openspec-act 执行。
 
 ---
 
-### 2. plugin-loader
+### 2. openspec-act
+
+**描述**：TDD 执行、Gate 验证、Review、归档收尾 — Phase 3-4 的实施工作流。
+
+**触发**：openspec-plan 完成后，开始写代码实现、运行测试、代码审查、归档时。
+
+**核心特性**：
+- TDD Iron Law：NO CHANGE WITHOUT TEST WITNESS
+- Evidence-Based Verification：零妥协的证据验证
+- Manual QA：CLI/API/UI 实际运行验证
+- Three-Strike Architecture Reflection：三次失败强制架构反思
+- OpenSpec 集成：按任务清单实施 + 归档
+
+**Phase 流程**：
+```
+Phase 3: EXECUTE → TDD 循环 + Gate 5 验证 → 所有 task 完成
+Phase 4: COMPLETE → 5 问自审 + /opsx:archive → Merge/PR/Keep/Discard
+```
+
+由 openspec-plan 产出的计划驱动。
+
+---
+
+### 3. plugin-loader
 
 **描述**：管理 Claude Code 插件生态。支持三个 marketplace：claude-plugins-official（官方 34 internal + 15 external）、claude-code-workflows（77 个专业领域插件）、claude-hud（状态栏）。提供全局/项目/文件夹三种部署方式。
 
@@ -73,7 +94,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 3. project-docs-generator-ulw
+### 4. project-docs-generator-ulw
 
 **描述**：项目文档生成器 - 为项目初始化完整的 .claude/ 文档体系（7 份单一职责 .md 文件），包含三大规则体系、架构决策、项目快照、任务清单、外部参考、优化方向。
 
@@ -96,7 +117,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 4. project-docs-assistant-ulw
+### 5. project-docs-assistant-ulw
 
 **描述**：项目文档助手 - 日常开发中按需读取 .claude/docs/ 文档，维护任务、快照、架构决策、学习记忆、参考和优化记录。按需加载、精准更新、主动记录学习发现。
 
@@ -118,7 +139,7 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 5. project-archivist
+### 6. project-archivist
 
 **描述**：项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），生成审核计划后执行，所有移动留墓碑标记可追溯。
 
@@ -151,7 +172,8 @@ Gate 2: 验证（Tombstone 数量匹配、源文档无损坏）
 
 ```bash
 # 复制到用户 skill 目录
-cp -r ai-engineer-workflow-v5 ~/.claude/skills/
+cp -r openspec-plan ~/.claude/skills/
+cp -r openspec-act ~/.claude/skills/
 cp -r plugin-loader ~/.claude/skills/
 cp -r project-docs-assistant-ulw ~/.claude/skills/
 cp -r project-docs-generator-ulw ~/.claude/skills/
@@ -164,7 +186,8 @@ claude skill list
 或使用 symbolic link（推荐）：
 
 ```bash
-ln -s /path/to/ai-engineer-workflow/ai-engineer-workflow-v5 ~/.claude/skills/ai-engineer-workflow-v5
+ln -s /path/to/ai-engineer-workflow/openspec-plan ~/.claude/skills/openspec-plan
+ln -s /path/to/ai-engineer-workflow/openspec-act ~/.claude/skills/openspec-act
 ln -s /path/to/ai-engineer-workflow/plugin-loader ~/.claude/skills/plugin-loader
 ln -s /path/to/ai-engineer-workflow/project-docs-assistant-ulw ~/.claude/skills/project-docs-assistant-ulw
 ln -s /path/to/ai-engineer-workflow/project-docs-generator-ulw ~/.claude/skills/project-docs-generator-ulw
@@ -184,7 +207,7 @@ project-docs-generator-ulw → 初始化文档体系 → project-docs-assistant-
 ### 功能开发
 
 ```
-ai-engineer-workflow-v5 → 基础 workflow + TDD/BDD
+openspec-plan → 需求探索 + 计划制定 → openspec-act → TDD 执行 + 验证归档
 ```
 
 ### 扩展能力
@@ -279,6 +302,7 @@ General:
 
 | 版本 | 更新内容 |
 |------|----------|
+| v6 | 工作流拆分为 openspec-plan + openspec-act，移除 CodeGraph 和 ULW |
 | v5 | 新增 BDD 智能缺口、Requirements Integrity Gate、Auto Mode 适配 |
 | v4 | 基础 workflow + TDD监察 + 六门控五循环 |
 
