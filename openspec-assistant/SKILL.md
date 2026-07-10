@@ -9,35 +9,6 @@ description: OpenSpec 文档助手 - 日常开发中按需读取 OpenSpec specs/
 
 ---
 
-## CodeGraph 铁律（默认机制，非可选工具）
-
-> 本节为全局铁律。所有 Pattern/Phase 默认遵循，不再重复声明。
-
-### 工具映射（意图 → 工具）
-
-| 意图 | 工具 | 说明 |
-|------|------|------|
-| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
-| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
-| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
-| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
-| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
-| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
-| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
-| 检查索引健康 | `codegraph_status` | 用前必检 |
-
-### 守则（必须遵守）
-
-- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
-- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
-- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
-- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
-- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
-- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
-- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
-
----
-
 此技能负责提醒 agent 更新和维护记忆，和工作流 skill 是协作关系，两者并不冲突。
 
 superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（如果要求冲突，生成位置以这个为准，路径是 .claude/docs/superpowers/，在这里生成 plan 和 spec 文件夹）
@@ -133,9 +104,9 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 
 **动作**:
 1. 读取 `openspec/specs/learned/spec.md`，查找相关分类（API路径/文件速查/踩坑记录/技巧模式）
-2. 用 `codegraph_search "{符号名}"` 找符号位置；用 `codegraph_node "{符号名}"` 拉单个完整源码
-3. 用 `codegraph_callers "{符号名}"` 找上游调用；用 `codegraph_callees "{符号名}"` 找下游调用
-4. 用 `codegraph_impact "{符号名}"` 评估跨文件影响范围
+2. 用 `grep -rn "keyword" openspec/specs/learned/spec.md` 搜索符号名；用 `Read` 读取匹配文件
+3. 用 `grep -rn "function_name" .` 查找函数调用者和所有引用
+4. 用 `Read` 读取函数体，用 `grep` 在函数体内搜索调用目标
 
 ### Pattern 5: 任务更新（Task Update）
 
@@ -176,7 +147,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
    - 日期
    - 决策内容
    - 原因
-   - 影响（用 `codegraph_impact` 评估改动影响）
+    - 影响
    - 替代方案
 5. 写入文件
 
@@ -189,9 +160,8 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: L01, L02, L03...）
 3. 添加条目到对应分类：API路径 / 文件速查 / 踩坑记录 / 技巧模式
 4. 条目以 `<!-- L{编号} -->` 标记开头，支持 grep 精确定位
-5. 写入前用 `codegraph_search` 验证 API/符号仍存在；用 `codegraph_callers` 确认调用关系
-6. 更新时间戳，保持表格格式
-7. 复杂踩坑创建详细档案（症状/根因/解决/预防）
+5. 更新时间戳，保持表格格式
+6. 复杂踩坑创建详细档案（症状/根因/解决/预防）
 
 ### Pattern 9: 参考添加（Reference Addition）
 
@@ -221,8 +191,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 
 **判断标准（提问前必须检查）**:
 - 已检查 openspec/specs/learned/spec.md 无记录
-- 已尝试 `codegraph_search` / `codegraph_node` / `codegraph_explore` 无结果
-- 已尝试 `codegraph_callers` / `codegraph_impact` 探查关联无结果
+- 已尝试 grep/Read 搜索代码库无结果
 - 该知识确实阻塞当前任务进度
 
 **动作**:

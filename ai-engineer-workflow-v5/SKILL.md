@@ -3,38 +3,9 @@ name: ai-engineer-workflow-v5
 description: V5 + OpenSpec 集成。强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口、OpenSpec 变更管理。
 ---
 
-# AI Engineer Workflow V5 — OpenSpec + CodeGraph 集成版
+# AI Engineer Workflow V5 — OpenSpec 集成版
 
-**强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口、OpenSpec 变更管理、CodeGraph 智能索引**
-
----
-
-## CodeGraph 铁律（默认机制，非可选工具）
-
-> 本节为全局铁律。所有 Phase/Pattern 默认遵循，不再重复声明。
-
-### 工具映射（意图 → 工具）
-
-| 意图 | 工具 | 说明 |
-|------|------|------|
-| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
-| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
-| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
-| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
-| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
-| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
-| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
-| 检查索引健康 | `codegraph_status` | 用前必检 |
-
-### 守则（必须遵守）
-
-- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
-- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
-- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
-- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
-- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
-- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
-- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
+**强化验证、防止蔓延、架构反思、需求完整性、TDD铁律、BDD智能缺口、OpenSpec 变更管理**
 
 ---
 
@@ -66,7 +37,6 @@ description: V5 + OpenSpec 集成。强化验证、防止蔓延、架构反思�
 | **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
 | **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
 | **OpenSpec** | 变更管理 | 变更提案 + 增量规格 + 归档 | Phase 1-4 |
-| **CodeGraph** | 代码智能 | 预建代码索引 | Phase 2-3 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
@@ -74,7 +44,6 @@ description: V5 + OpenSpec 集成。强化验证、防止蔓延、架构反思�
 - BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
 - TDD 负责**测试铁律**，Phase 3 强制执行
 - OpenSpec 负责**变更管理**，Phase 1 创建变更，Phase 4 归档变更
-- CodeGraph 负责**代码理解**，Phase 2-3 加速代码探索
 
 ---
 
@@ -436,23 +405,22 @@ Announce："Phase 2: 计划细化 + OpenSpec 完善"
   Inline：TaskCreate/TaskUpdate 工具 + TDD Iron Law
   Subagent：Agent 工具委托
   OpenSpec：/opsx:apply
-  CodeGraph：按顶部铁律块（codegraph_explore/callers/callees/impact）
 
 流程骨架：
   Load plan → Create TodoWrite
   **TaskCreate 铁律**: 每 Phase/Step 独立 Task，不合并；跳过必标 "SKIPPED: {原因}"; 报告前 TaskList 确认
   For each task:
     1. [变更范围确认]
-       - codegraph_impact {目标符号} → 评估改动影响
+       - grep -rn {目标符号} → 评估改动影响，找到所有引用
     2. Mark in_progress
     3. [Gate 3] 建立测试 + Verify Current State
-       - codegraph_explore {目标模块} → 理解当前实现
-       - codegraph_node {具体符号} → 拉源码参考
+       - Read + grep -rn {相关符号} → 理解当前实现
+       - Read 相关源文件 → 拉源码参考
     4. [Loop 3] TDD 循环（Iron Law + 状态见证）
     5. [Gate 5] Verify New State（展示输出片段）
-       - codegraph_callers {改动符号} → 验证所有调用已更新
+       - grep -rn {改动符号} → 验证所有调用已更新
     6. [Gate 4 + Loop 4] Review
-       - codegraph_explore {模块} → 整体复查
+       - Read + grep -rn {模块/符号} → 整体复查
     7. Mark completed（仅 Gate 5 通过后）
 
   All tasks → Phase 4
@@ -513,8 +481,6 @@ Phase 2:
 ❌ Requirements Traceability Matrix 未完成 → Gate 2 violation
 ❌ Simplification 未经用户 approval → Gate 2 violation
 ❌ OpenSpec tasks.md 未完善 → 变更管理 violation
-❌ 未用 codegraph_explore 理解现有代码 → 代码理解 violation
-❌ 未用 codegraph_impact 评估改动 → 影响评估 violation
 
 Phase 3:
 ❌ 无测试变更代码 → Iron Law violation
@@ -525,19 +491,14 @@ Phase 3:
 ❌ "太简单不用测" → Iron Law violation
 ❌ 变更超出 PLAN 范围 → Surgical Changes violation
 ❌ 继续第 4 次相同修复 → 3-Failure violation
-❌ 用 Read + Grep 而不用 codegraph_explore → CodeGraph 优先 violation
-❌ 开 Explore 子 agent 读文件 → 浪费 violation
-❌ 委托提示词中缺 codegraph_* 指令 → 委托 violation
 
 Phase 4:
 ❌ 未归档 OpenSpec 变更 → 变更管理 violation
 ❌ 5 问自审未通过就 END → 自审 violation
-❌ 未用 codegraph_affected 找受影响的测试 → CI 集成 violation
 
 General:
 ❌ "Should/probably" → Verification violation
 ❌ Gate BLOCK 不记录 → Workflow 违规（见 CLAUDE.md）
-❌ 先 grep 反向验证 codegraph 结果 → 信任 violation
 ❌ 看到一处已存在就推断全部已检查（必须逐项独立运行检查命令）→ Self-audit violation
 ❌ 用 "基本/大致/应该" 代替实际输出（必须贴输出摘录）→ Self-audit violation
 ❌ 5 问自审用 "Phase 0~5 全部覆盖" 泛化掩盖空洞 → Self-audit violation
@@ -549,7 +510,7 @@ General:
 ## Key Principles
 
 ```
-四系统协作：
+五系统协作：
   workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）
   权责清晰，违规即报
 
@@ -567,6 +528,5 @@ TDD 铁律：变更必须有测试见证
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
 OpenSpec 集成：变更生命周期管理
-CodeGraph 集成：按顶部铁律块使用
 Auto Mode 适配
 ```

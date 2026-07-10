@@ -3,38 +3,9 @@ name: ai-engineer-workflow-v5-ulw
 description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强制探索、Plan Agent、深度委托、Manual QA、零妥协、Auto-mode aware。
 ---
 
-# AI Engineer Workflow V5 — UltraWork Mode + OpenSpec + CodeGraph
+# AI Engineer Workflow V5 — UltraWork Mode + OpenSpec
 
-**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协，OpenSpec 变更管理，CodeGraph 智能索引**
-
----
-
-## CodeGraph 铁律（默认机制，非可选工具）
-
-> 本节为全局铁律。所有 Phase/Pattern 默认遵循，不再重复声明。
-
-### 工具映射（意图 → 工具）
-
-| 意图 | 工具 | 说明 |
-|------|------|------|
-| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
-| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
-| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
-| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
-| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
-| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
-| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
-| 检查索引健康 | `codegraph_status` | 用前必检 |
-
-### 守则（必须遵守）
-
-- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
-- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
-- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
-- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
-- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
-- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
-- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
+**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协，OpenSpec 变更管理**
 
 ---
 
@@ -57,7 +28,7 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 
 ---
 
-## 六系统分工
+## 五系统分工
 
 | 系统 | 角色 | 职责 | 激活时机 |
 |------|------|------|----------|
@@ -66,7 +37,6 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 | **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
 | **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
 | **OpenSpec** | 变更管理 | 变更提案 + 增量规格 + 归档 | Phase 1-4 |
-| **CodeGraph** | 代码智能 | 预建代码索引 | Phase 2-3 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
@@ -74,7 +44,6 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 - BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
 - TDD 负责**测试铁律**，Phase 3 强制执行
 - OpenSpec 负责**变更管理**，Phase 1 创建变更，Phase 4 归档变更
-- CodeGraph 负责**代码理解**，Phase 2-3 加速代码探索
 
 ---
 
@@ -232,7 +201,7 @@ Phase 4 (COMPLETE) → /opsx:archive
 
 ```
 Phase 1 简化：
-  - 可跳过 librarian（保留 CodeGraph 探索）
+  - 可跳过 librarian（保留 explore 子 agent）
   - Metis 可选
   - 仍需 BDD 缺口扫描 + AskUserQuestion
   - 仍需 Scenario Sketch
@@ -498,19 +467,12 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### Loop 1: Clarification（Phase 1）
 
 ```
-⭐ CodeGraph 优先（解决 CodeGraph vs explore agent 冲突）：
-
-有 CodeGraph 可用时：
-  codegraph_status（MCP）→ codegraph_explore（MCP）→ codegraph_files（MCP）→ Metis
-  → Gap Scan → AskUserQuestion → Scenario Sketch → /opsx:propose → [Gate 1]
-
-无 CodeGraph 或 CodeGraph 不可用时：
-  explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch
-  → /opsx:propose → [Gate 1]
-
-关键：CodeGraph 已初始化时，不要用 explore 子 agent 读代码
-       explore/librarian 只用于"找外部参考"（librarian）或"探索未知"
+explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch
+→ /opsx:propose → [Gate 1]
 ```
+
+explore 深入读取项目代码（grep/Read/glob），librarian 找外部参考。两者并行。
+
 
 ---
 
@@ -555,14 +517,13 @@ Run test → [Gate 5] → review-work → git-master → /opsx:archive → 4 opt
 ### Phase 1: CLARIFY
 
 ```
-调用（按优先级）：
-  ⭐ 有 CodeGraph：codegraph_status + codegraph_explore + codegraph_files
-     （不要用 explore 子 agent 读代码 — CodeGraph 是预建索引）
-  + librarian（并行）→ 找外部参考（不读项目代码）
+调用：
+  explore（并行）→ grep/Read/glob 深入读取项目代码
+  + librarian（并行）→ 找外部参考
   + Metis（阻塞）→ 意图/边界/依赖分析
   + /opsx:explore 或 /opsx:propose → 创建 OpenSpec 变更
 
-Announce："Phase 1: CodeGraph 探索 + 外部参考 + Metis 分析 + OpenSpec 变更创建"
+Announce："Phase 1: explore 探索 + 外部参考 + Metis 分析 + OpenSpec 变更创建"
 输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
 ```
 
@@ -675,12 +636,12 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 
 | Phase | Agent | 控制 |
 |-------|-------|------|
-| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose + codegraph_explore | 并行探索 + 预规划 + 需求澄清 + 变更创建 + 代码理解 |
-| 2 | plan agent（MANDATORY）+ Momus（阻塞）+ codegraph_impact | 任务分解 + 计划评审 + OpenSpec 细化 + 影响评估 |
-| 3 | category delegation + oracle（阻塞）+ /opsx:apply + codegraph_* | 深度委托 + 架构决策 + 任务实施 + 代码索引 |
-| 4 | review-work + git-master + /opsx:archive + codegraph_affected | Review + Git 操作 + 变更归档 + CI 集成 |
+| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose | 并行探索 + 预规划 + 需求澄清 + 变更创建 |
+| 2 | plan agent（MANDATORY）+ Momus（阻塞）| 任务分解 + 计划评审 + OpenSpec 细化 |
+| 3 | category delegation + oracle（阻塞）+ /opsx:apply | 深度委托 + 架构决策 + 任务实施 |
+| 4 | review-work + git-master + /opsx:archive | Review + Git 操作 + 变更归档 |
 
-**监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3、CodeGraph Phase 2-3，违规即报
+**监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3，违规即报
 
 ---
 
@@ -701,7 +662,6 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 ```
 Phase 1:
 ❌ 未并行启动 explore/librarian → 效率 violation
-❌ CodeGraph 可用时仍用 explore agent 读代码 → CodeGraph 优先 violation（取代上一行）
 ❌ Metis 未调用 → 预规划 violation
 ❌ 未询问场景缺口 → BDD violation
 ❌ 未创建 OpenSpec 变更 → 变更管理 violation
@@ -728,16 +688,11 @@ Phase 4:
 ❌ Skip Manual QA → UltraWork violation
 ❌ 未调用 review-work/git-master → Review violation
 ❌ 未归档 OpenSpec 变更 → 变更管理 violation
-❌ 用 Read + Grep 而不用 codegraph_explore → CodeGraph 优先 violation
-❌ 开 Explore 子 agent 读文件 → 浪费 violation
-❌ 委托提示词中缺 codegraph_* 指令 → 委托 violation
-❌ 未用 codegraph_impact 评估改动 → 影响评估 violation
 
 General:
 ❌ "Should/probably" → Verification violation
 ❌ 未使用 task_id follow-up → Session Continuity violation
 ❌ 子 agent prompt 中缺失关键知识，期望它自己 skill() 加载 → 委托 violation
-❌ 先 grep 反向验证 codegraph 结果 → 信任 violation
 ❌ 看到一处已存在就推断全部已检查（必须逐项独立运行检查命令）→ Self-audit violation
 ❌ 用 "基本/大致/应该" 代替实际输出（必须贴输出摘录）→ Self-audit violation
 ❌ 5 问自审用 "Phase 0~5 全部覆盖" 泛化掩盖空洞 → Self-audit violation
@@ -748,7 +703,7 @@ General:
 ## Key Principles
 
 ```
-六系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）→ CodeGraph（代码理解）
+五系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）
 
 原生 Agent 核心能力：
   explore/librarian：并行探索（FREE）
@@ -763,12 +718,10 @@ Loop 控制 Phase 内完成
 TDD 铁律：变更必须有测试见证
 委托铁律：不委托直接自己写代码
 Skill 隔离铁律：skill() 仅限主 agent 调用，子 agent 所需知识全部写入 prompt
-CodeGraph 铁律：用 codegraph_explore 替代 Read + Grep，不开 Explore 子 agent
 遇阻即停不猜测
 三次失败必须反思
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
 OpenSpec 集成：变更生命周期管理
-CodeGraph 集成：按顶部铁律块使用
 Auto Mode 适配
 ```

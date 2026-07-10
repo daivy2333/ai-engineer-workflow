@@ -9,37 +9,6 @@ description: OpenSpec 项目探究者 - 深度阅读项目生成 .claude/analysi
 
 此技能负责探究性阅读和文档生成，与 openspec-assistant 是协作关系，assistant 维护日常状态，explorer 补充深度分析。
 
----
-
-## CodeGraph 铁律（默认机制，非可选工具）
-
-> 本节为全局铁律。所有 Pattern/Phase 默认遵循，不再重复声明。
-
-### 工具映射（意图 → 工具）
-
-| 意图 | 工具 | 说明 |
-|------|------|------|
-| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
-| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
-| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
-| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
-| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
-| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
-| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
-| 检查索引健康 | `codegraph_status` | 用前必检 |
-
-### 守则（必须遵守）
-
-- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
-- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
-- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
-- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
-- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
-- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
-- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
-
----
-
 superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（如果要求冲突，生成位置以这个为准，路径是 .claude/docs/superpowers/，在这里生成 plan 和 spec 文件夹）
 
 在 plan 阶段进行计划 write plan 写入的时候如果计划太长请分步写入，避免一次性思考和输出太长导致被截断
@@ -51,7 +20,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 此 Skill 用于：
 1. **宏观探究**：笼统地根据目的总结项目所有可能需要的信息，生成多个主题分析文档
 2. **微观探究**：根据特定任务目标，聚焦探索解决实际问题所需的信息，生成 1-2 个精炼文档
-3. **架构理解**：通过 CodeGraph 理解模块间关系、调用链、数据流，输出架构分析文档
+3. **架构理解**：通过 grep/Read 理解模块间关系、调用链、数据流，输出架构分析文档
 4. **细节梳理**：深入某个子系统/模块，梳理接口、状态机、关键路径
 5. **文档落盘**：将分析成果写入 `.claude/analysis/`（或用户指定位置）
 6. **索引注册**：在 `openspec/specs/references/spec.md` 中注册生成文档的路径和概要
@@ -104,7 +73,6 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 - assistant 维护 **开发状态**（tasks/SNAPSHOT/learned/references 日常增改）
 - explorer 生成 **深度分析**（架构理解、流程梳理、接口分析 → .claude/analysis/）
 - explorer 只写入 references/spec.md（追加分析文档索引条目）、learned/spec.md（追加关键知识）和 architecture/spec.md（追加架构发现）
-- explorer 不维护子项目索引（归 openspec-liaison）
 - assistant 日常维护时不会删除 explorer 注册的索引条目（知识只增不减原则）
 
 **与 openspec-archivist 边界**：
@@ -157,13 +125,12 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 Entry: 用户触发宏观探究 + 提供项目路径/当前项目
 
 Step 1 — 项目扫描:
-  1. `codegraph_status` → 检查索引健康（不可用则按顶部铁律修复，不静默降级）
-  2. `codegraph_files` → 获取目录结构
-  3. `codegraph_search "{主类/入口}"` → 查找核心符号
-  4. 检查 .claude/docs/SNAPSHOT.md → 了解当前状态
-  5. 检查 openspec/specs/references/spec.md → 查看已有分析文档
-  6. 检查 .claude/analysis/ 目录是否已存在
-  7. 检查 `openspec list` → 了解活跃变更
+  1. `ls` / `glob` → 获取目录结构
+  2. `grep -rn "{主类/入口}"` → 查找核心符号
+  3. 检查 .claude/docs/SNAPSHOT.md → 了解当前状态
+  4. 检查 openspec/specs/references/spec.md → 查看已有分析文档
+  5. 检查 .claude/analysis/ 目录是否已存在
+  6. 检查 `openspec list` → 了解活跃变更
 
 Step 2 — 去重检查:
   对 references/spec.md 中已有条目 grep "docs/analysis" 或 grep "项目分析文档":
@@ -180,7 +147,7 @@ Step 3 — 主题拆分:
 
 Step 4 — 制定探究计划:
   对每个主题，确定:
-    - 用 codegraph_explore 探查的范围（符号名/文件名）
+    - 用 grep/Read 探查的范围（文件名/符号名）
     - 需要理解的接口/数据结构
     - 输出文档的文件名和概要
     - 与其他主题的交叉引用关系
@@ -209,11 +176,11 @@ Entry: Gate 1 PASS
 
 对每个主题（按确认的顺序）:
 
-  Step 1 — 深度探究（默认 CodeGraph）:
-    1. `codegraph_explore "{主题相关的符号名/问题}"` → 一次拿全部分组源码
-    2. 必要时 `codegraph_node {具体符号}` → 拉单个完整源码
-    3. 必要时 `codegraph_callers` / `codegraph_callees` → 追踪调用链
-    4. 必要时 `codegraph_impact` → 评估改动影响
+  Step 1 — 深度探究（grep/Read）:
+    1. `grep -rn "{主题相关的关键词}"` → 找到相关文件和位置
+    2. `Read {找到的关键文件}` → 阅读核心实现
+    3. `grep -rn "{函数名}"` → 追踪调用链（callers/callees）
+    4. `grep -rn "{符号名}"` → 评估改动影响范围
 
   Step 2 — 知识反哺:
     将探索中发现的关键知识同步写入 openspec/specs/learned/spec.md:
@@ -340,12 +307,12 @@ PASS  → 进入 Phase 2
 ```
 Entry: Gate 1 PASS
 
-Step 1 — 定向探究（默认 CodeGraph）:
-  1. `codegraph_explore "{任务目标相关符号}"` → 拿全部分组源码
-  2. `codegraph_callers {入口符号}` → 找上游调用
-  3. `codegraph_callees {入口符号}` → 找下游调用
-  4. `codegraph_impact {要改动的符号}` → 评估影响
-  5. 必要时 `codegraph_node {具体符号}` → 拉单个完整源码
+Step 1 — 定向探究（grep/Read）:
+  1. `grep -rn "{任务目标相关关键词}"` → 找到相关文件和位置
+  2. `grep -rn "{入口函数名}"` → 找上游调用者
+  3. `Read {入口文件}` → 阅读函数体，追踪下游调用
+  4. `grep -rn "{要改动的符号}"` → 评估影响范围
+  5. `Read {找到的具体文件}` → 阅读完整源码
 
 Step 2 — 知识反哺:
   与宏观模式相同，将关键知识写入 openspec/specs/learned/spec.md
@@ -611,12 +578,12 @@ ADR 条目: <!-- A{编号} --> ### {DATE} - {决策标题}
 ```
 适用于: 宏观模式、需要理解全局架构
 
-CodeGraph 默认动作:
-  1. `codegraph_files` → 项目结构
-  2. `codegraph_search "{项目名/主类}"` → 找入口符号
-  3. `codegraph_explore "{入口符号}"` → 拿全部分组源码
-  4. `codegraph_callers {入口}` → 找上游
-  5. `codegraph_callees {入口}` → 找下游
+grep/Read 默认动作:
+  1. `ls` / `glob` → 项目结构
+  2. `grep -rn "{项目名/主类}"` → 找入口文件
+  3. `Read {入口文件}` → 阅读核心源码
+  4. `grep -rn "{入口函数名}"` → 找上游调用者
+  5. `grep -rn "{入口函数名}"` + `Read` → 找下游调用
 ```
 
 ### 自底向上策略
@@ -624,12 +591,12 @@ CodeGraph 默认动作:
 ```
 适用于: 微观模式、需要理解特定实现
 
-CodeGraph 默认动作:
-  1. `codegraph_node {目标符号}` → 拿完整源码
-  2. `codegraph_callees {目标}` → 下游依赖
-  3. `codegraph_callers {目标}` → 上游消费者
-  4. `codegraph_impact {目标}` → 改动影响范围
-  5. `codegraph_search "{相关类型名}"` → 找关联符号
+grep/Read 默认动作:
+  1. `Read {目标文件}` → 阅读完整源码
+  2. `grep -rn "{目标函数名}"` → 找下游依赖
+  3. `grep -rn "{目标函数名}"` → 找上游消费者
+  4. `grep -rn "{目标符号}"` → 评估改动影响范围
+  5. `grep -rn "{相关类型名}"` → 找关联符号
 ```
 
 ### 调用链追踪策略
@@ -637,11 +604,10 @@ CodeGraph 默认动作:
 ```
 适用于: 理解执行流程、数据流
 
-CodeGraph 默认动作:
-  1. `codegraph_explore "{从 X 到 Y 的流程}"` → 一次拿到完整调用路径
-     例: `codegraph_explore "mutateElement renderScene"`
-  2. `codegraph_callees {X} depth=3` → 深度遍历
-  3. `codegraph_callers {Y} depth=3` → 反向遍历
+grep/Read 默认动作:
+  1. `grep -rn "{X}"` → 找到 X 的定义位置，`Read` 函数体追踪到 Y
+  2. `grep -rn "{X 中调用的函数}"` → 深度遍历下游（逐层）
+  3. `grep -rn "{Y}"` → 反向遍历上游调用者（逐层）
   4. 标注合成边（callback、EventEmitter、React re-render）
 
 输出格式:
@@ -797,20 +763,6 @@ grep -E "^\d{4}-\d{2}-\d{2}" openspec/specs/architecture/spec.md
    - 如用户删除了文档，archivist 清理 references/spec.md 中的索引
 ```
 
-### 与 openspec-liaison
-
-```
-协作场景:
-
-1. explorer 不维护子项目索引:
-   - 子项目索引归 openspec-liaison 负责
-   - explorer 只在当前项目内工作
-
-2. explorer 可被 liaison 委托:
-   - liaison 发现子项目需要深度分析时，可建议用户调用 explorer
-   - explorer 分析完成后，结果归当前项目
-```
-
 ### 与 OpenSpec CLI
 
 ```
@@ -860,7 +812,7 @@ grep -E "^\d{4}-\d{2}-\d{2}" openspec/specs/architecture/spec.md
 外科手术式更新，写入 references/learned/architecture 时只追加必要内容
 禁止全量覆盖，更新已有文档必须用 Edit 而非 Write，保护原有内容不被意外丢失
 grep 友好，所有条目有编号标记，支持精确搜索
-与 assistant/archivist/liaison 各司其职，互不冲突
+与 assistant/archivist 各司其职，互不冲突
 与 OpenSpec CLI 无缝集成
 禁止只进行 web search 而不实际阅读项目代码就生成文档
 ```

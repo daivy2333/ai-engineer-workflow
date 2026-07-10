@@ -34,7 +34,7 @@ description: 项目初始化器 - 整合 Karpathy Guidelines、务实编码原�
 ### Phase 0: 环境检查
 
 ```
-（**Phase 0 任务化铁律**: 4 个 Step 必须各自 TaskCreate 任务化，每 Step 独立 Task，不允许合并。
+（**Phase 0 任务化铁律**: 3 个 Step 必须各自 TaskCreate 任务化，每 Step 独立 Task，不允许合并。
   每个 Task 完成必须含: 命令名 + 关键输出摘录。无证据 = 未完成。）
 
 Step 1 — 检查 OpenSpec:
@@ -45,46 +45,17 @@ Step 1 — 检查 OpenSpec:
     等待用户确认安装完成
   ❌ "openspec 已存在 = Phase 0 完成" → 错误，每 Step 独立检查
 
-Step 2 — 检查 CodeGraph（**对源码项目强制执行**）:
-  ⚠️ 源码项目判定（命中任一即视为源码项目）:
-    - 目录: src/、lib/、pkg/、kernel/、app/、cmd/、internal/、core/、source/、sources/、packages/
-    - 或含: .py/.ts/.tsx/.js/.jsx/.rs/.go/.java/.cpp/.c/.h/.swift/.kt/.cs/.rb/.php/.scala 源码文件
-
-  ⚠️ 本步对源码项目 = "必须"。未执行 = Phase 0 未完成 = **禁止进入 Phase 1**。
-  ⚠️ "未安装" 不是豁免理由，必须立即安装。
-  ⚠️ "已存在 .codegraph/" 不是跳过理由，必须 init 验证 healthy。
-
-  运行: codegraph --version（或 which codegraph）
-  → 已安装: 记录版本号 → 继续 Step 3
-  → 未安装: **必须立即执行安装**（不允许仅"提示用户后等"）:
-    curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
-  安装完成后必须再次运行 `codegraph --version` 验证安装成功
-  验证成功才视为本步完成
-  ❌ "建议用户安装" / "未检测" 作为跳过项 → 错误，必须实际安装
-
-Step 3 — 检查项目状态（**每项独立检测**，禁止用"已存在"概括）:
+Step 2 — 检查项目状态（**每项独立检测**，禁止用"已存在"概括）:
   ⚠️ "目录已存在" ≠ "本项已检查"。每项必须独立运行检查命令。
 
   3.1 openspec/ 目录: `test -d openspec && echo "存在" || echo "缺失"`
   3.2 .claude/docs/ 目录: `test -d .claude/docs && echo "存在" || echo "缺失"`
-  3.3 .codegraph/ 目录（CodeGraph 索引）: `test -d .codegraph && echo "存在" || echo "缺失"`
-  3.4 CLAUDE.md: `test -f CLAUDE.md && echo "存在" || echo "缺失"`
+  3.3 CLAUDE.md: `test -f CLAUDE.md && echo "存在" || echo "缺失"`
 
   → 任一存在: 记录状态 + 提示用户是否覆盖/合并
   → 任一缺失: 记录为 "待创建"（不豁免后续创建步骤）
   ❌ "用 ls 代替 test -d/f" → 错误，必须独立运行检查命令
 
-Step 4 — 源码项目 + CodeGraph 索引初始化（**强制**，禁用"建议"一词）:
-  ⚠️ 本步对源码项目 = "必须"。"建议" 一词在本步视为禁用。
-  ⚠️ "已存在 .codegraph/" 不是跳过理由。必须 init 验证健康状态。
-  ⚠️ 索引 unhealthy = 重新 init（最多 3 次），禁止"先继续后面修"。
-
-  检测: 复用 Step 2 源码项目判定逻辑
-  → 源码项目: **必须执行** `codegraph init -i`
-  → 索引建好后: **必须执行** `codegraph status` 验证显示 healthy
-  → 状态非 healthy: 重新 init，最多 3 次
-  → 非源码项目: 记录"无源码"判定证据，跳过（必须含判定命令输出）
-  ❌ "建议运行 codegraph init" → 错误，必须运行并验证
 ```
 
 ### Phase 1: 项目分析
@@ -505,15 +476,6 @@ rules:
 | `.claude/docs/tasks.md` | 任务追踪 | `grep "关键词" .claude/docs/tasks.md` |
 | `.claude/analysis/` | 深度分析文档 | `ls .claude/analysis/` |
 
-### 代码智能（CodeGraph，强制）
-
-| 工具 | 用途 | 何时用 |
-|------|------|--------|
-| `codegraph_explore` | 理解模块工作原理 | 探究项目时首选 |
-| `codegraph_callers/callees` | 调用链分析 | 重构前评估 |
-| `codegraph_impact` | 改动影响范围 | 重构前必做 |
-| `codegraph_status` | 索引健康 | 排查问题时 |
-
 ---
 
 ## 读取顺序
@@ -526,7 +488,6 @@ rules:
 | 重构 | architecture + optimization + 编码规范 | architecture |
 | 记录决策 | architecture | architecture |
 | 创建变更 | /opsx:explore 或 /opsx:propose | openspec/changes/ |
-| 理解代码 | codegraph_explore | — |
 
 ---
 
@@ -728,83 +689,7 @@ rules:
 ✅ 不确定时 STOP 问，不确定时倾向于"漏做"而非"早收尾"
 ```
 
-### 5. CodeGraph 工具调用规范（重要，避免误用）
-
-**MCP 工具 vs CLI 命令**：
-
-```
-⚠️ 关键区分：CodeGraph 有两套调用接口，绝对不能混淆
-
-1. MCP 工具（agent tool-palette，agent 内部调用）：
-   - codegraph_explore
-   - codegraph_search
-   - codegraph_callers
-   - codegraph_callees
-   - codegraph_impact
-   - codegraph_node
-   - codegraph_files
-   - codegraph_status
-   - 等等
-   → 在 agent 内部通过 tool-call 接口调用
-   → 不是 shell 命令，不能用 bash 执行
-   → 错误示范：bash 中运行 codegraph_status → "command not found"
-
-2. CLI 命令（shell 中调用）：
-   - codegraph init / codegraph index / codegraph status
-   - codegraph search / codegraph files / codegraph callers
-   - 等等
-   → 用空格分隔子命令
-   → 在 Bash 工具中执行
-   → 正确示范：Bash 中运行 codegraph status
-
-⚠️ 误用后果：把 MCP 工具当 bash 命令运行 → "command not found"
-   这不代表 MCP 工具不可用，只代表"用错调用方式"
-```
-
-**CodeGraph 优先**：
-
-```
-CodeGraph 可用时（项目已 init，MCP 已连接）：
-  ⭐ 优先用 codegraph_explore 替代 Read + Grep
-  ⭐ 一次 codegraph_explore 顶一组 search + node
-  ⭐ 不要开 Explore 子 agent 读文件（浪费）
-  ⭐ 看到 ⚠️ stale banner 时，对那一个文件直接 Read，其它继续信任
-  ⭐ 信任 CodeGraph 结果，**不要用 grep 反向验证**（违反项目 house rule）
-```
-
-**信任 CodeGraph 结果（重要 house rule）**：
-
-```
-CLAUDE.md 明确：
-  "CodeGraph is the pre-built index, so a grep/read loop just repeats work it already did."
-
-src/mcp/server-instructions.ts 第一条：
-  "Trust codegraph's results — don't re-verify them with grep."
-
-实际应用：
-  ❌ 错误：codegraph_callers 返回 [A, B, C] → 用 grep 验证确实有 A, B, C
-  ✅ 正确：codegraph_callers 返回 [A, B, C] → 信任结果，直接使用
-  ❌ 错误：codegraph_status 返回 unhealthy → fallback 走 Read + Grep
-  ✅ 正确：codegraph_status 返回 unhealthy → 修复 MCP 连接/索引，不要降级
-```
-
-**CodeGraph 不可用时的处理**：
-
-```
-❌ 错误做法：CodeGraph 不可用 → 降级到 Read + Grep
-   - 这违反项目 house rule
-   - CLAUDE.md 明确：CodeGraph is the pre-built index
-   - 重复了 CodeGraph 已经做过的工作，更慢更贵
-
-✅ 正确做法：
-  1. 检查 MCP 连接是否正常
-  2. 用 codegraph_status 查看索引健康
-  3. 用 codegraph init 重建索引（必须）
-  4. 在 CodeGraph 恢复前，停止代码探索任务，提示用户修复
-  5. 如果是 CLI 命令，区分是不是用错调用方式（如 codegraph_status vs codegraph status）
-```
-
-### 6. OpenSpec 集成
+### 5. OpenSpec 集成
 
 ```
 - 变更必须用 /opsx:propose 创建，不用手动操作 changes/
@@ -813,7 +698,7 @@ src/mcp/server-instructions.ts 第一条：
 - 与 openspec-assistant 双向同步：changes/ ↔ tasks.md
 ```
 
-### 7. 文件编辑铁律
+### 6. 文件编辑铁律
 
 ```
 - 更新已有文档用 Edit（精准替换），不用 Write（全量覆盖）
@@ -931,64 +816,9 @@ CLAUDE.md 同时承担文档索引 + 规则全文两个角色（不再单独维�
 规则强度可调
 generator 只负责初始化，日常维护交给 assistant
 与 OpenSpec CLI 命令无缝集成
-与 CodeGraph 集成，加速代码探索
 ```
 
 ---
-
-## CodeGraph 集成
-
-### 初始化时检测 CodeGraph
-
-```
-环境检查（Phase 0）:
-  1. 检查 OpenSpec（必需）
-  2. 检查 CodeGraph（**对源码项目强制**）
-     - 已安装: **必须**运行 `codegraph init -i` 建索引
-     - 未安装: **必须**执行安装（curl 脚本）+ 验证 `codegraph --version` 成功
-```
-
-### CLAUDE.md 索引增加 CodeGraph 部分
-
-```
-在文档体系表格后增加:
-## 代码智能（CodeGraph）
-
-| 工具 | 用途 | 何时用 |
-|------|------|--------|
-| `codegraph_explore` | 理解模块工作原理 | 探究项目时首选 |
-| `codegraph_callers/callees` | 调用链分析 | 重构前评估 |
-| `codegraph_impact` | 改动影响范围 | 重构前必做 |
-| `codegraph_status` | 索引健康 | 排查问题时 |
-```
-
-### 初始化项目后
-
-```
-项目有源码时，必须执行（强约束）:
-  1. codegraph init -i
-  2. codegraph status  # 必须显示 healthy，不允许 unhealthy
-  3. 在 CLAUDE.md 中必须添加 CodeGraph 章节
-  强约束: 源码项目无 CodeGraph 索引 = 未完成初始化
-```
-
-### 与 openspec-assistant/explorer 的关系
-
-```
-CodeGraph 是预建索引，提供:
-  - 快速符号定位（替代 grep）
-  - 调用链追踪（替代 grep find-references）
-  - 改动影响评估（替代手算）
-  - 目录结构（替代 ls）
-
-openspec-explorer 用 CodeGraph 加速深度阅读
-openspec-assistant 用 CodeGraph 验证 API 活性
-openspec-archivist 用 CodeGraph 验证引用关系
-```
-
----
-
-## Red Flags
 
 ## Red Flags
 
@@ -1003,8 +833,5 @@ openspec-archivist 用 CodeGraph 验证引用关系
 ❌ 阻塞点未记录 → 问题丢失
 ❌ OpenSpec 未安装 → 环境缺失
 ❌ config.yaml 缺失 → OpenSpec 配置不完整
-❌ 源码项目无 CodeGraph 索引 → 初始化未完成（必须安装）
-❌ codegraph_status unhealthy → 索引损坏，需 codegraph init 重建
 ❌ 生成独立的 openspec/specs/rules/spec.md → 已废弃（规则在 CLAUDE.md）
-❌ 跳过 Phase 0 的 CodeGraph 检查 → 技能执行违规
 ```

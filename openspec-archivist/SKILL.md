@@ -89,7 +89,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 - 被新 ADR 明确替代的旧架构决策
 - 失效链接
 - 历史快照
-- 内容仍有 1+ 活跃引用（`codegraph_callers` > 0）
+- 内容仍有 1+ 活跃引用（`grep -rn` 命中 > 0）
 - 修复但核心机制未变（可能再次遇到）
 
 **不适用**：
@@ -166,7 +166,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 - 内容冗余（> 200 字）但核心事实 < 50 字
 
 **不适用**：
-- 完整内容有 1+ 活跃引用（`codegraph_callers` > 0 或 git 引用 < 30d）→ Archive
+- 完整内容有 1+ 活跃引用（`grep -rn` 命中 > 0 或 git 引用 < 30d）→ Archive
 - 修复但核心机制未变（可能再次遇到）→ Archive
 - 错录/空/完全无价值 → Delete
 - 任何"将来可能回滚"的内容 → Archive
@@ -245,9 +245,9 @@ grep `归档路径` 找 carrier spec → Edit 精准复制回源文档 → arc �
 
 | 内容类型 | 判断信号 | 阈值 | 默认判定 |
 |----------|---------|------|---------|
-| API 路径 | git-log 引用时间差 / codegraph_callers | > 90d | Archive |
-| API 路径（近期） | git-log 引用时间差 / codegraph_callers | 30-90d | Stale-Warn |
-| API 路径（活跃） | git-log 引用时间差 / codegraph_callers | < 30d | Keep |
+| API 路径 | grep -rn 引用时间差 | > 90d | Archive |
+| API 路径（近期） | grep -rn 引用时间差 | 30-90d | Stale-Warn |
+| API 路径（活跃） | grep -rn 引用时间差 | < 30d | Keep |
 | 构建命令 | 最后引用时间 | > 30d | Archive |
 | 踩坑记录（旧） | 症状是否仍可复现 | > 180d 未确认 | Archive |
 | 踩坑记录（一般） | 解决方案仍有效 | 90-180d | Simplify-Keep |
@@ -778,63 +778,23 @@ OpenSpec 变更用 openspec archive 归档
 archive.md 自身膨胀仅提醒，不自驱归档
 只能追加写入，禁止直接覆盖
 禁止全量覆盖写入，更新已有文档必须用 Edit 而非 Write，保护原有内容不被意外丢失
-与 CodeGraph 集成，用 codegraph_callers 验证 API 路径是否仍在使用
 ```
 
 ---
 
-## CodeGraph 集成
-
-### API 路径活性验证
+## API 路径活性验证
 
 ```
-传统方式: git log 搜索符号引用 → 不准
-CodeGraph 增强: codegraph_callers {符号} → 看是否仍有调用者
-
 判断流程:
   1. learned 中找到候选 API 路径条目
-  2. codegraph_callers {符号名} → 获取调用者列表
-  3. 无调用者且 > 90d → Archive
-  4. 有少量调用者但 > 180d → Stale-Warn
-  5. 有活跃调用者 → Keep
-```
+  2. grep -rn {函数名/路径} 跨项目搜索 → 获取所有引用位置
+  3. 无引用且 > 90d → Archive
+  4. 有少量引用但 > 180d → Stale-Warn
+  5. 有活跃引用 → Keep
 
-### 交叉引用检查增强
-
-```
-对每个候选 Archive/Delete 条目:
-  1. 用 codegraph_search 验证符号是否仍存在
-  2. 用 codegraph_callers 找所有调用者
-  3. 用 codegraph_callees 找所有被调用的对象
-  4. 用 grep 找文档引用
-  5. 综合判断是否真的可以归档
-
-优势:
-  - 准确：基于 AST 解析，不靠文本匹配
-  - 完整：包括动态分派（callback、EventEmitter、React re-render）
-  - 可追溯：每个调用都有 source 位置
-```
-
-### 死代码检测
-
-```
-用 CodeGraph 检测 dead code:
-  codegraph search {符号} --kind function
-  codegraph_callers {符号}  # 返回空 → 可能是 dead code
-  codegraph_search "dead code"  # 内置查询
-
-archivist 不直接执行，但可在分析报告中提示用户:
-  "以下函数 0 调用且 > 180d: {列表}，建议归档"
-```
-
-### 与 OpenSpec 变更协作
-
-```
-归档顺序（CodeGraph 增强）:
-  0. 检查 openspec list → 确认无活跃变更引用目标 API
-  1. 用 codegraph_callers 确认无活跃调用
-  2. 再用 git log 确认时间差
-  3. 三者都满足才归档
+时间差校验:
+  git log --since="90 days ago" -- {文件路径}
+  确认最近修改时间是否匹配判断阈值
 ```
 
 ---
@@ -862,6 +822,5 @@ General:
 ❌ 用户未确认即执行 → Gate 1 violation
 ❌ 4 轮判断修订仍未一致 → 3-Failure 模式，跳过争议条目
 ❌ 使用 Write 全量覆盖已有文档 → 内容丢失 violation（必须用 Edit 精准替换）
-❌ CodeGraph 可用时仍只用 git log 验证引用 → 验证不精确
-❌ 不检查 codegraph_callers 就归档活跃 API → 断链风险
+
 ```

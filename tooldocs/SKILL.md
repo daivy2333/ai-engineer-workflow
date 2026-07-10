@@ -1,6 +1,6 @@
 ---
 name: tooldocs
-description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下的工具使用手册（codegraph/openspec/understand-anything 等），按需读取并辅助用户理解工具能力。TRIGGER when: 用户提到工具名（codegraph/openspec/understand-anything）或询问"怎么用这个工具"/"有文档吗"。
+description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下的工具使用手册（openspec/understand-anything 等），按需读取并辅助用户理解工具能力。TRIGGER when: 用户提到工具名（openspec/understand-anything）或询问"怎么用这个工具"/"有文档吗"。
 ---
 
 # tooldocs — 工具文档查找
@@ -15,7 +15,6 @@ description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下
 
 ```
 /home/daivy/.claude/skills/docs/
-├── codegraph.md           # CodeGraph 精简使用手册（tree-sitter 知识图谱）
 ├── openspec.md            # OpenSpec 精简使用手册（AI 协作规范工具）
 └── understandanything.md  # Understand Anything 精简使用手册（交互式知识图谱）
 ```
@@ -24,7 +23,7 @@ description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下
 
 按以下顺序确认目标文档：
 
-1. 解析用户提到的工具名（codegraph / openspec / understand-anything / 其他）
+1. 解析用户提到的工具名（openspec / understand-anything / 其他）
 2. 直接读取 `/home/daivy/.claude/skills/docs/<工具名>.md`
 3. 文档不存在时，提示用户当前可用文档列表（见上）
 
