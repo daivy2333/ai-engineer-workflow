@@ -7,6 +7,37 @@ description: OpenSpec 文档助手 - 日常开发中按需读取 OpenSpec specs/
 
 **日常开发的文档管家，基于 OpenSpec 体系，按需取用，精准更新，主动学习。**
 
+---
+
+## CodeGraph 铁律（默认机制，非可选工具）
+
+> 本节为全局铁律。所有 Pattern/Phase 默认遵循，不再重复声明。
+
+### 工具映射（意图 → 工具）
+
+| 意图 | 工具 | 说明 |
+|------|------|------|
+| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
+| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
+| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
+| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
+| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
+| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
+| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
+| 检查索引健康 | `codegraph_status` | 用前必检 |
+
+### 守则（必须遵守）
+
+- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
+- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
+- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
+- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
+- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
+- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
+- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
+
+---
+
 此技能负责提醒 agent 更新和维护记忆，和工作流 skill 是协作关系，两者并不冲突。
 
 superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（如果要求冲突，生成位置以这个为准，路径是 .claude/docs/superpowers/，在这里生成 plan 和 spec 文件夹）
@@ -19,7 +50,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 
 此 Skill 用于：
 1. **上下文恢复**：读取 `SNAPSHOT.md` + `tasks.md` 快速了解当前进度
-2. **规范查询**：读取 `openspec/specs/rules/spec.md` 确认编码规范
+2. **规范查询**：读取 `CLAUDE.md` 确认编码规范
 3. **架构参考**：读取 `openspec/specs/architecture/spec.md` 了解技术决策
 4. **知识回忆**：读取 `openspec/specs/learned/spec.md` 获取 API 路径、技巧、踩坑经验
 5. **外部知识**：读取 `openspec/specs/references/spec.md` 查找依赖文档
@@ -39,7 +70,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 | 文件 | 原文件 | 用途 | 编号格式 |
 |------|--------|------|----------|
 | `openspec/specs/architecture/spec.md` | architecture.md | 架构决策记录 | <!-- A{编号} --> |
-| `openspec/specs/rules/spec.md` | rules.md | 编码规范 | 无编号（规则不自驱归档） |
+| `CLAUDE.md` | rules.md | 编码规范 | 无编号（规则不自驱归档） |
 | `openspec/specs/learned/spec.md` | learned.md | 学习记忆 | <!-- L{编号} --> |
 | `openspec/specs/references/spec.md` | references.md | 外部参考 | <!-- R{编号} --> |
 | `openspec/specs/optimization/spec.md` | optimization.md | 优化记录 | <!-- O{编号} --> |
@@ -81,11 +112,11 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 **触发**: 编码前、用户问"编码规范是什么"、"我应该遵循什么原则"
 
 **动作**:
-1. 读取 `openspec/specs/rules/spec.md`（或仅必要章节）
+1. 读取 `CLAUDE.md`（或仅必要章节）
 2. 根据当前任务类型（新功能/修复/重构）提取相关铁律
 3. 必要时提醒 Red Flags 检查
 
-**协作说明**: CLAUDE.md 只做索引，rules/spec.md 是三大规则的唯一事实来源。workflow 技能也通过 rules/spec.md 章节引用获取原则定义。assistant 与此共享单一事实来源。
+**协作说明**: CLAUDE.md 只做索引，CLAUDE.md 是三大规则的唯一事实来源。workflow 技能也通过 CLAUDE.md 章节引用获取原则定义。assistant 与此共享单一事实来源。
 
 ### Pattern 3: 架构查询（Architecture Lookup）
 
@@ -101,9 +132,10 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 **触发**: 需要 API 路径、文件位置、技巧、踩坑经验时
 
 **动作**:
-1. 读取 `openspec/specs/learned/spec.md`
-2. 查找相关分类（API路径/文件速查/踩坑记录/技巧模式）
-3. 提取有用的知识，避免重复探索
+1. 读取 `openspec/specs/learned/spec.md`，查找相关分类（API路径/文件速查/踩坑记录/技巧模式）
+2. 用 `codegraph_search "{符号名}"` 找符号位置；用 `codegraph_node "{符号名}"` 拉单个完整源码
+3. 用 `codegraph_callers "{符号名}"` 找上游调用；用 `codegraph_callees "{符号名}"` 找下游调用
+4. 用 `codegraph_impact "{符号名}"` 评估跨文件影响范围
 
 ### Pattern 5: 任务更新（Task Update）
 
@@ -144,7 +176,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
    - 日期
    - 决策内容
    - 原因
-   - 影响
+   - 影响（用 `codegraph_impact` 评估改动影响）
    - 替代方案
 5. 写入文件
 
@@ -157,8 +189,9 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 2. 确定条目编号: 读取已有最大编号，新条目编号递增（格式: L01, L02, L03...）
 3. 添加条目到对应分类：API路径 / 文件速查 / 踩坑记录 / 技巧模式
 4. 条目以 `<!-- L{编号} -->` 标记开头，支持 grep 精确定位
-5. 更新时间戳，保持表格格式
-6. 复杂踩坑创建详细档案（症状/根因/解决/预防）
+5. 写入前用 `codegraph_search` 验证 API/符号仍存在；用 `codegraph_callers` 确认调用关系
+6. 更新时间戳，保持表格格式
+7. 复杂踩坑创建详细档案（症状/根因/解决/预防）
 
 ### Pattern 9: 参考添加（Reference Addition）
 
@@ -188,8 +221,8 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 
 **判断标准（提问前必须检查）**:
 - 已检查 openspec/specs/learned/spec.md 无记录
-- 已尝试 grep/read 代码无结果
-- 已尝试 WebSearch 无效（除非是项目特有知识）
+- 已尝试 `codegraph_search` / `codegraph_node` / `codegraph_explore` 无结果
+- 已尝试 `codegraph_callers` / `codegraph_impact` 探查关联无结果
 - 该知识确实阻塞当前任务进度
 
 **动作**:
@@ -220,27 +253,28 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
    - 从 tasks.md 移除已完成任务
    - 更新 SNAPSHOT.md 记录归档
 
----
+### Pattern 13: Archive Restore（归档恢复）
 
-## 按需读取策略（避免上下文污染）
+**触发**: 用户说"恢复 L03"、"把 L28 找回来"、"取消归档 R04"
 
-根据用户意图，只读取必要的 1-3 个文档：
+**动作**:
+1. 在源文档末尾 grep `<!-- arc:` 找到候选 carrier spec 路径
+2. 读取 `<archive-path>/proposal.md` 的"归档条目映射表"
+3. 在映射表中匹配原编号（如 L03），获取 carrier spec 路径
+4. 读取 `openspec/archive/<date>-arc-XXX/specs/<源域>/spec.md` 中对应条目
+5. **Edit 精准插入**：用 Edit 把条目复制回源文档原位置（如可推断）
+6. **更新 arc 指引**：将 `<数量> 条已归档` 计数 -1，并追加 `<!-- restored: <原编号> <日期> -->` 注释行
+7. 验证：grep 原编号 应在源文档中可定位
 
-| 用户意图 | 应读取的文档 | 可能的写入 |
-|----------|-------------|-----------|
-| 开始新会话 | CLAUDE.md → SNAPSHOT.md → tasks.md | — |
-| 写新功能 | specs/rules/ + specs/architecture/ + specs/learned/ | tasks.md, specs/learned/ |
-| 修复 Bug | specs/rules/ + SNAPSHOT.md + specs/learned/ | tasks.md, specs/learned/（踩坑） |
-| 重构 | specs/architecture/ + specs/optimization/ + specs/rules/ | specs/architecture/ |
-| 查阅 API | specs/learned/ → specs/references/ | — |
-| 更新进度 | tasks.md | tasks.md, SNAPSHOT.md |
-| 记录决策 | specs/architecture/ | specs/architecture/ |
-| 记录学习发现 | specs/learned/ | specs/learned/ |
-| 记录参考 | specs/references/ | specs/references/ |
-| 记录优化点 | specs/optimization/ | specs/optimization/ |
-| 遇到知识盲区 | specs/learned/ → 判断 → AskUserQuestion | specs/learned/ |
-| 创建变更 | /opsx:explore 或 /opsx:propose | openspec/changes/ |
-| 查看变更 | openspec list | — |
+**示例**：见 openspec-archivist/SKILL.md §恢复协议
+
+**与 openspec-archivist 协作**:
+- 恢复后**不**通知 archivist（archivist 仅在用户主动触发时运行）
+- 若用户在同一次会话中既恢复又归档，archivist 会在下次清理时重新评估
+
+**不应触发的场景**:
+- "我需要看 L03 的内容" → 直接 read archive/ 路径，不要修改源文档
+- "把 L03 重新激活" → 这等同于恢复，按 Pattern 13 执行
 
 ---
 
@@ -256,7 +290,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 | 找踩坑记录 | `grep -i "坑" openspec/specs/learned/spec.md` | 快速跳到相关条目 |
 | 搜索决策 | `grep -i "决定" openspec/specs/architecture/spec.md` | 瞬间定位 ADR |
 | 查某模块 | `grep "模块名" .claude/docs/SNAPSHOT.md` | 找关键文件位置 |
-| 搜索规范 | `grep "关键词" openspec/specs/rules/spec.md` | 定位规范条目 |
+| 搜索规范 | `grep "关键词" CLAUDE.md` | 定位规范条目 |
 
 ### grep 搜索优于读取的情况
 
@@ -373,7 +407,39 @@ openspec archive <change-name>
 不重复探索已发现的知识
 知识索取，实在无法解决才提问，提问必须精准说明原因
 与 OpenSpec CLI 无缝集成，变更状态双向同步
+归档感知：源文档末尾 `<!-- arc:` 行表示已有归档。日常编辑不要误读为待办；恢复触发 Pattern 13。
 ```
+
+---
+
+## 工具调用铁律（精准版）
+
+### 三步流程
+
+1. 工具是 deferred → 先 `ToolSearch select:<name>` 加载 schema
+2. 查 schema 的 `required` 字段
+3. 字段名按 schema（camelCase），必填项一个不漏
+
+### 各工具必填参数速查
+
+| 工具 | required | 常见陷阱 |
+|------|----------|----------|
+| `TaskCreate` | `subject` + `description` | ❌ 误传 `taskId`（Create 不需要）<br>❌ 写成 `activeform`（小写 → 应为 `activeForm`） |
+| `TaskUpdate` | `taskId` | ❌ 只传 `subject` 不知道改哪个 |
+| `TaskGet` | `taskId` | — |
+| `Edit` | `file_path` + `old_string` + `new_string` | ❌ `old_string` 不唯一会失败 |
+| `Write` | `file_path` + `content` | ❌ 覆盖未 Read 的文件 |
+| `Read` | `file_path` | — |
+| `Bash` | `command` | — |
+| `ToolSearch` | `query` | — |
+| `Skill` | `skill` | — |
+| `AskUserQuestion` | `questions` | — |
+
+### ❌ 常见错误
+
+- **漏主键** → 不知道改哪个（`TaskUpdate` 只传 `subject`）
+- **驼峰写错** → `activeform` 应为 `activeForm`
+- **未加载 schema** → deferred 工具直接调用必报错
 
 ---
 
@@ -389,4 +455,5 @@ openspec archive <change-name>
 ❌ 编号冲突 → grep 定位错误
 ❌ 不同步 changes/ 状态 → 任务状态不一致
 ❌ 跳过 OpenSpec CLI 直接操作 changes/ → 元数据不更新
+❌ 工具漏主键 / 字段名拼错 / 未 ToolSearch 加载 schema → Invalid tool parameters
 ```

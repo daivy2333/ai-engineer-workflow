@@ -3,15 +3,44 @@ name: ai-engineer-workflow-v5-ulw
 description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强制探索、Plan Agent、深度委托、Manual QA、零妥协、Auto-mode aware。
 ---
 
-# AI Engineer Workflow V5 — UltraWork Mode + OpenSpec
+# AI Engineer Workflow V5 — UltraWork Mode + OpenSpec + CodeGraph
 
-**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协，OpenSpec 变更管理**
+**完整版：Requirements Completeness Gate 内嵌，TDD铁律，BDD智能缺口，零妥协，OpenSpec 变更管理，CodeGraph 智能索引**
+
+---
+
+## CodeGraph 铁律（默认机制，非可选工具）
+
+> 本节为全局铁律。所有 Phase/Pattern 默认遵循，不再重复声明。
+
+### 工具映射（意图 → 工具）
+
+| 意图 | 工具 | 说明 |
+|------|------|------|
+| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
+| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
+| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
+| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
+| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
+| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
+| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
+| 检查索引健康 | `codegraph_status` | 用前必检 |
+
+### 守则（必须遵守）
+
+- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
+- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
+- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
+- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
+- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
+- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
+- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
 
 ---
 
 ## 核心约束
 
-完整定义见 `openspec/specs/rules/spec.md → 四、核心执行约束（8 条）`
+完整定义见 `CLAUDE.md → 四、核心执行约束（8 条）`
 
 本 workflow 在此约束下执行：
 
@@ -28,7 +57,7 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 
 ---
 
-## 五系统分工
+## 六系统分工
 
 | 系统 | 角色 | 职责 | 激活时机 |
 |------|------|------|----------|
@@ -37,6 +66,7 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 | **BDD** | 缺口发现 | 智能扫描 + 用户选择 + 场景草图 | Phase 1 |
 | **TDD** | 测试监察 | Iron Law + Verify RED/GREEN | Phase 3 |
 | **OpenSpec** | 变更管理 | 变更提案 + 增量规格 + 归档 | Phase 1-4 |
+| **CodeGraph** | 代码智能 | 预建代码索引 | Phase 2-3 |
 
 **协作边界**：
 - workflow 负责**执行流程**，Gate/Loop 控制
@@ -44,12 +74,13 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 - BDD 负责**缺口发现 + 用户选择**，Phase 1 强制询问
 - TDD 负责**测试铁律**，Phase 3 强制执行
 - OpenSpec 负责**变更管理**，Phase 1 创建变更，Phase 4 归档变更
+- CodeGraph 负责**代码理解**，Phase 2-3 加速代码探索
 
 ---
 
 ## Karpathy 监察（全流程自动激活）
 
-**原则定义**：见 `openspec/specs/rules/spec.md → 一、Karpathy Guidelines`
+**原则定义**：见 `CLAUDE.md → 一、Karpathy Guidelines`
 
 本 workflow 全程监控以下 4 项原则的遵守情况：
 
@@ -69,7 +100,7 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 
 ### Requirements Integrity 违规处理
 
-**原则定义**：见 `openspec/specs/rules/spec.md → 一.5 Requirements Integrity`
+**原则定义**：见 `CLAUDE.md → 一.5 Requirements Integrity`
 
 本 workflow 的违规处理流程：
 
@@ -83,24 +114,24 @@ description: UltraWork V5 + OpenSpec 集成 + TDD监察 + BDD智能缺口。强�
 
 ## BDD 智能缺口（Phase 1 自动激活）
 
-**方法论定义**：见 `openspec/specs/rules/spec.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设、Auto Mode 协调）
+**方法论定义**：见 `CLAUDE.md → 五、BDD 方法论`（原则定义、缺口扫描规则、标准默认假设、Auto Mode 协调）
 
 本 workflow 中 BDD 的执行流程：
 
 ```
 Step 1：需求扫描（自动）
-  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 rules/spec.md）
+  读取需求 → 自动识别 Happy Path / Sad Path / Edge（扫描规则见 CLAUDE.md）
 
 Step 2：缺口发现 → AskUserQuestion（一次）
   选项: "用默认假设补充" / "手动补充具体场景" / "跳过，需求已足够清晰"
 
 Step 3：用户选择处理
-  "用默认假设" → 按 rules/spec.md 标准默认假设自动生成场景草图 → 继续
+  "用默认假设" → 按 CLAUDE.md 标准默认假设自动生成场景草图 → 继续
   "手动补充" → 询问具体缺口 → 补充 → 继续
   "跳过" → 记录缺口到 OpenSpec proposal.md → 继续
 
 Step 4：生成场景草图（模型生成，用户确认）
-  格式见 rules/spec.md → 五、BDD 方法论，不要求 Given-When-Then 表格
+  格式见 CLAUDE.md → 五、BDD 方法论，不要求 Given-When-Then 表格
 ```
 
 ### 与 Auto Mode 协调
@@ -122,12 +153,12 @@ Step 4：生成场景草图（模型生成，用户确认）
 
 ## TDD 监察（Phase 3 自动激活）
 
-**方法论定义**：见 `openspec/specs/rules/spec.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、REFACTOR、测试质量标准、常见借口）
+**方法论定义**：见 `CLAUDE.md → 六、TDD 方法论`（Iron Law、Red-Green-Refactor、Verify RED/GREEN、REFACTOR、测试质量标准、常见借口）
 
 本 workflow 中 TDD 的执行绑定：
 
 ```
-Phase 3 遵循 TDD Iron Law（定义见 rules/spec.md）
+Phase 3 遵循 TDD Iron Law（定义见 CLAUDE.md）
 
 本 workflow 执行铁律：
   1. 确定变更范围
@@ -138,7 +169,7 @@ Phase 3 遵循 TDD Iron Law（定义见 rules/spec.md）
   6. Done
 ```
 
-循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 rules/spec.md）
+循环引用：`RED → Verify RED → GREEN → Verify GREEN → REFACTOR`（完整定义见 CLAUDE.md）
 
 ---
 
@@ -179,6 +210,83 @@ Phase 4 (COMPLETE) → /opsx:archive
   - 保持双向一致性
 ```
 
+### 归档位置
+
+`openspec archive` 后的归档位于 `openspec/archive/<日期>-<change-name>/`。Gate 5 验证若发现 carrier change（archivist 步骤 4-12 触发），额外确认：`openspec validate --changes` 通过 + 源文档有对应 `<!-- arc:` 指引。
+
+---
+
+## 轻量模式（Light Mode）
+
+**触发条件**（全部满足）：
+
+```
+✅ 改动 < 3 文件
+✅ 核心代码 < 60 行
+✅ 不涉及跨模块影响
+✅ 不涉及架构决策
+✅ 不涉及安全/数据/性能关键路径
+```
+
+**轻量模式行为**：
+
+```
+Phase 1 简化：
+  - 可跳过 librarian（保留 CodeGraph 探索）
+  - Metis 可选
+  - 仍需 BDD 缺口扫描 + AskUserQuestion
+  - 仍需 Scenario Sketch
+  - 仍需 /opsx:propose 创建 OpenSpec 变更
+
+Phase 2 大幅简化：
+  - plan agent 可选（保留 BDD）
+  - Momus 跳过
+  - Requirements Traceability Matrix 可选
+  - OpenSpec tasks.md 简化（不需要完整 design.md）
+
+Phase 3-4 完整保留：
+  - TDD 铁律仍生效
+  - Gate 5 验证仍必需
+  - /opsx:apply 仍按 tasks.md 实施
+  - /opsx:archive 仍归档
+
+为什么这样设计：
+  - 避免对小任务"过度杀伤"导致流程被整体跳过
+  - 保留核心约束（OpenSpec 追溯、Gate 5 验证）
+  - 跳过的是"分析规划"层级（Metis/Momus/plan agent），不是"执行验证"层级
+```
+
+**判定示例**：
+
+```
+✅ "修这个 5 行 bug" → 轻量模式
+   - 1 文件，5 行改动
+   - 跳过 Metis/Momus/plan agent
+   - 仍需 /opsx:propose + Gate 5 验证
+
+✅ "改一个函数签名" → 轻量模式
+   - 1-2 文件，< 20 行
+   - 跳过 plan agent
+   - 仍需 OpenSpec 变更（签名变化是 breaking change）
+
+❌ "重构认证模块" → 标准模式
+   - 多文件，架构改动
+   - 走完整 Phase 1/2 流程
+
+❌ "修复内存泄漏" → 标准模式
+   - 性能关键路径
+   - 涉及架构决策（要不要重写）
+```
+
+**与 Workflow 主流程的关系**：
+
+```
+轻量模式 vs 标准模式 是正交维度：
+  - 轻量：减少分析规划层（跳过 Metis/Momus/plan agent）
+  - 标准：走完整 Phase 1-4
+  - 两者不可组合（轻量本身就是简化版标准模式）
+```
+
 ---
 
 ## 六个门控（GATES）
@@ -202,6 +310,24 @@ Phase 4 (COMPLETE) → /opsx:archive
 Phase 1 输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
 触发：用户说 "approved" / "继续" / "开始计划"
 附加：展示 Scenario Sketch 供确认
+```
+
+**Gate 1 豁免条款**：
+
+```
+⚠️ 关键：即使任务"看起来清晰"也必须过 Gate 1
+  ❌ 错误："用户给了 4 个具体子任务，够清晰了，跳过 Phase 1"
+  ✅ 正确：任务清晰是好事，但仍要 BDD 缺口扫描（可能有未暴露的边角）
+
+豁免机制（仅两种情况允许跳过 Gate 1）：
+  1. 用户显式说："跳过 Gate 1" / "直接做" / "不用 clarify"
+     → 记录在 OpenSpec 变更的 proposal.md 中："用户显式豁免 Gate 1"
+  2. 进入轻量模式（见上文）
+     → 仍需 BDD 缺口扫描，但 Metis 可选
+
+agent 自主判断豁免 → 不允许
+  - "我判断任务够清晰" / "用户描述够具体" → 这些不构成豁免
+  - 必须用户原话显式 approve 才行
 ```
 
 ---
@@ -235,7 +361,23 @@ Status：
 Gate 2 通过：所有 ✅、所有 ⚠️ 已获 approval、无 ❌
 ```
 
----
+**Gate 2 豁免条款**：
+
+```
+⚠️ 关键：即使有完整任务清单（T1-T4）也必须过 Gate 2
+  ❌ 错误："用户给了 T1-T4，够具体了，跳过 plan agent 和 RTM 矩阵"
+  ✅ 正确：任务清单是输入，但 plan agent 的"完整性检查"和"简化"是 Gate 2 的核心价值
+
+豁免机制（仅两种情况允许跳过 Gate 2）：
+  1. 用户显式说："跳过 Gate 2" / "不用 plan" / "直接做"
+     → 记录在 OpenSpec 变更的 proposal.md 中："用户显式豁免 Gate 2"
+  2. 进入轻量模式 + < 2 文件 + 纯机械改动
+     → plan agent 可选，但 RTM 矩阵仍需（哪怕简化版）
+
+agent 自主判断豁免 → 不允许
+  - "T1-T4 已经够清晰" / "有 OpenSpec 任务清单了" → 这些不构成豁免
+  - Gate 2 的价值是"完整性检查"和"简化标注"，不是"任务细化"
+```
 
 ### Gate 3: Test Witness
 
@@ -356,7 +498,18 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### Loop 1: Clarification（Phase 1）
 
 ```
-explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch → /opsx:propose → [Gate 1]
+⭐ CodeGraph 优先（解决 CodeGraph vs explore agent 冲突）：
+
+有 CodeGraph 可用时：
+  codegraph_status（MCP）→ codegraph_explore（MCP）→ codegraph_files（MCP）→ Metis
+  → Gap Scan → AskUserQuestion → Scenario Sketch → /opsx:propose → [Gate 1]
+
+无 CodeGraph 或 CodeGraph 不可用时：
+  explore/librarian（并行）→ Metis → Gap Scan → AskUserQuestion → Scenario Sketch
+  → /opsx:propose → [Gate 1]
+
+关键：CodeGraph 已初始化时，不要用 explore 子 agent 读代码
+       explore/librarian 只用于"找外部参考"（librarian）或"探索未知"
 ```
 
 ---
@@ -402,9 +555,50 @@ Run test → [Gate 5] → review-work → git-master → /opsx:archive → 4 opt
 ### Phase 1: CLARIFY
 
 ```
-调用：explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose
-Announce："Phase 1: 并行探索 + Metis 分析 + OpenSpec 变更创建"
+调用（按优先级）：
+  ⭐ 有 CodeGraph：codegraph_status + codegraph_explore + codegraph_files
+     （不要用 explore 子 agent 读代码 — CodeGraph 是预建索引）
+  + librarian（并行）→ 找外部参考（不读项目代码）
+  + Metis（阻塞）→ 意图/边界/依赖分析
+  + /opsx:explore 或 /opsx:propose → 创建 OpenSpec 变更
+
+Announce："Phase 1: CodeGraph 探索 + 外部参考 + Metis 分析 + OpenSpec 变更创建"
 输出：Approved Requirements List + Scenario Sketch + OpenSpec 变更
+```
+
+**OpenSpec 已有条目 → change 决策**：
+
+```
+场景：发现任务在 specs/ 中已有相关条目
+
+| 已有条目位置 | 是否仍需 /opsx:propose 建 change | 理由 |
+|------------|-------------------------------|------|
+| optimization/spec.md | ✅ 强烈建议 | learned/spec.md 是事实记录，optimization/spec.md 是待办，但 change 是行动追溯 |
+| learned/spec.md（API 路径/踩坑） | ✅ 必须 | 行动追溯（什么时候改、怎么改、改了什么）独立于事实记录 |
+| architecture/spec.md（已有 ADR） | ✅ 必须 | 新 change 是对 ADR 的实施或修订，需要追溯 |
+| references/spec.md（依赖） | ⚠️ 视情况 | 依赖升级可能用 change 也可能直接改 |
+| 无任何条目 | ✅ 必须 | 全新需求，无记录 |
+
+为什么"已有条目"不豁免 change：
+  - learned 是"已知事实"（what is）
+  - change 是"将做什么"（what to do）
+  - archive.md 是"已完成的过去"（what was done）
+  → 三个维度不可替代
+
+何时可"快捷引用"：
+  - 在 change 的 proposal.md 中引用已有条目
+  - 例: "本 change 实施 optimization/O002 中记录的性能优化"
+  - 这是追溯便利，不是豁免
+```
+
+**OpenSpec 缺失场景处理**：
+
+```
+场景：项目没有 OpenSpec 初始化
+
+  ❌ 不豁免：跳过 /opsx:propose
+  ✅ 处理：先调用 openspec-init（一次性），再继续
+  → 这是 OpenSpec 体系的入口，不能跳过
 ```
 
 ### Phase 2: PLAN
@@ -428,20 +622,7 @@ Announce："Phase 2: plan agent + Momus 评审 + OpenSpec 细化"
   - /opsx:apply → 按任务清单实施
 
 流程：Load plan → Create TodoWrite → For each task: [Gate 3] → 委托 → [Gate 5] → Review → Mark completed
-```
-
-**Skill 知识传递规则**：
-
-```
-skill() 仅主 agent 可调。子 agent 所需知识全部写入 prompt。
-
-✓ 主 agent → skill("xxx") 读取 → 提炼关键知识 → 写进 prompt
-✓ task(category="deep", load_skills=[], prompt="<含知识>")
-✗ task(load_skills=["superpowers:brainstorming"])  — 插件 skill 不支持
-✗ 期望子 agent 自己 skill() 加载未知知识
-
-理由：子 agent 无 skill() 权限，load_skills 仅支持 6 个 builtin skill。
-主 agent 读一次写进 prompt = 一次读取，无限复用。
+**TaskCreate 铁律**: 每 Phase/Step 独立 Task，不合并；跳过必标 "SKIPPED: {原因}"; 报告前 TaskList 确认
 ```
 
 ### Phase 4: COMPLETE
@@ -449,14 +630,22 @@ skill() 仅主 agent 可调。子 agent 所需知识全部写入 prompt。
 ```
 调用：review-work（5 parallel）+ git-master + /opsx:archive
 Announce："Phase 4: review-work + git-master + OpenSpec 归档"
-流程：[Loop 5] → Manual QA → /opsx:archive → END
+流程：[Loop 5] → **Manual QA** → **5 问对账式自审（PASS 才 END）** → /opsx:archive → END
+
+5 问对账式（必答，禁用 "基本/大致/应该/差不多"）:
+  1. 我执行了技能里的每一步吗？→ 按 Step 列证据（命令 + 输出摘录），❌ 禁止 "Phase 0~5 全部覆盖"
+  2. 跳过的步骤有显式记录原因吗？→ 区分 "主动跳过"（含检测证据） vs "被动遗漏"（违规）
+  3. 关键 Gate/Loop 都通过了吗？→ 按 Gate 列证据
+  4. 有输出证据吗？→ 粘贴关键命令的输出片段（不只是说 "运行了"）
+  5. 报告前读过 TaskList 吗？→ 列出 TaskList 当前状态
+  任一为 NO → 不允许声明完成
 ```
 
 ---
 
 ## Auto Mode
 
-**行为准则**：见 `openspec/specs/rules/spec.md → 七、Auto Mode 行为准则`
+**行为准则**：见 `CLAUDE.md → 七、Auto Mode 行为准则`
 
 本 workflow 下各场景的行为映射：
 
@@ -486,12 +675,12 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 
 | Phase | Agent | 控制 |
 |-------|-------|------|
-| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose | 并行探索 + 预规划 + 需求澄清 + 变更创建 |
-| 2 | plan agent（MANDATORY）+ Momus（阻塞） | 任务分解 + 计划评审 + OpenSpec 细化 |
-| 3 | category delegation + oracle（阻塞）+ /opsx:apply | 深度委托 + 架构决策 + 任务实施 |
-| 4 | review-work + git-master + /opsx:archive | Review + Git 操作 + 变更归档 |
+| 1 | explore（并行）+ librarian（并行）+ Metis（阻塞）+ /opsx:explore 或 /opsx:propose + codegraph_explore | 并行探索 + 预规划 + 需求澄清 + 变更创建 + 代码理解 |
+| 2 | plan agent（MANDATORY）+ Momus（阻塞）+ codegraph_impact | 任务分解 + 计划评审 + OpenSpec 细化 + 影响评估 |
+| 3 | category delegation + oracle（阻塞）+ /opsx:apply + codegraph_* | 深度委托 + 架构决策 + 任务实施 + 代码索引 |
+| 4 | review-work + git-master + /opsx:archive + codegraph_affected | Review + Git 操作 + 变更归档 + CI 集成 |
 
-**监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3，违规即报
+**监察层**：Karpathy 全 Phase、BDD Phase 1、TDD Phase 3、CodeGraph Phase 2-3，违规即报
 
 ---
 
@@ -505,19 +694,6 @@ Auto Mode 不跳过 AskUserQuestion（场景缺口）
 | 非常规方案 | artistry | 需要跳出常规思维的问题 |
 | 简单修改 | quick | 单文件修改、简单变更 |
 
-**load_skills 规则**：
-
-```
-load_skills 统一传 []。
-
-子 agent 所需知识 → 主 agent 用 skill() 读取后写进 prompt。
-
-例外（仅 6 个 builtin skill 可放 load_skills）：
-  playwright, frontend-ui-ux, git-master, dev-browser, review-work, ai-slop-remover
-
-插件 skill（superpowers:xxx 等）一律不准放 load_skills。
-```
-
 ---
 
 ## Red Flags
@@ -525,9 +701,13 @@ load_skills 统一传 []。
 ```
 Phase 1:
 ❌ 未并行启动 explore/librarian → 效率 violation
+❌ CodeGraph 可用时仍用 explore agent 读代码 → CodeGraph 优先 violation（取代上一行）
 ❌ Metis 未调用 → 预规划 violation
 ❌ 未询问场景缺口 → BDD violation
 ❌ 未创建 OpenSpec 变更 → 变更管理 violation
+❌ 任务"看起来清晰"就跳过 Gate 1 → Gate 豁免 violation
+❌ 自主判断豁免 Gate（需用户显式 approve 或轻量模式）→ 越权 violation
+❌ specs/ 已有条目就跳过 change → OpenSpec 追溯 violation
 
 Phase 2:
 ❌ TBD/TODO in plan → Lite Plan Check violation
@@ -535,6 +715,8 @@ Phase 2:
 ❌ 跳过 plan agent → UltraWork violation
 ❌ Momus 未调用 → 计划评审 violation
 ❌ OpenSpec 未完善 → 变更管理 violation
+❌ T1-T4 已清晰就跳过 Gate 2 → Gate 豁免 violation
+❌ 轻量模式超范围使用（如 > 3 文件也用）→ 轻量模式越界 violation
 
 Phase 3:
 ❌ 不委托直接自己写代码 → 委托 violation
@@ -546,12 +728,19 @@ Phase 4:
 ❌ Skip Manual QA → UltraWork violation
 ❌ 未调用 review-work/git-master → Review violation
 ❌ 未归档 OpenSpec 变更 → 变更管理 violation
+❌ 用 Read + Grep 而不用 codegraph_explore → CodeGraph 优先 violation
+❌ 开 Explore 子 agent 读文件 → 浪费 violation
+❌ 委托提示词中缺 codegraph_* 指令 → 委托 violation
+❌ 未用 codegraph_impact 评估改动 → 影响评估 violation
 
 General:
 ❌ "Should/probably" → Verification violation
 ❌ 未使用 task_id follow-up → Session Continuity violation
-❌ load_skills 传入插件 skill（superpowers:xxx 等）→ Skill 隔离 violation
 ❌ 子 agent prompt 中缺失关键知识，期望它自己 skill() 加载 → 委托 violation
+❌ 先 grep 反向验证 codegraph 结果 → 信任 violation
+❌ 看到一处已存在就推断全部已检查（必须逐项独立运行检查命令）→ Self-audit violation
+❌ 用 "基本/大致/应该" 代替实际输出（必须贴输出摘录）→ Self-audit violation
+❌ 5 问自审用 "Phase 0~5 全部覆盖" 泛化掩盖空洞 → Self-audit violation
 ```
 
 ---
@@ -559,7 +748,7 @@ General:
 ## Key Principles
 
 ```
-五系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）
+六系统协作：workflow（执行）→ Karpathy（监察）→ BDD（缺口发现）→ TDD（测试）→ OpenSpec（变更管理）→ CodeGraph（代码理解）
 
 原生 Agent 核心能力：
   explore/librarian：并行探索（FREE）
@@ -574,10 +763,12 @@ Loop 控制 Phase 内完成
 TDD 铁律：变更必须有测试见证
 委托铁律：不委托直接自己写代码
 Skill 隔离铁律：skill() 仅限主 agent 调用，子 agent 所需知识全部写入 prompt
+CodeGraph 铁律：用 codegraph_explore 替代 Read + Grep，不开 Explore 子 agent
 遇阻即停不猜测
 三次失败必须反思
 Task Complete 条件：Gate 5 通过后才能 Mark completed
 
 OpenSpec 集成：变更生命周期管理
+CodeGraph 集成：按顶部铁律块使用
 Auto Mode 适配
 ```

@@ -61,6 +61,7 @@ description: OpenSpec 项目联络器 - 索引子项目/关联项目文档体系
 扫描项目根目录下所有子目录：
   - 含 `.claude/docs/` 的子目录识别为子项目（传统文档体系）
   - 含 `openspec/` 的子目录识别为子项目（OpenSpec 体系）
+  - 含 `.codegraph/` 的子目录识别为子项目有 CodeGraph 索引
   - 用户可通过 `--paths path1,path2` 显式指定路径列表，跳过自动发现
   - 排除 `.claude/worktrees/` 等内部目录
 ```
@@ -80,10 +81,13 @@ description: OpenSpec 项目联络器 - 索引子项目/关联项目文档体系
 OpenSpec 体系：
   - openspec/config.yaml
   - openspec/specs/architecture/spec.md
-  - openspec/specs/rules/spec.md
+  - CLAUDE.md
   - openspec/specs/learned/spec.md
   - openspec/specs/references/spec.md
   - openspec/specs/optimization/spec.md
+
+CodeGraph 索引：
+  - .codegraph/codegraph.db
 
 若 SNAPSHOT.md 存在，读取第一段作为摘要
 获取文件最近修改时间作为"最近更新"
@@ -97,6 +101,18 @@ OpenSpec 体系：
 若该区域已存在，替换整个区域内容
 编号从现有最大 R 编号 +1 开始递增
 保留区域外的内容不变
+```
+
+### 4. CodeGraph 子项目信息
+
+```
+对有 .codegraph/ 的子项目，可补充以下信息（用 MCP 工具调用，不要用 CLI）:
+  - codegraph_status（MCP）→ 获取索引统计（节点数、边数、文件数）
+  - codegraph_files（MCP）→ 快速获取目录结构
+  - codegraph_search（MCP）→ 找核心符号
+  这些信息可作为子项目摘要的补充
+
+⚠️ 注意：MCP 工具是 agent 内部 tool-call，不能用 bash 调用
 ```
 
 ---
@@ -148,6 +164,7 @@ OpenSpec 体系：
 **文档体系状态**格式：
 - 传统文档：列出 SNAPSHOT / tasks / learned / architecture / references 各自的 ✓/✗ 状态
 - OpenSpec 体系：列出 config / specs / changes 各自的 ✓/✗ 状态
+- CodeGraph 索引：cg✓ / cg✗
 - 空格分隔
 
 **示例**（仅供参考格式，非实际数据）：
@@ -158,8 +175,8 @@ OpenSpec 体系：
 <!-- 由 openspec-liaison 写入，由 openspec-assistant 日常维护，由 openspec-archivist 周期清理。 -->
 <!-- 添加时格式: <!-- R{编号} --> | 子项目 | 路径 | 文档体系 | 摘要 | 最近更新 | -->
 
-<!-- R15 --> | submodule-auth | ./submodule-auth | OpenSpec✓ config✓ specs✓ changes✗ | 认证子模块，JWT+OAuth2实现 | 2026-05-28 |
-<!-- R16 --> | submodule-api | ./submodule-api | 传统✓ SNAPSHOT✓ tasks✓ learned✓ arch✓ refs✓ | API网关子模块 | 2026-05-30 |
+<!-- R15 --> | submodule-auth | ./submodule-auth | OpenSpec✓ config✓ specs✓ changes✗ cg✓ | 认证子模块，JWT+OAuth2实现 | 2026-05-28 |
+<!-- R16 --> | submodule-api | ./submodule-api | 传统✓ SNAPSHOT✓ tasks✓ learned✓ arch✓ refs✓ cg✗ | API网关子模块 | 2026-05-30 -->
 ```
 
 ### tasks.md 分支进度区
@@ -255,10 +272,41 @@ grep "✓" .claude/docs/tasks.md | grep "分支进度" -A 100
 单向索引，只读子项目/分支，只写当前项目
 主动触发，不自动扫描
 只索引不分析，深度阅读归 explorer
-通用扫描，自动检测 .claude/docs/ 和 openspec/
+通用扫描，自动检测 .claude/docs/、openspec/、.codegraph/
 格式兼容，遵循现有编号体系
 与 assistant/explorer/archivist 各司其职
 与 OpenSpec CLI 无缝集成
+与 CodeGraph 集成，索引子项目 cg 状态
+```
+
+---
+
+## CodeGraph 集成
+
+### 检测子项目 CodeGraph 状态
+
+```
+对每个子项目：
+  1. 检查 .codegraph/codegraph.db 是否存在
+  2. 存在 → 子项目有 CodeGraph 索引
+  3. 可选：调用 codegraph_status 获取统计信息
+
+检测命令：
+  test -f {子项目路径}/.codegraph/codegraph.db && echo "cg✓" || echo "cg✗"
+```
+
+### 索引条目增强
+
+```
+子项目索引条目新增 cg 字段:
+  <!-- R{编号} --> | {子项目} | {路径} | {文档体系} cg✓ | {摘要} | {日期} |
+```
+
+### 不直接调用 CodeGraph
+
+```
+liaison 不直接调用 codegraph_* 工具，只检测其存在性
+原因：liaison 只做索引，深度探索归 explorer
 ```
 
 ---
@@ -273,4 +321,5 @@ grep "✓" .claude/docs/tasks.md | grep "分支进度" -A 100
 ❌ 区域标识不精确 → 替换范围错误
 ❌ 覆盖区域外内容 → 数据丢失
 ❌ 不检查 OpenSpec 体系 → 遗漏新架构子项目
+❌ 不检查 CodeGraph 索引 → 遗漏代码索引子项目
 ```

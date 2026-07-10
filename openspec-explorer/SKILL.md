@@ -1,6 +1,6 @@
 ---
 name: openspec-explorer
-description: OpenSpec 项目探究者 - 根据任务目标深度阅读项目，理解架构与细节，总结成分析文档到 .claude/analysis/，并记录到 openspec/specs/references/spec.md。支持宏观/微观两种模式。TRIGGER when: 用户说"探究"、"分析项目"、"理解架构"、"梳理流程"、"总结项目"、"探索代码"、"深入阅读"、"生成分析文档"、"理解这个模块"、"梳理这个子系统"、或在开发前需要深度理解项目/子系统时。
+description: OpenSpec 项目探究者 - 深度阅读项目生成 .claude/analysis/ 分析文档，并反哺：references/spec.md（索引 R）、learned/spec.md（知识 L）、architecture/spec.md（架构 A）。支持宏观/微观两种模式。TRIGGER when: 用户说"探究"、"分析项目"、"理解架构"、"梳理流程"、"总结项目"、"探索代码"、"深入阅读"、"生成分析文档"、"理解这个模块"、"梳理这个子系统"、或在开发前需要深度理解项目/子系统时。
 ---
 
 # OpenSpec Explorer — 项目探究者
@@ -8,6 +8,37 @@ description: OpenSpec 项目探究者 - 根据任务目标深度阅读项目，�
 **根据任务目标深度阅读项目，理解架构与细节，总结成分析文档并记录索引。**
 
 此技能负责探究性阅读和文档生成，与 openspec-assistant 是协作关系，assistant 维护日常状态，explorer 补充深度分析。
+
+---
+
+## CodeGraph 铁律（默认机制，非可选工具）
+
+> 本节为全局铁律。所有 Pattern/Phase 默认遵循，不再重复声明。
+
+### 工具映射（意图 → 工具）
+
+| 意图 | 工具 | 说明 |
+|------|------|------|
+| 找符号位置 | `codegraph_search` | 只定位，不带源码 |
+| 拉单个完整源码 | `codegraph_node` | 同名重载时返回所有定义 |
+| 理解模块 / 追踪流程 | `codegraph_explore` ⭐ | 一次返回按文件分组的源码（首选） |
+| 找上游调用 | `codegraph_callers` | 重构影响分析、debug 入口 |
+| 找下游调用 | `codegraph_callees` | 依赖链追踪 |
+| 评估改动影响 | `codegraph_impact` | 跨文件影响范围 |
+| 看目录结构 | `codegraph_files` | 比 `ls` 快 |
+| 检查索引健康 | `codegraph_status` | 用前必检 |
+
+### 守则（必须遵守）
+
+- 找代码 → 优先 `codegraph_explore`，**禁止**先 `grep` / `ls` / `Read`
+- **禁止**用 `Read + Grep` 兜底（CodeGraph 是预建索引，重复更慢更贵）
+- **禁止**把 MCP 工具当 bash 命令调用（`codegraph_explore` ≠ `codegraph explore`）
+- **禁止**用 `grep` 反向验证 CodeGraph 结果（信任 AST 解析）
+- **禁止** CodeGraph 不可用时静默降级 → 必先 `codegraph_status` 排查，提示用户修复
+- 看到 ⚠️ stale banner → 仅对 banner 列出的文件 `Read`，其他继续信任 CodeGraph
+- 看到 `command not found` → 先确认是 MCP 工具调用方式错误（不是 MCP 不可用）
+
+---
 
 superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（如果要求冲突，生成位置以这个为准，路径是 .claude/docs/superpowers/，在这里生成 plan 和 spec 文件夹）
 
@@ -20,7 +51,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 此 Skill 用于：
 1. **宏观探究**：笼统地根据目的总结项目所有可能需要的信息，生成多个主题分析文档
 2. **微观探究**：根据特定任务目标，聚焦探索解决实际问题所需的信息，生成 1-2 个精炼文档
-3. **架构理解**：阅读源码理解模块间关系、调用链、数据流，输出架构分析文档
+3. **架构理解**：通过 CodeGraph 理解模块间关系、调用链、数据流，输出架构分析文档
 4. **细节梳理**：深入某个子系统/模块，梳理接口、状态机、关键路径
 5. **文档落盘**：将分析成果写入 `.claude/analysis/`（或用户指定位置）
 6. **索引注册**：在 `openspec/specs/references/spec.md` 中注册生成文档的路径和概要
@@ -66,6 +97,7 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 9. 交叉引用 — 生成的文档之间如有关联，在文档头部标注 See also 交叉引用
 10. 来源标注 — 每份分析文档头部标注来源（项目名、分支、分析日期）
 11. 禁止全量覆盖 — 更新已有文档（references/spec.md、learned/spec.md、分析文档等）时必须使用 Edit（精准替换）而非 Write（全文覆盖），确保未被涉及的内容不被丢弃。只有创建全新文件时才使用 Write
+12. 归档感知 — 探究时遇到 Lxx/Rxx/Axx 标记，先 `grep "<!-- arc:" <源文件>` 检查是否已归档；已归档条目跳到 `openspec/archive/<日期>-arc-XXX/specs/<源域>/spec.md`。
 ```
 
 **与 openspec-assistant 边界**：
@@ -125,13 +157,13 @@ superpowers 的 plan 和 spec 文件应当也生成到 .claude 文件夹下（�
 Entry: 用户触发宏观探究 + 提供项目路径/当前项目
 
 Step 1 — 项目扫描:
-  1. 检查项目根目录结构（ls 第一层 + src 第一层）
-  2. 检查是否有 CLAUDE.md → 了解项目类型和文档体系
-  3. 检查 .claude/docs/SNAPSHOT.md → 了解当前状态
-  4. 检查 openspec/specs/references/spec.md → 查看已有分析文档（避免重复）
-  5. 检查 .claude/analysis/ 目录是否已存在及其内容
-  6. 检查 openspec list → 了解活跃变更
-  7. 快速扫描源码目录（find 统计文件数、语言类型）
+  1. `codegraph_status` → 检查索引健康（不可用则按顶部铁律修复，不静默降级）
+  2. `codegraph_files` → 获取目录结构
+  3. `codegraph_search "{主类/入口}"` → 查找核心符号
+  4. 检查 .claude/docs/SNAPSHOT.md → 了解当前状态
+  5. 检查 openspec/specs/references/spec.md → 查看已有分析文档
+  6. 检查 .claude/analysis/ 目录是否已存在
+  7. 检查 `openspec list` → 了解活跃变更
 
 Step 2 — 去重检查:
   对 references/spec.md 中已有条目 grep "docs/analysis" 或 grep "项目分析文档":
@@ -148,7 +180,7 @@ Step 3 — 主题拆分:
 
 Step 4 — 制定探究计划:
   对每个主题，确定:
-    - 需要阅读的核心文件/目录
+    - 用 codegraph_explore 探查的范围（符号名/文件名）
     - 需要理解的接口/数据结构
     - 输出文档的文件名和概要
     - 与其他主题的交叉引用关系
@@ -177,12 +209,11 @@ Entry: Gate 1 PASS
 
 对每个主题（按确认的顺序）:
 
-  Step 1 — 深度阅读:
-    1. 读取核心源码文件（使用 Read 工具）
-    2. 追踪关键调用链（使用 Grep/Find）
-    3. 理解数据结构和接口定义
-    4. 识别模块间依赖关系
-    5. 记录关键发现（API路径、文件位置、架构模式）
+  Step 1 — 深度探究（默认 CodeGraph）:
+    1. `codegraph_explore "{主题相关的符号名/问题}"` → 一次拿全部分组源码
+    2. 必要时 `codegraph_node {具体符号}` → 拉单个完整源码
+    3. 必要时 `codegraph_callers` / `codegraph_callees` → 追踪调用链
+    4. 必要时 `codegraph_impact` → 评估改动影响
 
   Step 2 — 知识反哺:
     将探索中发现的关键知识同步写入 openspec/specs/learned/spec.md:
@@ -309,12 +340,12 @@ PASS  → 进入 Phase 2
 ```
 Entry: Gate 1 PASS
 
-Step 1 — 定向阅读:
-  1. 从入口点开始阅读源码（Read 工具）
-  2. 追踪关键调用链（Grep/Find）
-  3. 理解核心数据结构和接口
-  4. 记录关键路径和边界条件
-  5. 回答核心问题列表中的每个问题
+Step 1 — 定向探究（默认 CodeGraph）:
+  1. `codegraph_explore "{任务目标相关符号}"` → 拿全部分组源码
+  2. `codegraph_callers {入口符号}` → 找上游调用
+  3. `codegraph_callees {入口符号}` → 找下游调用
+  4. `codegraph_impact {要改动的符号}` → 评估影响
+  5. 必要时 `codegraph_node {具体符号}` → 拉单个完整源码
 
 Step 2 — 知识反哺:
   与宏观模式相同，将关键知识写入 openspec/specs/learned/spec.md
@@ -580,14 +611,12 @@ ADR 条目: <!-- A{编号} --> ### {DATE} - {决策标题}
 ```
 适用于: 宏观模式、需要理解全局架构
 
-阅读顺序:
-  1. CLAUDE.md / README.md → 项目概述
-  2. 目录结构 → 模块划分
-  3. Cargo.toml / package.json → 依赖关系
-  4. src/lib.rs / src/main.rs → 入口和公共 API
-  5. 各模块的 mod.rs / index.ts → 模块组织
-  6. 核心 trait/接口定义 → 架构骨架
-  7. 实现文件 → 细节填充
+CodeGraph 默认动作:
+  1. `codegraph_files` → 项目结构
+  2. `codegraph_search "{项目名/主类}"` → 找入口符号
+  3. `codegraph_explore "{入口符号}"` → 拿全部分组源码
+  4. `codegraph_callers {入口}` → 找上游
+  5. `codegraph_callees {入口}` → 找下游
 ```
 
 ### 自底向上策略
@@ -595,13 +624,12 @@ ADR 条目: <!-- A{编号} --> ### {DATE} - {决策标题}
 ```
 适用于: 微观模式、需要理解特定实现
 
-阅读顺序:
-  1. 目标文件（用户指定的或从任务推断的）
-  2. 该文件 import/use 的依赖 → 上游依赖
-  3. 该文件定义的公开接口 → 对外契约
-  4. 调用该文件的地方（Grep find-references）→ 下游消费者
-  5. 相关的测试文件 → 预期行为
-  6. 相关的配置文件 → 运行时行为
+CodeGraph 默认动作:
+  1. `codegraph_node {目标符号}` → 拿完整源码
+  2. `codegraph_callees {目标}` → 下游依赖
+  3. `codegraph_callers {目标}` → 上游消费者
+  4. `codegraph_impact {目标}` → 改动影响范围
+  5. `codegraph_search "{相关类型名}"` → 找关联符号
 ```
 
 ### 调用链追踪策略
@@ -609,13 +637,12 @@ ADR 条目: <!-- A{编号} --> ### {DATE} - {决策标题}
 ```
 适用于: 理解执行流程、数据流
 
-追踪方法:
-  1. 从入口函数开始（如 main、handler、init）
-  2. 记录每个函数调用 → 形成调用树
-  3. 标注数据流向（参数传递、返回值）
-  4. 标注状态变更（全局状态修改、锁获取释放）
-  5. 识别分支条件（错误处理、配置分支）
-  6. 到达系统边界（系统调用、I/O 操作、外部 API）时停止
+CodeGraph 默认动作:
+  1. `codegraph_explore "{从 X 到 Y 的流程}"` → 一次拿到完整调用路径
+     例: `codegraph_explore "mutateElement renderScene"`
+  2. `codegraph_callees {X} depth=3` → 深度遍历
+  3. `codegraph_callers {Y} depth=3` → 反向遍历
+  4. 标注合成边（callback、EventEmitter、React re-render）
 
 输出格式:
   调用链文档（嵌套缩进或流程图语法）
@@ -798,8 +825,6 @@ grep -E "^\d{4}-\d{2}-\d{2}" openspec/specs/architecture/spec.md
    - 架构发现可作为 design.md 的参考
    - 关键文件索引可帮助 /opsx:apply 定位代码
 ```
-
----
 
 ## 探究输出物清单
 
