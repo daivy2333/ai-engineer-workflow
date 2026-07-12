@@ -1,20 +1,20 @@
 ---
 name: openspec-archivist
-description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 SNAPSHOT"、"清理 references"、"整理归档"。
+description: 'OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/ 文档生命周期，按条目级别判断（归档/压缩归档/保留/删除/预警/提升/合并/分析文档归档），分析后对话展示摘要+模糊条目交用户判定，确认后直接执行，所有移动留墓碑标记可追溯。TRIGGER when: 用户说"归档"、"清理文档"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"、"清理 tasks"、"清理 SNAPSHOT"、"清理 references"、"整理归档"。'
 ---
 
 # OpenSpec Archivist — 项目归档器
 
-**按条目级别智能清理文档膨胀，审核先行，不可逆操作留墓碑可追溯。**
+**按条目级别清理文档生命周期，审核先行，不可逆操作留墓碑可追溯。**
 
 ---
 
 ## 功能概述
 
 此 Skill 用于：
-1. **分析** `openspec/specs/` 和 `.claude/docs/` 全部文档，逐条目判断膨胀程度
+1. **分析** `openspec/specs/` 和 `.claude/docs/` 全部文档，逐条目判断生命周期状态
 2. **审核** 展示分析摘要 + 模糊条目，用户判定后直接执行
-3. **执行** 归档/简化/删除/提升/合并，所有移动留 Tombstone 标记
+3. **执行** 归档/压缩归档/删除/提升/合并/预警，所有移动留 Tombstone 标记
 4. **OpenSpec 集成** 利用 `openspec archive` 命令管理变更归档
 5. **可追溯** 每条归档记录含日期、理由、置信度、交叉引用、恢复条件
 
@@ -62,11 +62,12 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 8. 禁止全量覆盖 — 见 `CLAUDE.md → 五.7、文件编辑铁律`
 9. 禁止手工把归档条目写回原文档（不绕过 carrier spec）— 一律走恢复协议（grep proposal.md → 复制回 → 计数 -1）
 10. 禁止跨 carrier spec 合并（每次清理独立保留）— 防止一次清理污染另一次清理的恢复路径
+11. 不修改活跃文档的表达密度 — 只有归档副本可压缩
 ```
 
 **与 openspec-assistant 协调**：
 - assistant 负责**日常增改**（12 种行为模式）
-- archivist 负责**周期性清理**（判断 + 归档 + 精简）
+- archivist 负责**周期性清理**（判断 + 归档 + 删除 + 预警）
 - 两者互不冲突：assistant 只增不改，archivist 只减不增
 
 **与 OpenSpec CLI 协调**：
@@ -97,18 +98,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 - 内容冗余（> 200 字）但核心事实 < 50 字 → Compress-Archive
 - 错录/空/完全无价值 → Delete
 
-### 2. Simplify-Keep（简化保留）
-
-**动作**：浓缩冗长内容后原地保留，保留核心信息，删冗余描述。
-
-**适用**：
-- 仍相关但过于冗长的条目（> 200 字纯描述）
-- 踩坑档案中过细的步骤可精简为"症状→根因→解决"
-- 技巧模式中冗余示例可合并
-
-**不适用**：规则内容、ADR 正文、任务描述（需完整保留意图）
-
-### 3. Keep（保留）
+### 2. Keep（保留）
 
 **动作**：无变化，跳过。
 
@@ -119,7 +109,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 - 所有 CLAUDE.md 内容
 - 当前有效的 ADR
 
-### 4. Delete（删除）
+### 3. Delete（删除）
 
 **动作**：直接删除，不归档。
 
@@ -131,9 +121,9 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 
 **约束**：删除前必须确认无交叉引用
 
-### 5. Stale-Warn（过期预警）
+### 4. Stale-Warn（过期预警）
 
-**动作**：原地添加 `⚠️ STALE` 标记，建议近期归档，但不移动。
+**动作**：添加 `⚠️ STALE` 标记，建议近期归档，但不移动。
 
 **适用**：
 - API 30-90 天未使用（不满足 Archive 的 > 90 天阈值）
@@ -142,7 +132,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 
 **标记格式**：`⚠️ STALE [2026-06-02] — 建议在 30 天内归档或更新`
 
-### 6. Promote（提升）
+### 5. Promote（提升）
 
 **动作**：从 `learned/spec.md` 提升到 `CLAUDE.md` 或 `architecture/spec.md`，原条目留提升标记。
 
@@ -154,9 +144,9 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 
 **标记格式**：`<!-- promoted: learned #05 → rules --> Promoted to CLAUDE.md §错误处理 2026-06-02`
 
-### 7. Compress-Archive（新增第 8 类）
+### 6. Compress-Archive（压缩归档）
 
-**动作**：原条目**整体搬移到 carrier spec 的"压缩保留"区**，按条目类型骨架压缩（≤ 3 行），原文档**整段移除**该条目，源文档末尾追加 arc 指引。
+**动作**：原文档整段移除该条目，源文档末尾追加 arc 指引；写入 carrier spec 时只保留压缩后的归档副本。压缩只发生在归档副本中，不改写活跃文档。
 
 **适用**：
 - 已修复 > 90d 但不太可能再遇到的次要 bug（防 regression 排查时再踩）
@@ -171,12 +161,12 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 - 错录/空/完全无价值 → Delete
 - 任何"将来可能回滚"的内容 → Archive
 
-**压缩原则**：
+**归档副本压缩原则**：
 1. 关键事实必留（路径/错误信息/版本/替代），状态必标（已修复/已废弃/已迁移）
 2. 原 L/R/A/O 编号必保（跨文档 grep 定位）
 3. 单条目 ≤ 3 行；超过 3 行 → 升级为 Archive
 
-### 8. Merge（合并）
+### 7. Merge（合并）
 
 **动作**：合并多个高度重叠的条目为一条，删除重复。
 
@@ -187,7 +177,7 @@ description: OpenSpec 归档器 - 智能清理 openspec/specs/ 和 .claude/docs/
 
 **合并规则**：保留最完整的一条 + 补充其他条目的独有信息 → 写为一条
 
-### 9. Analysis-Archive
+### 8. Analysis-Archive
 
 **动作**：移动文件 + R 索引改路径并加 `[ARCHIVED YYYY-MM-DD]` 前缀。R 编号保留。反哺条目不二次处理（explorer 已精炼）。
 
@@ -250,10 +240,10 @@ grep `归档路径` 找 carrier spec → Edit 精准复制回源文档 → arc �
 | API 路径（活跃） | grep -rn 引用时间差 | < 30d | Keep |
 | 构建命令 | 最后引用时间 | > 30d | Archive |
 | 踩坑记录（旧） | 症状是否仍可复现 | > 180d 未确认 | Archive |
-| 踩坑记录（一般） | 解决方案仍有效 | 90-180d | Simplify-Keep |
+| 踩坑记录（一般） | 解决方案仍有效 | 90-180d | Keep |
 | 踩坑记录（新） | 近期发现、仍有参考价值 | < 90d | Keep |
 | 技巧模式（≥ 2x） | 同一模式出现次数 | ≥ 2 次 | Promote |
-| 技巧模式（单次） | 是否有跨项目价值 | 低 | Simplify-Keep |
+| 技巧模式（单次） | 是否有跨项目价值 | 低 | Keep |
 | 已验证知识 | 仍准确 | — | Keep |
 | 依赖关系图 | 是否过期 | 与技术栈不一致 | Archive |
 | 待探索项 | 已探索完 | 可标记完成 | Delete 或 Archive |
@@ -270,7 +260,7 @@ grep `归档路径` 找 carrier spec → Edit 精准复制回源文档 → arc �
 | 条目状态 | 判断信号 | 判定 |
 |----------|---------|------|
 | 已解决/已完成 | 内容中明确写"已完成"、"已解决"、"done" | Archive |
-| 已解决但冗长 | 同上 + 描述 > 200 字 | Simplify-Keep 后 Archive |
+| 已解决但冗长 | 同上 + 描述 > 200 字 | Compress-Archive |
 | 未解决、仍相关 | 内容含"待优化"、"需要改进" | Keep |
 | 未解决但过时 | 技术栈已变、不再适用 | Archive |
 | 相似优化点 | ≥ 2 条描述同一问题 | Merge |
@@ -460,16 +450,16 @@ Next: Gate 1
 ```
 ##  归档分析报告
 
-| 文档 | 分析条目 | Archive | Compress | Simplify | Delete | Stale | Promote | Merge | Analysis-Archive | Keep |
-|------|---------|---------|----------|----------|--------|-------|---------|-------|-------------------|------|
-| specs/architecture/ | 8 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | - | 6 |
-| specs/learned/ | 52 | 5 | 3 | 4 | 1 | 3 | 0 | 2 | - | 34 |
-| specs/references/ | 12 | 2 | 1 | 1 | 0 | 0 | 0 | 0 | - | 8 |
-| specs/optimization/ | 15 | 0 | 2 | 0 | 0 | 1 | 0 | 0 | - | 12 |
-| .claude/docs/SNAPSHOT.md | - | 0 | - | 0 | 0 | 0 | - | - | - | - |
-| .claude/docs/tasks.md | 23 | 0 | 0 | 0 | 4 | 2 | 0 | 0 | - | 17 |
-| OpenSpec changes/ | 5 | - | - | - | - | - | - | - | - | 5 |
-| .claude/analysis/ | 8 | - | - | - | 1 | 1 | - | - | 4 | 2 |
+| 文档 | 分析条目 | Archive | Compress-Archive | Delete | Stale | Promote | Merge | Analysis-Archive | Keep |
+|------|---------|---------|------------------|--------|-------|---------|-------|-------------------|------|
+| specs/architecture/ | 8 | 1 | 0 | 0 | 1 | 0 | 0 | - | 6 |
+| specs/learned/ | 52 | 5 | 3 | 1 | 3 | 0 | 2 | - | 38 |
+| specs/references/ | 12 | 2 | 1 | 0 | 0 | 0 | 0 | - | 9 |
+| specs/optimization/ | 15 | 0 | 2 | 0 | 1 | 0 | 0 | - | 12 |
+| .claude/docs/SNAPSHOT.md | - | 0 | - | 0 | 0 | - | - | - | - |
+| .claude/docs/tasks.md | 23 | 0 | 0 | 4 | 2 | 0 | 0 | - | 17 |
+| OpenSpec changes/ | 5 | - | - | - | - | - | - | - | 5 |
+| .claude/analysis/ | 8 | - | - | 1 | 1 | - | - | 4 | 2 |
 
 ⚠️ 跳过归档（用户策略）: SNAPSHOT.md, tasks.md
 
@@ -574,16 +564,15 @@ Next: Gate 1
   5.  ★ 准备 carrier change 骨架 — mkdir -p openspec/changes/<ARC-ID>/specs/<各源域>/
   6.  ★ 写入 carrier spec — 按源域分组
         Archive 条目 → 原文写入（保留原 L/R/A/O 编号标记）
-        Compress-Archive 条目 → 按 8.2 节骨架压缩后写入
+        Compress-Archive 条目 → 按压缩归档骨架写入
   7.  ★ 写入 proposal.md — 完整映射表 + 排除项 + 恢复协议
   8.  ★ 写入 tasks.md — 每条目一个 task（completed）
   9.  ★ 写入 .openspec.yaml — OpenSpec 元数据（最小化：name + created + change-type: archive）
   10. ★ 验证 carrier change — openspec validate --changes（必须通过）
   11. ★ 执行归档 — openspec archive <ARC-ID>（移动到 archive/）
   12. ★ 原子化源文档编辑 — 对每个有归档条目的源文档：移除已归档条目 + 追加 arc 指引（一次 Edit 调用完成）
-  13. Simplify-Keep — 浓缩原地保留（保留原逻辑）
-  14. Delete — 直接删除（保留原逻辑）
-  15. Stale-Warn — 添加 ⚠️ 标记（保留原逻辑）
+  13. Delete — 直接删除（保留原逻辑）
+  14. Stale-Warn — 添加 ⚠️ 标记（保留原逻辑）
 ```
 
 ---

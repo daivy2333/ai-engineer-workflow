@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenSpec Compressor"
+  short_description: "原地压缩 OpenSpec 文档，保留信息量并降低膨胀。"
+  default_prompt: "压缩当前项目文档体系中膨胀的 Markdown 条目，不移动、不归档、不删除有用信息。"

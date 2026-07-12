@@ -6,10 +6,10 @@
 
 ## 概述
 
-本项目包含 6 个 Claude Code 技能（Skills），用于：
+本项目包含 8 个 Claude Code 技能（Skills），用于：
 
 1. **开发流程管理** — openspec-plan + openspec-act（需求探索 + TDD 执行，可独立或串联使用）
-2. **项目文档管理** — 文档生成器 + 日常助手 + 智能归档
+2. **项目文档管理** — 文档生成器 + 体系助手 + 文档维护器 + 原地压缩 + 智能归档
 3. **插件生态** — 管理 3 个 marketplace 的专业插件
 
 ---
@@ -117,36 +117,72 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 
 ---
 
-### 5. project-docs-assistant-ulw
+### 5. openspec-assistant
 
-**描述**：项目文档助手 - 日常开发中按需读取 .claude/docs/ 文档，维护任务、快照、架构决策、学习记忆、参考和优化记录。按需加载、精准更新、主动记录学习发现。
+**描述**：OpenSpec 体系助手 - 只读恢复项目上下文、规则、职责分工、规范、当前状态、活跃变更、架构决策、学习记忆、参考资料和优化记录。
 
-**触发**：用户说"更新任务"、"更新快照"、"记录一个决策"、"记录学习"、"添加参考资料"、"记一个优化点"、或在编码过程中需要查询规范/架构/知识时。
+**触发**：用户问"当前进度"、"项目规则是什么"、"这个体系怎么运作"、"应该用哪个 skill"、"查询架构/知识/参考/优化记录"时。
 
-**10 种行为模式**：
+**核心能力**：
 1. 上下文恢复 — 读取 snapshot.md + tasks.md
 2. 规范查询 — 读取 rules.md 确认编码规范
 3. 架构查询 — 读取 architecture.md 了解技术决策
 4. 知识回忆 — 读取 learned.md 获取 API/技巧/踩坑
-5. 任务更新 — 修改 tasks.md
-6. 快照更新 — 修改 snapshot.md
-7. 决策记录 — 追加 architecture.md ADR
-8. 学习记忆更新 — 追加 learned.md（API/踩坑/技巧）
-9. 参考添加 — 追加 references.md
-10. 优化点记录 — 追加 optimization.md
+5. 职责路由 — 判断应由哪个 skill 继续处理
 
-**核心原则**：按需加载、精准修改、主动学习
+**核心原则**：只读查询、恢复图谱、不写入文档
 
 ---
 
-### 6. project-archivist
+### 6. openspec-docs-maintainer
 
-**描述**：项目归档器 - 智能清理 .claude/docs/ 文档膨胀，按条目级别判断（归档/简化保留/保留/删除/预警/提升/合并），生成审核计划后执行，所有移动留墓碑标记可追溯。
+**描述**：OpenSpec 文档维护器 - 在其他 skill 或开发工作完成后，按需更新任务、快照、决策、学习、参考、优化记录，并同步 OpenSpec changes 状态。
 
-**触发**：用户说"归档"、"清理文档"、"压缩记忆"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"。
+**触发**：用户说"更新任务"、"更新快照"、"记录一个决策"、"记录学习"、"添加参考资料"、"记一个优化点"、"同步 OpenSpec 变更"、"把刚才的工作记到文档"时。
+
+**核心能力**：
+- 任务更新：维护 `.claude/docs/tasks.md`
+- 快照更新：维护 `.claude/docs/SNAPSHOT.md`
+- 决策记录：追加 `architecture/spec.md`
+- 学习记录：追加 `learned/spec.md`
+- 参考记录：追加 `references/spec.md`
+- 优化记录：追加 `optimization/spec.md`
+- 变更同步：同步 `openspec/changes/` 与 tasks
+
+**核心原则**：按需写入、精准修改、编号递增、不重复记录。
+
+---
+
+### 7. openspec-compressor
+
+**描述**：OpenSpec 文档压缩器 - 对易膨胀 Markdown 文档做原地压缩，保持信息量，不移动、不归档、不删除有效信息。
+
+**触发**：用户说"压缩文档"、"精简文档"、"压缩 learned"、"压缩 SNAPSHOT"、"文档太长但不要归档"时。
 
 **核心特性**：
-- 七类判断框架：Archive / Simplify-Keep / Keep / Delete / Stale-Warn / Promote / Merge
+- 原地压缩：只改写当前文档，不创建 archive，不移动条目
+- 信息量守恒：保留路径、命令、版本、日期、原因、后果、边界条件
+- 编号稳定：保留 `<!-- Lxx -->`、`<!-- Rxx -->`、`<!-- Axx -->` 等标记
+- 高风险保护：规则、ADR、任务意图改变前必须确认
+
+**Phase 流程**：
+```
+Phase 1: SCAN → 查找膨胀段落和高风险条目
+Phase 2: PLAN → 列出压缩候选和信息保留点
+Phase 3: COMPRESS → 精准替换，禁止全量覆盖
+Phase 4: VERIFY → diff + 编号标记 + 行数对比
+```
+
+---
+
+### 8. project-archivist
+
+**描述**：项目归档器 - 智能清理 .claude/docs/ 文档生命周期，按条目级别判断（归档/压缩归档/保留/删除/预警/提升/合并/分析文档归档），生成审核计划后执行，所有移动留墓碑标记可追溯。
+
+**触发**：用户说"归档"、"清理文档"、"整理 learned"、"优化膨胀"、"清理优化记录"、"整理项目文档"、"释放上下文"、"减肥"。
+
+**核心特性**：
+- 生命周期判断框架：Archive / Compress-Archive / Keep / Delete / Stale-Warn / Promote / Merge / Analysis-Archive
 - 两阶段工作流：Phase 1 分析产出 ARCHIVE-PLAN.md → Gate 1 用户审批 → Phase 2 执行
 - 分文档判断标准：每个 `.claude/docs/` 文件有专属的判定规则
 - 墓碑标记：所有归档条目原位留 `> Archived to archive.md §{文档} #{编号} {日期}` 可追溯
@@ -154,13 +190,13 @@ claude plugin install rust-analyzer-lsp@claude-plugins-official --scope user
 - 提升机制：learned.md 中 ≥2 次出现的模式自动建议提升到 rules.md
 - rules.md 保护：永不自驱归档，仅标记建议审查
 
-**与 project-docs-assistant 协调**：assistant 负责日常增改（只增不改），archivist 负责周期性清理（只减不增），两者互补。
+**与 OpenSpec 文档体系协调**：assistant 负责只读图谱恢复，maintainer 负责日常写入维护，compressor 负责活跃文档原地压缩，archivist 负责归档、压缩归档和删除。
 
 **Phase 流程**：
 ```
 Phase 1: ANALYZE → 读取全部文档 → 逐条目判断 → 交叉引用扫描 → 生成 ARCHIVE-PLAN.md
 Gate 1: 用户审批（支持全部/按置信度/按类型/按文档/逐条目调整）
-Phase 2: EXECUTE → Promote → Merge → Archive → Simplify → Delete → Stale-Warn
+Phase 2: EXECUTE → Promote → Merge → Archive / Compress-Archive → Delete → Stale-Warn
 Gate 2: 验证（Tombstone 数量匹配、源文档无损坏）
 ```
 
@@ -174,8 +210,10 @@ Gate 2: 验证（Tombstone 数量匹配、源文档无损坏）
 # 复制到用户 skill 目录
 cp -r openspec-plan ~/.claude/skills/
 cp -r openspec-act ~/.claude/skills/
+cp -r openspec-assistant ~/.claude/skills/
+cp -r openspec-docs-maintainer ~/.claude/skills/
+cp -r openspec-compressor ~/.claude/skills/
 cp -r plugin-loader ~/.claude/skills/
-cp -r project-docs-assistant-ulw ~/.claude/skills/
 cp -r project-docs-generator-ulw ~/.claude/skills/
 cp -r project-archivist ~/.claude/skills/
 
@@ -188,8 +226,10 @@ claude skill list
 ```bash
 ln -s /path/to/ai-engineer-workflow/openspec-plan ~/.claude/skills/openspec-plan
 ln -s /path/to/ai-engineer-workflow/openspec-act ~/.claude/skills/openspec-act
+ln -s /path/to/ai-engineer-workflow/openspec-assistant ~/.claude/skills/openspec-assistant
+ln -s /path/to/ai-engineer-workflow/openspec-docs-maintainer ~/.claude/skills/openspec-docs-maintainer
+ln -s /path/to/ai-engineer-workflow/openspec-compressor ~/.claude/skills/openspec-compressor
 ln -s /path/to/ai-engineer-workflow/plugin-loader ~/.claude/skills/plugin-loader
-ln -s /path/to/ai-engineer-workflow/project-docs-assistant-ulw ~/.claude/skills/project-docs-assistant-ulw
 ln -s /path/to/ai-engineer-workflow/project-docs-generator-ulw ~/.claude/skills/project-docs-generator-ulw
 ln -s /path/to/ai-engineer-workflow/project-archivist ~/.claude/skills/project-archivist
 ```
@@ -201,7 +241,7 @@ ln -s /path/to/ai-engineer-workflow/project-archivist ~/.claude/skills/project-a
 ### 新项目初始化
 
 ```
-project-docs-generator-ulw → 初始化文档体系 → project-docs-assistant-ulw → 日常维护
+project-docs-generator-ulw → 初始化文档体系 → openspec-assistant → 恢复上下文图谱
 ```
 
 ### 功能开发
@@ -219,9 +259,13 @@ plugin-loader → 安装专业插件（Python/前端/K8s/安全等）
 ### 文档维护
 
 ```
-project-docs-assistant-ulw → 日常增改（只增不改）
+openspec-assistant → 查询上下文/规则/职责
+             ↓ 有写入维护需求时
+openspec-docs-maintainer → 更新任务/快照/知识/同步 changes
              ↓ 文档膨胀时
-project-archivist → 智能归档清理（只减不增，审核先行）
+openspec-compressor → 原地压缩（不移动、不归档）
+             ↓ 仍需清理生命周期时
+project-archivist → 智能归档清理（审核先行）
 ```
 
 ---

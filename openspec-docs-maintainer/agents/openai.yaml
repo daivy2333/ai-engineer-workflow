@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenSpec Docs Maintainer"
+  short_description: "维护和同步 OpenSpec 文档体系中的任务、快照、决策、学习和参考记录。"
+  default_prompt: "根据刚完成的工作更新 OpenSpec 文档体系，同步任务、快照、决策、学习、参考或优化记录。"
