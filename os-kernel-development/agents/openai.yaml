@@ -1,0 +1,4 @@
+interface:
+  display_name: "OS Kernel Development"
+  short_description: "Layered OS kernel development workflow."
+  default_prompt: "Use $os-kernel-development to plan, implement, or review OS kernel work with layered gates and regression evidence."

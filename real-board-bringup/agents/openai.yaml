@@ -1,0 +1,4 @@
+interface:
+  display_name: "Real Board Bring-up"
+  short_description: "Layered physical-board kernel bring-up."
+  default_prompt: "Use $real-board-bringup to plan or debug physical-board kernel bring-up with boot, MMIO, IRQ, and workload gates."

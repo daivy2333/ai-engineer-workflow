@@ -1,0 +1,4 @@
+interface:
+  display_name: "QEMU Kernel Debugging"
+  short_description: "Kernel debugging and regression in QEMU."
+  default_prompt: "Use $qemu-kernel-debugging to debug, validate, or benchmark a kernel or driver under QEMU."

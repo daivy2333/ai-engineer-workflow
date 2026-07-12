@@ -1,0 +1,4 @@
+interface:
+  display_name: "Async Driver Development"
+  short_description: "Async OS driver design and validation."
+  default_prompt: "Use $async-driver-development to design or refactor an OS driver into an interrupt-driven async driver with clear gates."

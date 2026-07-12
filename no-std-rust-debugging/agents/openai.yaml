@@ -1,0 +1,4 @@
+interface:
+  display_name: "no_std Rust Debugging"
+  short_description: "no_std Rust kernel and driver debugging."
+  default_prompt: "Use $no-std-rust-debugging to investigate a no_std Rust kernel or driver build/runtime fault."

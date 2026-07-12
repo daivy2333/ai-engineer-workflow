@@ -6,7 +6,7 @@ description: OpenSpec 文档助手 - 日常开发中按需读取 OpenSpec specs/
 ## OpenSpec Assistant
 
 **日常开发的文档管家，基于 OpenSpec 体系，按需取用，精准更新，主动学习。**
-
+强制要求：无论工作是什么，都必须读取CLAUDE.md，确认编码规范。
 ---
 
 此技能负责提醒 agent 更新和维护记忆，和工作流 skill 是协作关系，两者并不冲突。
