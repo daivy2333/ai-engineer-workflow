@@ -1,31 +1,31 @@
 ---
 name: tooldocs
-description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下的工具使用手册（openspec/understand-anything 等），按需读取并辅助用户理解工具能力。TRIGGER when: 用户提到工具名（openspec/understand-anything）或询问"怎么用这个工具"/"有文档吗"。
+description: "读取技能目录自带的工具手册并回答概念、命令和排障问题。用于用户询问 OpenSpec 怎么用、有哪些命令、是否有文档，或要求读取已有工具手册时。"
 ---
 
 # tooldocs — 工具文档查找
 
-**按需定位并辅助理解 /home/daivy/.claude/skills/docs/ 下的工具使用手册，避免重复搜索。**
+按需读取 skill-local 手册，避免依赖 Claude Code、OpenCode 或 Codex 的固定安装路径。
 
 ---
 
 ## 一、文档位置
 
-所有工具文档集中存放在：
+工具文档与本 skill 一起分发：
 
 ```
-/home/daivy/.claude/skills/docs/
-├── openspec.md            # OpenSpec 精简使用手册（AI 协作规范工具）
-└── understandanything.md  # Understand Anything 精简使用手册（交互式知识图谱）
+tooldocs/
+└── references/
+    └── openspec.md
 ```
 
 ## 二、定位流程
 
 按以下顺序确认目标文档：
 
-1. 解析用户提到的工具名（openspec / understand-anything / 其他）
-2. 直接读取 `/home/daivy/.claude/skills/docs/<工具名>.md`
-3. 文档不存在时，提示用户当前可用文档列表（见上）
+1. 解析用户提到的工具名。
+2. OpenSpec 问题完整读取 [references/openspec.md](references/openspec.md)。
+3. 文档不存在时，报告当前没有对应手册，不猜测命令。
 
 ## 三、辅助使用
 
@@ -41,4 +41,4 @@ description: 工具文档查找器 - 定位 /home/daivy/.claude/skills/docs/ 下
 - **不要凭印象回答工具细节**，必须 Read 实际文档
 - **不要改写或二次创作**文档内容，必要时直接引用原文段落
 - 文档未覆盖的问题，**必须**显式告知用户"文档无此内容"
-- 中文文档（与英文同名 README）以 `docs/<name>.md` 为准
+- 本 skill 的 `references/` 是工具手册来源。

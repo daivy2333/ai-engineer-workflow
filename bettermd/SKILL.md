@@ -1,6 +1,6 @@
 ---
 name: bettermd
-description: 通用 Markdown 写作规范 — 8 条硬约束 + 禁用词清单，治 AI 味与文档膨胀。TRIGGER when: 撰写、修改、润色任意 Markdown 文档。
+description: "通用 Markdown 写作规范 — 8 条硬约束 + 禁用词清单，治 AI 味与文档膨胀。TRIGGER when: 撰写、修改、润色任意 Markdown 文档。"
 ---
 
 # BetterMd

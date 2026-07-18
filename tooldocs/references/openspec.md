@@ -14,6 +14,8 @@ description: OpenSpec 是一个 **AI 协作规范工具**，让人类和 AI 编�
 | **easy not complex** | 轻量设置，最少仪式 |
 | **brownfield-first** | 优先适配已有代码库的增量修改 |
 
+这些原则描述 OpenSpec 工具本身。本仓库的 `openspec-plan` 和 `openspec-act` 在其上增加 BDD、TDD 和 Gate，不改变 OpenSpec 的文件格式。
+
 ---
 
 ## 二、核心结构
@@ -59,24 +61,43 @@ openspec --version
 
 ---
 
-## 四、工作流（两种模式）
+## 四、工作流与平台适配
 
-### 🏃 默认快速路径（`core` profile）
+OpenSpec 生命周期使用通用动作：
+
+```text
+explore → propose → apply → validate/sync → archive
+```
+
+不同 AI 工具可以为这些动作提供 slash command、skill 或其他入口。流程不能依赖某一种命令拼写。
+
+| 语义 | 作用 |
+|------|------|
+| explore | 调查需求，不修改产品代码 |
+| propose | 创建 proposal、specs、design 和 tasks |
+| apply | 按 tasks 实施 |
+| validate | 检查规格或变更 |
+| sync | 将增量规格同步到主规格 |
+| archive | 完成并归档变更 |
+
+Claude Code、OpenCode 和 Codex 共用本仓库的 `SKILL.md`。安装目录和平台工具映射见项目 README。
+
+### OpenSpec profile
+
+默认 `core` profile 的常见入口：
 
 ```
 /opsx:propose → /opsx:apply → /opsx:sync → /opsx:archive
 ```
 
-**最适合大多数场景，一键到完成。**
-
-### 🧭 扩展路径（需手动开启）
+扩展命令需要启用 custom profile：
 
 ```bash
 openspec config profile    # 选择 custom
 openspec update            # 应用变更
 ```
 
-新增命令：`/opsx:new`、`/opsx:continue`、`/opsx:ff`、`/opsx:verify`、`/opsx:bulk-archive`、`/opsx:onboard`
+可用命令取决于 OpenSpec 版本和当前工具适配。
 
 ---
 
@@ -103,14 +124,9 @@ openspec update            # 应用变更
 | `/opsx:bulk-archive` | 批量归档多个完成修改 | 并行工作流完成后 |
 | `/opsx:onboard` | 引导式教程 | 新用户首次使用 |
 
-### 不同工具的语法
+### 平台命令不是流程约束
 
-| 工具 | 语法 |
-|------|------|
-| Claude Code | `/opsx:propose` |
-| Cursor/Windsurf | `/opsx-propose` |
-| Copilot IDE | `/opsx-propose` |
-| Kimi/Trae | `/skill:openspec-propose` |
+文档中的 `/opsx:*` 是 OpenSpec 集成示例。若当前平台暴露不同入口，使用等价能力，并保持 proposal、specs、design、tasks、validate 和 archive 的行为不变。
 
 ---
 
