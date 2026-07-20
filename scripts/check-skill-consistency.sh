@@ -109,6 +109,17 @@ require_pattern 'Act Response' "$iteration_template" \
 require_pattern 'Plan Review' "$iteration_template" \
   "iteration template lacks Plan Review"
 
+explorer_skill="$ROOT/openspec-explorer/SKILL.md"
+require_pattern '即时回答.*不调用 Maintainer' "$explorer_skill" \
+  "openspec-explorer answer mode does not forbid maintainer calls"
+require_pattern '自动调用 `openspec-docs-maintainer`' "$explorer_skill" \
+  "openspec-explorer document mode does not register analysis references"
+require_pattern '只限于去重并写入 `openspec/specs/references/spec.md`' "$explorer_skill" \
+  "openspec-explorer automatic registration is not limited to references"
+require_pattern 'Explorer 文档模式的 R 登记是唯一自动例外' \
+  "$ROOT/openspec-docs-maintainer/SKILL.md" \
+  "openspec-docs-maintainer lacks the narrow explorer exception"
+
 claude_template="$ROOT/openspec-init/references/claude-template.md"
 forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORMAT_COMMAND>|<LINT_COMMAND>' \
   "$claude_template" "CLAUDE template still contains project-state placeholders"

@@ -45,7 +45,7 @@
 | `openspec-plan` | BDD、计划、iteration 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
 | `openspec-docs-maintainer` | 显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾 |
-| `openspec-explorer` | 深度读取项目，生成 `.claude/analysis/` |
+| `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
 
@@ -84,7 +84,7 @@ openspec-docs-maintainer
 
 小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
 
-技能完成不构成下一阶段授权。Plan、Act 和 Explorer 交付后停止，只提示用户可调用的下一项能力。这里不增加审计 Gate。
+技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 的文档模式是窄例外：生成分析文档后自动调用 Maintainer 登记 R 引用，不执行其他维护。这里不增加审计 Gate。
 
 ### OS 与驱动
 

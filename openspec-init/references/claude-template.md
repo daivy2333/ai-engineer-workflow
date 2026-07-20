@@ -35,7 +35,7 @@
 - `openspec-plan`：需求、BDD、计划、iteration 和实施 Review。
 - `openspec-act`：TDD、实施、验证和 Act Response。
 - `openspec-docs-maintainer`：显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾。
-- `openspec-explorer`：`.claude/analysis/` 和 A/L/R 候选清单。
+- `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：生命周期清理和 carrier 归档。
 
@@ -45,9 +45,11 @@
 - Plan 完成后终止，等待用户审计和 Act 指令。
 - Act 写入反馈后终止，不归档、不维护全局状态。
 - Plan Review 后终止，不自动调用 Act 或 Maintainer。
-- Explorer 输出候选清单后终止，不自动登记。
-- Maintainer 只执行用户点名的同步、登记、收尾或归档动作。
-- 用户在同一指令中明确授权串联时，才可继续下一阶段。
+- Explorer 即时回答后终止，不调用 Maintainer。
+- Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
+- 此自动授权只覆盖 R 登记，不覆盖 A/L/O、tasks、SNAPSHOT 或 change。
+- 除 Explorer 的 R 登记外，Maintainer 只执行用户点名的维护动作。
+- 除上述例外，用户明确授权串联时才可继续下一阶段。
 
 ## 通用能力
 

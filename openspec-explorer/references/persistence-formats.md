@@ -1,6 +1,6 @@
 # 分析持久化格式
 
-Explorer 只生成候选条目。`openspec-docs-maintainer` 负责去重、编号和写入。
+Explorer 生成候选条目。文档模式自动调用 `openspec-docs-maintainer` 去重、编号并写入 R 引用。A/L 候选仍需用户明确授权登记。
 
 ## 分析文档
 
@@ -34,6 +34,14 @@ Maintainer 写入格式：
 ```markdown
 <!-- Rxx --> | <主题> | .claude/analysis/<file>.md | <概要> |
 ```
+
+自动登记请求只能包含：
+
+- 新建或实质更新的分析文档路径。
+- 主题和概要。
+- `references/spec.md` 这一目标。
+
+不得携带 A/L/O、tasks、SNAPSHOT、change 或归档请求。
 
 ## L 候选
 

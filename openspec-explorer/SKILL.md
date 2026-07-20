@@ -1,17 +1,22 @@
 ---
 name: openspec-explorer
-description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于理解整个项目、架构、调用链、模块或子系统；支持宏观和微观模式。只写分析文档，并输出可由 openspec-docs-maintainer 登记的候选清单。
+description: 深度阅读整个项目、模块、调用链或子系统，按宏观或微观范围生成即时回答或 .claude/analysis/ 分析文档。文档模式完成后自动调用 openspec-docs-maintainer 登记对应 R 引用；不修改产品代码。
 ---
 
 # OpenSpec Explorer
 
-读取代码和项目文档，生成可追溯分析。不要修改产品代码，也不要直接修改 A/L/R/O 状态文档。
+读取代码和项目文档，生成有依据的分析。不要修改产品代码，也不要自行修改 A/L/R/O 状态文档。
 
 ## 选择模式
 
-- 宏观模式：分析整个项目，生成 3-8 个主题文档。执行前完整读取 [references/macro-workflow.md](references/macro-workflow.md)。
-- 微观模式：围绕一个模块、流程或任务生成 1-2 个文档。执行前完整读取 [references/micro-workflow.md](references/micro-workflow.md)。
-- 需要登记知识、索引或架构发现时，读取 [references/persistence-formats.md](references/persistence-formats.md)，生成候选清单。
+先分别选择范围和输出：
+
+- 宏观范围：分析整个项目或多个模块。执行前完整读取 [references/macro-workflow.md](references/macro-workflow.md)。
+- 微观范围：分析一个模块、流程、符号或问题。执行前完整读取 [references/micro-workflow.md](references/micro-workflow.md)。
+- 即时回答：只向用户报告，不创建 `.claude/analysis/` 文档，也不调用 Maintainer。
+- 文档模式：生成分析文档。完整读取 [references/persistence-formats.md](references/persistence-formats.md)，并在文档验证后自动登记 R 引用。
+
+用户明确指定输出方式时服从用户。未指定时，仅在结果需要跨会话复用、多主题索引或后续计划依赖时使用文档模式。
 
 ## 前置检查
 
@@ -33,7 +38,7 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 - 遇到 `Lxx/Rxx/Axx` 归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
 - 只做网页搜索不能构成项目分析；必须读取实际项目文件。
 
-## 输出文件
+## 文档模式
 
 写入 `.claude/analysis/<topic>.md`。每份文档包含：
 
@@ -48,15 +53,19 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 
 文件名使用小写连字符。
 
-## 持久化交接
+## 持久化登记
 
-分析完成后生成候选清单：
+文档验证通过后：
 
-- `R`：分析文档索引。
-- `L`：API、关键文件、踩坑和技巧。
-- `A`：架构决策或约束。
+1. 为每份新建或实质更新的分析文档生成 R 候选。
+2. 自动调用 `openspec-docs-maintainer`。
+3. 授权范围只限于去重并写入 `openspec/specs/references/spec.md`。
+4. 报告 R 编号和分析文档路径。
+5. 登记失败时保留分析文档并报告原因，不扩大写入范围。
 
-输出清单后终止。提醒用户可调用 `openspec-docs-maintainer` 去重、编号和写入。Explorer 不调用其他 Skill，也不编辑 references、learned 或 architecture。
+发现 L 或 A 候选时只在结果中列出。除非用户明确授权，不自动登记 L、A、O、tasks 或 SNAPSHOT。
+
+即时回答模式不生成候选、不调用 Maintainer。
 
 ## Gate
 
@@ -64,9 +73,9 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 
 - 每个目标问题都有答案或明确未确认原因。
 - 调用链和依赖链足以支持结论。
-- 文档与用户目标相关。
-- 文件路径和交叉引用有效。
-- 候选 A/L/R 已写入报告。
+- 输出与用户目标相关。
+- 文档模式下，文件路径和交叉引用有效。
+- 文档模式下，每份分析文档已有 R 登记结果或失败说明。
 - 未修改产品代码。
 
 ## 禁止
@@ -77,4 +86,5 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 - 生成无来源结论。
 - 重复已有分析。
 - 把分析文档写入 `openspec/specs/`。
-- 自动调用 Maintainer 或写入 A/L/R/O。
+- 即时回答模式创建分析文档或调用 Maintainer。
+- 借自动 R 登记写入 A/L/O、tasks、SNAPSHOT 或 change。

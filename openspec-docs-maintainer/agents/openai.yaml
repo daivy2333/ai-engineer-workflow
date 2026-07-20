@@ -1,4 +1,4 @@
 interface:
   display_name: "OpenSpec Docs Maintainer"
-  short_description: "按明确指令维护文档或收尾指定 change。"
+  short_description: "按指令维护文档，或登记 Explorer 分析引用。"
   default_prompt: "按我的明确指令更新 OpenSpec 状态、知识，或收尾指定 change；不要执行未点名的维护动作。"
