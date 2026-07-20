@@ -9,6 +9,22 @@ fail() {
   errors=$((errors + 1))
 }
 
+require_pattern() {
+  local pattern=$1
+  local file=$2
+  local message=$3
+  rg -q "$pattern" "$file" || fail "$message"
+}
+
+forbid_pattern() {
+  local pattern=$1
+  local file=$2
+  local message=$3
+  if rg -q "$pattern" "$file"; then
+    fail "$message"
+  fi
+}
+
 skills=()
 for path in "$ROOT"/*/SKILL.md; do
   [[ -f "$path" ]] || continue
@@ -64,6 +80,42 @@ fi
 if rg -n 'TaskCreate|TaskUpdate|AskUserQuestion|TaskList|Agent 工具' "$ROOT"/openspec-*/SKILL.md >/dev/null 2>&1; then
   fail "OpenSpec main skills contain platform-specific task APIs"
 fi
+
+iteration_template="$ROOT/openspec-init/references/iteration-template.md"
+[[ -f "$iteration_template" ]] || fail "change iteration template is missing"
+
+require_pattern 'iterations/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not create the initial iteration"
+require_pattern '检查实际代码、diff 和验证证据' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan review does not inspect implementation evidence"
+require_pattern '输出交接信息后终止' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan lacks an explicit termination boundary"
+forbid_pattern '创建后把全局任务同步请求交给' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan still requests automatic global task sync"
+
+require_pattern '只填写当前迭代的 `Act Response`' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not own an explicit response section"
+require_pattern '未归档 change，未同步全局文档' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act lacks a no-closeout handoff"
+forbid_pattern '使用 OpenSpec 集成归档 change' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still archives changes"
+forbid_pattern '请求 `openspec-docs-maintainer`' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still invokes the maintainer"
+
+require_pattern 'Plan Context' "$iteration_template" \
+  "iteration template lacks Plan Context"
+require_pattern 'Act Response' "$iteration_template" \
+  "iteration template lacks Act Response"
+require_pattern 'Plan Review' "$iteration_template" \
+  "iteration template lacks Plan Review"
+
+claude_template="$ROOT/openspec-init/references/claude-template.md"
+forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORMAT_COMMAND>|<LINT_COMMAND>' \
+  "$claude_template" "CLAUDE template still contains project-state placeholders"
+require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
+  "CLAUDE template lacks the cross-skill authorization boundary"
+require_pattern '不记录项目现状' "$ROOT/README.md" \
+  "README does not define CLAUDE as normative-only"
 
 if (( errors > 0 )); then
   echo "$errors consistency check(s) failed" >&2

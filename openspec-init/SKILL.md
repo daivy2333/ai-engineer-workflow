@@ -12,6 +12,7 @@ description: 初始化或升级 OpenSpec 项目规则、specs、changes、CLAUDE
 - 生成 `CLAUDE.md` 前完整读取 [references/claude-template.md](references/claude-template.md)。
 - 为 Codex 和 OpenCode 生成规则入口前完整读取 [references/agents-adapter.md](references/agents-adapter.md)。
 - 生成 specs 前完整读取 [references/spec-templates.md](references/spec-templates.md)。
+- 生成迭代模板前完整读取 [references/iteration-template.md](references/iteration-template.md)。
 - 检测到旧文档结构时完整读取 [references/migration.md](references/migration.md)。
 
 ## Phase 0：环境检查
@@ -70,8 +71,10 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 
 - `.claude/docs/SNAPSHOT.md`
 - `.claude/docs/tasks.md`
+- `.claude/docs/templates/change-iteration.md`
 
 SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻塞和 change 来源。
+迭代模板定义 Plan Context、Act Response 和 Plan Review 的共享格式。
 
 ## Phase 5：公共规则
 
@@ -80,6 +83,7 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - 文档地图。
 - 读取顺序。
 - Skill 职责。
+- Skill 终止和显式授权规则。
 - 通用能力映射。
 - Requirements Integrity。
 - BDD、TDD、Gate、验证和三次失败规则。
@@ -106,11 +110,14 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - OpenSpec CLI 可用。
 - specs validate 通过。
 - `CLAUDE.md` 只有一个公共规则来源。
+- `CLAUDE.md` 不包含项目名称、技术栈、分支、路径现状或具体命令。
+- 项目事实和验证命令位于 SNAPSHOT。
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
 - maintainer 是日常状态和知识写入者。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
+- 迭代模板存在，Plan、Act 和 Review 区域职责分离。
 - Git diff 没有覆盖用户无关内容。
 
 ## 输出

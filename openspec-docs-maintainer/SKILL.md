@@ -1,11 +1,11 @@
 ---
 name: openspec-docs-maintainer
-description: 维护 OpenSpec 项目的 tasks、SNAPSHOT、架构决策、学习记忆、参考索引和优化记录，并同步 change 生命周期。用于明确要求更新状态、记录知识或决策、登记 explorer 发现、同步 propose/apply/archive，或恢复归档条目时。
+description: 按用户明确指令维护 OpenSpec 项目的 tasks、SNAPSHOT、架构决策、学习记忆、参考索引和优化记录，或同步、收尾、归档指定 change。用于用户要求更新状态、登记发现、处理已审计 change 或恢复归档条目时。
 ---
 
 # OpenSpec Docs Maintainer
 
-负责日常状态和知识写入。查询交给 `openspec-assistant`，表达压缩交给 `openspec-compressor`，生命周期清理交给 `openspec-archivist`。
+负责日常状态、知识写入和用户指定的 change 收尾。查询交给 `openspec-assistant`，表达压缩交给 `openspec-compressor`，文档生命周期清理交给 `openspec-archivist`。
 
 ## 写入范围
 
@@ -24,9 +24,11 @@ description: 维护 OpenSpec 项目的 tasks、SNAPSHOT、架构决策、学习�
 2. 写入前搜索重复条目。
 3. 读取最大编号后递增。
 4. 精准修改，不全量覆盖。
-5. 不删除历史；删除与归档交给 archivist。
+5. 不删除或归档 A/L/R/O 等文档条目；这类操作交给 archivist。
 6. 不改变 explorer 分析文档正文。
 7. change 元数据由 OpenSpec 集成管理。
+8. 只执行用户点名的维护动作。同步不隐含归档，归档不隐含其他清理。
+9. Plan、Act 或 Explorer 的完成报告不是写入授权。
 
 ## 工作流
 
@@ -45,8 +47,9 @@ description: 维护 OpenSpec 项目的 tasks、SNAPSHOT、架构决策、学习�
 - 学习：写入 API、文件位置、症状、根因、解决或技巧。
 - 参考：登记依赖、外部文档或 `.claude/analysis/` 索引。
 - 优化：记录问题、影响、建议、优先级和状态。
-- change 同步：在 propose、apply、archive 后同步 tasks 与 SNAPSHOT。
+- change 同步：仅在用户明确要求时，同步指定 propose、apply 或 archive 结果。
 - explorer 交接：接收 explorer 的候选 A/L/R 清单，去重后写入。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。检查最新 iteration、任务和验证证据；运行 validate 后使用 OpenSpec 集成归档，再同步 tasks 与 SNAPSHOT。
 
 ### 3. VERIFY
 
@@ -70,6 +73,9 @@ description: 维护 OpenSpec 项目的 tasks、SNAPSHOT、架构决策、学习�
 - 重复记录。
 - 编号冲突。
 - 全量覆盖。
-- 删除或归档条目。
+- 删除或归档文档条目。
 - 压缩活跃文档。
 - 直接修改 OpenSpec change 元数据。
+- 根据其他 Skill 的完成声明自动写入或归档。
+- 用户只要求同步时顺带归档。
+- 用户只要求归档时顺带清理分支或无关文档。

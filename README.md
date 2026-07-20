@@ -42,9 +42,9 @@
 |---|---|
 | `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
 | `openspec-assistant` | 只读查询规则、状态、知识和 active changes |
-| `openspec-plan` | BDD、需求完整性、计划和 change 创建 |
-| `openspec-act` | TDD、实施、Review、验证和 change 归档 |
-| `openspec-docs-maintainer` | tasks、SNAPSHOT、A/L/R/O 日常写入 |
+| `openspec-plan` | BDD、计划、iteration 创建和实施反馈 Review |
+| `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
+| `openspec-docs-maintainer` | 显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾 |
 | `openspec-explorer` | 深度读取项目，生成 `.claude/analysis/` |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
@@ -66,14 +66,25 @@ plan/act 维护当前 OpenSpec change
 openspec-plan
   → Gate 1：需求与 BDD
   → Gate 2：Requirements Traceability
+  → 写入 iterations/000-initial.md
+  → 终止，等待用户审计
 openspec-act
   → Gate 3：测试见证
   → Gate 4：Spec Review → Code Review
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
+  → 填写 Act Response
+  → 终止，等待用户审计
+openspec-plan
+  → 检查实际代码和证据
+  → 按需创建 001、002...
+openspec-docs-maintainer
+  → 仅按用户指令同步或收尾
 ```
 
 小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
+
+技能完成不构成下一阶段授权。Plan、Act 和 Explorer 交付后停止，只提示用户可调用的下一项能力。这里不增加审计 Gate。
 
 ### OS 与驱动
 
@@ -137,7 +148,9 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 
 ## 设计约束
 
-- `CLAUDE.md` 是目标项目公共执行规则的唯一事实来源。
+- `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
+- 项目事实和验证命令写入 SNAPSHOT，任务状态写入 tasks。
+- change 的多轮沟通写入 `iterations/NNN-title.md`。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。
 - 平台专属 frontmatter 不写入通用技能。

@@ -39,8 +39,9 @@ description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、
 |---|---|
 | 初始化规则和目录 | `openspec-init` |
 | 需求与计划 | `openspec-plan` |
-| 实施、验证、归档 change | `openspec-act` |
-| 更新 tasks、SNAPSHOT、A/L/R/O | `openspec-docs-maintainer` |
+| 实施、验证、填写 Act Response | `openspec-act` |
+| Review 实现、生成下一轮上下文 | `openspec-plan` |
+| 更新 tasks、SNAPSHOT、A/L/R/O，收尾指定 change | `openspec-docs-maintainer` |
 | 深度阅读并生成分析文档 | `openspec-explorer` |
 | 原地压缩表达 | `openspec-compressor` |
 | 归档、删除、墓碑 | `openspec-archivist` |

@@ -1,19 +1,21 @@
 ---
 name: openspec-act
-description: 按已批准的 OpenSpec 计划执行 TDD、Gate 验证、两阶段 Review 和归档收尾。用于 openspec-plan 已完成、存在获批 change，且用户要求开始实现、验证或完成变更时。
+description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、两阶段 Review，并记录实现反馈。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
 ---
 
 # OpenSpec Act
 
-完成 Phase 3-4：实施与收尾。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已显式豁免并留下记录。
+完成当前迭代的实施、验证和反馈。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已显式豁免并留下记录。
 
 ## 前置规则
 
-1. 读取项目 `CLAUDE.md`、change 的 proposal、specs、design 和 tasks。
-2. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-3. 使用当前环境可用的 OpenSpec 集成执行 apply、validate 和 archive。
-4. 修改产品代码前建立测试见证。
-5. 所有全局文档同步交给 `openspec-docs-maintainer`；`openspec-assistant` 只读。
+1. 读取项目 `CLAUDE.md`、SNAPSHOT、tasks 和 change 的 proposal、specs、design、tasks。
+2. 读取 `.claude/docs/templates/change-iteration.md`。
+3. 找到最新且 `Plan Context` 为 `ready`、`Act Response` 为 `pending` 的迭代。
+4. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
+5. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
+6. 修改产品代码前建立测试见证。
+7. Skill 完成不构成 Review、维护或归档授权。写入反馈后终止。
 
 ## Gate 3：Test Witness
 
@@ -40,7 +42,7 @@ description: 按已批准的 OpenSpec 计划执行 TDD、Gate 验证、两阶段
 7. 执行 Gate 4 和 Gate 5。
 8. Gate 5 通过后才能标记完成。
 
-不要修改计划范围外的代码。发现计划缺口时返回 `openspec-plan`，不要自行扩展需求。
+不要修改计划范围外的代码。发现计划缺口时，在 `Act Response` 记录阻塞并终止；提醒用户调用 `openspec-plan`，不要自行扩展需求。
 
 ## Gate 4：Two-Stage Review
 
@@ -96,21 +98,25 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 3. 判断应返回架构设计还是需求确认。
 4. 禁止直接开始第四次同类尝试。
 
-## Phase 4：COMPLETE
+## Phase 4：REPORT
 
 全部任务完成后：
 
 1. 运行完整验证套件。
 2. 完成两阶段 Review。
 3. 验证 OpenSpec change。
-4. 使用 OpenSpec 集成归档 change。
-5. 请求 `openspec-docs-maintainer` 同步 tasks 和 SNAPSHOT。
-6. 提供分支处理选项；删除或丢弃需要用户明确确认。
+4. 更新 change 内本轮任务状态。
+5. 只填写当前迭代的 `Act Response`：
+   - 实际改动。
+   - 文件和符号。
+   - 与计划的偏差及原因。
+   - 验证命令、输出和退出码。
+   - 未解决问题。
+   - 可选 commit 或 diff 引用。
+6. 将 `Act Response` 状态改为 `reported`。
+7. 终止并等待用户审计。
 
-若归档的是 archivist carrier change，还要确认：
-
-- OpenSpec changes 验证通过。
-- 源文档存在对应 `<!-- arc:` 指引。
+不得填写 `Plan Review`，不得创建下一轮 iteration。
 
 ## 完成前五问
 
@@ -118,19 +124,25 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 2. 所有跳过步骤是否记录原因？
 3. Gate 3-6 是否逐项通过或明确阻塞？
 4. 完成声明是否有新鲜输出？
-5. 最终报告前是否检查了任务追踪状态？
+5. `Act Response` 是否与实际代码和证据一致？
 
 任一答案为否，不得声明完成。
 
-## 输出
+## 输出与终止
 
 - 已完成任务。
 - 修改文件。
 - Spec review 和 code review 结果。
 - 验证命令、输出摘录和退出码。
-- OpenSpec 归档结果。
-- 文档同步结果。
+- 当前 iteration 路径和 Act Response 状态。
 - 跳过项、阻塞项和遗留 Minor 问题。
+
+然后终止。提醒用户：
+
+- 实现反馈已等待审计。
+- 需要检查或修订时调用 `openspec-plan`。
+- 认可结果后调用 `openspec-docs-maintainer` 同步或收尾。
+- 未归档 change，未同步全局文档，未清理分支。
 
 ## 禁止
 
@@ -138,5 +150,8 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 - 用“应该通过”代替运行结果。
 - Spec review 前做 code quality review。
 - 三次失败后继续盲试。
-- 直接修改全局任务或知识文档，绕过 maintainer。
+- 修改全局任务、SNAPSHOT 或知识文档。
+- 调用 Maintainer、Plan 或 Archivist。
+- 归档 change、清理分支或执行其他生命周期收尾。
+- 覆盖 Plan Context 或填写 Plan Review。
 - 把平台专属工具名写成流程前提。

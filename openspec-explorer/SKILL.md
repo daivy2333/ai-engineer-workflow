@@ -1,6 +1,6 @@
 ---
 name: openspec-explorer
-description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于理解整个项目、架构、调用链、模块或子系统；支持宏观和微观模式。只写分析文档，知识、参考和架构登记交给 openspec-docs-maintainer。
+description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于理解整个项目、架构、调用链、模块或子系统；支持宏观和微观模式。只写分析文档，并输出可由 openspec-docs-maintainer 登记的候选清单。
 ---
 
 # OpenSpec Explorer
@@ -11,7 +11,7 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 
 - 宏观模式：分析整个项目，生成 3-8 个主题文档。执行前完整读取 [references/macro-workflow.md](references/macro-workflow.md)。
 - 微观模式：围绕一个模块、流程或任务生成 1-2 个文档。执行前完整读取 [references/micro-workflow.md](references/micro-workflow.md)。
-- 需要登记知识、索引或架构发现时，读取 [references/persistence-formats.md](references/persistence-formats.md)，生成交接清单并调用 `openspec-docs-maintainer`。
+- 需要登记知识、索引或架构发现时，读取 [references/persistence-formats.md](references/persistence-formats.md)，生成候选清单。
 
 ## 前置检查
 
@@ -56,7 +56,7 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 - `L`：API、关键文件、踩坑和技巧。
 - `A`：架构决策或约束。
 
-把清单交给 `openspec-docs-maintainer` 去重、编号和写入。Explorer 不直接编辑 references、learned 或 architecture。
+输出清单后终止。提醒用户可调用 `openspec-docs-maintainer` 去重、编号和写入。Explorer 不调用其他 Skill，也不编辑 references、learned 或 architecture。
 
 ## Gate
 
@@ -66,7 +66,7 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 - 调用链和依赖链足以支持结论。
 - 文档与用户目标相关。
 - 文件路径和交叉引用有效。
-- 候选 A/L/R 已交给 maintainer。
+- 候选 A/L/R 已写入报告。
 - 未修改产品代码。
 
 ## 禁止
@@ -77,3 +77,4 @@ description: 深度阅读项目并生成 .claude/analysis/ 分析文档。用于
 - 生成无来源结论。
 - 重复已有分析。
 - 把分析文档写入 `openspec/specs/`。
+- 自动调用 Maintainer 或写入 A/L/R/O。

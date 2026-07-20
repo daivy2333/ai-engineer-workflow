@@ -69,4 +69,5 @@
 - 依赖关系。
 - 与用户目标和活跃 change 的关系。
 - 未确认问题。
-- maintainer 登记结果。
+- A/L/R 候选清单。
+- 可选的 Maintainer 调用提醒。

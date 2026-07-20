@@ -13,4 +13,4 @@ Before planning, implementing, reviewing, or updating project documentation:
 4. Do not copy those rules into this file; `CLAUDE.md` is their single source.
 ```
 
-该文件只负责入口适配。项目结构、构建命令等已有 AGENTS 内容可以保留。
+该文件只负责入口适配。已有项目说明可以保留，但与 OpenSpec 状态重复的项目结构、命令和现状应迁移到 SNAPSHOT。

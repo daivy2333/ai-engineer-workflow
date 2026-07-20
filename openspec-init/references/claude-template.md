@@ -1,18 +1,9 @@
 # CLAUDE.md 模板
 
-此模板生成项目公共规则。项目可补充技术栈细节，但不得复制出第二份规则来源。
+此模板只生成项目公共规范。项目事实、命令和现状写入 SNAPSHOT 或 tasks。
 
 ```markdown
 # CLAUDE.md
-
-## 项目
-
-- 名称：<PROJECT_NAME>
-- 技术栈：<TECH_STACK>
-- 构建：<BUILD_COMMAND>
-- 测试：<TEST_COMMAND>
-- 格式化：<FORMAT_COMMAND>
-- 静态分析：<LINT_COMMAND>
 
 ## 文档地图
 
@@ -21,30 +12,42 @@
 | 公共规则 | `CLAUDE.md` | 人工或 `openspec-init` |
 | 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | 全局任务 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
+| 迭代模板 | `.claude/docs/templates/change-iteration.md` | `openspec-init` |
 | 架构 | `openspec/specs/architecture/spec.md` | `openspec-docs-maintainer` |
 | 学习 | `openspec/specs/learned/spec.md` | `openspec-docs-maintainer` |
 | 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
 | 优化 | `openspec/specs/optimization/spec.md` | `openspec-docs-maintainer` |
-| 活跃变更 | `openspec/changes/` | OpenSpec + plan/act |
+| 活跃变更 | `openspec/changes/` | OpenSpec、plan、act |
 | 分析文档 | `.claude/analysis/` | `openspec-explorer` |
 
 ## 读取顺序
 
 - 新会话：CLAUDE → SNAPSHOT → tasks → active changes。
 - 新功能或 Bug：architecture → learned → plan。
-- 实施：change proposal/specs/design/tasks → act。
+- 实施：change 基线 → 最新 iteration → act。
+- 实现 Review：当前 iteration → 实际代码和证据 → plan。
 - 查询：assistant。
 - 日常文档写入：docs-maintainer。
 
 ## Skill 职责
 
 - `openspec-assistant`：只读。
-- `openspec-plan`：需求、BDD、计划和 change。
-- `openspec-act`：TDD、实施、验证和归档 change。
-- `openspec-docs-maintainer`：tasks、SNAPSHOT、A/L/R/O。
-- `openspec-explorer`：`.claude/analysis/`，登记请求交给 maintainer。
+- `openspec-plan`：需求、BDD、计划、iteration 和实施 Review。
+- `openspec-act`：TDD、实施、验证和 Act Response。
+- `openspec-docs-maintainer`：显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾。
+- `openspec-explorer`：`.claude/analysis/` 和 A/L/R 候选清单。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：生命周期清理和 carrier 归档。
+
+## 阶段边界
+
+- Skill 完成不构成下一阶段授权。
+- Plan 完成后终止，等待用户审计和 Act 指令。
+- Act 写入反馈后终止，不归档、不维护全局状态。
+- Plan Review 后终止，不自动调用 Act 或 Maintainer。
+- Explorer 输出候选清单后终止，不自动登记。
+- Maintainer 只执行用户点名的同步、登记、收尾或归档动作。
+- 用户在同一指令中明确授权串联时，才可继续下一阶段。
 
 ## 通用能力
 
@@ -58,31 +61,31 @@
 | 精准编辑 | 只修改相关片段 |
 | 命令执行 | 保留命令、输出和退出码 |
 | 并行委托 | 仅在环境支持且任务可独立时使用 |
-| OpenSpec 集成 | 创建、应用、验证、归档 change |
+| OpenSpec 集成 | 按当前职责创建、应用、验证或归档 change |
 
 平台工具名只是适配，不改变上述语义。
 
 ## 行为约束
 
-### Think Before Coding
+**Think Before Coding**
 
 - 陈述影响实现的假设。
 - 多种解释会改变结果时请求用户决定。
 - 不隐藏不确定性。
 
-### Simplicity First
+**Simplicity First**
 
 - 不添加未要求功能。
 - 不为一次使用提前抽象。
 - 不增加无需求依据的配置。
 
-### Surgical Changes
+**Surgical Changes**
 
 - 只修改需求需要的内容。
 - 不清理无关代码。
 - 清理由本次改动产生的孤儿。
 
-### Requirements Integrity
+**Requirements Integrity**
 
 - 用户明确要求必须全部覆盖。
 - 实现简单不能成为裁剪需求的理由。
@@ -144,6 +147,17 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 - 跳过项标记 `SKIPPED: <reason>`。
 - 只有验证通过后才能标记完成。
 - 最终报告前检查全部任务状态。
+
+## 迭代线程
+
+- 每个 change 使用 `iterations/000-initial.md` 开始。
+- 后续轮次使用递增的零填充编号。
+- Plan 只写 `Plan Context` 和 `Plan Review`。
+- Act 只写 `Act Response`。
+- 交接后的 Plan Context 不得改写。
+- Act 不得创建下一轮 iteration。
+- Plan Review 必须检查代码和证据，不只读取 Act Response。
+- 有后续任务时创建新 iteration，不覆盖旧记录。
 
 ## 验证
 
