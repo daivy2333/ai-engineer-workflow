@@ -9,7 +9,7 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 
 ## 前置规则
 
-1. 读取项目 `CLAUDE.md`、SNAPSHOT、tasks 和 change 的 proposal、specs、design、tasks。
+1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
 2. 读取 `.claude/docs/templates/change-iteration.md`。
 3. 找到最新且 `Plan Context` 为 `ready`、`Act Response` 为 `pending` 的迭代。
 4. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
@@ -96,7 +96,7 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 1. 列出三次尝试和症状。
 2. 检查 shared state、coupling 和错误的需求假设。
 3. 判断应返回架构设计还是需求确认。
-4. 禁止直接开始第四次同类尝试。
+4. 禁止开始第四次同类尝试。
 
 ## Phase 4：REPORT
 

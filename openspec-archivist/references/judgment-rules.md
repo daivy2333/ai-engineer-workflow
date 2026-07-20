@@ -9,126 +9,133 @@
 
 ## 动作定义
 
-### Archive
+**Archive**
 
 完整内容进入 carrier，源条目移除并留下 arc 指引。
 
-适用：
+适用于被替代、有历史价值或仍需恢复的条目。
 
-- 过期但仍有历史或恢复价值。
-- 已完成任务超过 30 天。
-- 已完成优化。
-- 被新 ADR 替代。
-- 有活跃引用，必须保留完整内容。
-- 核心机制仍可能再次遇到。
+**Compress-Archive**
 
-### Compress-Archive
+压缩内容进入 carrier，源条目移除并留下 arc 指引。有关联引用、回滚价值或有效机制时改用 Archive。
 
-压缩后的内容进入 carrier，源条目移除并留下 arc 指引。
+**Keep**
 
-适用：
+用于活跃、未解决、当前有效或受保护内容。
 
-- 次要且不太可能重现的问题。
-- 已迁移 API。
-- 已废弃命令。
-- 超过 200 字但事实可在 3 行内完整保留。
+**Delete**
 
-有活跃引用、可能回滚或机制仍有效时升级为 Archive。
+只用于无引用、无历史价值的误录、空占位或长期未启动任务。
 
-### Keep
+**Stale-Warn**
 
-活跃、未解决、当前有效或受保护内容。
-
-### Delete
-
-只用于无引用且没有历史价值的误录、空占位或长期未启动任务。
-
-### Stale-Warn
-
-状态不能确认但已经变旧。格式：
+状态无法确认时标记：
 
 ```text
 ⚠️ STALE [YYYY-MM-DD] — 建议在 30 天内确认、更新或归档
 ```
 
-### Promote
+**Promote**
 
-learned 中同一稳定模式出现至少 2 次时，候选提升到规则或 ADR。提升写入交给 maintainer，原条目保留提升标记。
+当条目职责改变时迁移到目标类型：
 
-### Merge
+- K 成为强制约束时，候选提升到 M 或 CLAUDE。
+- I 获准实施时，提升为 change，并标记 `promoted`。
+- Incident 结论可提升到 K、D、M、I 或 Runbook。
 
-两个以上条目内容重叠超过 60% 时，保留完整条目和独有信息。
+提升写入交给 Maintainer。原条目保留目标编号或路径。
 
-### Analysis-Archive
+**Merge**
 
-移动 `.claude/analysis/` 文件到 `.claude/analysis/archive/`，保留 R 编号并更新路径和 `[ARCHIVED YYYY-MM-DD]` 标记。不进入 carrier。
+两个以上条目内容重叠超过 60% 时，保留完整条目和各自独有信息。
+
+**Artifact-Archive**
+
+移动 Analysis、Runbook 或 Incident 到对应 `archive/` 子目录。保留 R 编号并更新路径和 `[ARCHIVED YYYY-MM-DD]` 状态，不进入 carrier。
 
 ## 通用阈值
 
 | 条目 | 条件 | 默认动作 |
 |---|---|---|
-| API 无引用 | >90 天 | Archive |
-| API 未确认 | 30-90 天 | Stale-Warn |
-| 构建命令无引用 | >30 天 | Archive |
-| 踩坑不可确认 | >180 天 | Archive |
-| 已完成任务 | >30 天 | Archive |
-| 未启动任务 | >90 天 | Delete，需无引用 |
-| 待办任务 | 30-90 天 | Stale-Warn |
-| 分析文档孤立 | >180 天 | Analysis-Archive |
+| 已完成任务 | 超过 30 天 | Archive |
+| 未启动任务 | 超过 90 天且无引用 | Delete |
+| 待办任务 | 30-90 天无活动 | Stale-Warn |
+| 失效参考 | 已确认不可访问或不再使用 | Archive |
+| 孤立 Analysis | 超过 180 天 | Artifact-Archive |
+| 过时 Runbook | 依赖的系统或命令已失效 | Artifact-Archive |
+| 已解决 Incident | 无活跃后续动作且结论已提升 | Artifact-Archive |
 
-时间结论需要 Git 历史或文档日期支持，不能只按当前日期猜测。
+时间结论需要 Git 历史或文档日期支持，不能只按当前日期推断。
 
 ## 分文档规则
 
-### tasks
+**tasks**
 
-- `进行中`：永不归档。
-- `阻塞项`：Keep，除非用户明确处理。
+- 进行中和阻塞项：Keep。
 - 近期完成：Keep。
 - 长期完成：Archive。
 - 长期未启动且无引用：Delete。
+- 未批准想法：迁移到 I 或删除误录。
 
-### architecture
+**project-model**
 
-- 当前有效 ADR：Keep。
-- 被新 ADR 明确替代：Archive，并记录替代编号。
+- 当前有效约束：Keep。
+- 已失效且有历史价值：Archive。
+- 与当前代码冲突但无法判定：Stale-Warn。
+- 选择原因混入 M：迁移到 D。
+
+**decisions**
+
+- accepted：Keep。
+- superseded：保留替代编号；按引用决定 Keep 或 Archive。
 - 疑似被替代但无明确关系：Stale-Warn。
+- 当前约束正文重复：保留 D 原因，M 保存现行约束。
 
-### learned
+**knowledge**
 
-- 活跃 API、文件和技巧：Keep。
-- 重复稳定技巧：Promote 候选。
-- 旧 API 或命令：Archive 或 Compress-Archive。
-- 症状和机制仍可能重现：Archive。
+- 已验证且仍适用：Keep。
+- 失效但可能再次遇到：Archive。
+- 单纯路径、签名或链接：迁移到 R。
+- 强制约束：Promote 到 M 或 CLAUDE。
 
-### references
+**references**
 
 - 有效且仍使用：Keep。
 - 失效链接：Archive，并标记 `[DEAD]`。
-- 重复依赖：Merge。
-- 不再使用的依赖：Archive。
+- 重复索引：Merge。
+- 目标文件已移动：先更新路径。
+- 目标正文复制进 R：压缩为检索元数据。
 
-### optimization
+**improvements**
 
-- 未解决且相关：Keep。
-- 已完成：Archive。
-- 已完成且冗长：Compress-Archive。
-- 无法判断：Stale-Warn。
+- 未承诺且仍相关：Keep。
+- 已批准：Promote 为 change，I 标记 `promoted`。
+- change 已归档：Archive。
+- 无证据或无法判断：Stale-Warn。
 
-### SNAPSHOT
+**Runbook**
 
-- 当前状态：Keep。
-- 超过 30 天的历史修改：Archive。
-- 疑似过时的关键文件表：Stale-Warn。
+- 仍可执行且验证有效：Keep。
+- 命令或环境疑似过时：Stale-Warn。
+- 被新版替代：Artifact-Archive，并更新 R。
 
-### CLAUDE.md
+**Incident**
 
-永不自动修改。只能报告：
+- 后续动作仍活跃：Keep。
+- 已解决但结论未提升：Keep。
+- 已解决且结论、决策和动作已有目标记录：Artifact-Archive。
 
-- `SUGGEST-REVIEW`
-- `SUGGEST-MERGE`
+**SNAPSHOT**
 
-### OpenSpec changes
+- 当前事实：Keep。
+- 历史状态：Archive。
+- 疑似过时的关键事实：Stale-Warn。
+
+**CLAUDE.md**
+
+永不自动修改。只能报告 `SUGGEST-REVIEW` 或 `SUGGEST-MERGE`。
+
+**OpenSpec changes**
 
 - 活跃：Keep。
 - 完成：建议使用 OpenSpec 集成归档。
@@ -138,7 +145,8 @@ learned 中同一稳定模式出现至少 2 次时，候选提升到规则或 AD
 ## 条目边界
 
 - 编号注释到下一个同类编号。
-- H3 ADR 或踩坑标题到下一个同级标题。
+- 同级条目标题到下一个同级标题。
 - 表格中每个数据行为独立条目。
 - checkbox 每行为独立任务。
-- 没有编号的旧条目在执行写入前分配编号。
+- 没有编号的旧条目在写入前分配编号。
+- 迁移条目的 Legacy ID 属于对应新条目。

@@ -1,6 +1,6 @@
 ---
 name: openspec-init
-description: 初始化或升级 OpenSpec 项目规则、specs、changes、CLAUDE.md、SNAPSHOT 和 tasks。用于新项目设置规范、创建 OpenSpec 结构、迁移旧文档体系，或让同一套技能在 Claude Code、OpenCode 和 Codex 中使用。
+description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、decisions、knowledge、references、improvements，迁移旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
 ---
 
 # OpenSpec Init
@@ -25,7 +25,7 @@ description: 初始化或升级 OpenSpec 项目规则、specs、changes、CLAUDE
    - `.claude/docs/`
    - `CLAUDE.md`
 3. 检查 Git 状态和现有用户修改。
-4. 任一目标已存在时，先确定合并策略，不直接覆盖。
+4. 任一目标已存在时，先确定合并策略，不覆盖原内容。
 
 OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验证的替代结构。
 
@@ -56,14 +56,17 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 
 创建或合并：
 
-- `openspec/specs/architecture/spec.md`
-- `openspec/specs/learned/spec.md`
+- `openspec/specs/project-model/spec.md`
+- `openspec/specs/decisions/spec.md`
+- `openspec/specs/knowledge/spec.md`
 - `openspec/specs/references/spec.md`
-- `openspec/specs/optimization/spec.md`
+- `openspec/specs/improvements/spec.md`
 
 不创建 `rules/spec.md`。公共规则只存在于 `CLAUDE.md`。
 
 所有 spec 必须满足 OpenSpec 当前格式要求，并包含可验证 Scenario。
+
+`.claude/analysis/`、`.claude/runbooks/` 和 `.claude/incidents/` 是按需产物目录。没有内容时不创建占位文件。
 
 ## Phase 4：状态文档
 
@@ -115,6 +118,8 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
 - maintainer 是日常状态和知识写入者。
+- 活跃项目记忆使用 `M/D/K/R/I` 编号。
+- 新项目不创建 architecture、learned 或 optimization spec。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - 迭代模板存在，Plan、Act 和 Review 区域职责分离。
@@ -126,6 +131,8 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - 创建和合并的文件。
 - OpenSpec 验证输出。
 - 三端入口路径。
+- 旧编号到 M/D/K/R/I 的迁移映射。
+- 按需产物目录的支持状态。
 - 跳过项及原因。
 - 需要用户决定的冲突。
 

@@ -10,7 +10,7 @@ description: 需求探索、BDD 缺口扫描、计划制定、OpenSpec 变更创
 ## 前置规则
 
 1. 读取项目 `CLAUDE.md`。它是公共执行规则的唯一事实来源。
-2. 读取 `.claude/docs/SNAPSHOT.md`、`.claude/docs/tasks.md` 和相关 change。
+2. 读取 SNAPSHOT、tasks、相关 project-model、decisions、knowledge 和 change。
 3. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-iteration.md`，先使用 `openspec-init`。
 4. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 5. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
@@ -152,9 +152,9 @@ openspec/changes/<change>/iterations/000-initial.md
 仅在以下条件全部满足时使用：
 
 - 改动少于 3 个文件。
-- 核心代码少于 60 行。
+- 实现代码少于 60 行。
 - 不跨模块。
-- 不含架构决策。
+- 不新增项目模型或长期决策。
 - 不触及安全、数据或性能关键路径。
 
 轻量模式仍要求：

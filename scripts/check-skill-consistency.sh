@@ -120,7 +120,47 @@ require_pattern 'Explorer 文档模式的 R 登记是唯一自动例外' \
   "$ROOT/openspec-docs-maintainer/SKILL.md" \
   "openspec-docs-maintainer lacks the narrow explorer exception"
 
+maintainer_skill="$ROOT/openspec-docs-maintainer/SKILL.md"
+for path in project-model decisions knowledge references improvements; do
+  require_pattern "openspec/specs/$path/spec\\.md" "$maintainer_skill" \
+    "openspec-docs-maintainer does not own $path"
+done
+require_pattern 'M/D/K/R/I' "$maintainer_skill" \
+  "openspec-docs-maintainer lacks the V2 document IDs"
+require_pattern '\.claude/runbooks/' "$maintainer_skill" \
+  "openspec-docs-maintainer lacks runbook support"
+require_pattern '\.claude/incidents/' "$maintainer_skill" \
+  "openspec-docs-maintainer lacks incident support"
+[[ -f "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
+  fail "runbook and incident templates are missing"
+
+init_skill="$ROOT/openspec-init/SKILL.md"
+for path in project-model decisions knowledge references improvements; do
+  require_pattern "openspec/specs/$path/spec\\.md" "$init_skill" \
+    "openspec-init does not create $path"
+done
+
+active_model_files=(
+  "$ROOT/openspec-assistant/SKILL.md"
+  "$ROOT/openspec-compressor/SKILL.md"
+  "$ROOT/openspec-docs-maintainer/SKILL.md"
+  "$ROOT/openspec-explorer/SKILL.md"
+  "$ROOT/openspec-init/references/claude-template.md"
+)
+for file in "${active_model_files[@]}"; do
+  forbid_pattern 'openspec/specs/(architecture|learned|optimization)/spec\.md' "$file" \
+    "$file still uses a legacy active spec path"
+done
+
 claude_template="$ROOT/openspec-init/references/claude-template.md"
+for path in project-model decisions knowledge references improvements; do
+  require_pattern "openspec/specs/$path/spec\\.md" "$claude_template" \
+    "CLAUDE template does not map $path"
+done
+require_pattern '\.claude/runbooks/' "$claude_template" \
+  "CLAUDE template lacks runbook routing"
+require_pattern '\.claude/incidents/' "$claude_template" \
+  "CLAUDE template lacks incident routing"
 forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORMAT_COMMAND>|<LINT_COMMAND>' \
   "$claude_template" "CLAUDE template still contains project-state placeholders"
 require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \

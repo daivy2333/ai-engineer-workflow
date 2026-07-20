@@ -5,7 +5,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 # OpenSpec Explorer
 
-读取代码和项目文档，生成有依据的分析。不要修改产品代码，也不要自行修改 A/L/R/O 状态文档。
+读取代码和项目文档，生成有依据的分析。不要修改产品代码，也不要自行修改 M/D/K/R/I。
 
 ## 选择模式
 
@@ -21,7 +21,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 ## 前置检查
 
 1. 读取 `CLAUDE.md`。
-2. 读取 SNAPSHOT、references、learned 和 architecture 中与目标相关的内容。
+2. 读取 SNAPSHOT、project-model、decisions、knowledge 和 references 中与目标相关的内容。
 3. 检查 `.claude/analysis/` 是否已有同主题文档。
 4. 检查活跃 OpenSpec change。
 5. 明确目标、范围和 3-8 个需要回答的问题。
@@ -35,7 +35,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 记录动态边：回调、事件、重新渲染、任务唤醒和消息队列。
 - 深度以回答目标问题为限。
 - 所有代码事实给出文件和符号位置。
-- 遇到 `Lxx/Rxx/Axx` 归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
+- 遇到 `Mxx/Dxx/Kxx/Rxx/Ixx` 或旧编号归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
 - 只做网页搜索不能构成项目分析；必须读取实际项目文件。
 
 ## 文档模式
@@ -63,7 +63,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 4. 报告 R 编号和分析文档路径。
 5. 登记失败时保留分析文档并报告原因，不扩大写入范围。
 
-发现 L 或 A 候选时只在结果中列出。除非用户明确授权，不自动登记 L、A、O、tasks 或 SNAPSHOT。
+发现 M、D、K 或 I 候选时只在结果中列出。除非用户明确授权，不自动登记这些候选、tasks 或 SNAPSHOT。
 
 即时回答模式不生成候选、不调用 Maintainer。
 
@@ -82,9 +82,9 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 - 在目标不清楚时开始深挖。
 - 修改源码。
-- 直接写 A/L/R/O。
+- 自行写 M/D/K/R/I。
 - 生成无来源结论。
 - 重复已有分析。
 - 把分析文档写入 `openspec/specs/`。
 - 即时回答模式创建分析文档或调用 Maintainer。
-- 借自动 R 登记写入 A/L/O、tasks、SNAPSHOT 或 change。
+- 借自动 R 登记写入 M/D/K/I、tasks、SNAPSHOT 或 change。

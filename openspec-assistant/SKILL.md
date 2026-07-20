@@ -1,6 +1,6 @@
 ---
 name: openspec-assistant
-description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、变更、架构、知识、参考与优化记录。用于询问当前进度、项目规则、文档位置、已有决策或应使用哪个 OpenSpec skill；不执行任何写入。
+description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更、项目模型、决策、知识、参考、改进、Runbook、Incident 和分析文档。用于询问项目现状、已有依据、文档位置或应使用哪个 OpenSpec skill；不执行写入。
 ---
 
 # OpenSpec Assistant
@@ -15,9 +15,11 @@ description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、
 2. `.claude/docs/SNAPSHOT.md`
 3. `.claude/docs/tasks.md`
 4. `openspec list`
-5. 与问题相关的 specs、changes 或 analysis
+5. 与问题相关的 M/D/K/R/I、changes 或持久化产物
 
 文件不存在时报告缺失，不创建模板。
+
+新项目记忆不存在但发现 architecture、learned 或 optimization 时，按只读方式查询旧内容，标记为 legacy，并建议使用 `openspec-init` 迁移。
 
 ## 文档地图
 
@@ -26,12 +28,15 @@ description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、
 | 公共规则 | `CLAUDE.md` | `openspec-init` 或人工 |
 | 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | 全局任务 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| 架构决策 | `openspec/specs/architecture/spec.md` | `openspec-docs-maintainer` |
-| 学习记忆 | `openspec/specs/learned/spec.md` | `openspec-docs-maintainer` |
-| 外部参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
-| 优化记录 | `openspec/specs/optimization/spec.md` | `openspec-docs-maintainer` |
+| 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
+| 决策记录 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
+| 项目知识 | `openspec/specs/knowledge/spec.md` | `openspec-docs-maintainer` |
+| 参考索引 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
+| 改进候选 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
 | 活跃变更 | `openspec/changes/` | OpenSpec 集成与 plan/act |
 | 深度分析 | `.claude/analysis/` | `openspec-explorer` |
+| 操作手册 | `.claude/runbooks/` | `openspec-docs-maintainer` |
+| 故障记录 | `.claude/incidents/` | `openspec-docs-maintainer` |
 
 ## 路由
 
@@ -41,7 +46,7 @@ description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、生成下一轮上下文 | `openspec-plan` |
-| 更新 tasks、SNAPSHOT、A/L/R/O，收尾指定 change | `openspec-docs-maintainer` |
+| 更新状态、M/D/K/R/I、Runbook、Incident 或收尾 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
 | 原地压缩表达 | `openspec-compressor` |
 | 归档、删除、墓碑 | `openspec-archivist` |
@@ -58,6 +63,6 @@ description: 只读恢复和查询 OpenSpec 项目的规则、状态、任务、
 
 - 修改任何文件。
 - 同步任务。
-- 追加知识或 ADR。
+- 追加项目模型、决策、知识或其他记录。
 - 压缩、归档、删除或恢复条目。
 - 忽略活跃 change。

@@ -1,6 +1,6 @@
 ---
 name: openspec-archivist
-description: 清理 OpenSpec 文档生命周期，按条目判断归档、压缩归档、保留、删除、过期预警、提升、合并或分析文档归档。仅在用户明确要求归档、清理或整理文档时使用；分析后必须先让用户判定，再执行并保留可恢复指引。
+description: 清理 OpenSpec 条目和持久化产物的生命周期，判断归档、压缩归档、保留、删除、过期预警、提升、合并或 Artifact 归档。仅在用户明确要求清理项目模型、决策、知识、参考、改进、任务、Analysis、Runbook 或 Incident 时使用。
 ---
 
 # OpenSpec Archivist
@@ -20,7 +20,7 @@ description: 清理 OpenSpec 文档生命周期，按条目判断归档、压缩
 - `openspec-compressor`：活跃文档原地压缩。
 - `openspec-archivist`：生命周期判断、归档、删除、arc 墓碑和预警。
 
-Archivist 不日常维护 tasks、SNAPSHOT 或 A/L/R/O。
+Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 ## 不可违反的约束
 
@@ -42,21 +42,22 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 A/L/R/O。
 按存在情况读取：
 
 - `CLAUDE.md`
-- architecture、learned、references、optimization
+- project-model、decisions、knowledge、references、improvements
 - SNAPSHOT、tasks
-- `.claude/analysis/`
+- `.claude/analysis/`、`.claude/runbooks/`、`.claude/incidents/`
+- 迁移期间存在的 architecture、learned、optimization
 - `openspec list`
 
 ### Step 2：解析
 
 按编号和结构识别条目：
 
-- `Axx/Lxx/Rxx/Oxx/Txx`
-- ADR 标题。
-- 踩坑标题。
+- `Mxx/Dxx/Kxx/Rxx/Ixx/Txx`
+- 旧 `Axx/Lxx/Oxx` 和 Legacy ID。
+- 决策、模型、知识和改进标题。
 - 表格行。
 - checkbox 任务。
-- 分析文档与 R 索引。
+- Analysis、Runbook、Incident 与 R 索引。
 
 ### Step 3：交叉引用
 
@@ -114,7 +115,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 A/L/R/O。
 7. 精准移除源条目并追加作为批次墓碑的 `<!-- arc:` 指引。
 8. Delete。
 9. Stale-Warn。
-10. Analysis-Archive。
+10. Artifact-Archive。
 
 任何 carrier 步骤失败时停止，不删除源条目。
 
@@ -127,11 +128,11 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 A/L/R/O。
 - Delete 条目没有活跃引用。
 - OpenSpec 验证通过。
 - 源文档结构完整。
-- 分析文档移动后 R 路径已更新。
+- 详细产物移动后 R 路径已更新。
 
 ## 恢复
 
-恢复请求交给 `openspec-docs-maintainer`。Archivist 只保证 carrier、映射和 arc 指引足以恢复。
+恢复请求交给 `openspec-docs-maintainer`。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
 
 ## 禁止
 
@@ -140,5 +141,5 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 A/L/R/O。
 - 自动改写或归档 `CLAUDE.md`。
 - 手工移动 OpenSpec change。
 - carrier 失败后删除源条目。
-- 把 analysis 文档放进 OpenSpec archive。
+- 把 Analysis、Runbook 或 Incident 放进 OpenSpec archive。
 - 全量覆盖源文档。

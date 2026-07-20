@@ -35,8 +35,11 @@ Use this skill for kernel work where a bug or feature crosses boot, memory, task
    - Hardware or SMP proof if the claim depends on hardware or SMP.
 
 5. Update persistent knowledge.
-   - Record new decisions as architecture notes.
-   - Record new traps, commands, and platform facts as learned notes.
+   - Record current cross-subsystem constraints in the project model.
+   - Record long-lived choices and alternatives as decisions.
+   - Record verified non-obvious traps as knowledge.
+   - Index commands and file locations as references.
+   - Record repeatable recovery procedures as runbooks.
    - Archive or tombstone stale plans after the active state moves elsewhere.
 
 ## Layer Gates

@@ -2,7 +2,7 @@
 
 ## 分析报告
 
-| 文档 | 条目 | Archive | Compress | Delete | Stale | Promote | Merge | Analysis | Keep |
+| 文档 | 条目 | Archive | Compress | Delete | Stale | Promote | Merge | Artifact | Keep |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 
 ### HIGH 置信度

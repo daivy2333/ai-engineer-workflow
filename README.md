@@ -41,10 +41,10 @@
 | Skill | 职责 |
 |---|---|
 | `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
-| `openspec-assistant` | 只读查询规则、状态、知识和 active changes |
+| `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
 | `openspec-plan` | BDD、计划、iteration 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
-| `openspec-docs-maintainer` | 显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾 |
+| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
@@ -54,7 +54,7 @@
 ```text
 assistant 只读
 explorer 只写 analysis
-maintainer 写日常状态和知识
+maintainer 写状态、项目记忆和持久化产物
 compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
@@ -85,6 +85,22 @@ openspec-docs-maintainer
 小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
 
 技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 的文档模式是窄例外：生成分析文档后自动调用 Maintainer 登记 R 引用，不执行其他维护。这里不增加审计 Gate。
+
+### 文档模型
+
+| 类型 | 职责 | 编号或路径 |
+|---|---|---|
+| Project Model | 当前有效的跨模块约束 | `Mxx` |
+| Decisions | 长期选择、原因和替代方案 | `Dxx` |
+| Knowledge | 已验证、非显然且可复用的结论 | `Kxx` |
+| References | 只保存检索元数据 | `Rxx` |
+| Improvements | 有证据但未承诺实施的问题 | `Ixx` |
+| Tasks | 已承诺工作 | `Txx` |
+| Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
+| Runbooks | 可重复或高风险操作 | `.claude/runbooks/` |
+| Incidents | 重要故障和后续动作 | `.claude/incidents/` |
+
+Architecture 的当前约束进入 Project Model，选择历史进入 Decisions。Learned 中的稳定结论进入 Knowledge，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
 
 ### OS 与驱动
 
@@ -145,6 +161,8 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - 不存在旧技能名称。
 - assistant 没有写入职责。
 - OpenSpec 主技能没有硬绑定平台任务 API。
+- V2 项目记忆路径和 M/D/K/R/I 编号齐全。
+- 新项目不再生成 architecture、learned 或 optimization spec。
 
 ## 设计约束
 

@@ -1,6 +1,6 @@
 ---
 name: openspec-compressor
-description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE.md、SNAPSHOT、tasks、architecture、learned、references 或 optimization 文档。
+description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I、analysis、runbooks、incidents，或迁移期旧 architecture、learned、optimization。
 ---
 
 # OpenSpec Compressor
@@ -23,7 +23,7 @@ description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不
 4. 标记风险：
    - LOW：删除重复修饰。
    - MEDIUM：压缩过程但保留结论和约束。
-   - HIGH：可能改变规则、ADR 或任务意图。
+   - HIGH：可能改变规则、模型约束、决策或任务意图。
 
 HIGH 风险项必须获得用户确认。
 
@@ -40,19 +40,24 @@ HIGH 风险项必须获得用户确认。
 
 使用精准替换。优先结构：
 
-- 踩坑：症状 / 根因 / 解决 / 预防。
-- ADR：决策 / 原因 / 影响 / 替代。
-- 优化：问题 / 影响 / 建议 / 状态。
+- 模型：分类 / 范围 / 不变量 / 证据 / 状态。
+- 决策：选择 / 原因 / 替代 / 影响 / 状态。
+- 知识：结论 / 证据 / 范围 / 边界。
+- 改进：问题 / 证据 / 影响 / 建议 / 状态。
 - 任务：目标 / 验收 / 阻塞。
-- 参考：资源 / 用途 / 关键点。
+- 参考：类型 / 位置 / 日期或版本 / 用途 / 状态。
+- Runbook：范围 / 前置 / 步骤 / 验证 / 失败 / 回滚。
+- Incident：影响 / 时间线 / 根因 / 恢复 / 后续。
 
 必须保留：
 
-- `Axx/Lxx/Rxx/Oxx/Txx` 编号。
+- `Mxx/Dxx/Kxx/Rxx/Ixx/Txx` 和 Legacy ID。
 - 路径、命令、版本、日期和阈值。
 - 失败症状和根因。
 - 约束、例外和风险。
 - 未解决问题。
+
+迁移期旧文档只压缩表达，不改类型或编号。分类迁移交给 `openspec-init`。
 
 ## Phase 4：VERIFY
 
@@ -66,5 +71,5 @@ HIGH 风险项必须获得用户确认。
 - 删除完整条目。
 - 移动内容到 archive。
 - 合并不同编号的独立条目。
-- 改变任务状态、ADR 结论或规则含义。
+- 改变任务状态、模型约束、决策结论或规则含义。
 - 为减少行数而删除未解决问题。

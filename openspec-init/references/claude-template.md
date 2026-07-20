@@ -2,6 +2,15 @@
 
 此模板只生成项目公共规范。项目事实、命令和现状写入 SNAPSHOT 或 tasks。
 
+## 模板目录
+
+- 文档地图与读取顺序
+- Skill 职责与阶段边界
+- 信息路由与记录边界
+- BDD、TDD、Gate 和验证
+- 任务追踪与迭代线程
+- 文件编辑与完成检查
+
 ```markdown
 # CLAUDE.md
 
@@ -13,19 +22,24 @@
 | 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | 全局任务 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
 | 迭代模板 | `.claude/docs/templates/change-iteration.md` | `openspec-init` |
-| 架构 | `openspec/specs/architecture/spec.md` | `openspec-docs-maintainer` |
-| 学习 | `openspec/specs/learned/spec.md` | `openspec-docs-maintainer` |
+| 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
+| 决策 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
+| 知识 | `openspec/specs/knowledge/spec.md` | `openspec-docs-maintainer` |
 | 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
-| 优化 | `openspec/specs/optimization/spec.md` | `openspec-docs-maintainer` |
+| 改进 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
 | 活跃变更 | `openspec/changes/` | OpenSpec、plan、act |
 | 分析文档 | `.claude/analysis/` | `openspec-explorer` |
+| Runbook | `.claude/runbooks/` | `openspec-docs-maintainer` |
+| Incident | `.claude/incidents/` | `openspec-docs-maintainer` |
 
 ## 读取顺序
 
 - 新会话：CLAUDE → SNAPSHOT → tasks → active changes。
-- 新功能或 Bug：architecture → learned → plan。
+- 新功能或 Bug：相关 project-model → decisions → knowledge → plan。
 - 实施：change 基线 → 最新 iteration → act。
 - 实现 Review：当前 iteration → 实际代码和证据 → plan。
+- 操作任务：相关 Runbook。
+- 故障复盘：Incident → knowledge → decisions/model → improvements/change。
 - 查询：assistant。
 - 日常文档写入：docs-maintainer。
 
@@ -34,7 +48,7 @@
 - `openspec-assistant`：只读。
 - `openspec-plan`：需求、BDD、计划、iteration 和实施 Review。
 - `openspec-act`：TDD、实施、验证和 Act Response。
-- `openspec-docs-maintainer`：显式维护 tasks、SNAPSHOT、A/L/R/O 和指定 change 收尾。
+- `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：生命周期清理和 carrier 归档。
@@ -47,7 +61,7 @@
 - Plan Review 后终止，不自动调用 Act 或 Maintainer。
 - Explorer 即时回答后终止，不调用 Maintainer。
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
-- 此自动授权只覆盖 R 登记，不覆盖 A/L/O、tasks、SNAPSHOT 或 change。
+- 此自动授权只覆盖 R 登记，不覆盖 M/D/K/I、tasks、SNAPSHOT 或 change。
 - 除 Explorer 的 R 登记外，Maintainer 只执行用户点名的维护动作。
 - 除上述例外，用户明确授权串联时才可继续下一阶段。
 
@@ -66,6 +80,32 @@
 | OpenSpec 集成 | 按当前职责创建、应用、验证或归档 change |
 
 平台工具名只是适配，不改变上述语义。
+
+## 信息路由
+
+- 当前短期事实写 SNAPSHOT。
+- 已承诺工作写 tasks 或 OpenSpec change。
+- 当前跨模块约束写 project-model，编号 `Mxx`。
+- 有替代方案的长期选择写 decisions，编号 `Dxx`。
+- 已验证、非显然且可复用的结论写 knowledge，编号 `Kxx`。
+- 指针和检索元数据写 references，编号 `Rxx`。
+- 有证据但未承诺实施的问题写 improvements，编号 `Ixx`。
+- 可重复或高风险操作写 Runbook，并登记 R。
+- 重要故障事件写 Incident，并登记 R。
+- 详细调查、实验和评估写 analysis，并登记 R。
+
+一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
+
+## 记录边界
+
+- Model 只保存当前有效约束，不保存选择历史。
+- Decision 被替代后保留，并标记 `superseded`。
+- Knowledge 不保存单纯路径、API 签名、链接或未验证猜测。
+- Reference 不复制目标正文。
+- Improvement 只保存未承诺工作；批准后创建 change 并标记 `promoted`。
+- Tasks 不保存未批准想法。
+- 普通测试失败不创建 Incident。
+- 一次性命令不创建 Runbook。
 
 ## 行为约束
 
@@ -93,7 +133,7 @@
 - 实现简单不能成为裁剪需求的理由。
 - 任何简化先写入 RTM 并取得批准。
 
-## 核心执行约束
+## 执行约束
 
 1. 不探索清楚不实现。
 2. 不计划清楚不实现。
