@@ -19,7 +19,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 文件不存在时报告缺失，不创建模板。
 
-新项目记忆不存在但发现 architecture、learned 或 optimization 时，按只读方式查询旧内容，标记为 legacy，并建议使用 `openspec-init` 迁移。
+新项目记忆不存在但发现 architecture、learned 或 optimization 时，按只读方式查询旧内容，标记为 legacy，并建议使用 `openspec-init` 逐信息单元全量迁移。不得建议选择性迁移或直接删除旧文档。
 
 ## 文档地图
 

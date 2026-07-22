@@ -1,6 +1,6 @@
 ---
 name: openspec-compressor
-description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I、analysis、runbooks、incidents，或迁移期旧 architecture、learned、optimization。
+description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I、analysis、runbooks 和 incidents。
 ---
 
 # OpenSpec Compressor
@@ -57,7 +57,7 @@ HIGH 风险项必须获得用户确认。
 - 约束、例外和风险。
 - 未解决问题。
 
-迁移期旧文档只压缩表达，不改类型或编号。分类迁移交给 `openspec-init`。
+旧体系全量迁移开始后，旧来源文档和 migration carrier 不得压缩。分类迁移和旧文档完整归档交给 `openspec-init` 与 `openspec-archivist`。
 
 ## Phase 4：VERIFY
 
@@ -73,3 +73,4 @@ HIGH 风险项必须获得用户确认。
 - 合并不同编号的独立条目。
 - 改变任务状态、模型约束、决策结论或规则含义。
 - 为减少行数而删除未解决问题。
+- 压缩迁移来源、覆盖清单或 migration carrier。

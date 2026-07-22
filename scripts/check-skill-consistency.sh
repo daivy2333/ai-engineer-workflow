@@ -139,6 +139,46 @@ for path in project-model decisions knowledge references improvements; do
   require_pattern "openspec/specs/$path/spec\\.md" "$init_skill" \
     "openspec-init does not create $path"
 done
+require_pattern '覆盖率为 100%.*`unmapped = 0`.*`skipped = 0`' "$init_skill" \
+  "openspec-init does not require complete legacy migration"
+require_pattern '每份活动经验源完整原文' "$init_skill" \
+  "openspec-init migration carrier does not preserve full legacy sources"
+require_pattern 'CLAUDE 和 SNAPSHOT 已按新体系重建' "$init_skill" \
+  "openspec-init does not rebuild replaceable documents"
+require_pattern '选择性、部分或抽样迁移旧经验文档' "$init_skill" \
+  "openspec-init does not explicitly forbid partial legacy migration"
+
+migration_ref="$ROOT/openspec-init/references/migration.md"
+require_pattern 'source units = mapped source units' "$migration_ref" \
+  "migration reference lacks source-to-target coverage invariant"
+require_pattern 'unmapped = 0' "$migration_ref" \
+  "migration reference allows unmapped source units"
+require_pattern 'skipped = 0' "$migration_ref" \
+  "migration reference allows skipped source units"
+require_pattern '每份活动经验源完整原文' "$migration_ref" \
+  "migration reference does not preserve full legacy documents"
+require_pattern '两者不进入覆盖清单、MIG 原文副本和恢复范围' "$migration_ref" \
+  "migration reference treats CLAUDE or SNAPSHOT as legacy experience"
+require_pattern '禁止 Delete 和 Compress-Archive' "$migration_ref" \
+  "migration reference permits destructive legacy retirement"
+
+archivist_skill="$ROOT/openspec-archivist/SKILL.md"
+require_pattern 'Init 迁移请求已构成完整 Archive 的确认' "$archivist_skill" \
+  "openspec-archivist asks for redundant migration archive confirmation"
+require_pattern '覆盖率为 100%.*`unmapped = 0`.*`skipped = 0`' "$archivist_skill" \
+  "openspec-archivist does not verify complete migration coverage"
+require_pattern '旧经验文档只能完整 Archive' "$archivist_skill" \
+  "openspec-archivist permits destructive legacy retirement"
+
+carrier_ref="$ROOT/openspec-archivist/references/carrier-protocol.md"
+require_pattern 'Carrier spec 必须逐文件保存活动经验源完整原文' "$carrier_ref" \
+  "migration carrier does not retain exact legacy documents"
+require_pattern 'Migration carrier 只允许 Archive' "$carrier_ref" \
+  "migration carrier permits delete or compression"
+
+require_pattern '旧体系全量迁移开始后.*不得压缩' \
+  "$ROOT/openspec-compressor/SKILL.md" \
+  "openspec-compressor can mutate migration sources"
 
 active_model_files=(
   "$ROOT/openspec-assistant/SKILL.md"

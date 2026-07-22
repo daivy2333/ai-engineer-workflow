@@ -163,6 +163,8 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - OpenSpec 主技能没有硬绑定平台任务 API。
 - V2 项目记忆路径和 M/D/K/R/I 编号齐全。
 - 新项目不再生成 architecture、learned 或 optimization spec。
+- 旧体系升级逐信息单元达到 100% 映射和验证。
+- 旧经验文档完整原文进入 migration carrier 后才退出活动路径。
 
 ## 设计约束
 
@@ -174,6 +176,8 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - 平台专属 frontmatter 不写入通用技能。
 - 平台专属工具名不能成为流程前提。
 - 不把 AI 工具写入 Git co-author。
+
+旧体系升级全量迁移经验文档。Init 沿文档地图、引用、归档指引和历史 carrier 发现来源，把正文逐条分类到新体系。重复、过时、已归档或低价值不构成跳过理由。覆盖清单达到 100%、`unmapped = 0`、`skipped = 0` 后，活动经验源进入 migration carrier 并完整归档。CLAUDE 和 SNAPSHOT 按新体系重建，不迁移或归档旧内容。
 
 ## License
 

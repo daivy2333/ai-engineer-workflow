@@ -24,7 +24,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 ## 不可违反的约束
 
-1. 用户确认前不移动、删除或归档。
+1. 用户确认前不移动、删除或归档；用户明确要求 Init 升级或迁移，视为只确认旧经验文档的完整 Archive。
 2. 逐条判断，不按整份文件粗略处理。
 3. Archive 和 Delete 前扫描交叉引用。
 4. `CLAUDE.md` 永不自动归档，只能建议审查。
@@ -34,6 +34,25 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 8. carrier 归档成功前不删除源条目。
 9. 每次清理使用独立 carrier，不跨清理批次合并。
 10. 活跃文档的表达压缩交给 compressor。
+11. Init 全量迁移不重新判断信息价值；覆盖清单中的全部来源单元都必须保留。
+12. 旧经验文档只能完整 Archive，不得 Delete 或 Compress-Archive。
+
+## Init 迁移归档
+
+这是普通生命周期清理的窄例外，只接收 `openspec-init` 已完成的新体系写入和迁移清单。
+
+Archivist 只核验：
+
+- 每个旧来源单元已映射并验证。
+- 覆盖率为 100%，`unmapped = 0`，`skipped = 0`。
+- 来源 hash 与当前旧文档一致。
+- carrier 包含覆盖清单、编号映射和每份活动经验源完整原文。
+- 新目标、活动引用和恢复入口均可定位。
+- CLAUDE 和 SNAPSHOT 不在覆盖清单、原文副本或归档队列中。
+
+核验通过后使用完整 Archive 归档 migration carrier，再退出旧活动路径。不得重新筛选、合并掉来源映射或要求用户逐条确认。任一条件失败时保留全部旧活动文件并返回 Init 修复。
+
+已归档 legacy carrier 不重复装入或归档。Archivist 核验其路径、hash、全部来源单元映射和新目标，保持历史载体不可变。
 
 ## Phase 1：ANALYZE
 
@@ -78,6 +97,8 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 - 交叉引用。
 - 恢复条件。
 
+Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”核验全部旧经验文档；不跳过覆盖核验。
+
 ### Step 5：提交用户
 
 展示：
@@ -88,7 +109,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 - 交叉引用警告。
 - OpenSpec change 建议。
 
-用户只需判定不确定项，也可以限制动作类型或文件范围。没有用户确认时停止。
+用户只需判定不确定项，也可以限制动作类型或文件范围。没有用户确认时停止。Init 迁移请求已构成完整 Archive 的确认，不进入普通候选判定。
 
 ## Gate 1：用户判定
 
@@ -106,7 +127,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 按顺序执行：
 
-1. 处理用户批准的 OpenSpec change 归档。
+1. 处理用户批准的 OpenSpec change 归档；Init 迁移先核验 migration carrier。
 2. Promote。
 3. Merge。
 4. 预检活跃 changes。
@@ -119,6 +140,8 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 任何 carrier 步骤失败时停止，不删除源条目。
 
+Migration carrier 归档成功后，按载体协议退出旧体系活动路径，不追加会让旧体系继续处于活动状态的墓碑文件。
+
 ## Gate 2：验证
 
 确认：
@@ -129,6 +152,9 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 - OpenSpec 验证通过。
 - 源文档结构完整。
 - 详细产物移动后 R 路径已更新。
+- Init 迁移的覆盖清单为 100%，且没有未映射或跳过单元。
+- migration carrier 保存每份活动经验源完整原文和来源 hash。
+- migration carrier 成功归档后，旧体系活动路径和活动引用均不存在。
 
 ## 恢复
 
@@ -143,3 +169,5 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 - carrier 失败后删除源条目。
 - 把 Analysis、Runbook 或 Incident 放进 OpenSpec archive。
 - 全量覆盖源文档。
+- 对 Init 迁移内容执行价值、时效或相关性筛选。
+- 删除或压缩归档旧经验文档。
