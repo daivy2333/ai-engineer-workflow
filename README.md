@@ -66,6 +66,7 @@ plan/act 维护当前 OpenSpec change
 openspec-plan
   → Gate 1：需求与 BDD
   → Gate 2：Requirements Traceability
+  → 声明 Persisted Evidence：none|required
   → 写入 iterations/000-initial.md
   → 终止，等待用户审计
 openspec-act
@@ -73,6 +74,7 @@ openspec-act
   → Gate 4：Spec Review → Code Review
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
+  → 按 Plan 要求或实际需要保存 change 内 Evidence
   → 填写 Act Response
   → 终止，等待用户审计
 openspec-plan
@@ -99,8 +101,11 @@ openspec-docs-maintainer
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
 | Runbooks | 可重复或高风险操作 | `.claude/runbooks/` |
 | Incidents | 重要故障和后续动作 | `.claude/incidents/` |
+| Evidence | 按需保存某次 iteration 的日志和数据 | `openspec/changes/<change>/evidence/` |
 
 Architecture 的当前约束进入 Project Model，选择历史进入 Decisions。Learned 中的稳定结论进入 Knowledge，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
+
+Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；Plan 明确要求持久化，或 Act 需要保留长日志、特殊格式和难以复现的输出时，才创建对应 iteration 的 Evidence 目录。Evidence 随 change 归档，不创建空占位目录。
 
 ### OS 与驱动
 
@@ -171,6 +176,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 项目事实和验证命令写入 SNAPSHOT，任务状态写入 tasks。
 - change 的多轮沟通写入 `iterations/NNN-title.md`。
+- change 的按需证据写入 `evidence/<NNN-title>/`，目录名与 iteration 对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。
 - 平台专属 frontmatter 不写入通用技能。

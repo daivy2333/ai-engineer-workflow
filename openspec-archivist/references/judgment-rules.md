@@ -155,6 +155,7 @@
 - 完成：建议使用 OpenSpec 集成归档。
 - 超过 90 天无活动：提交用户判定。
 - 空 change：提交用户判定。
+- change 内 Evidence 随 change 处理，不单独判断、登记 R 或 Artifact-Archive。
 
 ## 条目边界
 

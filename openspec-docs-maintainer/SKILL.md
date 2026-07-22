@@ -36,6 +36,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 9. Plan 和 Act 的完成报告不是写入授权。
 10. Explorer 自动请求只授权分析文档 R 登记，不授权其他维护。
 11. 每项信息只有一个权威位置；其他文档使用编号或路径引用。
+12. Change Evidence 属于 change，不登记 R，也不作为独立持久化产物维护。
 
 ## 工作流
 
@@ -61,7 +62,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 - change 同步：仅在用户明确要求时，同步指定 propose、apply 或 archive 结果。
 - explorer 自动登记：只处理分析文档 R 候选，去重后写入 references。
 - explorer 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。检查最新 iteration、任务和验证证据；运行 validate 后使用 OpenSpec 集成归档，再同步 tasks 与 SNAPSHOT。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。检查最新 iteration、任务、Act Response 和 `required` Evidence；运行 validate 后使用 OpenSpec 集成归档，再同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -81,6 +82,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
+- 检查每个 `required` Evidence 目录和 README 可定位；`none` 的 iteration 不要求 Evidence 目录。
 - 涉及 OpenSpec 时运行相应 validate。
 - 报告修改文件、编号和条目。
 
@@ -120,3 +122,4 @@ Analysis、Runbook 或 Incident：
 - 为一次性命令创建 Runbook。
 - 用户只要求同步时顺带归档。
 - 用户只要求归档时顺带清理分支或无关文档。
+- 为 change 内 Evidence 创建 R、独立归档或补写实际证据。

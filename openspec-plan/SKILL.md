@@ -86,6 +86,7 @@ description: 需求探索、BDD 缺口扫描、计划制定、OpenSpec 变更创
 - 标明相关文件、模块或符号。
 - 说明实现顺序和关键路径。
 - 记录不得破坏的约束和明确不做的内容。
+- 判断 Gate 是否需要持久化证据；默认使用 Act Response，不因存在 Gate 自动要求 Evidence 目录。
 
 计划过长时分段写入，避免一次性覆盖整个文件。
 
@@ -132,6 +133,9 @@ openspec/changes/<change>/iterations/000-initial.md
 - 实现顺序和必要技术细节。
 - 不变量、兼容性要求和非目标。
 - 验收条件、验证方法和风险。
+- `Persisted Evidence` 模式：`none` 或 `required`。
+
+`none` 表示命令、关键输出、退出码、修改文件和符号写入 Act Response 即可。`required` 时逐项写明关联 Gate、证据内容、文件格式、采集环境和通过条件。Plan 只提出要求，不创建 `evidence/` 或实际证据文件。
 
 交接后不得改写 `Plan Context`。后续反馈使用迭代 Review 流程。
 
@@ -143,6 +147,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - 所有 `Simplified` requirement 已获用户批准。
 - OpenSpec tasks、specs 和必要的 design 已完成。
 - `000-initial.md` 足以支持无会话上下文的 Act 执行。
+- Persisted Evidence 模式明确，`required` 项能映射到 Gate 和验收条件。
 - 用户批准计划。
 
 用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。轻量模式不构成自动豁免。
@@ -170,13 +175,14 @@ openspec/changes/<change>/iterations/000-initial.md
 用户要求检查 Act 结果时：
 
 1. 读取当前迭代的 `Plan Context` 和 `Act Response`。
-2. 检查实际代码、diff 和验证证据，不以 Act 自述代替检查。
-3. 在当前文件的 `Plan Review` 追加结论。
-4. 按需更新 change 的 tasks、specs 或 design，并保留 requirement 映射。
-5. 有遗留问题时，创建下一个零填充编号文件。
-6. 新文件补齐独立执行所需上下文，不只写“修复 Review 问题”。
-7. 没有后续任务时，记录 `no-follow-up`，但不归档或同步状态。
-8. 输出结果后终止，等待用户审计和下一步指令。
+2. 检查实际代码、diff、Act Response 和计划要求的 Evidence，不以 Act 自述代替检查。
+3. `required` 时检查 `evidence/<iteration>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
+4. 在当前文件的 `Plan Review` 追加结论。
+5. 按需更新 change 的 tasks、specs 或 design，并保留 requirement 映射。
+6. 有遗留问题时，创建下一个零填充编号文件。
+7. 新文件补齐独立执行所需上下文，不只写“修复 Review 问题”。
+8. 没有后续任务时，记录 `no-follow-up`，但不归档或同步状态。
+9. 输出结果后终止，等待用户审计和下一步指令。
 
 旧迭代只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
 
@@ -189,6 +195,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - Requirements Traceability Matrix。
 - OpenSpec change 路径。
 - 当前迭代路径和编号。
+- Persisted Evidence 模式和 `required` 项，或 `none`。
 - Gate 1、Gate 2 证据。
 - 所有显式跳过项及原因。
 
@@ -215,4 +222,5 @@ Review 模式改为交付：
 - 自动调用 Act 或 Maintainer。
 - 自动同步 tasks、SNAPSHOT 或归档 change。
 - 覆盖旧迭代的 Plan Context、Act Response 或 Plan Review。
+- 在原计划为 `none` 时，把缺少 Evidence 目录本身作为 Review 问题。
 - 依赖某个平台专属任务工具或 slash command 才能执行流程。

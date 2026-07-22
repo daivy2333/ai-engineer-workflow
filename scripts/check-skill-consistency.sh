@@ -83,10 +83,12 @@ fi
 
 iteration_template="$ROOT/openspec-init/references/iteration-template.md"
 [[ -f "$iteration_template" ]] || fail "change iteration template is missing"
+evidence_template="$ROOT/openspec-act/references/evidence-format.md"
+[[ -f "$evidence_template" ]] || fail "change Evidence template is missing"
 
 require_pattern 'iterations/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not create the initial iteration"
-require_pattern '检查实际代码、diff 和验证证据' "$ROOT/openspec-plan/SKILL.md" \
+require_pattern '检查实际代码、diff、Act Response 和计划要求的 Evidence' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan review does not inspect implementation evidence"
 require_pattern '输出交接信息后终止' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan lacks an explicit termination boundary"
@@ -108,6 +110,30 @@ require_pattern 'Act Response' "$iteration_template" \
   "iteration template lacks Act Response"
 require_pattern 'Plan Review' "$iteration_template" \
   "iteration template lacks Plan Review"
+require_pattern 'Mode: none \| required' "$iteration_template" \
+  "iteration template does not declare optional persisted Evidence"
+require_pattern '不创建占位目录' "$iteration_template" \
+  "iteration template can force empty Evidence directories"
+
+require_pattern 'openspec/changes/<change>/evidence/' "$evidence_template" \
+  "Evidence template is not change-local"
+require_pattern 'Evidence 不登记 R' "$evidence_template" \
+  "Evidence template registers a redundant R entry"
+require_pattern '随 change 一起归档' "$evidence_template" \
+  "Evidence template lacks change-coupled archival"
+
+require_pattern '默认使用 Act Response' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not default to inline response evidence"
+require_pattern '`none` 时不得仅因 Evidence 目录不存在提出问题' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan review can require unplanned Evidence"
+
+require_pattern '只有以下情况才创建' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not create Evidence on demand"
+require_pattern '没有保存需要时不创建空目录' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act can create empty Evidence directories"
+require_pattern 'Evidence 不登记 R，不单独归档' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act gives Evidence an independent lifecycle"
 
 explorer_skill="$ROOT/openspec-explorer/SKILL.md"
 require_pattern '即时回答.*不调用 Maintainer' "$explorer_skill" \
@@ -201,6 +227,10 @@ require_pattern '\.claude/runbooks/' "$claude_template" \
   "CLAUDE template lacks runbook routing"
 require_pattern '\.claude/incidents/' "$claude_template" \
   "CLAUDE template lacks incident routing"
+require_pattern 'openspec/changes/<change>/evidence/' "$claude_template" \
+  "CLAUDE template lacks change-local Evidence routing"
+require_pattern '不登记 R' "$claude_template" \
+  "CLAUDE template does not exclude Evidence from references"
 forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORMAT_COMMAND>|<LINT_COMMAND>' \
   "$claude_template" "CLAUDE template still contains project-state placeholders"
 require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \

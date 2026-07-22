@@ -39,6 +39,20 @@ openspec/
 - `specs/` — 系统当前行为的真相源
 - `changes/` — 提议的修改，完成后归档合并回 `specs/`
 
+本仓库的 Plan/Act 工作流允许在 change 内按需增加：
+
+```text
+changes/<change>/
+├── iterations/             ← 多轮 Plan、Act 和 Review
+└── evidence/               ← 仅在需要留存证据时创建
+    ├── README.md
+    └── <NNN-title>/
+        ├── README.md
+        └── <日志、调试输出或其他证据>
+```
+
+Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存验证摘要；`required` 时 Act 保存指定文件。Evidence 属于 change，不登记 R，随 change 归档。
+
 ---
 
 ## 三、快速开始

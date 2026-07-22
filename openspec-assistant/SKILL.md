@@ -15,7 +15,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 2. `.claude/docs/SNAPSHOT.md`
 3. `.claude/docs/tasks.md`
 4. `openspec list`
-5. 与问题相关的 M/D/K/R/I、changes 或持久化产物
+5. 与问题相关的 M/D/K/R/I、changes、change 内 Evidence 或持久化产物
 
 文件不存在时报告缺失，不创建模板。
 
@@ -34,6 +34,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 参考索引 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
 | 改进候选 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
 | 活跃变更 | `openspec/changes/` | OpenSpec 集成与 plan/act |
+| Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act`，按需创建 |
 | 深度分析 | `.claude/analysis/` | `openspec-explorer` |
 | 操作手册 | `.claude/runbooks/` | `openspec-docs-maintainer` |
 | 故障记录 | `.claude/incidents/` | `openspec-docs-maintainer` |
@@ -57,6 +58,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 - 当前状态或查询结果。
 - 活跃 change。
 - 证据路径。
+- 相关 iteration 要求的 Evidence 路径；未创建时说明 `none` 或不存在原因。
 - 后续应使用的 skill。
 
 ## 禁止

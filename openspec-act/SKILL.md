@@ -12,10 +12,12 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
 2. 读取 `.claude/docs/templates/change-iteration.md`。
 3. 找到最新且 `Plan Context` 为 `ready`、`Act Response` 为 `pending` 的迭代。
-4. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-5. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
-6. 修改产品代码前建立测试见证。
-7. Skill 完成不构成 Review、维护或归档授权。写入反馈后终止。
+4. 读取 `Persisted Evidence` 模式和全部 `required` 项。
+5. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
+6. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
+7. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
+8. 修改产品代码前建立测试见证。
+9. Skill 完成不构成 Review、维护或归档授权。写入反馈后终止。
 
 ## Gate 3：Test Witness
 
@@ -81,6 +83,21 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 |---|---|---|---|
 | 测试 | `<command>` | `<fresh output>` | PASS/FAIL |
 
+Gate 需要可验证依据，但不要求每轮都创建持久化 Evidence。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的文件。
+
+## 按需 Evidence
+
+Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/`。只有以下情况才创建：
+
+- Plan 把 Persisted Evidence 设为 `required`。
+- Act 需要保留长日志、特殊格式、难以复现的环境输出或意外故障信息。
+
+首次创建时生成 change 级 `evidence/README.md` 和 iteration 级 `README.md`。目录名与 iteration 文件名一致。结构化说明使用 Markdown，原始文本输出使用 `.log`，其他证据保留原格式。
+
+每项证据记录来源、结论、采集环境、结果和限制。Plan 要求的文件缺失时，对应 Gate 不得通过。Act 主动增加证据时，在 README 和 Act Response 中说明原因。失败、超时和跳过也是证据。
+
+Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录。Act Response 引用证据文件或编号，不复制长日志；状态变为 `reported` 后，不静默覆盖已有证据。
+
 ## Gate 6：Stop on Blocker
 
 遇到以下情况停止当前路径并记录：
@@ -111,6 +128,7 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
    - 文件和符号。
    - 与计划的偏差及原因。
    - 验证命令、输出和退出码。
+   - Persisted Evidence 路径和编号，或 `None required`。
    - 未解决问题。
    - 可选 commit 或 diff 引用。
 6. 将 `Act Response` 状态改为 `reported`。
@@ -125,6 +143,7 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 3. Gate 3-6 是否逐项通过或明确阻塞？
 4. 完成声明是否有新鲜输出？
 5. `Act Response` 是否与实际代码和证据一致？
+6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
 
 任一答案为否，不得声明完成。
 
@@ -135,6 +154,7 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 - Spec review 和 code review 结果。
 - 验证命令、输出摘录和退出码。
 - 当前 iteration 路径和 Act Response 状态。
+- Persisted Evidence 路径，或未创建的原因。
 - 跳过项、阻塞项和遗留 Minor 问题。
 
 然后终止。提醒用户：
@@ -155,3 +175,5 @@ Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题
 - 归档 change、清理分支或执行其他生命周期收尾。
 - 覆盖 Plan Context 或填写 Plan Review。
 - 把平台专属工具名写成流程前提。
+- 为每轮 iteration 强制创建空 Evidence 目录。
+- 把 change 内 Evidence 登记为 R 或单独执行 Artifact-Archive。

@@ -36,6 +36,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 10. 活跃文档的表达压缩交给 compressor。
 11. Init 全量迁移不重新判断信息价值；覆盖清单中的全部来源单元都必须保留。
 12. 旧经验文档只能完整 Archive，不得 Delete 或 Compress-Archive。
+13. Change Evidence 不执行 Artifact-Archive，不登记 R，随所属 change 由 OpenSpec 集成归档。
 
 ## Init 迁移归档
 
@@ -77,6 +78,7 @@ Archivist 只核验：
 - 表格行。
 - checkbox 任务。
 - Analysis、Runbook、Incident 与 R 索引。
+- 活跃 change 的 iteration、Act Response 和按需 Evidence。
 
 ### Step 3：交叉引用
 
@@ -152,6 +154,7 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 - OpenSpec 验证通过。
 - 源文档结构完整。
 - 详细产物移动后 R 路径已更新。
+- change 归档后，其已有 Evidence 目录和文件仍完整可定位。
 - Init 迁移的覆盖清单为 100%，且没有未映射或跳过单元。
 - migration carrier 保存每份活动经验源完整原文和来源 hash。
 - migration carrier 成功归档后，旧体系活动路径和活动引用均不存在。
@@ -168,6 +171,7 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 - 手工移动 OpenSpec change。
 - carrier 失败后删除源条目。
 - 把 Analysis、Runbook 或 Incident 放进 OpenSpec archive。
+- 脱离所属 change 单独移动、压缩或登记 Evidence。
 - 全量覆盖源文档。
 - 对 Init 迁移内容执行价值、时效或相关性筛选。
 - 删除或压缩归档旧经验文档。

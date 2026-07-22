@@ -28,6 +28,7 @@
 | 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
 | 改进 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
 | 活跃变更 | `openspec/changes/` | OpenSpec、plan、act |
+| Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act` |
 | 分析文档 | `.claude/analysis/` | `openspec-explorer` |
 | Runbook | `.claude/runbooks/` | `openspec-docs-maintainer` |
 | Incident | `.claude/incidents/` | `openspec-docs-maintainer` |
@@ -36,8 +37,8 @@
 
 - 新会话：CLAUDE → SNAPSHOT → tasks → active changes。
 - 新功能或 Bug：相关 project-model → decisions → knowledge → plan。
-- 实施：change 基线 → 最新 iteration → act。
-- 实现 Review：当前 iteration → 实际代码和证据 → plan。
+- 实施：change 基线 → 最新 iteration → 按需 Evidence → act。
+- 实现 Review：当前 iteration → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
 - 故障复盘：Incident → knowledge → decisions/model → improvements/change。
 - 查询：assistant。
@@ -46,8 +47,8 @@
 ## Skill 职责
 
 - `openspec-assistant`：只读。
-- `openspec-plan`：需求、BDD、计划、iteration 和实施 Review。
-- `openspec-act`：TDD、实施、验证和 Act Response。
+- `openspec-plan`：需求、BDD、计划、Evidence 要求、iteration 和实施 Review。
+- `openspec-act`：TDD、实施、验证、按需 Evidence 和 Act Response。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
@@ -93,6 +94,7 @@
 - 可重复或高风险操作写 Runbook，并登记 R。
 - 重要故障事件写 Incident，并登记 R。
 - 详细调查、实验和评估写 analysis，并登记 R。
+- iteration 的持久化日志和数据写 change 内 Evidence，不登记 R。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
@@ -116,6 +118,7 @@
 - Tasks 不保存未批准想法。
 - 普通测试失败不创建 Incident。
 - 一次性命令不创建 Runbook。
+- 普通验证结果写 Act Response；没有持久化要求时不创建 Evidence 占位目录。
 
 ## 行为约束
 
@@ -205,7 +208,10 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 - 每个 change 使用 `iterations/000-initial.md` 开始。
 - 后续轮次使用递增的零填充编号。
 - Plan 只写 `Plan Context` 和 `Plan Review`。
+- Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写 `Act Response`。
+- Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<NNN-title>/`。
+- Evidence 目录名与 iteration 文件名一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。
 - Act 不得创建下一轮 iteration。
 - Plan Review 必须检查代码和证据，不只读取 Act Response。
@@ -219,6 +225,8 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 - 关键输出。
 - 退出码或明确结果。
 - 证据支持的结论。
+
+Gate 必须有可验证依据，但持久化 Evidence 是按需产物。`none` 时由 Act Response 保存验证摘要；`required` 时对应文件缺失会阻塞 Gate。
 
 禁止使用“应该、大概、基本完成”替代证据。
 

@@ -59,6 +59,8 @@ HIGH 风险项必须获得用户确认。
 
 旧体系全量迁移开始后，旧来源文档和 migration carrier 不得压缩。分类迁移和旧文档完整归档交给 `openspec-init` 与 `openspec-archivist`。
 
+Change Evidence 保存采集时的原始输出和审计上下文，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件。
+
 ## Phase 4：VERIFY
 
 1. `git diff --check`
@@ -74,3 +76,4 @@ HIGH 风险项必须获得用户确认。
 - 改变任务状态、模型约束、决策结论或规则含义。
 - 为减少行数而删除未解决问题。
 - 压缩迁移来源、覆盖清单或 migration carrier。
+- 压缩或改写 change 内 Evidence。

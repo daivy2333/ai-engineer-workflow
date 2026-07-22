@@ -79,7 +79,7 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 - 按当前模板生成 `.claude/docs/templates/change-iteration.md`。
 
 SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻塞和 change 来源。
-迭代模板定义 Plan Context、Act Response 和 Plan Review 的共享格式。
+迭代模板定义 Plan Context、Act Response 和 Plan Review 的共享格式。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
 
@@ -150,6 +150,7 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - 迭代模板存在，Plan、Act 和 Review 区域职责分离。
+- iteration 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
 - Git diff 没有覆盖用户无关内容。
 
 ## 输出

@@ -102,6 +102,8 @@
 
 只记录检索元数据，不复制目标正文。条目使用 `Rxx`。
 
+Change Evidence 位于所属 change 内，由 change 提供索引和归档入口，不登记 R。
+
 类型可以是：
 
 - analysis

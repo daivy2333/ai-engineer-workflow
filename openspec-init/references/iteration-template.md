@@ -51,6 +51,12 @@
 
 <测试、检查命令和所需证据>
 
+**Persisted Evidence**
+
+- Mode: none | required
+
+<`none` 表示 Act Response 足以承载验证结果；`required` 时列出 Gate、文件、格式和通过条件>
+
 **Risks and Notes**
 
 <常见误判、回归风险和额外注意事项>
@@ -74,6 +80,10 @@
 **Verification Evidence**
 
 <命令或操作、关键输出、退出码和结论>
+
+**Persisted Evidence**
+
+<`None required`，或 `../evidence/<NNN-title>/README.md` 及证据编号>
 
 **Remaining Issues**
 
@@ -111,7 +121,9 @@
 ## 写入规则
 
 - Plan 创建文件并填写 `Plan Context`。
+- Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`。
 - Act 只填写 `Act Response`，完成后把其状态改为 `reported`。
+- `required` 时，Act 按自身 Evidence 格式创建对应目录；`none` 时不创建占位目录。
 - Plan Review 只填写 `Plan Review`。
 - 已交接的区域只追加所属角色预留内容，不改写历史。
 - Review 需要后续工作时创建下一编号文件。
