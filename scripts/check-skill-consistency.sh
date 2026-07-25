@@ -88,10 +88,25 @@ evidence_template="$ROOT/openspec-act/references/evidence-format.md"
 
 require_pattern 'iterations/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not create the initial iteration"
-require_pattern '检查实际代码、diff、Act Response 和计划要求的 Evidence' "$ROOT/openspec-plan/SKILL.md" \
+require_pattern '检查实际代码、diff、Act Response、Self-Review 和计划要求的 Evidence' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan review does not inspect implementation evidence"
 require_pattern '输出交接信息后终止' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan lacks an explicit termination boundary"
+require_pattern '调查当前实现' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not investigate the current implementation"
+require_pattern 'Current-State Evidence' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan lacks current-state evidence"
+require_pattern '不得把定位调用者、判断影响范围、选择测试策略或决定接口语义留给 Act' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan leaves implementation discovery to Act"
+require_pattern 'Gate 2：Execution Readiness' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan Gate 2 does not check execution readiness"
+require_pattern 'requirement、scenario、design、task、代码和测试形成链路' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan lacks end-to-end traceability"
+require_pattern 'PLAN-OMISSION.*PLAN-INVALID.*ACT-DEVIATION.*BASELINE-CHANGED.*NEW-EVIDENCE' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan review does not classify deviations"
 forbid_pattern '创建后把全局任务同步请求交给' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan still requests automatic global task sync"
 
@@ -99,6 +114,24 @@ require_pattern '只填写当前迭代的 `Act Response`' "$ROOT/openspec-act/SK
   "openspec-act does not own an explicit response section"
 require_pattern '未归档 change，未同步全局文档' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks a no-closeout handoff"
+require_pattern 'Gate 3：Plan Baseline and Test Witness' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act Gate 3 does not validate the plan baseline"
+require_pattern 'Act 不重新选择接口语义、状态所有权、架构或测试策略' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act can redesign an incomplete plan"
+require_pattern '重新读取任务契约并检查' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act Gate 4 lacks task-level self-review"
+require_pattern '审查完整 diff，不只复用逐任务结论' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act lacks final full-diff self-review"
+require_pattern 'Self-Review 检查结果、已修复发现和遗留 Minor 问题' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act response lacks self-review results"
+require_pattern 'pending → reported.*pending → blocked' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act lacks explicit response state transitions"
+require_pattern 'Blocker Handoff' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act lacks blocked handoff"
+require_pattern 'act-added / BLOCKED' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act lacks optional blocked evidence"
 forbid_pattern '使用 OpenSpec 集成归档 change' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act still archives changes"
 forbid_pattern '请求 `openspec-docs-maintainer`' "$ROOT/openspec-act/SKILL.md" \
@@ -112,6 +145,20 @@ require_pattern 'Plan Review' "$iteration_template" \
   "iteration template lacks Plan Review"
 require_pattern 'Mode: none \| required' "$iteration_template" \
   "iteration template does not declare optional persisted Evidence"
+require_pattern 'Current-State Evidence' "$iteration_template" \
+  "iteration template lacks current-state evidence"
+require_pattern 'Task Contracts' "$iteration_template" \
+  "iteration template lacks executable task contracts"
+require_pattern 'Gate 2 Readiness' "$iteration_template" \
+  "iteration template lacks Gate 2 readiness evidence"
+require_pattern 'Self-Review' "$iteration_template" \
+  "iteration template lacks Act self-review results"
+require_pattern 'Blocker Handoff' "$iteration_template" \
+  "iteration template lacks blocked handoff"
+require_pattern '状态改为 `blocked`' "$iteration_template" \
+  "iteration template lacks blocked response status"
+require_pattern 'Deviation Classification' "$iteration_template" \
+  "iteration template lacks deviation classification"
 require_pattern '不创建占位目录' "$iteration_template" \
   "iteration template can force empty Evidence directories"
 
@@ -121,6 +168,8 @@ require_pattern 'Evidence 不登记 R' "$evidence_template" \
   "Evidence template registers a redundant R entry"
 require_pattern '随 change 一起归档' "$evidence_template" \
   "Evidence template lacks change-coupled archival"
+require_pattern 'Plan 基线与实际不一致' "$evidence_template" \
+  "Evidence template lacks blocked plan-deviation evidence"
 
 require_pattern '默认使用 Act Response' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not default to inline response evidence"

@@ -42,7 +42,7 @@
 |---|---|
 | `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
 | `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
-| `openspec-plan` | BDD、计划、iteration 创建和实施反馈 Review |
+| `openspec-plan` | BDD、实现调查、可执行计划、iteration 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
 | `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
@@ -65,20 +65,27 @@ plan/act 维护当前 OpenSpec change
 ```text
 openspec-plan
   → Gate 1：需求与 BDD
-  → Gate 2：Requirements Traceability
+  → 调查实际代码、调用链、状态、测试和影响面
+  → 定义行为变化、任务契约和停止条件
+  → Gate 2：Execution Readiness
   → 声明 Persisted Evidence：none|required
   → 写入 iterations/000-initial.md
   → 终止，等待用户审计
 openspec-act
-  → Gate 3：测试见证
-  → Gate 4：Spec Review → Code Review
+  → Gate 3：计划基线与测试见证
+  → Gate 4：每任务 Spec Review → Code Review
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
+  → 计划偏差时写 blocked Response 和 Blocker Handoff
+  → 按需保存 act-added / BLOCKED Evidence
+  → Response 前重新审查完整 diff
+  → 修复计划内发现并重跑受影响 Gate
   → 按 Plan 要求或实际需要保存 change 内 Evidence
   → 填写 Act Response
   → 终止，等待用户审计
 openspec-plan
-  → 检查实际代码和证据
+  → 检查实际代码、blocked/reported Response 和证据
+  → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
   → 按需创建 001、002...
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾

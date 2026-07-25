@@ -47,8 +47,8 @@
 ## Skill 职责
 
 - `openspec-assistant`：只读。
-- `openspec-plan`：需求、BDD、计划、Evidence 要求、iteration 和实施 Review。
-- `openspec-act`：TDD、实施、验证、按需 Evidence 和 Act Response。
+- `openspec-plan`：需求、BDD、实现调查、可执行计划、Evidence 要求、iteration 和实施 Review。
+- `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence 和 Act Response。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
@@ -168,6 +168,17 @@
 
 输出场景草图：前置状态、动作、结果和失败边界。用户显式接受的缺口写入 proposal。
 
+## Plan 调查
+
+Plan 在制定任务前读取实际代码并记录：
+
+- 入口、目标符号、调用者和被调用者。
+- 数据流、状态变化、错误和并发边界。
+- 现有测试、验证命令和基线结果。
+- 当前行为、目标行为和影响范围。
+
+Plan 负责确定接口语义、状态所有权、测试策略和停止条件。影响实现的未知项阻塞 Gate 2，不留给 Act 决定。
+
 ## TDD
 
 铁律：`NO CHANGE WITHOUT TEST WITNESS`。
@@ -187,10 +198,10 @@
 
 ## Gate
 
-- Gate 1：需求、BDD、场景和 change 获批。
-- Gate 2：RTM 无 Missing，所有 Simplified 获批。
-- Gate 3：每个任务有测试见证。
-- Gate 4：先 spec review，后 code review。
+- Gate 1：需求、BDD、场景、范围和 change 获批。
+- Gate 2：调查、设计、任务、追踪和验证均达到执行就绪。
+- Gate 3：计划基线有效且每个任务有测试见证。
+- Gate 4：每个任务先 spec review，后 code review。
 - Gate 5：完成声明有新鲜证据。
 - Gate 6：阻塞即停；三次失败后反思。
 
@@ -208,13 +219,21 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 - 每个 change 使用 `iterations/000-initial.md` 开始。
 - 后续轮次使用递增的零填充编号。
 - Plan 只写 `Plan Context` 和 `Plan Review`。
+- Plan Context 包含 Current-State Evidence、行为变化、变更面、任务契约和停止条件。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写 `Act Response`。
+- Act 每个任务完成后执行 Gate 4，并在 Response 前重新审查完整 diff。
+- Act 修复计划范围内的问题；新设计或范围问题返回 Plan。
+- Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
+- Act Response 状态只允许 `pending → reported` 或 `pending → blocked`。
+- 计划偏差时，Act 写 Blocker Handoff，并按需保存 `act-added / BLOCKED` Evidence。
+- `blocked` iteration 不恢复执行；Plan Review 后创建新 iteration。
 - Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<NNN-title>/`。
 - Evidence 目录名与 iteration 文件名一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。
 - Act 不得创建下一轮 iteration。
-- Plan Review 必须检查代码和证据，不只读取 Act Response。
+- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。
+- Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据。
 - 有后续任务时创建新 iteration，不覆盖旧记录。
 
 ## 验证

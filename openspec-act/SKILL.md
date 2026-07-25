@@ -1,6 +1,6 @@
 ---
 name: openspec-act
-description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、两阶段 Review，并记录实现反馈。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
+description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、任务自检、全量 diff Review，并记录实现反馈。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
 ---
 
 # OpenSpec Act
@@ -19,15 +19,18 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 8. 修改产品代码前建立测试见证。
 9. Skill 完成不构成 Review、维护或归档授权。写入反馈后终止。
 
-## Gate 3：Test Witness
+## Gate 3：Plan Baseline and Test Witness
 
 每个任务开始前确认：
 
-- 已定位变更符号、调用者和影响范围。
-- 已有测试覆盖，或先建立测试。
+- Plan 已列出变更符号、调用者、影响范围和任务停止条件。
+- 实际代码仍符合 Plan 的 Current-State Evidence。
+- 计划指定的测试存在，或可按计划建立。
 - 已运行当前状态验证。
 - 新功能和 Bug 修复已观察到预期 RED。
 - 重构已观察到变更前 GREEN。
+
+计划基线失效、关键调用者遗漏或测试无法证明目标时，执行阻塞交接并返回 Plan。Act 不重新选择接口语义、状态所有权、架构或测试策略。
 
 铁律：`NO CHANGE WITHOUT TEST WITNESS`。
 
@@ -38,22 +41,38 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 1. 标记任务进行中。
 2. 建立 Gate 3 证据。
 3. 运行 RED → 验证 RED。
-4. 做满足当前任务的最小改动。
+4. 按任务执行契约做满足当前任务的最小改动。
 5. 运行 GREEN → 验证 GREEN。
 6. 必要时重构并保持 GREEN。
 7. 执行 Gate 4 和 Gate 5。
 8. Gate 5 通过后才能标记完成。
 
-不要修改计划范围外的代码。发现计划缺口时，在 `Act Response` 记录阻塞并终止；提醒用户调用 `openspec-plan`，不要自行扩展需求。
+不要修改计划范围外的代码。发现计划缺口、错误基线或停止条件时，执行阻塞交接并终止；提醒用户调用 `openspec-plan`，不要自行补充设计。
 
 ## Gate 4：Two-Stage Review
 
-严格按顺序执行：
+每个任务完成 GREEN 后，严格按顺序执行：
 
 1. Spec compliance review。
 2. Code quality review。
 
-Critical 和 Important 问题必须在进入下一任务前解决。Minor 问题可以记录，但不得伪装成已解决。
+Spec review 重新读取任务契约并检查：
+
+- requirement、scenario 和目标行为完整实现。
+- 计划列出的文件、符号、调用者和错误路径均已处理。
+- 不变量、兼容性和禁止修改项未被破坏。
+- RED 因目标行为缺失而失败，GREEN 能证明目标行为。
+- Gate 证据覆盖任务的通过条件。
+
+Code quality review 检查：
+
+- diff 没有计划外修改。
+- 错误、边界、状态和资源生命周期正确。
+- 没有新增警告、死代码、重复实现或无依据复杂度。
+- 测试不会因错误原因通过。
+- 命名和局部结构符合项目惯例。
+
+计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4。需要改变设计、范围或测试策略时，按 Gate 6 阻塞。Minor 问题可以记录，但不得伪装成已解决。
 
 ## Gate 5：Evidence-Based Verification
 
@@ -98,6 +117,8 @@ Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/`。只有以下
 
 Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录。Act Response 引用证据文件或编号，不复制长日志；状态变为 `reported` 后，不静默覆盖已有证据。
 
+计划偏差简单且可复现时，只在 Act Response 记录。需要保留长日志、复杂调用链、结构化数据或难复现输出时，创建 `act-added / BLOCKED` Evidence。
+
 ## Gate 6：Stop on Blocker
 
 遇到以下情况停止当前路径并记录：
@@ -105,6 +126,8 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 - 缺失依赖。
 - 当前状态验证失败且原因未知。
 - 计划无法覆盖任务。
+- 计划基线与实际代码不一致。
+- 实现需要新的接口、状态所有权、架构或测试策略选择。
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
@@ -115,28 +138,50 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 3. 判断应返回架构设计还是需求确认。
 4. 禁止开始第四次同类尝试。
 
+### 阻塞交接
+
+命中 Gate 6 时：
+
+1. 停止计划外修改，不回滚用户或既有工作。
+2. 记录发现偏差的 task、step 和 Gate。
+3. 对比 Plan 预期与实际情况，并说明影响。
+4. 列出已完成、部分完成和未开始的任务。
+5. 记录修改文件、工作区状态和已通过的 Gate。
+6. 按需保存 `act-added / BLOCKED` Evidence；简单偏差写 `None required`。
+7. 填写 Act Response 的 `Blocker Handoff` 和证据引用。
+8. 将 Act Response 状态从 `pending` 改为 `blocked`。
+9. 终止并提醒用户调用 `openspec-plan`。
+
+状态流转只有 `pending → reported` 和 `pending → blocked`。`blocked` iteration 不得由 Act 恢复执行，也不得改成 `reported`。
+
 ## Phase 4：REPORT
 
-全部任务完成后：
+全部任务正常完成后：
 
-1. 运行完整验证套件。
-2. 完成两阶段 Review。
-3. 验证 OpenSpec change。
-4. 更新 change 内本轮任务状态。
-5. 只填写当前迭代的 `Act Response`：
+1. 重新读取 Plan Context、requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
+2. 审查完整 diff，不只复用逐任务结论。
+3. 检查跨任务交互、遗漏实现、计划外修改、回归风险和测试有效性。
+4. 修复计划范围内的 Critical 和 Important 问题。
+5. 对每项修复重跑受影响的 Gate 4 和 Gate 5。
+6. 新设计、范围或测试策略问题按 Gate 6 阻塞并返回 Plan。
+7. 运行完整验证套件。
+8. 验证 OpenSpec change。
+9. 更新 change 内本轮任务状态。
+10. 只填写当前迭代的 `Act Response`：
    - 实际改动。
    - 文件和符号。
    - 与计划的偏差及原因。
+   - Self-Review 检查结果、已修复发现和遗留 Minor 问题。
    - 验证命令、输出和退出码。
    - Persisted Evidence 路径和编号，或 `None required`。
    - 未解决问题。
    - 可选 commit 或 diff 引用。
-6. 将 `Act Response` 状态改为 `reported`。
-7. 终止并等待用户审计。
+11. 将 `Act Response` 状态改为 `reported`。
+12. 终止并等待用户审计。
 
 不得填写 `Plan Review`，不得创建下一轮 iteration。
 
-## 完成前五问
+## 完成前检查
 
 1. 每个计划任务是否都有状态和证据？
 2. 所有跳过步骤是否记录原因？
@@ -144,6 +189,8 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 4. 完成声明是否有新鲜输出？
 5. `Act Response` 是否与实际代码和证据一致？
 6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
+7. 是否重新读取计划并审查完整 diff？
+8. Self-Review 是否没有未解决的 Critical 或 Important 问题？
 
 任一答案为否，不得声明完成。
 
@@ -151,11 +198,13 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 
 - 已完成任务。
 - 修改文件。
-- Spec review 和 code review 结果。
+- 任务级和全量 diff Self-Review 结果。
+- 已修复发现和遗留 Minor 问题。
 - 验证命令、输出摘录和退出码。
 - 当前 iteration 路径和 Act Response 状态。
+- `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
 - Persisted Evidence 路径，或未创建的原因。
-- 跳过项、阻塞项和遗留 Minor 问题。
+- 跳过项和阻塞项。
 
 然后终止。提醒用户：
 
@@ -169,11 +218,15 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 - 无测试见证修改代码。
 - 用“应该通过”代替运行结果。
 - Spec review 前做 code quality review。
+- 只依赖逐任务 Review，跳过 Response 前的完整 diff Review。
+- Self-Review 存在未解决的 Critical 或 Important 问题时标记 `reported`。
+- 把 `blocked` iteration 恢复为 `pending` 或改成 `reported`。
 - 三次失败后继续盲试。
 - 修改全局任务、SNAPSHOT 或知识文档。
 - 调用 Maintainer、Plan 或 Archivist。
 - 归档 change、清理分支或执行其他生命周期收尾。
 - 覆盖 Plan Context 或填写 Plan Review。
+- 自行补全 Plan 遗漏的设计或扩大变更面。
 - 把平台专属工具名写成流程前提。
 - 为每轮 iteration 强制创建空 Evidence 目录。
 - 把 change 内 Evidence 登记为 R 或单独执行 Artifact-Archive。

@@ -10,6 +10,7 @@ openspec/changes/<change>/evidence/
 └── <NNN-title>/
     ├── README.md
     ├── implementation.md
+    ├── blocker.md
     ├── test.log
     └── <其他实际证据文件>
 ```
@@ -39,12 +40,31 @@ openspec/changes/<change>/evidence/
 
 `Origin` 使用 `plan-required`、`act-added` 或 `user-required`。每项证据写明采集方式、结果和适用限制；失败、超时和跳过同样保留。
 
+## 阻塞证据
+
+计划偏差简单且可复现时，只写 Act Response。以下情况保存 `blocker.md` 或原始输出：
+
+- 输出较长。
+- 涉及复杂调用链或多文件状态。
+- 需要结构化数据支持判断。
+- 问题难以复现。
+
+`blocker.md` 记录发现位置、Plan 预期、实际情况、影响、部分工作、工作区状态和恢复条件。README 使用：
+
+```markdown
+| ID | Origin | Claim | Artifact | Result |
+|---|---|---|---|---|
+| EV-<NNN>-01 | act-added | Plan 基线与实际不一致 | [blocker.md](blocker.md) | BLOCKED |
+```
+
+Act Response 引用证据编号。没有保存需要时写 `None required`，不创建 Evidence 目录。
+
 ## 规则
 
 - Plan 只声明证据要求，不生成实际证据。
 - `required` 项缺失时，对应 Gate 不得通过。
 - Act 可保存计划外证据，但必须在 README 和 Act Response 中说明原因。
 - Act Response 引用具体文件或证据编号，不复制长日志。
-- Response 标记 `reported` 后，不静默覆盖已有证据；重新执行时新增文件或修正记录。
+- Response 标记 `reported` 或 `blocked` 后，不静默覆盖已有证据。
 - 敏感信息必须脱敏，并注明脱敏范围。
 - Evidence 不登记 R，不单独 Artifact-Archive，随 change 一起归档。
