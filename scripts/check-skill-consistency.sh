@@ -287,6 +287,25 @@ require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
 require_pattern '不记录项目现状' "$ROOT/README.md" \
   "README does not define CLAUDE as normative-only"
 
+omo_ulw="$ROOT/omo-ulw/SKILL.md"
+[[ -f "$omo_ulw" ]] || fail "omo-ulw skill is missing"
+require_pattern '`sisyphus`.*协调当前 OpenSpec 阶段' "$omo_ulw" \
+  "omo-ulw does not assign OpenSpec coordination"
+require_pattern '`explore`.*搜索本地代码' "$omo_ulw" \
+  "omo-ulw does not assign local investigation"
+require_pattern '`metis`.*查找需求、计划和任务契约的缺口' "$omo_ulw" \
+  "omo-ulw does not assign plan gap analysis"
+require_pattern '`hephaestus`.*边界明确的复杂实现' "$omo_ulw" \
+  "omo-ulw does not constrain deep implementation"
+require_pattern '`ulw` 不得把 Plan 完成视为 Act 授权' "$omo_ulw" \
+  "omo-ulw breaks the Plan-to-Act authorization boundary"
+require_pattern '不使用 OMO 的持久化状态替代 change、iteration、Evidence 或 Response' "$omo_ulw" \
+  "omo-ulw can replace OpenSpec persistence with OMO state"
+require_pattern 'Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者' "$omo_ulw" \
+  "omo-ulw does not protect single-writer OpenSpec artifacts"
+forbid_pattern 'GLM|DeepSeek|MiniMax|ark-code|deepseek-v|minimax-m' "$omo_ulw" \
+  "omo-ulw hard-codes a model name"
+
 if (( errors > 0 )); then
   echo "$errors consistency check(s) failed" >&2
   exit 1

@@ -1,6 +1,6 @@
 # AI Engineer Workflow Skills
 
-一组可复用的 `SKILL.md` 工作流，覆盖 OpenSpec、Markdown 写作、知识讲授、OS、驱动、QEMU 和真机调试。
+一组可复用的 `SKILL.md` 工作流，覆盖 OpenSpec、OMO 模型编排、Markdown 写作、知识讲授、OS、驱动、QEMU 和真机调试。
 
 ## 支持范围
 
@@ -48,6 +48,7 @@
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
+| `omo-ulw` | 在 OMO ultrawork 下为 OpenSpec 阶段分配代理、Category 和模型 |
 
 职责规则：
 
@@ -132,7 +133,7 @@ Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；P
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 16 个技能。
+当前仓库共 17 个技能。
 
 OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
