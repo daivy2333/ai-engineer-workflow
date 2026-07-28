@@ -72,7 +72,7 @@ Archivist 只核验：
 
 按编号和结构识别条目：
 
-- `Mxx/Dxx/Kxx/Rxx/Ixx/Txx`
+- `Mxx/Dxx/Kxx/Rxx/Ixx/MSxx/Txx`
 - 旧 `Axx/Lxx/Oxx` 和 Legacy ID。
 - 决策、模型、知识和改进标题。
 - 表格行。

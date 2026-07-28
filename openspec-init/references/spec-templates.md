@@ -176,10 +176,14 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 
 `tasks.md` 记录：
 
+- milestone roadmap，使用 `MSxx`。
+- 每个 milestone 的成果、工作量、稳定基线、验证边界、诊断边界和依赖。
 - 进行中。
 - 已承诺待办。
 - 阻塞。
 - 最近完成。
 - 与 OpenSpec changes 的同步规则。
+
+Milestone 与 change 数量不绑定。路线规划由 `openspec-milestone-planner` 负责，运行状态由 `openspec-docs-maintainer` 按用户指令同步。
 
 未批准的想法不进入 tasks。CLAUDE 不记录项目事实。

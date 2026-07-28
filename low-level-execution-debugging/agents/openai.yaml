@@ -1,0 +1,4 @@
+interface:
+  display_name: "Low-Level Execution Debugging"
+  short_description: "Trace low-level execution across ELF, addresses, and disassembly"
+  default_prompt: "Use $low-level-execution-debugging to reconcile this runtime PC and control flow with the exact binary."

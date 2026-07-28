@@ -29,6 +29,7 @@ description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。
 |---|---|---|
 | `openspec-assistant` | `sisyphus` | `explore`、`librarian` |
 | `openspec-explorer` | `sisyphus` | `explore`、`librarian`、`oracle`、`multimodal-looker` |
+| `openspec-milestone-planner` | `sisyphus` | `prometheus`、`metis`、`momus`、`oracle` |
 | `openspec-plan` | `sisyphus` | `prometheus`、`explore`、`librarian`、`metis`、`momus`、`oracle` |
 | `openspec-act` | `sisyphus` | `atlas`、`hephaestus`、`sisyphus-junior`、`explore` |
 | Act Self-Review | `sisyphus` | `momus`、`oracle`、`sisyphus-junior` |
@@ -38,7 +39,7 @@ description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。
 | `openspec-archivist` | `sisyphus` | `explore`、`oracle`、`sisyphus-junior` |
 | `openspec-init` | `sisyphus` | `explore`、`librarian`、`oracle`、`sisyphus-junior` |
 
-`openspec-plan` 仍负责 change、Task Contract 和 Gate 2。
+`openspec-milestone-planner` 负责 `MSxx` 路线，不创建 change。`openspec-plan` 仍负责 change、Task Contract 和 Gate 2。
 
 ## 编排顺序
 
@@ -69,7 +70,7 @@ description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。
 - 多任务实施只在依赖关系明确时交给 `atlas` 协调。
 - 未闭合设计不得交给 `atlas`、`hephaestus` 或 `sisyphus-junior` 自行决定。
 - 允许并行的只有无共享写入且依赖为空的调查任务。
-- Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者。
+- Milestone roadmap、Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者。
 - 代理升级不能代替用户授权、Gate、停止条件或新鲜证据。
 - 同一问题反复失败时遵守所属 skill 的三次失败规则，不靠更换代理继续盲试。
 

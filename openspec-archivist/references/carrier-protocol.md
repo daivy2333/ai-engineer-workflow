@@ -64,7 +64,7 @@ Proposal 映射表至少包含：
 
 Carrier spec 保留：
 
-- 原 M/D/K/R/I/T 编号和 Legacy ID。
+- 原 M/D/K/R/I/MS/T 编号和 Legacy ID。
 - 旧 carrier 继续保留 A/L/R/O/T，不改写历史。
 - Archive 的完整内容。
 - Compress-Archive 的关键事实、状态和替代方案。

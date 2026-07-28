@@ -42,6 +42,7 @@
 |---|---|
 | `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
 | `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
+| `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
 | `openspec-plan` | BDD、实现调查、可执行计划、iteration 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
 | `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾 |
@@ -55,6 +56,7 @@
 ```text
 assistant 只读
 explorer 只写 analysis
+milestone-planner 只规划 MSxx 路线
 maintainer 写状态、项目记忆和持久化产物
 compressor 只改表达密度
 archivist 只处理生命周期
@@ -64,6 +66,13 @@ plan/act 维护当前 OpenSpec change
 开发流程：
 
 ```text
+openspec-milestone-planner
+  → 读取项目目标、状态和已有分析
+  → 建立阶段成果、依赖、稳定基线和故障边界
+  → 聚合过细阶段，拆分过重阶段
+  → 用户批准后写入 tasks 的 MSxx
+  → 终止，不创建 change
+
 openspec-plan
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
@@ -105,6 +114,7 @@ openspec-docs-maintainer
 | Knowledge | 已验证、非显然且可复用的结论 | `Kxx` |
 | References | 只保存检索元数据 | `Rxx` |
 | Improvements | 有证据但未承诺实施的问题 | `Ixx` |
+| Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
 | Runbooks | 可重复或高风险操作 | `.claude/runbooks/` |
@@ -120,6 +130,7 @@ Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；P
 | Skill | 职责 |
 |---|---|
 | `os-kernel-development` | 通用内核开发、评审与跨子系统调试 |
+| `low-level-execution-debugging` | 对照 ELF、运行地址、反汇编和实际控制流排查底层故障 |
 | `async-driver-development` | IRQ、DMA、异步队列、wakeup 和 completion |
 | `no-std-rust-debugging` | no_std Rust 构建、链接、MMIO、trap 和 ELF |
 | `qemu-kernel-debugging` | QEMU 启动、设备、IRQ、回归和证据边界 |
@@ -130,10 +141,11 @@ Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；P
 | Skill | 职责 |
 |---|---|
 | `bettermd` | 编写和修改高信息密度 Markdown |
+| `grilling` | 逐项质询计划、决策或想法，确认共同理解后停止 |
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 17 个技能。
+当前仓库共 20 个技能。
 
 OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
@@ -183,6 +195,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 项目事实和验证命令写入 SNAPSHOT，任务状态写入 tasks。
+- milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的多轮沟通写入 `iterations/NNN-title.md`。
 - change 的按需证据写入 `evidence/<NNN-title>/`，目录名与 iteration 对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。

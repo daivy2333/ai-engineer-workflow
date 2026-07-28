@@ -85,6 +85,9 @@
 
 **tasks**
 
+- `planned`、`ready`、`active` 和 `blocked` milestone：Keep。
+- 已完成 milestone：按时间和引用判断 Keep 或 Archive。
+- 被替代 milestone：保留替代编号；按引用判断 Keep 或 Archive。
 - 进行中和阻塞项：Keep。
 - 近期完成：Keep。
 - 长期完成：Archive。
@@ -159,7 +162,7 @@
 
 ## 条目边界
 
-- 编号注释到下一个同类编号。
+- 编号注释到下一个同类编号，包括 `MSxx`。
 - 同级条目标题到下一个同级标题。
 - 表格中每个数据行为独立条目。
 - checkbox 每行为独立任务。

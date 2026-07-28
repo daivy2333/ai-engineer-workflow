@@ -27,7 +27,8 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 |---|---|---|
 | 公共规则 | `CLAUDE.md` | `openspec-init` 或人工 |
 | 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
-| 全局任务 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
+| Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
+| 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
 | 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
 | 决策记录 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
 | 项目知识 | `openspec/specs/knowledge/spec.md` | `openspec-docs-maintainer` |
@@ -44,6 +45,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 请求 | Skill |
 |---|---|
 | 初始化规则和目录 | `openspec-init` |
+| 规划、拆分、合并或重排 milestones | `openspec-milestone-planner` |
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、生成下一轮上下文 | `openspec-plan` |

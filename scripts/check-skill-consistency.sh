@@ -77,6 +77,32 @@ if rg -n 'assistant (同步|更新|维护|写入|负责日常)' "$ROOT"/openspec
   fail "openspec-assistant is described as a writer"
 fi
 
+grilling_skill="$ROOT/grilling/SKILL.md"
+[[ -f "$grilling_skill" ]] || fail "grilling skill is missing"
+require_pattern 'Ask exactly one decision question per turn' "$grilling_skill" \
+  "grilling does not enforce one-question turns"
+require_pattern 'Investigate facts through available files and tools' "$grilling_skill" \
+  "grilling asks users for discoverable facts"
+require_pattern 'decision register' "$grilling_skill" \
+  "grilling does not retain resolved decisions"
+require_pattern 'After confirmation, do not act automatically' "$grilling_skill" \
+  "grilling can start another workflow without a new request"
+
+execution_debug_skill="$ROOT/low-level-execution-debugging/SKILL.md"
+[[ -f "$execution_debug_skill" ]] || fail "low-level-execution-debugging skill is missing"
+require_pattern 'Build an address ledger' "$execution_debug_skill" \
+  "low-level execution debugging lacks address reconciliation"
+require_pattern 'Compare runtime bytes at PC with bytes from the exact artifact' "$execution_debug_skill" \
+  "low-level execution debugging does not reconcile runtime bytes"
+require_pattern 'Do not trust a debugger session until its symbols match the running image' "$execution_debug_skill" \
+  "low-level execution debugging permits stale symbols"
+require_pattern 'JTAG and OpenOCD prove the attached target state' "$execution_debug_skill" \
+  "low-level execution debugging lacks hardware probe boundaries"
+for reference in address-reconciliation debugger-evidence failure-patterns architecture-checks; do
+  [[ -f "$ROOT/low-level-execution-debugging/references/$reference.md" ]] || \
+    fail "low-level execution debugging reference '$reference' is missing"
+done
+
 if rg -n 'TaskCreate|TaskUpdate|AskUserQuestion|TaskList|Agent 工具' "$ROOT"/openspec-*/SKILL.md >/dev/null 2>&1; then
   fail "OpenSpec main skills contain platform-specific task APIs"
 fi
@@ -209,6 +235,27 @@ require_pattern '\.claude/incidents/' "$maintainer_skill" \
 [[ -f "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
   fail "runbook and incident templates are missing"
 
+milestone_skill="$ROOT/openspec-milestone-planner/SKILL.md"
+[[ -f "$milestone_skill" ]] || fail "openspec-milestone-planner skill is missing"
+require_pattern '聚合审计' "$milestone_skill" \
+  "milestone planner does not merge milestones that are too small"
+require_pattern '拆分审计' "$milestone_skill" \
+  "milestone planner does not split milestones that are too large"
+require_pattern '不创建 OpenSpec change' "$milestone_skill" \
+  "milestone planner can create changes"
+require_pattern '不要求 Explorer、Plan、Act 或 Maintainer 生成专用交接' "$milestone_skill" \
+  "milestone planner couples other skills to its workflow"
+require_pattern 'Milestone 与 change 不绑定数量' "$milestone_skill" \
+  "milestone planner forces a milestone-to-change mapping"
+require_pattern 'MSxx' "$ROOT/openspec-init/references/claude-template.md" \
+  "CLAUDE template lacks milestone routing"
+require_pattern 'MSxx' "$ROOT/openspec-compressor/SKILL.md" \
+  "compressor does not preserve milestone IDs"
+for skill in openspec-explorer openspec-plan openspec-act; do
+  forbid_pattern 'openspec-milestone-planner|MSxx' "$ROOT/$skill/SKILL.md" \
+    "$skill is coupled to milestone planning"
+done
+
 init_skill="$ROOT/openspec-init/SKILL.md"
 for path in project-model decisions knowledge references improvements; do
   require_pattern "openspec/specs/$path/spec\\.md" "$init_skill" \
@@ -303,6 +350,8 @@ require_pattern '不使用 OMO 的持久化状态替代 change、iteration、Evi
   "omo-ulw can replace OpenSpec persistence with OMO state"
 require_pattern 'Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者' "$omo_ulw" \
   "omo-ulw does not protect single-writer OpenSpec artifacts"
+require_pattern 'Milestone roadmap、Plan、Act Response、Plan Review' "$omo_ulw" \
+  "omo-ulw does not protect milestone roadmap ownership"
 forbid_pattern 'GLM|DeepSeek|MiniMax|ark-code|deepseek-v|minimax-m' "$omo_ulw" \
   "omo-ulw hard-codes a model name"
 

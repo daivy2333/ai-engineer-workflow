@@ -15,7 +15,7 @@
 | `.claude/docs/optimization.md` | improvements |
 | `openspec/specs/optimization/spec.md` | improvements |
 | `.claude/docs/rules.md` | CLAUDE |
-| 旧 tasks | 新 tasks、change 或其他匹配类型 |
+| 旧 tasks | milestone roadmap、新 tasks、change 或其他匹配类型 |
 | 已归档的旧 carrier | 按内容进入全部匹配类型，历史 carrier 保持不变 |
 
 表中路径是常见来源，不是迁移白名单。还要沿旧文档地图、活动引用、归档指引和历史 carrier 枚举其他旧体系文档。表中目标也不是限制；一个来源单元包含多类信息时，拆分到多个目标。
@@ -44,6 +44,7 @@
 ## 信息分类
 
 - 当前事实进入 SNAPSHOT。
+- 项目路线和阶段基线进入 milestone roadmap。
 - 已承诺工作进入 tasks 或 change。
 - 跨模块约束进入 project-model。
 - 选择、原因和替代方案进入 decisions。
@@ -85,7 +86,7 @@ skipped = 0
 
 ## 编号迁移
 
-新活动编号为 `Mxx/Dxx/Kxx/Rxx/Ixx/Txx`。
+新活动编号为 `Mxx/Dxx/Kxx/Rxx/Ixx/MSxx/Txx`。
 
 - 旧 `Axx` 按内容拆分为 M、D 或其他匹配类型。
 - 旧 `Lxx` 按内容拆分为 K、R、Runbook、Incident 或其他匹配类型。

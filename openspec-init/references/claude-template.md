@@ -20,7 +20,8 @@
 |---|---|---|
 | 公共规则 | `CLAUDE.md` | 人工或 `openspec-init` |
 | 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
-| 全局任务 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
+| Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
+| 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
 | 迭代模板 | `.claude/docs/templates/change-iteration.md` | `openspec-init` |
 | 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
 | 决策 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
@@ -42,11 +43,13 @@
 - 操作任务：相关 Runbook。
 - 故障复盘：Incident → knowledge → decisions/model → improvements/change。
 - 查询：assistant。
+- 路线规划：milestone-planner。
 - 日常文档写入：docs-maintainer。
 
 ## Skill 职责
 
 - `openspec-assistant`：只读。
+- `openspec-milestone-planner`：规划 `MSxx` 路线，平衡工作量、验证边界和诊断边界；不创建 change。
 - `openspec-plan`：需求、BDD、实现调查、可执行计划、Evidence 要求、iteration 和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence 和 Act Response。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾。
@@ -57,6 +60,7 @@
 ## 阶段边界
 
 - Skill 完成不构成下一阶段授权。
+- Milestone Planner 写入 roadmap 后终止，不调用 Explorer、Plan、Act 或 Maintainer。
 - Plan 完成后终止，等待用户审计和 Act 指令。
 - Act 写入反馈后终止，不归档、不维护全局状态。
 - Plan Review 后终止，不自动调用 Act 或 Maintainer。
@@ -85,6 +89,7 @@
 ## 信息路由
 
 - 当前短期事实写 SNAPSHOT。
+- 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
 - 已承诺工作写 tasks 或 OpenSpec change。
 - 当前跨模块约束写 project-model，编号 `Mxx`。
 - 有替代方案的长期选择写 decisions，编号 `Dxx`。
@@ -115,6 +120,7 @@
 - Knowledge 不保存单纯路径、API 签名、链接或未验证猜测。
 - Reference 不复制目标正文。
 - Improvement 只保存未承诺工作；批准后创建 change 并标记 `promoted`。
+- Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
 - Tasks 不保存未批准想法。
 - 普通测试失败不创建 Incident。
 - 一次性命令不创建 Runbook。

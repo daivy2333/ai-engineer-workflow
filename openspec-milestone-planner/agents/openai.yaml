@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenSpec Milestone Planner"
+  short_description: "规划工作量适中且可独立验证、排障与维护的项目里程碑路线"
+  default_prompt: "Use $openspec-milestone-planner to turn the project goal into a balanced, diagnosable milestone roadmap."

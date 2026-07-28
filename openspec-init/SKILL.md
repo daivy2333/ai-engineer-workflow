@@ -78,7 +78,7 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 - 创建或合并 `.claude/docs/tasks.md`。
 - 按当前模板生成 `.claude/docs/templates/change-iteration.md`。
 
-SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻塞和 change 来源。
+SNAPSHOT 记录当前项目事实。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
 迭代模板定义 Plan Context、Act Response 和 Plan Review 的共享格式。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
@@ -138,6 +138,7 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
 - maintainer 是日常状态和知识写入者。
+- milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/D/K/R/I` 编号。
 - 新项目不创建 architecture、learned 或 optimization spec。
 - 升级项目的全部旧经验单元已映射并验证，覆盖率为 100%。
@@ -150,6 +151,7 @@ SNAPSHOT 记录当前项目事实。tasks 记录全局进行中、待办、阻�
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - 迭代模板存在，Plan、Act 和 Review 区域职责分离。
+- tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
 - iteration 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
 - Git diff 没有覆盖用户无关内容。
 

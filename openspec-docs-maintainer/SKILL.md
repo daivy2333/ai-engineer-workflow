@@ -1,6 +1,6 @@
 ---
 name: openspec-docs-maintainer
-description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project model、decisions、knowledge、references、improvements、runbooks 和 incidents，或同步、收尾、归档指定 change；也接收 openspec-explorer 文档模式发出的限定 R 登记请求。
+description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project model、decisions、knowledge、references、improvements、runbooks 和 incidents，或同步、收尾、归档指定 change；也接收 openspec-explorer 文档模式发出的限定 R 登记请求。
 ---
 
 # OpenSpec Docs Maintainer
@@ -13,7 +13,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 
 | 文档 | 编号 |
 |---|---|
-| `.claude/docs/tasks.md` | `Txx` |
+| `.claude/docs/tasks.md` | `Txx`；已有 `MSxx` 的状态和 change 引用 |
 | `.claude/docs/SNAPSHOT.md` | 无 |
 | `openspec/specs/project-model/spec.md` | `Mxx` |
 | `openspec/specs/decisions/spec.md` | `Dxx` |
@@ -37,6 +37,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 10. Explorer 自动请求只授权分析文档 R 登记，不授权其他维护。
 11. 每项信息只有一个权威位置；其他文档使用编号或路径引用。
 12. Change Evidence 属于 change，不登记 R，也不作为独立持久化产物维护。
+13. `MSxx` 的目标、范围、依赖、验证和诊断边界由 `openspec-milestone-planner` 规划；Maintainer 只同步已有 milestone 的运行状态和 change 引用。
 
 ## 工作流
 
@@ -51,6 +52,7 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、tasks、project
 ### 2. UPDATE
 
 - 任务：维护进行中、待办、阻塞和最近完成，并保留 change 来源。
+- Milestone 状态：按用户指令同步 `active`、`blocked`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
 - 快照：根据 Git 状态和关键目录更新当前状态。
 - 模型：记录当前有效的跨模块不变量、范围、证据和状态。
 - 决策：记录选择、原因、替代方案、影响、状态和关联模型。
@@ -117,6 +119,7 @@ Analysis、Runbook 或 Incident：
 - 借 Explorer 自动登记修改 R 以外的文档。
 - 把单纯路径、API 签名或未验证猜测写入 K。
 - 把已承诺工作继续作为活跃 I 保留。
+- 创建、拆分、合并或重排 `MSxx`。
 - 在 R 中复制目标文档正文。
 - 为普通测试失败创建 Incident。
 - 为一次性命令创建 Runbook。
