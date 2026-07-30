@@ -1,6 +1,6 @@
 ---
 name: omo-ulw
-description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。用于运行 OpenSpec 的查询、探索、计划、实施、Review、维护、压缩、初始化或归档阶段时，借用 OMO 的代理分工能力，同时保持原有 Gate、授权、证据和持久化职责不变。
+description: 在 OMO ultrawork 模式下按需为 OpenSpec 工作分配代理。用于运行查询、探索、计划、实施、Review、经验记录、维护、压缩、初始化或归档阶段时，以少量代理补充调查、判断和复杂实现，同时保持原有 Gate、授权、证据和持久化职责不变。
 ---
 
 # OMO ULW
@@ -11,45 +11,40 @@ description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。
 
 | Agent | 职责 | 限制 |
 |---|---|---|
-| `sisyphus` | 协调当前 OpenSpec 阶段，分派任务并收集结果 | 不跨越阶段授权 |
-| `prometheus` | 提供计划建议 | 不创建或替代 OpenSpec 权威计划 |
+| `sisyphus` | 持有当前阶段，执行普通工作，按需分派并验收结果 | 不跨越阶段授权，不把最终责任交给子代理 |
 | `explore` | 搜索本地代码、调用链、测试和配置 | 不作设计决定 |
-| `librarian` | 查询外部文档、上游实现和版本事实 | 不把外部模式当作项目事实 |
-| `metis` | 查找需求、计划和任务契约的缺口 | 不写最终计划 |
-| `momus` | 检查计划是否可执行、引用是否有效 | 不替代 Plan Review |
 | `oracle` | 处理架构、复杂偏差和高风险判断 | 只提供建议，不接管状态 |
-| `atlas` | 按已批准的任务顺序协调实现 | 不使用 OMO 状态替代 iteration |
-| `hephaestus` | 完成边界明确的复杂实现或调试 | 不自行改变设计、范围或测试策略 |
-| `sisyphus-junior` | 完成局部修改、验证和机械步骤 | 不处理未闭合任务 |
-| `multimodal-looker` | 读取截图、图表、PDF 和其他视觉证据 | 不单独作出验收结论 |
+| `hephaestus` | 完成已有明确契约的复杂实现或深度调试 | 不解释需求，不扩大范围，不改变设计或验收策略 |
 
-## OpenSpec 分工
+`sisyphus` 是默认执行者。小型、机械或上下文紧密的工作由它完成，不为使用代理而委派。
 
-| Skill 或阶段 | 所有者 | 可调用代理 |
+`sisyphus` 决定为什么做、做什么和何时整体完成。`hephaestus` 只决定如何完成一个封闭实现单元。目标、范围、约束和独立验收方式都明确后，才能调用它。
+
+`hephaestus` 可以修改同一目标下的多个文件，也可以补充测试和运行验证。需要改变 requirement、设计、milestone、change、iteration 或验收标准时，立即停止并返回证据。
+
+## 按需分工
+
+下表是弱映射，不是固定调用链。
+
+| 工作类型 | 默认所有者 | 按需调用 |
 |---|---|---|
-| `openspec-assistant` | `sisyphus` | `explore`、`librarian` |
-| `openspec-explorer` | `sisyphus` | `explore`、`librarian`、`oracle`、`multimodal-looker` |
-| `openspec-milestone-planner` | `sisyphus` | `prometheus`、`metis`、`momus`、`oracle` |
-| `openspec-plan` | `sisyphus` | `prometheus`、`explore`、`librarian`、`metis`、`momus`、`oracle` |
-| `openspec-act` | `sisyphus` | `atlas`、`hephaestus`、`sisyphus-junior`、`explore` |
-| Act Self-Review | `sisyphus` | `momus`、`oracle`、`sisyphus-junior` |
-| Plan Review | `sisyphus` | `explore`、`momus`、`oracle` |
-| `openspec-docs-maintainer` | `sisyphus` | `sisyphus-junior`、`explore` |
-| `openspec-compressor` | `sisyphus` | `sisyphus-junior`、`momus` |
-| `openspec-archivist` | `sisyphus` | `explore`、`oracle`、`sisyphus-junior` |
-| `openspec-init` | `sisyphus` | `explore`、`librarian`、`oracle`、`sisyphus-junior` |
+| 查询、维护和压缩 | `sisyphus` | 缺少本地事实时调用 `explore` |
+| 项目探索 | `sisyphus` | 本地调查调用 `explore`；高风险架构结论调用 `oracle` |
+| Milestone 和 change 规划 | `sisyphus` | 核对本地事实调用 `explore`；重大取舍调用 `oracle` |
+| Act | `sisyphus` | 封闭的复杂实现调用 `hephaestus`；调查调用 `explore`；高风险偏差调用 `oracle` |
+| 经验记录 | `sisyphus` | 只使用已有证据；证据不足时停止 |
+| Review、初始化和归档 | `sisyphus` | 证据核对调用 `explore`；高风险判断调用 `oracle` |
 
-`openspec-milestone-planner` 负责 `MSxx` 路线，不创建 change。`openspec-plan` 仍负责 change、Task Contract 和 Gate 2。
+各 OpenSpec skill 保持原有职责。代理只补充执行能力，不成为技能之间的新交接要求。
+
 
 ## 编排顺序
 
 1. 加载当前阶段所属的 OpenSpec skill。
-2. 由 `sisyphus` 保持该 skill 的职责、状态和写入边界。
-3. 先调用 `explore` 或 `librarian` 建立依据。
-4. 计划阶段调用 `metis` 查缺口，再调用 `momus` 检查可执行性。
-5. 架构、歧义和高风险偏差交给 `oracle`。
-6. Act 按任务契约选择 `atlas`、`hephaestus` 或 `sisyphus-junior`。
-7. 子代理返回证据，由当前 OpenSpec skill 复核并写入原有产物。
+2. `sisyphus` 确认授权、目标、边界和验收方式。
+3. 能独立完成时不调用子代理。
+4. 存在事实、判断或封闭实现缺口时，只选择对应代理。
+5. `sisyphus` 复核返回证据，完成集成、最终验证和持久化。
 
 子任务必须包含：
 
@@ -64,12 +59,13 @@ description: 在 OMO ultrawork 模式下为 OpenSpec 技能体系分配代理。
 
 ## 调度规则
 
-- 搜索和资料读取优先交给 `explore` 或 `librarian`。
-- 局部、低风险和机械工作优先交给 `sisyphus-junior`。
-- 已闭合且复杂的实现交给 `hephaestus`。
-- 多任务实施只在依赖关系明确时交给 `atlas` 协调。
-- 未闭合设计不得交给 `atlas`、`hephaestus` 或 `sisyphus-junior` 自行决定。
-- 允许并行的只有无共享写入且依赖为空的调查任务。
+- 默认只运行 `sisyphus`。没有明确收益时不得委派。
+- 缺少本地代码事实时调用 `explore`。
+- 需要独立的高风险判断时调用 `oracle`。
+- 任务契约闭合且需要持续深入实现或调试时调用 `hephaestus`。
+- 无法写清目标、范围、约束和验收方式时，不得调用 `hephaestus`。
+- 默认一次只调用一个子代理。只有相互独立、无共享写入的调查任务才能并行。
+- 外部资料和视觉材料由 `sisyphus` 按需使用工具读取，不设置常驻代理。
 - Milestone roadmap、Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者。
 - 代理升级不能代替用户授权、Gate、停止条件或新鲜证据。
 - 同一问题反复失败时遵守所属 skill 的三次失败规则，不靠更换代理继续盲试。

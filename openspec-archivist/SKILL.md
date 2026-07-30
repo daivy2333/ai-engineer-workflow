@@ -161,7 +161,7 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 
 ## 恢复
 
-恢复请求交给 `openspec-docs-maintainer`。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
+M/D/K/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`，R 路径和状态由其限定请求交给 Maintainer 更新。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
 
 ## 禁止
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenSpec Experience Recorder"
+  short_description: "把已验证的实施经验记录为 Runbook 或 Incident。"
+  default_prompt: "Use $openspec-experience-recorder to turn verified implementation or operational evidence into a Runbook or Incident."

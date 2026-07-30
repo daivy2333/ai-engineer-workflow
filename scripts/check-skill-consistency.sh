@@ -209,6 +209,12 @@ require_pattern '没有保存需要时不创建空目录' "$ROOT/openspec-act/SK
   "openspec-act can create empty Evidence directories"
 require_pattern 'Evidence 不登记 R，不单独归档' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act gives Evidence an independent lifecycle"
+require_pattern 'Experience Candidates' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not report experience candidates"
+require_pattern 'Act 不创建持久化产物' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act writes experience artifacts directly"
+require_pattern '候选不构成创建授权' "$iteration_template" \
+  "iteration template treats experience candidates as recorder authorization"
 
 explorer_skill="$ROOT/openspec-explorer/SKILL.md"
 require_pattern '即时回答.*不调用 Maintainer' "$explorer_skill" \
@@ -217,9 +223,33 @@ require_pattern '自动调用 `openspec-docs-maintainer`' "$explorer_skill" \
   "openspec-explorer document mode does not register analysis references"
 require_pattern '只限于去重并写入 `openspec/specs/references/spec.md`' "$explorer_skill" \
   "openspec-explorer automatic registration is not limited to references"
-require_pattern 'Explorer 文档模式的 R 登记是唯一自动例外' \
+require_pattern 'Explorer 和 Recorder 的限定 R 登记是自动例外' \
   "$ROOT/openspec-docs-maintainer/SKILL.md" \
-  "openspec-docs-maintainer lacks the narrow explorer exception"
+  "openspec-docs-maintainer lacks narrow artifact reference exceptions"
+
+recorder_skill="$ROOT/openspec-experience-recorder/SKILL.md"
+[[ -f "$recorder_skill" ]] || fail "openspec-experience-recorder skill is missing"
+require_pattern '不依赖 Act' "$recorder_skill" \
+  "experience recorder is coupled to Act"
+require_pattern 'Runbook 必须同时满足' "$recorder_skill" \
+  "experience recorder lacks the Runbook evidence gate"
+require_pattern 'Incident 至少满足一项' "$recorder_skill" \
+  "experience recorder lacks the Incident significance gate"
+require_pattern '自动调用 `openspec-docs-maintainer`' "$recorder_skill" \
+  "experience recorder does not register artifact references"
+require_pattern '不得携带 M/D/K/I、tasks、SNAPSHOT、change' "$recorder_skill" \
+  "experience recorder registration can mutate project memory"
+require_pattern '创建、更新和恢复 `.claude/runbooks/`' "$recorder_skill" \
+  "experience recorder does not own Runbook bodies"
+require_pattern '创建、更新和恢复 `.claude/incidents/`' "$recorder_skill" \
+  "experience recorder does not own Incident bodies"
+
+experience_formats="$ROOT/openspec-experience-recorder/references/artifact-formats.md"
+[[ -f "$experience_formats" ]] || fail "Runbook and Incident formats are missing"
+require_pattern 'Last validated' "$experience_formats" \
+  "Runbook format lacks revalidation state"
+require_pattern 'Unconfirmed' "$experience_formats" \
+  "Incident format cannot preserve unknown root cause"
 
 maintainer_skill="$ROOT/openspec-docs-maintainer/SKILL.md"
 for path in project-model decisions knowledge references improvements; do
@@ -228,12 +258,10 @@ for path in project-model decisions knowledge references improvements; do
 done
 require_pattern 'M/D/K/R/I' "$maintainer_skill" \
   "openspec-docs-maintainer lacks the V2 document IDs"
-require_pattern '\.claude/runbooks/' "$maintainer_skill" \
-  "openspec-docs-maintainer lacks runbook support"
-require_pattern '\.claude/incidents/' "$maintainer_skill" \
-  "openspec-docs-maintainer lacks incident support"
-[[ -f "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
-  fail "runbook and incident templates are missing"
+require_pattern '创建、修改或恢复 Runbook 和 Incident 正文' "$maintainer_skill" \
+  "openspec-docs-maintainer can still own experience artifact bodies"
+[[ ! -e "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
+  fail "experience artifact formats still belong to docs maintainer"
 
 milestone_skill="$ROOT/openspec-milestone-planner/SKILL.md"
 [[ -f "$milestone_skill" ]] || fail "openspec-milestone-planner skill is missing"
@@ -306,6 +334,7 @@ active_model_files=(
   "$ROOT/openspec-assistant/SKILL.md"
   "$ROOT/openspec-compressor/SKILL.md"
   "$ROOT/openspec-docs-maintainer/SKILL.md"
+  "$ROOT/openspec-experience-recorder/SKILL.md"
   "$ROOT/openspec-explorer/SKILL.md"
   "$ROOT/openspec-init/references/claude-template.md"
 )
@@ -323,6 +352,12 @@ require_pattern '\.claude/runbooks/' "$claude_template" \
   "CLAUDE template lacks runbook routing"
 require_pattern '\.claude/incidents/' "$claude_template" \
   "CLAUDE template lacks incident routing"
+require_pattern 'Runbook.*`openspec-experience-recorder`' "$claude_template" \
+  "CLAUDE template does not assign Runbook ownership to the recorder"
+require_pattern 'Incident.*`openspec-experience-recorder`' "$claude_template" \
+  "CLAUDE template does not assign Incident ownership to the recorder"
+require_pattern 'Act 完成不构成 Recorder 授权' "$claude_template" \
+  "CLAUDE template couples Act completion to experience recording"
 require_pattern 'openspec/changes/<change>/evidence/' "$claude_template" \
   "CLAUDE template lacks change-local Evidence routing"
 require_pattern '不登记 R' "$claude_template" \
@@ -333,16 +368,32 @@ require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
   "CLAUDE template lacks the cross-skill authorization boundary"
 require_pattern '不记录项目现状' "$ROOT/README.md" \
   "README does not define CLAUDE as normative-only"
+require_pattern '压缩或改写 Runbook、Incident' "$ROOT/openspec-compressor/SKILL.md" \
+  "openspec-compressor can rewrite experience artifacts"
+for boundary in 授权边界 能力边界 停止边界; do
+  require_pattern "$boundary" "$claude_template" \
+    "CLAUDE template does not define the $boundary task boundary"
+done
+require_pattern '只有审核结果为 `PASS`.*生成下一批任务' "$claude_template" \
+  "CLAUDE template can advance after unverified external evidence"
+require_pattern '验证失败时保留当前任务，不执行下游任务' "$claude_template" \
+  "CLAUDE template can advance after failed verification"
+require_pattern '没有后续任务不表示 change、iteration 或当前阶段已经完成' "$claude_template" \
+  "CLAUDE template treats an empty task batch as workflow completion"
+
+agents_adapter="$ROOT/openspec-init/references/agents-adapter.md"
+require_pattern 'automatically resumes pending work.*re-check the nearest authorization, capability, or stop boundary' \
+  "$agents_adapter" "AGENTS adapter does not guard automatic task continuation"
 
 omo_ulw="$ROOT/omo-ulw/SKILL.md"
 [[ -f "$omo_ulw" ]] || fail "omo-ulw skill is missing"
-require_pattern '`sisyphus`.*协调当前 OpenSpec 阶段' "$omo_ulw" \
-  "omo-ulw does not assign OpenSpec coordination"
+require_pattern '`sisyphus`.*持有当前阶段' "$omo_ulw" \
+  "omo-ulw does not assign OpenSpec ownership"
 require_pattern '`explore`.*搜索本地代码' "$omo_ulw" \
   "omo-ulw does not assign local investigation"
-require_pattern '`metis`.*查找需求、计划和任务契约的缺口' "$omo_ulw" \
-  "omo-ulw does not assign plan gap analysis"
-require_pattern '`hephaestus`.*边界明确的复杂实现' "$omo_ulw" \
+require_pattern '`oracle`.*高风险判断' "$omo_ulw" \
+  "omo-ulw does not assign high-risk judgment"
+require_pattern '`hephaestus`.*明确契约的复杂实现' "$omo_ulw" \
   "omo-ulw does not constrain deep implementation"
 require_pattern '`ulw` 不得把 Plan 完成视为 Act 授权' "$omo_ulw" \
   "omo-ulw breaks the Plan-to-Act authorization boundary"
@@ -352,6 +403,8 @@ require_pattern 'Plan、Act Response、Plan Review、编号和生命周期修改
   "omo-ulw does not protect single-writer OpenSpec artifacts"
 require_pattern 'Milestone roadmap、Plan、Act Response、Plan Review' "$omo_ulw" \
   "omo-ulw does not protect milestone roadmap ownership"
+forbid_pattern 'Task Contract 标注 `manual`' "$omo_ulw" \
+  "omo-ulw depends on an undefined manual task marker"
 forbid_pattern 'GLM|DeepSeek|MiniMax|ark-code|deepseek-v|minimax-m' "$omo_ulw" \
   "omo-ulw hard-codes a model name"
 

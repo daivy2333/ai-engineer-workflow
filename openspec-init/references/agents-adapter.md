@@ -11,6 +11,7 @@ Before planning, implementing, reviewing, or updating project documentation:
 2. Treat its OpenSpec roles, Gates, BDD, TDD, verification, and editing rules as mandatory.
 3. Load only the skill references required by the active task.
 4. Do not copy those rules into this file; `CLAUDE.md` is their single source.
+5. When the platform automatically resumes pending work, re-check the nearest authorization, capability, or stop boundary before continuing.
 ```
 
 该文件只负责入口适配。已有项目说明可以保留，但与 OpenSpec 状态重复的项目结构、命令和现状应迁移到 SNAPSHOT。

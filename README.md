@@ -45,7 +45,8 @@
 | `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
 | `openspec-plan` | BDD、实现调查、可执行计划、iteration 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
-| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、Runbook、Incident 和指定 change 收尾 |
+| `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Incident |
+| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、限定 R 登记和指定 change 收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
@@ -57,7 +58,8 @@
 assistant 只读
 explorer 只写 analysis
 milestone-planner 只规划 MSxx 路线
-maintainer 写状态、项目记忆和持久化产物
+experience-recorder 只写 Runbook 和 Incident
+maintainer 写状态、项目记忆和检索索引
 compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
@@ -93,6 +95,12 @@ openspec-act
   → 按 Plan 要求或实际需要保存 change 内 Evidence
   → 填写 Act Response
   → 终止，等待用户审计
+openspec-experience-recorder
+  → 由用户单独请求，或在 Act 前预先授权串联
+  → 读取 Act Response、Evidence 或外部运行证据
+  → 创建、更新或恢复 Runbook、Incident
+  → 自动请求 Maintainer 登记对应 R
+  → 终止，不修改 change 或项目记忆
 openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
   → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
@@ -103,7 +111,7 @@ openspec-docs-maintainer
 
 小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
 
-技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 的文档模式是窄例外：生成分析文档后自动调用 Maintainer 登记 R 引用，不执行其他维护。这里不增加审计 Gate。
+技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 和 Experience Recorder 可在产物验证后自动调用 Maintainer 登记对应 R；该例外不授权其他维护，也不增加审计 Gate。
 
 ### 文档模型
 
@@ -117,8 +125,8 @@ openspec-docs-maintainer
 | Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
-| Runbooks | 可重复或高风险操作 | `.claude/runbooks/` |
-| Incidents | 重要故障和后续动作 | `.claude/incidents/` |
+| Runbooks | 已验证、可重复或高风险的操作 | `.claude/runbooks/` |
+| Incidents | 已发生的重要故障和后续动作 | `.claude/incidents/` |
 | Evidence | 按需保存某次 iteration 的日志和数据 | `openspec/changes/<change>/evidence/` |
 
 Architecture 的当前约束进入 Project Model，选择历史进入 Decisions。Learned 中的稳定结论进入 Knowledge，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
@@ -145,7 +153,7 @@ Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；P
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 20 个技能。
+当前仓库共 21 个技能。
 
 OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 

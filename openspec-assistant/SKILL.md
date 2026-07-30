@@ -37,8 +37,8 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 活跃变更 | `openspec/changes/` | OpenSpec 集成与 plan/act |
 | Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act`，按需创建 |
 | 深度分析 | `.claude/analysis/` | `openspec-explorer` |
-| 操作手册 | `.claude/runbooks/` | `openspec-docs-maintainer` |
-| 故障记录 | `.claude/incidents/` | `openspec-docs-maintainer` |
+| 操作手册 | `.claude/runbooks/` | `openspec-experience-recorder` |
+| 故障记录 | `.claude/incidents/` | `openspec-experience-recorder` |
 
 ## 路由
 
@@ -49,7 +49,8 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、生成下一轮上下文 | `openspec-plan` |
-| 更新状态、M/D/K/R/I、Runbook、Incident 或收尾 change | `openspec-docs-maintainer` |
+| 创建、更新或恢复 Runbook、Incident | `openspec-experience-recorder` |
+| 更新状态、M/D/K/R/I 或收尾 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
 | 原地压缩表达 | `openspec-compressor` |
 | 归档、删除、墓碑 | `openspec-archivist` |

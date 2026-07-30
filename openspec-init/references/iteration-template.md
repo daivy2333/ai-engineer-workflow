@@ -147,6 +147,14 @@
 
 <`None required`，或 `../evidence/<NNN-title>/README.md` 及证据编号>
 
+**Experience Candidates**
+
+| Type | Candidate | Evidence | Reason |
+|---|---|---|---|
+| Runbook / Incident | <候选主题> | <Act Response 或 Evidence> | <满足产物门槛的原因> |
+
+<没有候选时写 None。候选不构成创建授权>
+
 **Remaining Issues**
 
 <未解决问题或 None>
@@ -189,11 +197,13 @@
 - Plan 创建文件并填写 `Plan Context`。
 - Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`。
 - Act 只填写 `Act Response`。
+- Act 在 Experience Candidates 中记录有证据的 Runbook 或 Incident 候选；没有则写 `None`。
 - 正常完成时，Act 把状态从 `pending` 改为 `reported`。
 - 计划偏差阻塞时，Act 填写 Blocker Handoff 并把状态改为 `blocked`。
 - `blocked` iteration 不得恢复执行；Plan Review 后创建新 iteration。
 - `required` 时，Act 按自身 Evidence 格式创建对应目录；`none` 时不创建占位目录。
 - Plan Review 只填写 `Plan Review`。
+- Experience Candidates 不构成 Recorder 授权，也不是 Act 完成 Gate。
 - 已交接的区域只追加所属角色预留内容，不改写历史。
 - Review 需要后续工作时创建下一编号文件。
 - 文件名使用 `NNN-title.md`，编号从 `000` 递增。

@@ -41,7 +41,6 @@
 
 - K 成为强制约束时，候选提升到 M 或 CLAUDE。
 - I 获准实施时，提升为 change，并标记 `promoted`。
-- Incident 结论可提升到 K、D、M、I 或 Runbook。
 
 提升写入交给 Maintainer。原条目保留目标编号或路径。
 
@@ -63,7 +62,7 @@
 | 失效参考 | 已确认不可访问或不再使用 | Archive |
 | 孤立 Analysis | 超过 180 天 | Artifact-Archive |
 | 过时 Runbook | 依赖的系统或命令已失效 | Artifact-Archive |
-| 已解决 Incident | 无活跃后续动作且结论已提升 | Artifact-Archive |
+| 已解决 Incident | 无活跃后续动作且必要关联已记录 | Artifact-Archive |
 
 时间结论需要 Git 历史或文档日期支持，不能只按当前日期推断。
 
@@ -139,8 +138,10 @@
 **Incident**
 
 - 后续动作仍活跃：Keep。
-- 已解决但结论未提升：Keep。
-- 已解决且结论、决策和动作已有目标记录：Artifact-Archive。
+- 已解决但必要关联尚未记录：Keep。
+- 已解决且结论、决策、动作或 Runbook 已有目标引用：Artifact-Archive。
+
+Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结事件经验。
 
 **SNAPSHOT**
 

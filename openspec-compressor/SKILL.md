@@ -1,6 +1,6 @@
 ---
 name: openspec-compressor
-description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I、analysis、runbooks 和 incidents。
+description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I 和 analysis；不处理 Runbook、Incident 或 change Evidence。
 ---
 
 # OpenSpec Compressor
@@ -12,6 +12,7 @@ description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不
 - `openspec-assistant`：只读查询。
 - `openspec-docs-maintainer`：日常状态和知识写入。
 - `openspec-explorer`：生成分析文档。
+- `openspec-experience-recorder`：生成和更新 Runbook、Incident。
 - `openspec-compressor`：原地压缩表达。
 - `openspec-archivist`：归档、删除、移动和墓碑。
 
@@ -47,8 +48,6 @@ HIGH 风险项必须获得用户确认。
 - 任务：目标 / 验收 / 阻塞。
 - Milestone：成果 / 工作量 / 稳定基线 / 验证边界 / 诊断边界 / 状态。
 - 参考：类型 / 位置 / 日期或版本 / 用途 / 状态。
-- Runbook：范围 / 前置 / 步骤 / 验证 / 失败 / 回滚。
-- Incident：影响 / 时间线 / 根因 / 恢复 / 后续。
 
 必须保留：
 
@@ -61,6 +60,8 @@ HIGH 风险项必须获得用户确认。
 旧体系全量迁移开始后，旧来源文档和 migration carrier 不得压缩。分类迁移和旧文档完整归档交给 `openspec-init` 与 `openspec-archivist`。
 
 Change Evidence 保存采集时的原始输出和审计上下文，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件。
+
+Runbook 和 Incident 保存已验证操作与事件历史，由 `openspec-experience-recorder` 精准更新。不要压缩或改写其正文。
 
 ## Phase 4：VERIFY
 
@@ -79,3 +80,4 @@ Change Evidence 保存采集时的原始输出和审计上下文，不属于活�
 - 为减少行数而删除未解决问题。
 - 压缩迁移来源、覆盖清单或 migration carrier。
 - 压缩或改写 change 内 Evidence。
+- 压缩或改写 Runbook、Incident。

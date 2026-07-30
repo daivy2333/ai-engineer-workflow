@@ -1,6 +1,6 @@
 ---
 name: openspec-act
-description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、任务自检、全量 diff Review，并记录实现反馈。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
+description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、任务自检、全量 diff Review，并记录实现反馈和工程经验候选。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
 ---
 
 # OpenSpec Act
@@ -17,7 +17,7 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 6. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
 7. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
 8. 修改产品代码前建立测试见证。
-9. Skill 完成不构成 Review、维护或归档授权。写入反馈后终止。
+9. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
 
 ## Gate 3：Plan Baseline and Test Witness
 
@@ -174,12 +174,20 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
    - Self-Review 检查结果、已修复发现和遗留 Minor 问题。
    - 验证命令、输出和退出码。
    - Persisted Evidence 路径和编号，或 `None required`。
+   - Experience Candidates，或 `None`。
    - 未解决问题。
    - 可选 commit 或 diff 引用。
 11. 将 `Act Response` 状态改为 `reported`。
 12. 终止并等待用户审计。
 
 不得填写 `Plan Review`，不得创建下一轮 iteration。
+
+Experience Candidates 只记录可能满足以下条件的实施经验：
+
+- Runbook：已经端到端验证成功，且可重复或风险较高的操作路径。
+- Incident：造成显著影响、需要异常恢复、难以复现或包含系统性诊断信息的故障。
+
+候选必须引用 Act Response 或 Evidence。普通测试失败、预期 RED、一次性命令和未验证建议不构成候选。Act 不创建持久化产物；用户可以随后调用 `openspec-experience-recorder`，或预先明确授权串联执行。
 
 ## 完成前检查
 
@@ -191,6 +199,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
 7. 是否重新读取计划并审查完整 diff？
 8. Self-Review 是否没有未解决的 Critical 或 Important 问题？
+9. Experience Candidates 是否已记录证据或明确写 `None`？
 
 任一答案为否，不得声明完成。
 
@@ -204,6 +213,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 - 当前 iteration 路径和 Act Response 状态。
 - `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
 - Persisted Evidence 路径，或未创建的原因。
+- Experience Candidates 及其证据，或 `None`。
 - 跳过项和阻塞项。
 
 然后终止。提醒用户：
@@ -224,6 +234,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 - 三次失败后继续盲试。
 - 修改全局任务、SNAPSHOT 或知识文档。
 - 调用 Maintainer、Plan 或 Archivist。
+- 未经用户明确授权调用 Experience Recorder。
 - 归档 change、清理分支或执行其他生命周期收尾。
 - 覆盖 Plan Context 或填写 Plan Review。
 - 自行补全 Plan 遗漏的设计或扩大变更面。
