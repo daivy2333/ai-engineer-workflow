@@ -36,8 +36,9 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 记录：
 
 - 项目类型、语言和版本。
-- 构建、测试、格式化和 lint 命令。
+- 主要模块、组件和职责边界。
 - 源码、测试和文档目录。
+- 支持的平台和交付形态。
 - Git 分支和工作区状态。
 - 现有规则文件。
 - Claude Code、OpenCode、Codex 中需要支持的平台。
@@ -80,7 +81,7 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 - 创建或合并 `.claude/docs/tasks.md`。
 - 按当前模板生成 `.claude/docs/templates/change-iteration.md`。
 
-SNAPSHOT 记录当前项目事实。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
+SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
 迭代模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
@@ -137,7 +138,9 @@ SNAPSHOT 记录当前项目事实。tasks 支持 `MSxx` roadmap、`Txx` 任务�
 - specs validate 通过。
 - `CLAUDE.md` 只有一个公共规则来源。
 - `CLAUDE.md` 不包含项目名称、技术栈、分支、路径现状或具体命令。
-- 项目事实和验证命令位于 SNAPSHOT。
+- 当前项目描述只位于 SNAPSHOT。
+- 可复用的构建、测试和其他命令行操作流程进入 Runbook。
+- SNAPSHOT 不包含工作状态、操作流程、约束、原因或历史。
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
 - maintainer 是日常状态和知识写入者。

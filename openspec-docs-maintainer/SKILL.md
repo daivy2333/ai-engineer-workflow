@@ -1,6 +1,6 @@
 ---
 name: openspec-docs-maintainer
-description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project model、decisions、knowledge、references 和 improvements，或同步、收尾、归档指定 change；也接收 openspec-explorer 与 openspec-experience-recorder 发出的限定 R 登记请求。
+description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project model、decisions、knowledge、references 和 improvements，或同步、收尾、归档指定 change；每次运行默认刷新 SNAPSHOT，也接收 openspec-explorer 与 openspec-experience-recorder 发出的限定 R 登记请求。
 ---
 
 # OpenSpec Docs Maintainer
@@ -21,16 +21,16 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 miles
 
 ## 约束
 
-1. 只在用户明确要求时修改；Explorer 和 Recorder 的限定 R 登记是自动例外。
+1. 除 SNAPSHOT 默认刷新外，只在用户明确要求时修改；Explorer 和 Recorder 的限定 R 登记是自动例外。
 2. 写入前搜索重复条目。
 3. 读取最大编号后递增。
-4. 精准修改，不全量覆盖。
+4. SNAPSHOT 默认增量更新；其他已有文档只做精准修改。
 5. 不删除或归档 M/D/K/R/I 等条目；这类操作交给 archivist。
 6. 不改变 Explorer、Recorder 管理的持久化产物正文。
 7. change 元数据由 OpenSpec 集成管理。
-8. 除 Explorer 和 Recorder 的限定 R 登记外，只执行用户点名的维护动作。同步不隐含归档，归档不隐含其他清理。
+8. 每次运行都默认刷新 SNAPSHOT。除此之外，只执行用户点名的维护动作或 Explorer、Recorder 的限定 R 登记。同步不隐含归档，归档不隐含其他清理。
 9. Plan 和 Act 的完成报告不是写入授权。
-10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。
+10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。SNAPSHOT 刷新是 Maintainer 自身职责，不扩大调用方授权。
 11. 每项信息只有一个权威位置；其他文档使用编号或路径引用。
 12. Change Evidence 属于 change，不登记 R，也不作为独立持久化产物维护。
 13. `MSxx` 的目标、范围、依赖、验证和诊断边界由 `openspec-milestone-planner` 规划；Maintainer 只同步已有 milestone 的运行状态和 change 引用。
@@ -40,6 +40,9 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 miles
 ### 1. LOAD
 
 - 确定写入类型和目标文件。
+- 读取 SNAPSHOT 的同步 revision、时间和状态。
+- 比较当前 Git 状态，确定能否可靠计算增量及受影响字段。
+- SNAPSHOT 不存在或没有可靠同步基线时，记录全量刷新原因。
 - 搜索已有条目。
 - 读取相关 M/D/K/R/I 条目，检查职责重叠。
 - 涉及 change 时读取 `openspec list` 和对应 tasks。
@@ -49,7 +52,8 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 miles
 
 - 任务：维护进行中、待办、阻塞和最近完成，并保留 change 来源。
 - Milestone 状态：按用户指令同步 `active`、`blocked`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
-- 快照：根据 Git 状态和关键目录更新当前状态。
+- 快照：优先按同步 revision 与当前 Git 差异做增量刷新，只更新受影响的项目描述字段。
+- 快照回退：无法可靠计算增量时执行全量刷新；刷新失败时标记 `stale`，记录原因，不声称同步成功。
 - 模型：记录当前有效的跨模块不变量、范围、证据和状态。
 - 决策：记录选择、原因、替代方案、影响、状态和关联模型。
 - 知识：记录已验证的非显然结论、证据、范围和边界。
@@ -64,18 +68,21 @@ description: 按用户明确指令维护 OpenSpec 的 SNAPSHOT、任务与 miles
 
 路由规则：
 
-- 短期当前事实写 SNAPSHOT。
+- 当前项目描述写 SNAPSHOT，只包括项目身份、组成、支持范围和仓库现场。
 - 已承诺工作写 tasks 或 change。
 - 当前跨模块约束写 M。
 - 有替代方案的长期选择写 D。
 - 已验证、非显然且可复用的结论写 K。
 - 指针和检索元数据写 R。
 - 未承诺改进写 I；批准后创建 change 并标记 `promoted`。
+- 可复用的构建、测试和其他命令行操作流程写 Runbook。
 - Runbook 和 Incident 正文交给 `openspec-experience-recorder`。
 
 ### 3. VERIFY
 
 - 运行 `git diff --check`。
+- 检查 SNAPSHOT 的同步 revision、时间和 `current/stale` 状态与本次刷新结果一致。
+- 检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
@@ -108,7 +115,7 @@ Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`。Main
 - 无需求写入。
 - 重复记录。
 - 编号冲突。
-- 全量覆盖。
+- 在 SNAPSHOT 回退以外全量覆盖已有文档。
 - 删除或归档文档条目。
 - 压缩活跃文档。
 - 手工修改 OpenSpec change 元数据。

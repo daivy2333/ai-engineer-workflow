@@ -89,6 +89,7 @@ openspec-act
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
+  → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 iteration
   → 按需保存 act-added / BLOCKED Evidence
   → Response 前重新审查完整 diff
   → 修复计划内发现并重跑受影响 Gate
@@ -202,7 +203,8 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 ## 设计约束
 
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
-- 项目事实和验证命令写入 SNAPSHOT，任务状态写入 tasks。
+- 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
+- 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的多轮沟通写入 `iterations/NNN-title.md`。
 - change 的按需证据写入 `evidence/<NNN-title>/`，目录名与 iteration 对齐。

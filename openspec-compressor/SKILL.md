@@ -52,6 +52,7 @@ HIGH 风险项必须获得用户确认。
 必须保留：
 
 - `Mxx/Dxx/Kxx/Rxx/Ixx/MSxx/Txx` 和 Legacy ID。
+- SNAPSHOT 的同步 revision、时间和 `current/stale` 状态。
 - 路径、命令、版本、日期和阈值。
 - 失败症状和根因。
 - 约束、例外和风险。
@@ -77,6 +78,7 @@ Runbook 和 Incident 保存已验证操作与事件历史，由 `openspec-experi
 - 合并不同编号的独立条目。
 - 改变任务状态、模型约束、决策结论或规则含义。
 - 删除 milestone 的工作量依据、稳定基线、验证边界或诊断边界。
+- 删除或改写 SNAPSHOT 的同步元数据和职责边界。
 - 为减少行数而删除未解决问题。
 - 压缩迁移来源、覆盖清单或 migration carrier。
 - 压缩或改写 change 内 Evidence。

@@ -1,6 +1,6 @@
 # CLAUDE.md 模板
 
-此模板只生成项目公共规范。项目事实、命令和现状写入 SNAPSHOT 或 tasks。
+此模板只生成项目公共规范。当前项目描述写入 SNAPSHOT，工作状态写入 tasks 或 change。
 
 ## 模板目录
 
@@ -19,7 +19,7 @@
 | 内容 | 路径 | 写入者 |
 |---|---|---|
 | 公共规则 | `CLAUDE.md` | 人工或 `openspec-init` |
-| 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
+| 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
 | 迭代模板 | `.claude/docs/templates/change-iteration.md` | `openspec-init` |
@@ -68,8 +68,9 @@
 - Explorer 即时回答后终止，不调用 Maintainer。
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
 - Recorder 生成、更新或恢复 Runbook、Incident 后，可自动调用 Maintainer 创建或更新对应 R。
-- 上述自动授权只覆盖对应 R，不覆盖 M/D/K/I、tasks、SNAPSHOT 或 change。
-- 除 Explorer 和 Recorder 的限定 R 登记外，Maintainer 只执行用户点名的维护动作。
+- 上述自动授权只覆盖对应 R，不覆盖 M/D/K/I、tasks 或 change。
+- Maintainer 每次运行都刷新 SNAPSHOT；这是 Maintainer 自身职责，不扩大调用方授权。
+- 除 SNAPSHOT 刷新和限定 R 登记外，Maintainer 只执行用户点名的维护动作。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
 - 除上述例外，用户明确授权串联时才可继续下一阶段。
 
@@ -91,7 +92,9 @@
 
 ## 信息路由
 
-- 当前短期事实写 SNAPSHOT。
+- SNAPSHOT 只描述项目现在是什么：项目身份、组成、支持范围和仓库现场。
+- SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录。
+- 其他文档只引用 SNAPSHOT，不复制当前项目描述。
 - 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
 - 已承诺工作写 tasks 或 OpenSpec change。
 - 当前跨模块约束写 project-model，编号 `Mxx`。
@@ -99,12 +102,15 @@
 - 已验证、非显然且可复用的结论写 knowledge，编号 `Kxx`。
 - 指针和检索元数据写 references，编号 `Rxx`。
 - 有证据但未承诺实施的问题写 improvements，编号 `Ixx`。
+- 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
 - 已发生的重要故障由 Recorder 写入 Incident，并登记 R。
 - 详细调查、实验和评估写 analysis，并登记 R。
 - iteration 的持久化日志和数据写 change 内 Evidence，不登记 R。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
+
+Analysis、iteration、Act Response、Evidence 和 Incident 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
 
 ## 旧体系迁移
 
@@ -249,9 +255,10 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 修复计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
 - Act Response 记录有证据的 Runbook、Incident 候选；没有则写 `None`。
-- Act Response 状态只允许 `pending → reported` 或 `pending → blocked`。
+- Act Response 状态允许 `pending → reported`、`pending → blocked` 和用户解决阻塞后的 `blocked → pending`。
 - 计划偏差时，Act 写 Blocker Handoff，并按需保存 `act-added / BLOCKED` Evidence。
-- `blocked` iteration 不恢复执行；Plan Review 后创建新 iteration。
+- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 iteration。
+- 已创建后继 iteration 时，不再恢复旧 iteration。
 - Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<NNN-title>/`。
 - Evidence 目录名与 iteration 文件名一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。

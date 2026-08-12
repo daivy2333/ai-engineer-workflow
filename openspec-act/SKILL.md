@@ -11,7 +11,7 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 
 1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
 2. 读取 `.claude/docs/templates/change-iteration.md`。
-3. 找到最新且 `Plan Context` 为 `ready`、`Act Response` 为 `pending` 的迭代。
+3. 找到最新且 `Plan Context` 为 `ready` 的迭代。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
 4. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 5. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 6. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
@@ -47,7 +47,7 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 7. 执行 Gate 4 和 Gate 5。
 8. Gate 5 通过后才能标记完成。
 
-不要修改计划范围外的代码。发现计划缺口、错误基线或停止条件时，执行阻塞交接并终止；提醒用户调用 `openspec-plan`，不要自行补充设计。
+不要修改计划范围外的代码。发现计划缺口、错误基线或停止条件时，执行阻塞交接并终止。等待用户解决阻塞，或调用 `openspec-plan` 调整计划。
 
 ## Gate 4：Two-Stage Review
 
@@ -150,9 +150,22 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 6. 按需保存 `act-added / BLOCKED` Evidence；简单偏差写 `None required`。
 7. 填写 Act Response 的 `Blocker Handoff` 和证据引用。
 8. 将 Act Response 状态从 `pending` 改为 `blocked`。
-9. 终止并提醒用户调用 `openspec-plan`。
+9. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
 
-状态流转只有 `pending → reported` 和 `pending → blocked`。`blocked` iteration 不得由 Act 恢复执行，也不得改成 `reported`。
+状态流转包括 `pending → reported`、`pending → blocked` 和 `blocked → pending`。恢复后必须先回到 `pending`，不得越过它改成 `reported`。
+
+**恢复阻塞**
+
+用户补充事实、给出解决办法或接受风险，并明确要求继续时：
+
+1. 读取 Blocker Handoff、已有 Evidence 和工作区状态。
+2. 确认当前 iteration 没有后继 iteration，Plan Review 仍为 `pending`。
+3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
+4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
+5. 将状态从 `blocked` 改为 `pending`。
+6. 重跑受影响的 Gate 3，再从恢复点继续。
+
+不得只因 iteration 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
 
 ## Phase 4：REPORT
 
@@ -212,6 +225,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 验证命令、输出摘录和退出码。
 - 当前 iteration 路径和 Act Response 状态。
 - `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
+- 恢复过阻塞时的 Blocker Resolution 和重跑 Gate。
 - Persisted Evidence 路径，或未创建的原因。
 - Experience Candidates 及其证据，或 `None`。
 - 跳过项和阻塞项。
@@ -230,7 +244,8 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - Spec review 前做 code quality review。
 - 只依赖逐任务 Review，跳过 Response 前的完整 diff Review。
 - Self-Review 存在未解决的 Critical 或 Important 问题时标记 `reported`。
-- 把 `blocked` iteration 恢复为 `pending` 或改成 `reported`。
+- 从 `blocked` 越过 `pending` 改成 `reported`。
+- 用户已解决阻塞并要求继续时，仅因旧状态为 `blocked` 而拒绝恢复。
 - 三次失败后继续盲试。
 - 修改全局任务、SNAPSHOT 或知识文档。
 - 调用 Maintainer、Plan 或 Archivist。

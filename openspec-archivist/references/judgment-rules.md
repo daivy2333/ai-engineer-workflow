@@ -145,9 +145,9 @@ Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创
 
 **SNAPSHOT**
 
-- 当前事实：Keep。
-- 历史状态：Archive。
-- 疑似过时的关键事实：Stale-Warn。
+- 当前项目描述：Keep。
+- `stale` 状态：保留并交给 Maintainer 刷新。
+- 工作状态、操作流程、约束、原因或历史记录：移出 SNAPSHOT 后按对应类型判断。
 
 **CLAUDE.md**
 

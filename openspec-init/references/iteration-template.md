@@ -127,7 +127,17 @@
 - Gates: <已通过和阻塞的 Gate>
 - Evidence: <证据编号、路径或 None required>
 - Plan decision needed: <需要 Plan 重新决定的问题>
-- Resume condition: <后续 iteration 的恢复条件>
+- Resume condition: <当前 iteration 可恢复的条件；需改 Plan 时说明>
+
+**Blocker Resolution**
+
+<未恢复时写 None；用户要求继续时追加：>
+
+- User instruction: <用户提供的事实、办法或风险豁免>
+- Resolution: <阻塞如何解除>
+- Accepted risk: <已接受风险或 None>
+- Resume point: <恢复的 task / step>
+- Required verification: <恢复前后需要重跑的 Gate>
 
 **Self-Review**
 
@@ -200,7 +210,8 @@
 - Act 在 Experience Candidates 中记录有证据的 Runbook 或 Incident 候选；没有则写 `None`。
 - 正常完成时，Act 把状态从 `pending` 改为 `reported`。
 - 计划偏差阻塞时，Act 填写 Blocker Handoff 并把状态改为 `blocked`。
-- `blocked` iteration 不得恢复执行；Plan Review 后创建新 iteration。
+- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，执行 `blocked → pending` 后恢复当前 iteration。
+- 已创建后继 iteration 时，不再恢复旧 iteration。
 - `required` 时，Act 按自身 Evidence 格式创建对应目录；`none` 时不创建占位目录。
 - Plan Review 只填写 `Plan Review`。
 - Experience Candidates 不构成 Recorder 授权，也不是 Act 完成 Gate。

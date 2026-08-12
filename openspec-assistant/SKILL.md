@@ -26,7 +26,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 内容 | 路径 | 写入者 |
 |---|---|---|
 | 公共规则 | `CLAUDE.md` | `openspec-init` 或人工 |
-| 当前状态 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
+| 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
 | 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
@@ -58,7 +58,8 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 ## 输出
 
 - 已读取的文档。
-- 当前状态或查询结果。
+- SNAPSHOT 中的当前项目描述和 `current/stale` 状态。
+- 工作状态或其他查询结果，并标明对应权威文档。
 - 活跃 change。
 - 证据路径。
 - 相关 iteration 要求的 Evidence 路径；未创建时说明 `none` 或不存在原因。

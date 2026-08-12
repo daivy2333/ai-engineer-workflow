@@ -23,7 +23,7 @@
 `CLAUDE.md` 和 SNAPSHOT 是可重建文档，不属于经验迁移来源：
 
 - `CLAUDE.md` 按新模板覆盖，旧内容不逐条迁移或归档。
-- SNAPSHOT 按迁移后的代码、配置和活动状态重建。
+- SNAPSHOT 按迁移后的代码和配置重建当前项目描述。
 - 两者不进入覆盖清单、MIG 原文副本和恢复范围。
 
 ## 全量约束
@@ -43,7 +43,7 @@
 
 ## 信息分类
 
-- 当前事实进入 SNAPSHOT。
+- 当前项目描述进入 SNAPSHOT。
 - 项目路线和阶段基线进入 milestone roadmap。
 - 已承诺工作进入 tasks 或 change。
 - 跨模块约束进入 project-model。
@@ -51,7 +51,7 @@
 - 已验证结论进入 knowledge。
 - 路径、链接和检索元数据进入 references。
 - 未承诺问题进入 improvements。
-- 可重复或高风险操作进入 runbooks。
+- 可复用的构建、测试和其他命令行操作流程进入 runbooks。
 - 故障事件过程进入 incidents。
 - 执行规范进入 CLAUDE。
 - 详细调查过程进入 analysis。

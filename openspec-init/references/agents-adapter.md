@@ -14,4 +14,4 @@ Before planning, implementing, reviewing, or updating project documentation:
 5. When the platform automatically resumes pending work, re-check the nearest authorization, capability, or stop boundary before continuing.
 ```
 
-该文件只负责入口适配。已有项目说明可以保留，但与 OpenSpec 状态重复的项目结构、命令和现状应迁移到 SNAPSHOT。
+该文件只负责入口适配。已有项目说明可以保留，但重复的当前项目描述应迁移到 SNAPSHOT。可复用的命令和操作流程进入 Runbook。

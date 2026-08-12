@@ -77,6 +77,31 @@ if rg -n 'assistant (同步|更新|维护|写入|负责日常)' "$ROOT"/openspec
   fail "openspec-assistant is described as a writer"
 fi
 
+bettermd_skill="$ROOT/bettermd/SKILL.md"
+[[ -f "$bettermd_skill" ]] || fail "bettermd skill is missing"
+require_pattern '准确 > 完整 > 清楚 > 自然 > 精简' "$bettermd_skill" \
+  "bettermd lacks an explicit writing priority"
+require_pattern '禁止句式' "$bettermd_skill" \
+  "bettermd does not separate prohibited phrasing"
+require_pattern '谨慎词汇' "$bettermd_skill" \
+  "bettermd treats every suspect word as an absolute ban"
+require_pattern '一个段落只处理一个问题' "$bettermd_skill" \
+  "bettermd lacks paragraph-level focus"
+require_pattern '审查改写' "$bettermd_skill" \
+  "bettermd lacks a revision workflow"
+require_pattern '众所周知.*毋庸置疑' "$bettermd_skill" \
+  "bettermd lacks false-consensus phrasing checks"
+require_pattern '名词化长句' "$bettermd_skill" \
+  "bettermd lacks nominalized prose checks"
+require_pattern 'README.*设计文档.*规范.*Runbook' "$bettermd_skill" \
+  "bettermd trigger does not cover common Markdown document types"
+require_pattern '通用.*不属于 OpenSpec' "$bettermd_skill" \
+  "bettermd is not described as independent from OpenSpec"
+require_pattern '任何 Markdown 文档时都应使用' "$bettermd_skill" \
+  "bettermd does not trigger for every Markdown writing task"
+forbid_pattern '治 AI 味|三段式优先|层级 ≤ H2|单段 ≤ 5 句|单句 ≤ 30 字' "$bettermd_skill" \
+  "bettermd still contains promotional or mechanical style rules"
+
 grilling_skill="$ROOT/grilling/SKILL.md"
 [[ -f "$grilling_skill" ]] || fail "grilling skill is missing"
 require_pattern 'Ask exactly one decision question per turn' "$grilling_skill" \
@@ -154,6 +179,10 @@ require_pattern 'Self-Review 检查结果、已修复发现和遗留 Minor 问�
   "openspec-act response lacks self-review results"
 require_pattern 'pending → reported.*pending → blocked' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks explicit response state transitions"
+require_pattern 'blocked → pending' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act cannot resume a user-resolved blocker"
+require_pattern '用户.*要求继续' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not honor an explicit user resume instruction"
 require_pattern 'Blocker Handoff' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks blocked handoff"
 require_pattern 'act-added / BLOCKED' "$ROOT/openspec-act/SKILL.md" \
@@ -183,6 +212,23 @@ require_pattern 'Blocker Handoff' "$iteration_template" \
   "iteration template lacks blocked handoff"
 require_pattern '状态改为 `blocked`' "$iteration_template" \
   "iteration template lacks blocked response status"
+require_pattern 'Blocker Resolution' "$iteration_template" \
+  "iteration template lacks blocker resolution history"
+require_pattern '当前 iteration 可恢复的条件' "$iteration_template" \
+  "iteration template still routes every blocker to a later iteration"
+require_pattern 'blocked → pending' "$iteration_template" \
+  "iteration template cannot resume a blocked response"
+forbid_pattern '`blocked` iteration 不得恢复执行|`blocked` iteration 保持不可变|把 `blocked` iteration 恢复为 `pending`' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still makes blockers irreversible"
+forbid_pattern '`blocked` iteration 不得恢复执行|`blocked` iteration 保持不可变' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan still makes blockers irreversible"
+forbid_pattern '`blocked` iteration 不得恢复执行|`blocked` iteration 不恢复执行' \
+  "$iteration_template" \
+  "iteration template still makes blockers irreversible"
+forbid_pattern '`blocked` iteration 不恢复执行' "$ROOT/openspec-init/references/claude-template.md" \
+  "CLAUDE template still makes blockers irreversible"
 require_pattern 'Deviation Classification' "$iteration_template" \
   "iteration template lacks deviation classification"
 require_pattern '不创建占位目录' "$iteration_template" \
@@ -366,6 +412,46 @@ forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORM
   "$claude_template" "CLAUDE template still contains project-state placeholders"
 require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
   "CLAUDE template lacks the cross-skill authorization boundary"
+
+snapshot_template="$ROOT/openspec-init/references/spec-templates.md"
+require_pattern 'SNAPSHOT 只描述项目现在是什么' "$claude_template" \
+  "CLAUDE template does not define the SNAPSHOT boundary"
+require_pattern '项目名称、用途和范围' "$snapshot_template" \
+  "SNAPSHOT template lacks project identity and scope"
+require_pattern '主要模块、组件和职责边界' "$snapshot_template" \
+  "SNAPSHOT template lacks current project composition"
+require_pattern '支持的平台和交付形态' "$snapshot_template" \
+  "SNAPSHOT template lacks supported platforms and delivery forms"
+require_pattern '同步 revision、时间和状态' "$snapshot_template" \
+  "SNAPSHOT template lacks synchronization metadata"
+forbid_pattern '构建、测试、格式化和静态分析命令' "$snapshot_template" \
+  "SNAPSHOT template still stores operation commands"
+forbid_pattern '当前 change 和最新 iteration' "$snapshot_template" \
+  "SNAPSHOT template still stores work state"
+forbid_pattern '最近验证结果及日期' "$snapshot_template" \
+  "SNAPSHOT template still stores validation history"
+
+require_pattern '每次运行都默认刷新 SNAPSHOT' "$maintainer_skill" \
+  "docs maintainer does not refresh SNAPSHOT by default"
+require_pattern '增量刷新' "$maintainer_skill" \
+  "docs maintainer lacks incremental SNAPSHOT refresh"
+require_pattern '全量刷新' "$maintainer_skill" \
+  "docs maintainer lacks full-refresh fallback"
+require_pattern 'stale' "$maintainer_skill" \
+  "docs maintainer cannot mark an unverifiable SNAPSHOT stale"
+
+require_pattern '可复用的构建、测试和其他命令行操作流程.*Runbook' "$claude_template" \
+  "CLAUDE template does not route reusable operations to Runbook"
+forbid_pattern '项目事实和验证命令写入 SNAPSHOT' "$ROOT/README.md" \
+  "README still routes validation commands to SNAPSHOT"
+forbid_pattern '> Project:' "$ROOT/openspec-explorer/references/persistence-formats.md" \
+  "analysis template still duplicates current project identity"
+require_pattern 'Snapshot:' "$ROOT/openspec-explorer/references/persistence-formats.md" \
+  "analysis template does not reference SNAPSHOT"
+forbid_pattern '项目概览必须存在' "$ROOT/openspec-explorer/references/macro-workflow.md" \
+  "macro exploration still creates a duplicate project overview"
+require_pattern '不复制完整项目概览' "$ROOT/openspec-explorer/SKILL.md" \
+  "explorer does not enforce the SNAPSHOT project-description boundary"
 require_pattern '不记录项目现状' "$ROOT/README.md" \
   "README does not define CLAUDE as normative-only"
 require_pattern '压缩或改写 Runbook、Incident' "$ROOT/openspec-compressor/SKILL.md" \

@@ -229,7 +229,7 @@ openspec/changes/<change>/iterations/000-initial.md
 9. 有遗留问题时，重新调查受影响范围并创建下一个零填充编号文件。
 10. 新文件补齐独立执行所需上下文，不只写“修复 Review 问题”。
 11. 新 iteration 必须重新通过 Gate 2，才能交给 Act。
-12. `blocked` iteration 保持不可变，不得重新设为 `pending`。
+12. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` iteration。已创建后继 iteration 时，不再恢复旧 iteration。
 13. 没有后续任务时，记录 `no-follow-up`，但不归档或同步状态。
 14. 输出结果后终止，等待用户审计和下一步指令。
 

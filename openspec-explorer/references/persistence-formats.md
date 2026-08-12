@@ -7,9 +7,10 @@ Explorer 文档模式自动调用 `openspec-docs-maintainer` 登记 R。其他�
 ```markdown
 # 标题
 
-> Project: <name>
-> Branch: <branch>
-> Date: YYYY-MM-DD
+> Snapshot: [SNAPSHOT](../docs/SNAPSHOT.md)
+> Captured revision: <revision>
+> Observed branch: <branch>
+> Captured at: YYYY-MM-DD
 > See also: [关联文档](file.md)
 
 ## 结论
