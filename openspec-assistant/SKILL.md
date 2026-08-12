@@ -61,6 +61,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 - SNAPSHOT 中的当前项目描述和 `current/stale` 状态。
 - 工作状态或其他查询结果，并标明对应权威文档。
 - 活跃 change。
+- change 的当前 Iteration、后续 Iteration Plan 和剩余 tasks。
 - 证据路径。
 - 相关 iteration 要求的 Evidence 路径；未创建时说明 `none` 或不存在原因。
 - 后续应使用的 skill。

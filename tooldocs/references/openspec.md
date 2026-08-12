@@ -53,6 +53,8 @@ changes/<change>/
 
 Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存验证摘要；`required` 时 Act 保存指定文件。Evidence 属于 change，不登记 R，随 change 归档。
 
+本仓库还要求 Plan 在 change 的 `tasks.md` 中把全部任务预先分配到一个或多个 Iteration，但每次只生成当前轮文件。Plan Review 把必要修复、当前轮未完成任务和原计划下一轮任务重新平衡后，再生成一个后继 Iteration。
+
 ---
 
 ## 三、快速开始

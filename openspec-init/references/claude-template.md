@@ -50,7 +50,7 @@
 
 - `openspec-assistant`：只读。
 - `openspec-milestone-planner`：规划 `MSxx` 路线，平衡工作量、验证边界和诊断边界；不创建 change。
-- `openspec-plan`：需求、BDD、实现调查、可执行计划、Evidence 要求、iteration 和实施 Review。
+- `openspec-plan`：需求、BDD、实现调查、change 任务分轮、当前 iteration 和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I 和指定 change 收尾，并处理限定 R 登记。
@@ -69,8 +69,8 @@
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
 - Recorder 生成、更新或恢复 Runbook、Incident 后，可自动调用 Maintainer 创建或更新对应 R。
 - 上述自动授权只覆盖对应 R，不覆盖 M/D/K/I、tasks 或 change。
-- Maintainer 每次运行都刷新 SNAPSHOT；这是 Maintainer 自身职责，不扩大调用方授权。
-- 除 SNAPSHOT 刷新和限定 R 登记外，Maintainer 只执行用户点名的维护动作。
+- Maintainer 由用户直接调用时刷新 SNAPSHOT；Explorer、Recorder 的限定 R 登记不刷新 SNAPSHOT。
+- Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
 - 除上述例外，用户明确授权串联时才可继续下一阶段。
 
@@ -215,7 +215,7 @@ Plan 负责确定接口语义、状态所有权、测试策略和停止条件。
 ## Gate
 
 - Gate 1：需求、BDD、场景、范围和 change 获批。
-- Gate 2：调查、设计、任务、追踪和验证均达到执行就绪。
+- Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪。
 - Gate 3：计划基线有效且每个任务有测试见证。
 - Gate 4：每个任务先 spec review，后 code review。
 - Gate 5：完成声明有新鲜证据。
@@ -245,8 +245,9 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 
 ## 迭代线程
 
-- 每个 change 使用 `iterations/000-initial.md` 开始。
-- 后续轮次使用递增的零填充编号。
+- Plan 在 change `tasks.md` 中把全部任务分配到工作量适中、可独立验证和诊断的 Iteration，只创建当前轮文件。
+- 每个 change 从 `iterations/000-initial.md` 开始；后续轮次由 Plan Review 按零填充编号逐轮创建。
+- 每个任务只归属一个 Iteration；首轮与后续轮次使用相同的聚合、拆分标准。
 - Plan 只写 `Plan Context` 和 `Plan Review`。
 - Plan Context 包含 Current-State Evidence、行为变化、变更面、任务契约和停止条件。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
@@ -265,7 +266,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 不得创建下一轮 iteration。
 - Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。
 - Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据。
-- 有后续任务时创建新 iteration，不覆盖旧记录。
+- Plan Review 合并当前轮未完成任务、必要修复和原计划下一轮任务，重新平衡后只创建一个新 Iteration，不覆盖旧记录。
 
 ## 验证
 

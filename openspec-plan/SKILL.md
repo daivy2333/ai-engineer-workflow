@@ -1,6 +1,6 @@
 ---
 name: openspec-plan
-description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制定、OpenSpec 变更创建和实施反馈 Review。用于新功能、Bug 修复、重构，或根据 openspec-act 的实现反馈检查代码并生成下一轮任务上下文；只调查、规划和 Review，不修改产品代码。
+description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需求与 BDD、实现调查、change 任务和 Iteration 规划，或 Review openspec-act 反馈并滚动生成下一轮；只调查、规划和 Review，不修改产品代码。
 ---
 
 # OpenSpec Plan
@@ -16,6 +16,7 @@ description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制
 5. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
 6. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
 7. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
+8. 制定 change 计划或 Review iteration 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
 
 ## Phase 1：CLARIFY
 
@@ -102,7 +103,7 @@ description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制
 
 影响实现的选择不得留作 TBD。无法通过只读调查解决时，阻塞 Gate 2 并请求用户决定。
 
-### Step 3：制定任务
+### Step 3：制定任务和 Iteration Plan
 
 每个任务必须：
 
@@ -113,12 +114,19 @@ description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制
 - 描述当前行为和计划后的可观察行为。
 - 说明要修改的行为、接口、状态或错误语义。
 - 记录必须保持的约束和明确禁止的修改。
-- 指定测试位置、预期 RED 原因和 GREEN 通过条件。
+- 指定测试位置、任务类型对应的 RED 或变更前 GREEN 见证，以及修改后 GREEN 条件。
 - 给出验证命令、通过条件和失败含义。
 - 列出发现计划失效时的停止条件。
 - 判断 Gate 是否需要持久化证据；默认使用 Act Response，不因存在 Gate 自动要求 Evidence 目录。
 
 任务说明固定行为契约和责任边界，不规定变量名、辅助函数拆分等局部表达。
+
+把全部任务写入 change 的 `tasks.md`，再按引用规则规划 Iteration：
+
+- 每个任务只归属一个 Iteration，并满足依赖顺序。
+- 每轮记录阶段结果、稳定基线、验证边界、诊断边界和 Non-goals。
+- 对每轮执行聚合和拆分审计，避免过碎或过重。
+- 只展开第一轮；后续轮次此时不创建 Iteration 文件。
 
 计划过长时分段写入，避免一次性覆盖整个文件。
 
@@ -126,9 +134,9 @@ description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制
 
 生成 Requirements Traceability Matrix：
 
-| Requirement | Scenario | Design | Task | Code Surface | Test Witness | Simplification | Status |
-|---|---|---|---|---|---|---|---|
-| R1 | S1 | D1 | T1 | `path::symbol` | `test_name` | None | Covered |
+| Requirement | Scenario | Design | Task | Iteration | Code Surface | Test Witness | Simplification | Status |
+|---|---|---|---|---|---|---|---|---|
+| R1 | S1 | D1 | T1 | 000 | `path::symbol` | `test_name` | None | Covered |
 
 状态规则：
 
@@ -149,9 +157,10 @@ description: 需求探索、实现调查、BDD 缺口扫描、可执行计划制
 5. 每个任务是否包含完整执行契约。
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
-8. 新会话中的 Act 是否无需重新设计就能执行。
+8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
+9. 新会话中的 Act 是否无需重新设计就能执行当前轮。
 
-### Step 6：创建实施迭代
+### Step 6：创建首个实施迭代
 
 按 `.claude/docs/templates/change-iteration.md` 创建：
 
@@ -170,6 +179,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - RTM、验收条件、验证方法和条件性风险。
 - Gate 2 各检查项的状态和证据。
 - `Persisted Evidence` 模式：`none` 或 `required`。
+- 当前轮在 `tasks.md` 中的任务和边界；后续任务只作为 Deferred Tasks 引用。
 
 `none` 表示命令、关键输出、退出码、修改文件和符号写入 Act Response 即可。`required` 时逐项写明关联 Gate、证据内容、文件格式、采集环境和通过条件。Plan 只提出要求，不创建 `evidence/` 或实际证据文件。
 
@@ -184,8 +194,9 @@ openspec/changes/<change>/iterations/000-initial.md
 - 调查完整：当前实现、调用链、状态、测试和影响面都有证据。
 - 设计闭合：行为差异、接口、错误语义和关键选择已经明确。
 - 任务可执行：每个任务都有代码位置、行为变化、测试见证和停止条件。
+- 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
-- 验证充分：RED、GREEN、回归命令和通过条件能证明验收目标。
+- 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
 - 没有影响实现的未知项、TBD 或需要 Act 决定的设计问题。
 - OpenSpec tasks、specs、design 和当前 iteration 一致。
 - Persisted Evidence 模式明确，`required` 项能映射到 Gate 和验收条件。
@@ -226,12 +237,11 @@ openspec/changes/<change>/iterations/000-initial.md
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
 7. 在当前文件的 `Plan Review` 追加结论。
 8. 按需更新 change 的 tasks、specs 或 design，并保留 requirement 映射。
-9. 有遗留问题时，重新调查受影响范围并创建下一个零填充编号文件。
-10. 新文件补齐独立执行所需上下文，不只写“修复 Review 问题”。
-11. 新 iteration 必须重新通过 Gate 2，才能交给 Act。
-12. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` iteration。已创建后继 iteration 时，不再恢复旧 iteration。
-13. 没有后续任务时，记录 `no-follow-up`，但不归档或同步状态。
-14. 输出结果后终止，等待用户审计和下一步指令。
+9. 按引用规则合并当前轮未完成任务、必要修复和原计划下一轮任务，重新平衡剩余 Iteration Plan。
+10. 仍有工作时只创建一个下一编号文件；新文件使用当前代码补齐独立上下文并重新通过 Gate 2。
+11. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` iteration。已创建后继 iteration 时，不再恢复旧 iteration。
+12. 没有修复和剩余任务时记录 `no-follow-up`，但不归档或同步状态。
+13. 输出结果后终止，等待用户审计和下一步指令。
 
 旧迭代只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
 
@@ -243,6 +253,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - Scenario Sketch。
 - Current-State Evidence 和未确认项。
 - Requirements Traceability Matrix。
+- change tasks 中的 Iteration Plan 和平衡审计结果。
 - OpenSpec change 路径。
 - 当前迭代路径和编号。
 - Persisted Evidence 模式和 `required` 项，或 `none`。
@@ -254,6 +265,7 @@ Review 模式改为交付：
 - 实际代码和证据的检查结果。
 - Blocker Handoff 的处理结果，或正常完成说明。
 - 当前 iteration 的 Plan Review 状态。
+- Iteration Plan 的任务合并、顺延或拆分结果。
 - 新 iteration 路径，或 `no-follow-up`。
 - 未确认问题和用户需决定的内容。
 

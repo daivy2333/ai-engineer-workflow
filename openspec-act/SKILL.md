@@ -12,12 +12,13 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
 2. 读取 `.claude/docs/templates/change-iteration.md`。
 3. 找到最新且 `Plan Context` 为 `ready` 的迭代。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
-4. 读取 `Persisted Evidence` 模式和全部 `required` 项。
-5. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
-6. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-7. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
-8. 修改产品代码前建立测试见证。
-9. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
+4. 核对 change `tasks.md` 的 Iteration Plan，只执行当前 Plan Context 列出的任务。
+5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
+6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
+7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
+8. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
+9. 修改产品代码前建立测试见证。
+10. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
 
 ## Gate 3：Plan Baseline and Test Witness
 
@@ -40,7 +41,7 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 
 1. 标记任务进行中。
 2. 建立 Gate 3 证据。
-3. 运行 RED → 验证 RED。
+3. 新功能和 Bug 验证预期 RED；重构验证变更前 GREEN。
 4. 按任务执行契约做满足当前任务的最小改动。
 5. 运行 GREEN → 验证 GREEN。
 6. 必要时重构并保持 GREEN。
@@ -61,7 +62,7 @@ Spec review 重新读取任务契约并检查：
 - requirement、scenario 和目标行为完整实现。
 - 计划列出的文件、符号、调用者和错误路径均已处理。
 - 不变量、兼容性和禁止修改项未被破坏。
-- RED 因目标行为缺失而失败，GREEN 能证明目标行为。
+- 测试见证符合任务类型，修改后 GREEN 能证明目标行为或行为保持。
 - Gate 证据覆盖任务的通过条件。
 
 Code quality review 检查：
@@ -169,7 +170,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 
 ## Phase 4：REPORT
 
-全部任务正常完成后：
+本轮全部任务正常完成后：
 
 1. 重新读取 Plan Context、requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
 2. 审查完整 diff，不只复用逐任务结论。
@@ -179,7 +180,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 6. 新设计、范围或测试策略问题按 Gate 6 阻塞并返回 Plan。
 7. 运行完整验证套件。
 8. 验证 OpenSpec change。
-9. 更新 change 内本轮任务状态。
+9. 只更新 change 内本轮任务状态。
 10. 只填写当前迭代的 `Act Response`：
    - 实际改动。
    - 文件和符号。
@@ -234,7 +235,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - 实现反馈已等待审计。
 - 需要检查或修订时调用 `openspec-plan`。
-- 认可结果后调用 `openspec-docs-maintainer` 同步或收尾。
+- 调用 `openspec-plan` Review 本轮结果并生成下一轮；Review 确认没有后续任务后，才调用 `openspec-docs-maintainer` 收尾。
 - 未归档 change，未同步全局文档，未清理分支。
 
 ## 禁止

@@ -78,10 +78,11 @@ openspec-milestone-planner
 openspec-plan
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
-  → 定义行为变化、任务契约和停止条件
+  → 定义行为变化、完整任务和 Iteration Plan
+  → 按稳定基线、验证与诊断边界平衡每轮工作
   → Gate 2：Execution Readiness
   → 声明 Persisted Evidence：none|required
-  → 写入 iterations/000-initial.md
+  → 只写入当前 iterations/000-initial.md
   → 终止，等待用户审计
 openspec-act
   → Gate 3：计划基线与测试见证
@@ -105,7 +106,8 @@ openspec-experience-recorder
 openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
   → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
-  → 按需创建 001、002...
+  → 合并必要修复、未完成任务和原计划下一轮任务
+  → 重新平衡后只创建下一轮
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
 ```
@@ -207,6 +209,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的多轮沟通写入 `iterations/NNN-title.md`。
+- change 的 `tasks.md` 预先规划全部 Iteration，但只为当前轮创建详细文件；后续轮次由 Plan Review 滚动生成。
 - change 的按需证据写入 `evidence/<NNN-title>/`，目录名与 iteration 对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。

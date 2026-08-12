@@ -11,6 +11,14 @@
 - Round: <NNN>
 - Parent: <NONE_OR_PARENT>
 
+**Iteration Scope**
+
+- Change tasks: <本轮 task ID>
+- Depends on: <前序 Iteration 或 None>
+- Stable baseline: <完成后下一轮可依赖的结果>
+- Diagnostic boundary: <失败时的排查范围>
+- Deferred tasks: <后续 Iteration 的 task ID 或 None>
+
 **Objective**
 
 <本轮可验证结果>
@@ -56,7 +64,7 @@
 - 依赖和执行顺序。
 - 当前行为和目标行为。
 - 必须修改与禁止修改的内容。
-- 测试位置、预期 RED 原因和 GREEN 条件。
+- 测试位置、任务类型对应的 RED 或变更前 GREEN 见证，以及修改后 GREEN 条件。
 - 验证命令、通过条件和失败含义。
 - 计划失效时的停止条件。
 
@@ -82,6 +90,7 @@
 |---|---|---|
 | Investigation | PASS/BLOCKED/WAIVED | <当前实现与影响面证据> |
 | Design | PASS/BLOCKED/WAIVED | <行为和接口设计证据> |
+| Iteration Plan | PASS/BLOCKED/WAIVED | <任务分轮、依赖和平衡审计> |
 | Task Contracts | PASS/BLOCKED/WAIVED | <任务可执行性证据> |
 | Traceability | PASS/BLOCKED/WAIVED | <RTM 证据> |
 | Verification | PASS/BLOCKED/WAIVED | <测试和通过条件> |
@@ -197,6 +206,10 @@
 
 <下一步和范围>
 
+**Iteration Plan Update**
+
+<Review 修复、未完成任务与原计划下一轮任务的合并、顺延或拆分；没有则写 None>
+
 **Next Iteration**
 
 <新 iteration 路径或 None>
@@ -205,6 +218,7 @@
 ## 写入规则
 
 - Plan 创建文件并填写 `Plan Context`。
+- Plan 在 change `tasks.md` 中规划全部 Iteration，但每次只创建当前一个 Iteration 文件。
 - Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`。
 - Act 只填写 `Act Response`。
 - Act 在 Experience Candidates 中记录有证据的 Runbook 或 Incident 候选；没有则写 `None`。
@@ -216,5 +230,5 @@
 - Plan Review 只填写 `Plan Review`。
 - Experience Candidates 不构成 Recorder 授权，也不是 Act 完成 Gate。
 - 已交接的区域只追加所属角色预留内容，不改写历史。
-- Review 需要后续工作时创建下一编号文件。
+- Review 合并必要修复、当前轮未完成任务和原计划下一轮任务，重新平衡后只创建下一编号文件。
 - 文件名使用 `NNN-title.md`，编号从 `000` 递增。

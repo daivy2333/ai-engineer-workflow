@@ -1,6 +1,6 @@
 ---
 name: openspec-docs-maintainer
-description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project model、decisions、knowledge、references 和 improvements，或同步、收尾、归档指定 change；每次运行默认刷新 SNAPSHOT，也接收 openspec-explorer 与 openspec-experience-recorder 发出的限定 R 登记请求。
+description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R/I，或同步、收尾、归档指定 change。用户直接调用时默认刷新 SNAPSHOT；也接收 Explorer、Recorder 只写 R 的限定登记请求。
 ---
 
 # OpenSpec Docs Maintainer
@@ -21,16 +21,16 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project
 
 ## 约束
 
-1. 除 SNAPSHOT 默认刷新外，只在用户明确要求时修改；Explorer 和 Recorder 的限定 R 登记是自动例外。
+1. 用户直接调用时，除 SNAPSHOT 默认刷新外只修改明确要求的内容；Explorer 和 Recorder 的限定 R 登记只写 references。
 2. 写入前搜索重复条目。
 3. 读取最大编号后递增。
-4. SNAPSHOT 默认增量更新；其他已有文档只做精准修改。
+4. 直接调用时 SNAPSHOT 默认增量更新；其他已有文档只做精准修改。
 5. 不删除或归档 M/D/K/R/I 等条目；这类操作交给 archivist。
 6. 不改变 Explorer、Recorder 管理的持久化产物正文。
 7. change 元数据由 OpenSpec 集成管理。
-8. 每次运行都默认刷新 SNAPSHOT。除此之外，只执行用户点名的维护动作或 Explorer、Recorder 的限定 R 登记。同步不隐含归档，归档不隐含其他清理。
+8. 直接调用默认刷新 SNAPSHOT；限定 R 登记跳过 SNAPSHOT。同步不隐含归档，归档不隐含其他清理。
 9. Plan 和 Act 的完成报告不是写入授权。
-10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。SNAPSHOT 刷新是 Maintainer 自身职责，不扩大调用方授权。
+10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。
 11. 每项信息只有一个权威位置；其他文档使用编号或路径引用。
 12. Change Evidence 属于 change，不登记 R，也不作为独立持久化产物维护。
 13. `MSxx` 的目标、范围、依赖、验证和诊断边界由 `openspec-milestone-planner` 规划；Maintainer 只同步已有 milestone 的运行状态和 change 引用。
@@ -40,9 +40,8 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project
 ### 1. LOAD
 
 - 确定写入类型和目标文件。
-- 读取 SNAPSHOT 的同步 revision、时间和状态。
-- 比较当前 Git 状态，确定能否可靠计算增量及受影响字段。
-- SNAPSHOT 不存在或没有可靠同步基线时，记录全量刷新原因。
+- 直接调用时读取 SNAPSHOT 的同步 revision、时间和状态；限定 R 登记只读取 references 和目标产物元数据。
+- 直接调用时比较当前 Git 状态，确定能否可靠计算 SNAPSHOT 增量；没有可靠同步基线时记录全量刷新原因。
 - 搜索已有条目。
 - 读取相关 M/D/K/R/I 条目，检查职责重叠。
 - 涉及 change 时读取 `openspec list` 和对应 tasks。
@@ -64,7 +63,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project
 - recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。检查最新 iteration、任务、Act Response 和 `required` Evidence；运行 validate 后使用 OpenSpec 集成归档，再同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。确认全部 change tasks 完成、Iteration Plan 无剩余任务、最新 Plan Review 为 `no-follow-up`，再检查 Act Response 和 `required` Evidence；validate 通过后归档并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -81,8 +80,8 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、project
 ### 3. VERIFY
 
 - 运行 `git diff --check`。
-- 检查 SNAPSHOT 的同步 revision、时间和 `current/stale` 状态与本次刷新结果一致。
-- 检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
+- 直接调用时检查 SNAPSHOT 的同步 revision、时间和 `current/stale` 状态与本次刷新结果一致。
+- 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。

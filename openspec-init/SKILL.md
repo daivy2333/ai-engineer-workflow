@@ -82,7 +82,7 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 - 按当前模板生成 `.claude/docs/templates/change-iteration.md`。
 
 SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
-迭代模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
+迭代模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部 Iteration，每次只生成当前轮文件。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
 
@@ -158,6 +158,7 @@ SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约�
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - 迭代模板存在，Plan、Act 和 Review 区域职责分离。
+- change tasks 支持 Iteration Plan，后续轮次由 Plan Review 滚动生成。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
 - iteration 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
 - iteration 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。

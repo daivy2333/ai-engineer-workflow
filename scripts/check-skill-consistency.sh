@@ -136,6 +136,8 @@ iteration_template="$ROOT/openspec-init/references/iteration-template.md"
 [[ -f "$iteration_template" ]] || fail "change iteration template is missing"
 evidence_template="$ROOT/openspec-act/references/evidence-format.md"
 [[ -f "$evidence_template" ]] || fail "change Evidence template is missing"
+iteration_planning="$ROOT/openspec-plan/references/iteration-planning.md"
+[[ -f "$iteration_planning" ]] || fail "iteration planning reference is missing"
 
 require_pattern 'iterations/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not create the initial iteration"
@@ -158,6 +160,22 @@ require_pattern 'requirement、scenario、design、task、代码和测试形成�
 require_pattern 'PLAN-OMISSION.*PLAN-INVALID.*ACT-DEVIATION.*BASELINE-CHANGED.*NEW-EVIDENCE' \
   "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan review does not classify deviations"
+require_pattern '已采用 OpenSpec' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan trigger is not limited to OpenSpec work"
+require_pattern '把全部任务写入 change 的 `tasks.md`' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not plan the complete change task pool"
+require_pattern '只展开第一轮' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan can materialize every planned iteration at once"
+require_pattern '当前轮未完成任务、必要修复和原计划下一轮任务' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan review does not roll findings into the next planned batch"
+require_pattern '每个 task 只分配给一个 Iteration' "$iteration_planning" \
+  "iteration planning does not assign every task exactly once"
+require_pattern '聚合和拆分审计|平衡审计' "$iteration_planning" \
+  "iteration planning lacks batch balancing"
+require_pattern '只创建一个下一编号 Iteration' "$iteration_planning" \
+  "iteration review can create multiple future iteration files"
+forbid_pattern 'materialized|reviewed|^- State:' "$iteration_planning" \
+  "iteration planning adds unnecessary lifecycle states"
 forbid_pattern '创建后把全局任务同步请求交给' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan still requests automatic global task sync"
 
@@ -187,6 +205,10 @@ require_pattern 'Blocker Handoff' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks blocked handoff"
 require_pattern 'act-added / BLOCKED' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks optional blocked evidence"
+require_pattern '只执行当前 Plan Context 列出的任务' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act can execute tasks from future iterations"
+require_pattern '新功能和 Bug 验证预期 RED；重构验证变更前 GREEN' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not select the test witness by task type"
 forbid_pattern '使用 OpenSpec 集成归档 change' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act still archives changes"
 forbid_pattern '请求 `openspec-docs-maintainer`' "$ROOT/openspec-act/SKILL.md" \
@@ -231,6 +253,10 @@ forbid_pattern '`blocked` iteration 不恢复执行' "$ROOT/openspec-init/refere
   "CLAUDE template still makes blockers irreversible"
 require_pattern 'Deviation Classification' "$iteration_template" \
   "iteration template lacks deviation classification"
+require_pattern 'Iteration Scope' "$iteration_template" \
+  "iteration template lacks the current batch boundary"
+require_pattern 'Iteration Plan Update' "$iteration_template" \
+  "iteration review cannot record rolling plan changes"
 require_pattern '不创建占位目录' "$iteration_template" \
   "iteration template can force empty Evidence directories"
 
@@ -269,9 +295,11 @@ require_pattern '自动调用 `openspec-docs-maintainer`' "$explorer_skill" \
   "openspec-explorer document mode does not register analysis references"
 require_pattern '只限于去重并写入 `openspec/specs/references/spec.md`' "$explorer_skill" \
   "openspec-explorer automatic registration is not limited to references"
-require_pattern 'Explorer 和 Recorder 的限定 R 登记是自动例外' \
+require_pattern 'Explorer 和 Recorder 的限定 R 登记只写 references' \
   "$ROOT/openspec-docs-maintainer/SKILL.md" \
   "openspec-docs-maintainer lacks narrow artifact reference exceptions"
+require_pattern '限定 R 登记跳过 SNAPSHOT' "$ROOT/openspec-docs-maintainer/SKILL.md" \
+  "artifact reference registration can mutate SNAPSHOT"
 
 recorder_skill="$ROOT/openspec-experience-recorder/SKILL.md"
 [[ -f "$recorder_skill" ]] || fail "openspec-experience-recorder skill is missing"
@@ -304,6 +332,8 @@ for path in project-model decisions knowledge references improvements; do
 done
 require_pattern 'M/D/K/R/I' "$maintainer_skill" \
   "openspec-docs-maintainer lacks the V2 document IDs"
+require_pattern 'Iteration Plan 无剩余任务.*Plan Review 为 `no-follow-up`' "$maintainer_skill" \
+  "docs maintainer can close a change with planned iteration work remaining"
 require_pattern '创建、修改或恢复 Runbook 和 Incident 正文' "$maintainer_skill" \
   "openspec-docs-maintainer can still own experience artifact bodies"
 [[ ! -e "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
@@ -412,6 +442,12 @@ forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORM
   "$claude_template" "CLAUDE template still contains project-state placeholders"
 require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
   "CLAUDE template lacks the cross-skill authorization boundary"
+require_pattern '全部任务分配到.*Iteration，只创建当前轮文件' "$claude_template" \
+  "CLAUDE template does not define rolling iteration planning"
+require_pattern 'change tasks 支持 Iteration Plan' "$init_skill" \
+  "openspec-init does not validate iteration planning support"
+require_pattern 'tasks.md.*预先规划全部 Iteration.*只为当前轮创建' "$ROOT/README.md" \
+  "README does not describe rolling iteration planning"
 
 snapshot_template="$ROOT/openspec-init/references/spec-templates.md"
 require_pattern 'SNAPSHOT 只描述项目现在是什么' "$claude_template" \
@@ -431,8 +467,8 @@ forbid_pattern '当前 change 和最新 iteration' "$snapshot_template" \
 forbid_pattern '最近验证结果及日期' "$snapshot_template" \
   "SNAPSHOT template still stores validation history"
 
-require_pattern '每次运行都默认刷新 SNAPSHOT' "$maintainer_skill" \
-  "docs maintainer does not refresh SNAPSHOT by default"
+require_pattern '直接调用默认刷新 SNAPSHOT' "$maintainer_skill" \
+  "docs maintainer does not refresh SNAPSHOT on direct runs"
 require_pattern '增量刷新' "$maintainer_skill" \
   "docs maintainer lacks incremental SNAPSHOT refresh"
 require_pattern '全量刷新' "$maintainer_skill" \
