@@ -20,14 +20,16 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 ## 前置检查
 
-1. 读取 `CLAUDE.md`。
-2. 读取 SNAPSHOT、project-model、decisions、knowledge 和 references 中与目标相关的内容。
+1. 复用当前会话中已读取且未变化的 CLAUDE、SNAPSHOT、project-model、decisions、knowledge、references 和 change 信息，只补读目标所需的缺失内容。
+2. Assistant 提供的体系文档上下文不能替代本次目标代码调查。
 3. 检查 `.claude/analysis/` 是否已有同主题文档。
 4. 检查活跃 OpenSpec change。
 5. 调查涉及实施结论时，读取相关 Iteration、Cycle、Act Response 和已有 Evidence。
 6. 明确目标、范围和 3-8 个需要回答的问题。
 
 已有分析足够时复用，不重复生成。
+
+用户随后调用 Plan 时，当前会话结论或 Analysis 是可复用的实现调查输入。Explorer 记录捕获 revision、代码位置、已确认事实、推断、未知项和适用范围；Plan 负责判断其是否仍适用并补齐制定执行契约所缺的内容。Explorer 不生成 Plan Context。
 
 ## 调查规则
 
@@ -36,6 +38,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 记录动态边：回调、事件、重新渲染、任务唤醒和消息队列。
 - 深度以回答目标问题为限。
 - 所有代码事实给出文件和符号位置。
+- 记录与目标有关的现有测试、验证入口和已实际运行的结果；没有运行时明确说明。
 - 当前项目描述以 SNAPSHOT 为准。分析文档不复制完整项目概览，只保留目标所需的历史现场。
 - Evidence 只能支持其记录的环境和结论；引用时给出 change、Iteration、Cycle 和文件路径。
 - 遇到 `Mxx/Dxx/Kxx/Rxx/Ixx` 或旧编号归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
@@ -47,10 +50,11 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 - SNAPSHOT 路径、采集 revision、分支和日期。
 - 目标与范围。
-- 结论。
+- 已确认事实、推断和未确认项。
 - 调用链、数据流或状态机。
+- 现有测试、验证入口和影响面。
 - 关键接口和数据结构。
-- 边界、失败路径和未确认项。
+- 边界和失败路径。
 - 关键文件索引。
 - 关联分析的相对链接。
 

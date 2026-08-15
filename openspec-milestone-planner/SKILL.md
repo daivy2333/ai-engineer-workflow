@@ -28,14 +28,12 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 
 ## Phase 1：LOAD
 
-读取：
+复用当前会话中 Assistant 已读取且未变化的体系上下文，只补读规划所缺的信息：
 
-1. `CLAUDE.md`。
-2. `.claude/docs/SNAPSHOT.md`。
-3. `.claude/docs/tasks.md`。
-4. 相关 project-model、decisions、knowledge 和 references。
-5. 已存在且与目标相关的 analysis。
-6. 活跃 change 的名称、目标和状态。
+1. `CLAUDE.md`、`.claude/docs/SNAPSHOT.md` 和 `.claude/docs/tasks.md`；当前上下文没有具体内容时再读取。
+2. 相关 project-model、decisions、knowledge 和 references。
+3. 已存在且与目标相关的 analysis。
+4. 活跃 change 的名称、目标和状态。
 
 Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止；不要求 Explorer 扩展职责，也不自行深挖代码。
 

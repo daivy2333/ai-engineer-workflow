@@ -53,12 +53,12 @@ openspec/changes/<change>/evidence/
 - 需要结构化数据支持判断。
 - 问题难以复现。
 
-`blocker.md` 记录发现位置、Plan 预期、实际情况、影响、部分工作、工作区状态和恢复条件。README 使用：
+只有实质偏差命中 Gate 6 时才生成阻塞证据。局部路径变化、等价实现或验证调整和非阻塞 Minor finding 写入 Act Response，不生成 BLOCKED Evidence。`blocker.md` 记录发现位置、Plan 预期、实际情况、影响、部分工作、工作区状态和恢复条件。README 使用：
 
 ```markdown
 | ID | Origin | Claim | Artifact | Result |
 |---|---|---|---|---|
-| EV-<III>-<CCC>-01 | act-added | Plan 基线与实际不一致 | [blocker.md](blocker.md) | BLOCKED |
+| EV-<III>-<CCC>-01 | act-added | Task Contract 与实际代码存在实质冲突 | [blocker.md](blocker.md) | BLOCKED |
 ```
 
 Act Response 引用证据编号。没有保存需要时写 `None required`，不创建 Evidence 目录。

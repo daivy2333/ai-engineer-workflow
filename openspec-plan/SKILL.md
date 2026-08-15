@@ -9,14 +9,15 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ## 前置规则
 
-1. 读取项目 `CLAUDE.md`。它是公共执行规则的唯一事实来源。
-2. 读取 SNAPSHOT、tasks、相关 project-model、decisions、knowledge 和 change。
-3. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-cycle.md`，先使用 `openspec-init`。
-4. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
-5. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
-6. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
-7. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
-8. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
+1. 复用当前会话中已读取且未变化的 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
+2. 新计划先消费当前会话中的 Explorer 结论或相关 Analysis，检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有 Explorer 输入时由 Plan 完成所需调查。
+3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
+4. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-cycle.md`，先使用 `openspec-init`。
+5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
+6. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
+7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
+8. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
+9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
 
 ## Phase 1：CLARIFY
 
@@ -77,7 +78,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 1：调查当前实现
 
-制定计划前，读取实际代码并建立 Current-State Evidence：
+制定计划前，先整理 Explorer 已确认且仍适用于当前工作区的事实，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
 
 - 定位入口、目标文件、符号及职责。
 - 追踪调用者、被调用者和动态调用边。
@@ -86,9 +87,9 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 定位现有测试、测试夹具和验证命令。
 - 检查相关 M/D/K、活跃 change 和兼容性约束。
 - 运行必要的只读基线验证，记录命令、关键输出和退出码。
-- 列出影响实现的未知项，并在制定任务前解决或标记阻塞。
+- 列出影响实现的未知项；只有实质未知项才阻塞。
 
-调查深度以支持本次修改为限。计划不得把定位调用者、判断影响范围、选择测试策略或决定接口语义留给 Act。
+不得无条件重复 Explorer 已完成且仍有效的调用链或影响面调查。调查深度以支持本次修改为限；计划不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act。
 
 ### Step 2：闭合设计
 
@@ -101,25 +102,13 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
 
-影响实现的选择不得留作 TBD。无法通过只读调查解决时，阻塞 Gate 2 并请求用户决定。
+影响契约语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
 
 ### Step 3：制定任务和 Iteration Plan
 
-每个任务必须：
+按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 证据，不因存在 Gate 自动要求 Evidence 目录。
 
-- 范围单一。
-- 有依赖关系。
-- 映射到 requirement 和 scenario。
-- 说明目标文件、符号、调用者及其当前职责。
-- 描述当前行为和计划后的可观察行为。
-- 说明要修改的行为、接口、状态或错误语义。
-- 记录必须保持的约束和明确禁止的修改。
-- 指定测试位置、任务类型对应的 RED 或变更前 GREEN 见证，以及修改后 GREEN 条件。
-- 给出验证命令、通过条件和失败含义。
-- 列出发现计划失效时的停止条件。
-- 判断 Gate 是否需要持久化证据；默认使用 Act Response，不因存在 Gate 自动要求 Evidence 目录。
-
-任务说明固定行为契约和责任边界，不规定变量名、辅助函数拆分等局部表达。
+Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implementation Guidance 不得给出冲突指令，也不规定非实质实现选择。
 
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
@@ -158,7 +147,8 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
-9. 新会话中的 Act 是否无需重新设计就能执行当前 Cycle。
+9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个测试见证并执行。
+10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
@@ -168,18 +158,14 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 openspec/changes/<change>/iterations/000-initial/000-initial.md
 ```
 
-`Plan Context` 必须包含：
+`Plan Context` 按 Cycle 模板写入：
 
-- 目标、背景和当前基线。
-- Current-State Evidence 及基线验证结果。
-- 入口、调用链、数据流、状态变化和影响面。
-- 当前行为、目标行为和变更面。
-- 每个任务的执行契约、依赖和停止条件。
-- 不变量、兼容性要求和非目标。
-- RTM、验收条件、验证方法和条件性风险。
-- Gate 2 各检查项的状态和证据。
-- `Persisted Evidence` 模式：`none` 或 `required`。
-- 当前逻辑 Iteration 在 `tasks.md` 中的任务和边界；当前 Cycle Type 为 `initial`，后续任务只作为 Deferred Tasks 引用。
+- Cycle 身份、范围、目标、背景和当前基线。
+- Current-State Evidence、关键路径、行为变化和 Change Surface。
+- Task Contracts、共享不变量、非目标、RTM、Acceptance 和 Verification。
+- Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
+
+Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务。
 
 `none` 表示命令、关键输出、退出码、修改文件和符号写入 Act Response 即可。`required` 时逐项写明关联 Gate、证据内容、文件格式、采集环境和通过条件。Plan 只提出要求，不创建 `evidence/` 或实际证据文件。
 
@@ -197,7 +183,7 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 - 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
-- 没有影响实现的未知项、TBD 或需要 Act 决定的设计问题。
+- 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确，`required` 项能映射到 Gate 和验收条件。
 - 用户批准计划。
@@ -235,9 +221,11 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 4. 状态为 `blocked` 时，检查 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
+   - 非实质 finding 不阻塞。
+   - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
 7. 判断每项 finding 是否阻塞当前 Iteration 的既有 Acceptance，并给出以下结果之一：
-   - `accepted`：Acceptance 已满足，只有非阻塞 Minor finding 或没有问题。
-   - `rework-required`：需要修复实现、Act 偏离，或补足达到既有 Acceptance 必需的 Plan 遗漏。
+   - `accepted`：Acceptance 已满足，只有非阻塞 Minor finding、已记录的非实质偏差或没有问题。
+   - `rework-required`：实现未满足既有 Acceptance、Act 出现实质偏离，或必须补足达到既有 Acceptance 的 Plan 遗漏。
    - `replan-required`：目标、范围、依赖、requirement、设计或验收边界必须改变。
 8. 在当前 Cycle 的 `Plan Review` 追加结论、Acceptance Gaps 和收敛状态。
 9. `rework-required` 时，为验收缺口建立映射到原 task 的本地 repair item；不得新增全局 change task 或修改 Iteration Map。
@@ -248,6 +236,8 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 14. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` Cycle。已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
 15. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，重新检查 Plan、设计和需求假设；同一问题三次失败后停止，不创建第四次同类 Cycle。
 16. 输出结果后终止，等待用户审计和下一步指令。
+
+不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建 rework Cycle。记录 finding 并返回 `accepted`。
 
 旧 Cycle 只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
 
@@ -287,8 +277,8 @@ Review 模式改为交付：
 - 需求未批准就实现。
 - 需求缺口未扫描就设计。
 - 未调查实际代码就制定实施任务。
-- 把调用链、影响范围、接口语义或测试策略留给 Act 决定。
-- 让影响实现的未知项通过 Gate 2。
+- 把必要调用链、实质影响范围、接口语义或测试策略留给 Act 决定。
+- 让影响契约语义或 Acceptance 的未知项通过 Gate 2。
 - 用轻量模式取消追溯或验证。
 - 把 `openspec-assistant` 当作写入者。
 - 自动调用 Act 或 Maintainer。

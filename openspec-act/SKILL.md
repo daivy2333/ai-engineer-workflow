@@ -9,10 +9,10 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 ## 前置规则
 
-1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
-2. 读取 `.claude/docs/templates/change-cycle.md`。
-3. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready` 的 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
-4. 核对 change `tasks.md` 的 Iteration Plan，只执行当前 Cycle 的 Plan Context 列出的 task 或 repair item。
+1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `CLAUDE.md`。
+2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready` 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
+3. 只执行当前 Plan Context 列出的 task 或 repair item。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
+4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
@@ -20,28 +20,20 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 9. 修改产品代码前建立测试见证。
 10. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
 
-## Gate 3：Plan Baseline and Test Witness
+## Gate 3：Test Witness
 
-当前 Cycle 开始时确认一次：
-
-- Plan Context 状态为 `ready`。
-- Plan 已提供目标符号、调用者、影响范围、Task Contract、测试位置和停止条件。
-- 计划指定的目标文件、符号和测试入口可以定位。
-- 当前已知状态没有与 Plan Context 明显冲突。
-
-Plan Context 是本 Cycle 的实施基线。Act 不重新调查调用链、影响范围或 Current-State Evidence，也不为基线重复生成证据。实施过程中发现实际代码与 Plan 不一致时，执行阻塞交接并返回 Plan。Act 不重新选择接口语义、状态所有权、架构或测试策略。
-
-每个 task 修改前只建立测试见证：
+Plan 对基线和 Gate 2 负责。`Plan Context: ready` 即构成 Act 的执行授权；Act 不确认、复核或重新建立计划基线，也不为基线生成证据。每个 task 修改前直接建立测试见证：
 
 - 新功能和 Bug 修复观察预期 RED。
 - 重构观察变更前 GREEN。
-- 测试不存在、无法运行或不能证明目标时，执行阻塞交接并返回 Plan。
+- Task Contract 要求新建测试时，先写测试再观察 RED。
+- 无法按契约建立或运行见证，或见证不能证明目标且必须改变测试策略时，执行阻塞交接并返回 Plan。
 
 铁律：`NO CHANGE WITHOUT TEST WITNESS`。
 
 ## Phase 3：EXECUTE
 
-完成本 Cycle 的一次 Gate 3 计划基线确认后，对每个 OpenSpec task 或 repair item 执行：
+对每个 OpenSpec task 或 repair item 执行：
 
 1. 标记任务进行中。
 2. 建立当前 task 的测试见证。
@@ -52,7 +44,9 @@ Plan Context 是本 Cycle 的实施基线。Act 不重新调查调用链、影�
 7. 执行 Gate 4 和 Gate 5。
 8. Gate 5 通过后才能标记完成。
 
-不要修改计划范围外的代码。发现计划缺口、错误基线或停止条件时，执行阻塞交接并终止。等待用户解决阻塞，或调用 `openspec-plan` 调整计划。
+不要修改计划范围外的代码。目标文件或符号发生可直接定位的移动、等价局部实现与计划建议不同，或验证命令可作等价调整时，只要不构成公共规则定义的实质问题，即可在契约内处理并记录到 `Deviations from Plan`。
+
+只有差异使 Task Contract 无法执行，或继续工作会构成实质问题时，才执行阻塞交接并终止。
 
 ## Gate 4：Two-Stage Review
 
@@ -77,7 +71,7 @@ Code quality review 检查：
 - 测试不会因错误原因通过。
 - 命名和局部结构符合项目惯例。
 
-计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4。需要改变设计、范围或测试策略时，按 Gate 6 阻塞。Minor 问题可以记录，但不得伪装成已解决。
+计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4。实质问题按 Gate 6 阻塞。Minor 问题可以记录并继续，不得伪装成已解决。
 
 ## Gate 5：Evidence-Based Verification
 
@@ -130,9 +124,8 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 
 - 缺失依赖。
 - 当前状态验证失败且原因未知。
-- 计划无法覆盖任务。
-- 计划基线与实际代码不一致。
-- 实现需要新的接口、状态所有权、架构或测试策略选择。
+- Task Contract 无法覆盖达到既有 Acceptance 所需的工作。
+- 实际代码与契约存在实质冲突，或继续实施会构成实质问题。
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
@@ -142,6 +135,8 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 2. 检查 shared state、coupling 和错误的需求假设。
 3. 判断应返回架构设计还是需求确认。
 4. 禁止开始第四次同类尝试。
+
+非实质差异不命中 Gate 6。Act 在契约内处理并记录，不建立 Blocker Handoff。
 
 ### 阻塞交接
 
@@ -168,7 +163,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
 4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
 5. 将状态从 `blocked` 改为 `pending`。
-6. 重跑受影响的 Gate 3，再从恢复点继续。
+6. 重新建立受影响 task 的测试见证，再从恢复点继续。
 
 不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
 
@@ -176,15 +171,15 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 
 当前 Cycle 的全部 task 或 repair item 正常完成后：
 
-1. 重新读取 Plan Context、requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
+1. 对照当前 Cycle 的 requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
 2. 审查完整 diff，不只复用逐任务结论。
 3. 检查跨任务交互、遗漏实现、计划外修改、回归风险和测试有效性。
 4. 修复计划范围内的 Critical 和 Important 问题。
 5. 对每项修复重跑受影响的 Gate 4 和 Gate 5。
-6. 新设计、范围或测试策略问题按 Gate 6 阻塞并返回 Plan。
+6. 实质问题按 Gate 6 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
 7. 运行完整验证套件。
 8. 验证 OpenSpec change。
-9. initial Cycle 只更新所属 Iteration 的 change task 状态；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
+9. initial Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 10. 只填写当前 Cycle 的 `Act Response`：
    - 实际改动。
    - 文件和符号。
@@ -215,7 +210,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 4. 完成声明是否有新鲜输出？
 5. `Act Response` 是否与实际代码和证据一致？
 6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
-7. 是否重新读取计划并审查完整 diff？
+7. 是否对照当前 Cycle 审查完整 diff？
 8. Self-Review 是否没有未解决的 Critical 或 Important 问题？
 9. Experience Candidates 是否已记录证据或明确写 `None`？
 

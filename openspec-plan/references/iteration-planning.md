@@ -76,7 +76,7 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 
 1. 为每项 Acceptance gap 建立本地 repair item，并映射到原 task、requirement、证据和来源 Cycle。repair item 可使用 `T2-R1` 形式，但不作为新的全局 change task，也不修改 Iteration Map。
 2. 在当前 Iteration 目录创建下一 Cycle 文件，记录父 Cycle、偏差分类、Acceptance gap、继承范围、repair item、当前代码基线、验证方法和停止条件。
-3. 新 Cycle 使用当前代码重新建立 Current-State Evidence，并重新通过 Gate 2。
+3. Plan 根据父 Cycle、Act Response 和当前代码补齐 Acceptance gap 所需的 Current-State Evidence，并重新通过 Gate 2；不重复调查未变化范围。新 Cycle 仍直接写入 Act 所需事实，不要求 Act 回读父 Cycle。
 4. Act 和 Plan 分别填写新 Cycle 的 Act Response 与 Plan Review；旧 Cycle 不改写。
 5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，Review 必须检查 Plan、设计和需求假设。同一问题连续失败三次时触发三次失败规则，不创建第四次同类 Cycle。
 

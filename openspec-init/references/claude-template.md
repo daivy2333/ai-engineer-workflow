@@ -36,9 +36,13 @@
 
 ## 读取顺序
 
-- 新会话：CLAUDE → SNAPSHOT → tasks → active changes。
-- 新功能或 Bug：相关 project-model → decisions → knowledge → plan。
-- 实施：change 基线 → 当前 Iteration 的最新 Cycle → 按需 Evidence → act。
+- 新会话：assistant 读取 CLAUDE → SNAPSHOT → tasks → active changes，并按问题补充相关 M/D/K/R/I 和持久化产物。
+- 当前会话中来源明确、细节仍可用且读取后未变化的信息直接复用；Skill 切换本身不触发重复读取。
+- 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新鲜运行证据时，才重新读取对应权威来源。
+- Assistant 只恢复 OpenSpec 体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
+- 探索：复用体系上下文 → 读取目标代码和测试 → 形成即时结论或 Analysis。
+- 计划：复用 Explorer 的当前会话结论或 Analysis → 只补查缺失或失效的实现事实 → 形成自包含 Plan Context。
+- 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
 - 实现 Review：当前 Cycle → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
 - 故障复盘：Incident → knowledge → decisions/model → improvements/change。
@@ -73,6 +77,7 @@
 - Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
 - 除上述例外，用户明确授权串联时才可继续下一阶段。
+- Explorer 的结论是 Plan 可复用的调查输入。Plan 负责检查适用性、补齐缺口并把必要事实写入当前 Cycle；Act 不沿引用链回读 Explorer Analysis。
 
 ## 通用能力
 
@@ -193,7 +198,7 @@ Plan 在制定任务前读取实际代码并记录：
 - 现有测试、验证命令和基线结果。
 - 当前行为、目标行为和影响范围。
 
-Plan 负责确定接口语义、状态所有权、测试策略和停止条件。影响实现的未知项阻塞 Gate 2，不留给 Act 决定。
+影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。
 
 ## TDD
 
@@ -215,8 +220,8 @@ Plan 负责确定接口语义、状态所有权、测试策略和停止条件。
 ## Gate
 
 - Gate 1：需求、BDD、场景、范围和 change 获批。
-- Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪。
-- Gate 3：计划基线有效且每个任务有测试见证。
+- Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪；非实质未知项不阻塞。
+- Gate 3：每个任务在修改前有测试见证。
 - Gate 4：每个任务先 spec review，后 code review。
 - Gate 5：完成声明有新鲜证据。
 - Gate 6：阻塞即停；三次失败后反思。
@@ -252,9 +257,13 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不占用全局 Iteration 编号，不修改 Iteration Map。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
 - Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件。
+- Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文。
+- Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写当前 Cycle 的 `Act Response`。
 - Act 每个 task 或 repair item 完成后执行 Gate 4，并在 Response 前重新审查完整 diff。
+- Act 不建立或复核 Plan 基线；直接按 ready 的 Plan Context 建立测试见证并实施。
+- Act 可处理非实质局部差异并在 Response 记录；实质问题返回 Plan。
 - Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
 - Act Response 记录有证据的 Runbook、Incident 候选；没有则写 `None`。

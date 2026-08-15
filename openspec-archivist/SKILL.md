@@ -59,14 +59,14 @@ Archivist 只核验：
 
 ### Step 1：读取
 
-按存在情况读取：
+复用当前会话中 Assistant 已读取且未变化的项目地图和状态概览。先读取用户指定目标和判断所需的索引，再按搜索命中补读相关内容：
 
-- `CLAUDE.md`
-- project-model、decisions、knowledge、references、improvements
-- SNAPSHOT、tasks
-- `.claude/analysis/`、`.claude/runbooks/`、`.claude/incidents/`
+- 目标所在的 project-model、decisions、knowledge、references、improvements、SNAPSHOT 或 tasks
+- 目标 Analysis、Runbook、Incident 及其 R 索引
 - 迁移期间存在的 architecture、learned、optimization
-- `openspec list`
+- 与目标有关的活跃 change 和 `openspec list` 结果
+
+Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive、Compress-Archive 或 Delete 前对目标正文、活动状态和交叉引用的新鲜检查。
 
 ### Step 2：解析
 

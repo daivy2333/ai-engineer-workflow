@@ -60,6 +60,8 @@ Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Res
 
 本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan 在 `tasks.md` 中预先分配全部 Iteration，只展开当前 Iteration 的当前 Cycle。Review 返回 `rework-required` 时在同一目录增加 Cycle，不修改 Map；返回 `replan-required` 时才调整逻辑 Iteration。
 
+上下文按职责传递：Assistant 恢复 OpenSpec 体系文档，Explorer 调查实际代码，Plan 复用探索结果并只补查缺失或失效事实，再把 Act 所需内容直接写入自包含 Plan Context。Act 不回读 Explorer 或重新建立计划基线，只读取当前 Cycle、目标代码和测试。局部实现差异和不影响 Acceptance 的 Minor finding 记录后继续；需要改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 时才阻塞。
+
 ---
 
 ## 三、快速开始

@@ -76,6 +76,7 @@ openspec-milestone-planner
   → 终止，不创建 change
 
 openspec-plan
+  → 复用 Explorer 已完成的代码调查，只补查缺失或失效事实
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
   → 定义行为变化、完整任务和 Iteration Plan
@@ -85,7 +86,8 @@ openspec-plan
   → 只写入当前 iterations/000-initial/000-initial.md
   → 终止，等待用户审计
 openspec-act
-  → Gate 3：计划基线与测试见证
+  → 直接消费 Plan Context，不重新建立计划基线
+  → Gate 3：任务测试见证
   → Gate 4：每任务 Spec Review → Code Review
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
@@ -116,6 +118,8 @@ openspec-docs-maintainer
 小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
 
 技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 和 Experience Recorder 可在产物验证后自动调用 Maintainer 登记对应 R；该例外不授权其他维护，也不增加审计 Gate。
+
+Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未变化的信息由后续 Skill 复用；Explorer 调查实际代码，Plan 消化探索结论并补齐缺口，Act 只依据自包含 Plan Context、目标代码和测试实施，不沿引用链重建上游调查。非实质的局部实现差异和 Minor finding 记录后继续；只有会改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题才阻塞。
 
 ### 文档模型
 
@@ -208,6 +212,8 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态或中间产物。
 - 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
+- 更新 OpenSpec 技能时控制提示词体积；新增规则前先合并或替换重复内容，不在 Skill、公共模板和引用中重复解释同一约束。
+- OpenSpec Skill 复用当前会话中来源明确且未变化的上下文，只补读缺失信息和实际操作对象；不得因 Skill 切换重复恢复项目状态。
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。

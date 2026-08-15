@@ -13,11 +13,15 @@ Explorer 文档模式自动调用 `openspec-docs-maintainer` 登记 R。其他�
 > Captured at: YYYY-MM-DD
 > See also: [关联文档](file.md)
 
-## 结论
+## 目标与范围
+
+## 已确认事实、推断与未确认项
 
 ## 调用链或数据流
 
 ## 边界与失败路径
+
+## 测试、验证入口与影响面
 
 ## 关键文件
 ```

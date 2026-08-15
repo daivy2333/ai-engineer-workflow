@@ -62,8 +62,8 @@ Incident 至少满足一项：
 
 ## 1. LOAD
 
-1. 读取 `CLAUDE.md`、references 和同主题持久化产物。
-2. 涉及 Act 时读取对应 Plan Context、Act Response 和实际存在的 Evidence。
+1. 复用当前会话中已读取且未变化的 `CLAUDE.md` 和体系上下文，读取格式规则、同主题持久化产物及其 R 索引。
+2. 涉及 Act 时优先读取 Act Response 和实际存在的 Evidence；只有范围、前置条件或环境无法由这些来源确定时，才补读 Plan Context 的相关部分。
 3. 记录来源 revision、环境、命令、结果和证据路径。
 4. 搜索同主题 Runbook、Incident 和 R，避免重复。
 

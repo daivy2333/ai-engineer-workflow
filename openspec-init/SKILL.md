@@ -138,6 +138,7 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - specs validate 通过。
 - `CLAUDE.md` 只有一个公共规则来源。
 - `CLAUDE.md` 不包含项目名称、技术栈、分支、路径现状或具体命令。
+- 公共读取规则要求复用当前会话中来源明确且未变化的体系上下文，并明确 Assistant 不替代代码调查或实际操作对象检查。
 - 当前项目描述只位于 SNAPSHOT。
 - 可复用的构建、测试和其他命令行操作流程进入 Runbook。
 - SNAPSHOT 不包含工作状态、操作流程、约束、原因或历史。

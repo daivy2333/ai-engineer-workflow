@@ -68,6 +68,8 @@ done
 actual_count=${#skills[@]}
 readme_count=$(sed -n 's/^当前仓库共 \([0-9][0-9]*\) 个技能。$/\1/p' "$ROOT/README.md")
 [[ "$readme_count" == "$actual_count" ]] || fail "README count '$readme_count' does not match '$actual_count'"
+require_pattern '更新 OpenSpec 技能时控制提示词体积' "$ROOT/README.md" \
+  "README lacks the prompt-size update constraint"
 
 if rg -n 'plugin-loader|project-docs-generator-ulw|project-archivist' "$ROOT/README.md" >/dev/null; then
   fail "README contains removed skill names"
@@ -149,9 +151,15 @@ require_pattern '调查当前实现' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not investigate the current implementation"
 require_pattern 'Current-State Evidence' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan lacks current-state evidence"
-require_pattern '不得把定位调用者、判断影响范围、选择测试策略或决定接口语义留给 Act' \
+require_pattern '不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act' \
   "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan leaves implementation discovery to Act"
+require_pattern '先消费当前会话中的 Explorer 结论或相关 Analysis' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not reuse explorer investigation"
+require_pattern '不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文' \
+  "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan can create a chained rather than self-contained handoff"
 require_pattern 'Gate 2：Execution Readiness' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan Gate 2 does not check execution readiness"
 require_pattern 'requirement、scenario、design、task、代码和测试形成链路' \
@@ -189,22 +197,23 @@ require_pattern '只填写当前 Cycle 的 `Act Response`' "$ROOT/openspec-act/S
   "openspec-act does not own an explicit response section"
 require_pattern '未归档 change，未同步全局文档' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks a no-closeout handoff"
-require_pattern 'Gate 3：Plan Baseline and Test Witness' "$ROOT/openspec-act/SKILL.md" \
-  "openspec-act Gate 3 does not validate the plan baseline"
-require_pattern '当前 Cycle 开始时确认一次' "$ROOT/openspec-act/SKILL.md" \
-  "openspec-act repeats the plan baseline check for every task"
-require_pattern 'Plan Context 是本 Cycle 的实施基线' "$ROOT/openspec-act/SKILL.md" \
-  "openspec-act does not trust the approved Cycle context"
-require_pattern 'Act 不重新调查调用链、影响范围或 Current-State Evidence' \
+require_pattern 'Gate 3：Test Witness' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act Gate 3 is not limited to the test witness"
+require_pattern 'Act 不确认、复核或重新建立计划基线' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still establishes a plan baseline"
+forbid_pattern 'Plan Baseline and Test Witness|当前 Cycle 开始时确认一次|计划指定的目标文件、符号和测试入口可以定位' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still performs baseline confirmation"
+require_pattern '不重新调查调用链、影响范围或 Current-State Evidence' \
   "$ROOT/openspec-act/SKILL.md" \
   "openspec-act repeats the investigation already completed by plan"
 require_pattern '建立当前 task 的测试见证' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act does not retain per-task test witnesses"
 forbid_pattern '每个任务开始前确认|建立 Gate 3 证据' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act still rebuilds the Gate 3 baseline per task"
-require_pattern 'Act 不重新选择接口语义、状态所有权、架构或测试策略' \
+require_pattern '只有差异使 Task Contract 无法执行.*构成实质问题时' \
   "$ROOT/openspec-act/SKILL.md" \
-  "openspec-act can redesign an incomplete plan"
+  "openspec-act lacks a materiality threshold for blockers"
 require_pattern '重新读取任务契约并检查' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act Gate 4 lacks task-level self-review"
 require_pattern '审查完整 diff，不只复用逐任务结论' "$ROOT/openspec-act/SKILL.md" \
@@ -222,7 +231,7 @@ require_pattern 'Blocker Handoff' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks blocked handoff"
 require_pattern 'act-added / BLOCKED' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks optional blocked evidence"
-require_pattern '只执行当前 Cycle 的 Plan Context 列出的 task 或 repair item' "$ROOT/openspec-act/SKILL.md" \
+require_pattern '只执行当前 Plan Context 列出的 task 或 repair item' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act can execute work outside the current Cycle"
 require_pattern '新功能和 Bug 验证预期 RED；重构验证变更前 GREEN' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act does not select the test witness by task type"
@@ -243,6 +252,10 @@ require_pattern 'Current-State Evidence' "$iteration_template" \
   "iteration template lacks current-state evidence"
 require_pattern 'Task Contracts' "$iteration_template" \
   "iteration template lacks executable task contracts"
+require_pattern 'Task Contract 是 Act 的任务级执行依据' "$iteration_template" \
+  "iteration template does not make task contracts authoritative"
+require_pattern '不得要求 Act 回读才能执行' "$iteration_template" \
+  "iteration template allows a chained Act handoff"
 require_pattern 'Gate 2 Readiness' "$iteration_template" \
   "iteration template lacks Gate 2 readiness evidence"
 require_pattern 'Self-Review' "$iteration_template" \
@@ -295,10 +308,10 @@ require_pattern 'Evidence 不登记 R' "$evidence_template" \
   "Evidence template registers a redundant R entry"
 require_pattern '随 change 一起归档' "$evidence_template" \
   "Evidence template lacks change-coupled archival"
-require_pattern 'Plan 基线与实际不一致' "$evidence_template" \
-  "Evidence template lacks blocked plan-deviation evidence"
+require_pattern 'Task Contract 与实际代码存在实质冲突' "$evidence_template" \
+  "Evidence template lacks material contract-conflict evidence"
 
-require_pattern '默认使用 Act Response' "$ROOT/openspec-plan/SKILL.md" \
+require_pattern '默认用 Act Response 保存 Gate 证据' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not default to inline response evidence"
 require_pattern '`none` 时不得仅因 Evidence 目录不存在提出问题' \
   "$ROOT/openspec-plan/SKILL.md" \
@@ -318,6 +331,10 @@ require_pattern '候选不构成创建授权' "$iteration_template" \
   "iteration template treats experience candidates as recorder authorization"
 
 explorer_skill="$ROOT/openspec-explorer/SKILL.md"
+require_pattern '复用当前会话中已读取且未变化' "$explorer_skill" \
+  "openspec-explorer does not reuse established system context"
+require_pattern 'Plan 负责判断其是否仍适用并补齐' "$explorer_skill" \
+  "openspec-explorer does not provide reusable investigation to plan"
 require_pattern '即时回答.*不调用 Maintainer' "$explorer_skill" \
   "openspec-explorer answer mode does not forbid maintainer calls"
 require_pattern '自动调用 `openspec-docs-maintainer`' "$explorer_skill" \
@@ -346,6 +363,8 @@ require_pattern '创建、更新和恢复 `.claude/runbooks/`' "$recorder_skill"
   "experience recorder does not own Runbook bodies"
 require_pattern '创建、更新和恢复 `.claude/incidents/`' "$recorder_skill" \
   "experience recorder does not own Incident bodies"
+require_pattern '优先读取 Act Response 和实际存在的 Evidence' "$recorder_skill" \
+  "experience recorder still loads the entire change by default"
 
 experience_formats="$ROOT/openspec-experience-recorder/references/artifact-formats.md"
 [[ -f "$experience_formats" ]] || fail "Runbook and Incident formats are missing"
@@ -365,6 +384,8 @@ require_pattern 'Iteration Plan 无剩余任务.*Plan Review 为 `accepted`.*`Ne
   "docs maintainer can close a change before the final Iteration is accepted"
 require_pattern '创建、修改或恢复 Runbook 和 Incident 正文' "$maintainer_skill" \
   "openspec-docs-maintainer can still own experience artifact bodies"
+require_pattern '复用当前会话中 Assistant 或上游 Skill 已读取且未变化' "$maintainer_skill" \
+  "openspec-docs-maintainer does not reuse established context"
 [[ ! -e "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
   fail "experience artifact formats still belong to docs maintainer"
 
@@ -380,6 +401,8 @@ require_pattern '不要求 Explorer、Plan、Act 或 Maintainer 生成专用交�
   "milestone planner couples other skills to its workflow"
 require_pattern 'Milestone 与 change 不绑定数量' "$milestone_skill" \
   "milestone planner forces a milestone-to-change mapping"
+require_pattern '复用当前会话中 Assistant 已读取且未变化' "$milestone_skill" \
+  "milestone planner still reloads all project context"
 require_pattern 'MSxx' "$ROOT/openspec-init/references/claude-template.md" \
   "CLAUDE template lacks milestone routing"
 require_pattern 'MSxx' "$ROOT/openspec-compressor/SKILL.md" \
@@ -424,6 +447,8 @@ require_pattern '覆盖率为 100%.*`unmapped = 0`.*`skipped = 0`' "$archivist_s
   "openspec-archivist does not verify complete migration coverage"
 require_pattern '旧经验文档只能完整 Archive' "$archivist_skill" \
   "openspec-archivist permits destructive legacy retirement"
+require_pattern '不能代替 Archive、Compress-Archive 或 Delete 前.*新鲜检查' "$archivist_skill" \
+  "openspec-archivist reuses stale context for destructive decisions"
 
 carrier_ref="$ROOT/openspec-archivist/references/carrier-protocol.md"
 require_pattern 'Carrier spec 必须逐文件保存活动经验源完整原文' "$carrier_ref" \
@@ -449,6 +474,19 @@ for file in "${active_model_files[@]}"; do
 done
 
 claude_template="$ROOT/openspec-init/references/claude-template.md"
+require_pattern 'Skill 切换本身不触发重复读取' "$claude_template" \
+  "CLAUDE template does not reuse current-session context"
+require_pattern 'Assistant 只恢复 OpenSpec 体系文档上下文' "$claude_template" \
+  "CLAUDE template lets assistant replace implementation investigation"
+require_pattern 'Act 不沿引用链回读 Explorer Analysis' "$claude_template" \
+  "CLAUDE template allows chained Explorer-to-Act context"
+require_pattern '局部命名、辅助函数拆分、等价控制流.*不属于实质问题' "$claude_template" \
+  "CLAUDE template lacks the shared materiality definition"
+for skill in openspec-plan openspec-act; do
+  forbid_pattern '可观察行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance' \
+    "$ROOT/$skill/SKILL.md" \
+    "$skill duplicates the shared materiality definition"
+done
 for path in project-model decisions knowledge references improvements; do
   require_pattern "openspec/specs/$path/spec\\.md" "$claude_template" \
     "CLAUDE template does not map $path"
