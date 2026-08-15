@@ -139,8 +139,8 @@ evidence_template="$ROOT/openspec-act/references/evidence-format.md"
 iteration_planning="$ROOT/openspec-plan/references/iteration-planning.md"
 [[ -f "$iteration_planning" ]] || fail "iteration planning reference is missing"
 
-require_pattern 'iterations/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
-  "openspec-plan does not create the initial iteration"
+require_pattern 'iterations/000-initial/000-initial\.md' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan does not create the initial Iteration/Cycle structure"
 require_pattern '检查实际代码、diff、Act Response、Self-Review 和计划要求的 Evidence' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan review does not inspect implementation evidence"
 require_pattern '输出交接信息后终止' "$ROOT/openspec-plan/SKILL.md" \
@@ -164,27 +164,44 @@ require_pattern '已采用 OpenSpec' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan trigger is not limited to OpenSpec work"
 require_pattern '把全部任务写入 change 的 `tasks.md`' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not plan the complete change task pool"
-require_pattern '只展开第一轮' "$ROOT/openspec-plan/SKILL.md" \
-  "openspec-plan can materialize every planned iteration at once"
-require_pattern '当前轮未完成任务、必要修复和原计划下一轮任务' "$ROOT/openspec-plan/SKILL.md" \
-  "openspec-plan review does not roll findings into the next planned batch"
+require_pattern '只展开第一个 Iteration 目录及其 `000-initial\.md`' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan can materialize every planned Iteration at once"
+for review_result in accepted rework-required replan-required; do
+  require_pattern "\`$review_result\`" "$ROOT/openspec-plan/SKILL.md" \
+    "openspec-plan review lacks the '$review_result' result"
+done
+require_pattern '不得新增全局 change task 或修改 Iteration Map' "$ROOT/openspec-plan/SKILL.md" \
+  "openspec-plan promotes in-scope rework into the global Iteration Map"
 require_pattern '每个 task 只分配给一个 Iteration' "$iteration_planning" \
   "iteration planning does not assign every task exactly once"
 require_pattern '聚合和拆分审计|平衡审计' "$iteration_planning" \
   "iteration planning lacks batch balancing"
-require_pattern '只创建一个下一编号 Iteration' "$iteration_planning" \
-  "iteration review can create multiple future iteration files"
+require_pattern '`rework-required` 只创建同目录的下一 Cycle' "$iteration_planning" \
+  "iteration review does not keep rework inside the logical Iteration"
+require_pattern '不因当前 Iteration 的 Cycle 数量修改或顺延编号' "$iteration_planning" \
+  "rework can renumber the planned Iteration Map"
 forbid_pattern 'materialized|reviewed|^- State:' "$iteration_planning" \
   "iteration planning adds unnecessary lifecycle states"
 forbid_pattern '创建后把全局任务同步请求交给' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan still requests automatic global task sync"
 
-require_pattern '只填写当前迭代的 `Act Response`' "$ROOT/openspec-act/SKILL.md" \
+require_pattern '只填写当前 Cycle 的 `Act Response`' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act does not own an explicit response section"
 require_pattern '未归档 change，未同步全局文档' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks a no-closeout handoff"
 require_pattern 'Gate 3：Plan Baseline and Test Witness' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act Gate 3 does not validate the plan baseline"
+require_pattern '当前 Cycle 开始时确认一次' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act repeats the plan baseline check for every task"
+require_pattern 'Plan Context 是本 Cycle 的实施基线' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not trust the approved Cycle context"
+require_pattern 'Act 不重新调查调用链、影响范围或 Current-State Evidence' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act repeats the investigation already completed by plan"
+require_pattern '建立当前 task 的测试见证' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not retain per-task test witnesses"
+forbid_pattern '每个任务开始前确认|建立 Gate 3 证据' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act still rebuilds the Gate 3 baseline per task"
 require_pattern 'Act 不重新选择接口语义、状态所有权、架构或测试策略' \
   "$ROOT/openspec-act/SKILL.md" \
   "openspec-act can redesign an incomplete plan"
@@ -205,8 +222,8 @@ require_pattern 'Blocker Handoff' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks blocked handoff"
 require_pattern 'act-added / BLOCKED' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act lacks optional blocked evidence"
-require_pattern '只执行当前 Plan Context 列出的任务' "$ROOT/openspec-act/SKILL.md" \
-  "openspec-act can execute tasks from future iterations"
+require_pattern '只执行当前 Cycle 的 Plan Context 列出的 task 或 repair item' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act can execute work outside the current Cycle"
 require_pattern '新功能和 Bug 验证预期 RED；重构验证变更前 GREEN' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act does not select the test witness by task type"
 forbid_pattern '使用 OpenSpec 集成归档 change' "$ROOT/openspec-act/SKILL.md" \
@@ -236,8 +253,8 @@ require_pattern '状态改为 `blocked`' "$iteration_template" \
   "iteration template lacks blocked response status"
 require_pattern 'Blocker Resolution' "$iteration_template" \
   "iteration template lacks blocker resolution history"
-require_pattern '当前 iteration 可恢复的条件' "$iteration_template" \
-  "iteration template still routes every blocker to a later iteration"
+require_pattern '当前 Cycle 可恢复的条件' "$iteration_template" \
+  "Cycle template still routes every blocker to a later execution unit"
 require_pattern 'blocked → pending' "$iteration_template" \
   "iteration template cannot resume a blocked response"
 forbid_pattern '`blocked` iteration 不得恢复执行|`blocked` iteration 保持不可变|把 `blocked` iteration 恢复为 `pending`' \
@@ -255,13 +272,25 @@ require_pattern 'Deviation Classification' "$iteration_template" \
   "iteration template lacks deviation classification"
 require_pattern 'Iteration Scope' "$iteration_template" \
   "iteration template lacks the current batch boundary"
+require_pattern 'Cycle Scope' "$iteration_template" \
+  "iteration template lacks the execution-attempt boundary"
 require_pattern 'Iteration Plan Update' "$iteration_template" \
   "iteration review cannot record rolling plan changes"
+require_pattern 'accepted \| rework-required \| replan-required' "$iteration_template" \
+  "iteration template lacks explicit Cycle review outcomes"
+require_pattern 'Acceptance Gaps' "$iteration_template" \
+  "iteration template cannot track rework acceptance gaps"
+require_pattern 'Convergence' "$iteration_template" \
+  "iteration template cannot detect non-converging rework"
 require_pattern '不创建占位目录' "$iteration_template" \
   "iteration template can force empty Evidence directories"
 
 require_pattern 'openspec/changes/<change>/evidence/' "$evidence_template" \
   "Evidence template is not change-local"
+require_pattern 'evidence/<iteration>/<cycle>/' "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not separate Evidence by Iteration and Cycle"
+require_pattern 'iterations/<III-title>/<CCC-title>\.md' "$evidence_template" \
+  "Evidence template does not mirror the Iteration/Cycle hierarchy"
 require_pattern 'Evidence 不登记 R' "$evidence_template" \
   "Evidence template registers a redundant R entry"
 require_pattern '随 change 一起归档' "$evidence_template" \
@@ -332,8 +361,8 @@ for path in project-model decisions knowledge references improvements; do
 done
 require_pattern 'M/D/K/R/I' "$maintainer_skill" \
   "openspec-docs-maintainer lacks the V2 document IDs"
-require_pattern 'Iteration Plan 无剩余任务.*Plan Review 为 `no-follow-up`' "$maintainer_skill" \
-  "docs maintainer can close a change with planned iteration work remaining"
+require_pattern 'Iteration Plan 无剩余任务.*Plan Review 为 `accepted`.*`Next Iteration: None`' "$maintainer_skill" \
+  "docs maintainer can close a change before the final Iteration is accepted"
 require_pattern '创建、修改或恢复 Runbook 和 Incident 正文' "$maintainer_skill" \
   "openspec-docs-maintainer can still own experience artifact bodies"
 [[ ! -e "$ROOT/openspec-docs-maintainer/references/artifact-templates.md" ]] || \
@@ -442,12 +471,12 @@ forbid_pattern '<PROJECT_NAME>|<TECH_STACK>|<BUILD_COMMAND>|<TEST_COMMAND>|<FORM
   "$claude_template" "CLAUDE template still contains project-state placeholders"
 require_pattern 'Skill 完成不构成下一阶段授权' "$claude_template" \
   "CLAUDE template lacks the cross-skill authorization boundary"
-require_pattern '全部任务分配到.*Iteration，只创建当前轮文件' "$claude_template" \
-  "CLAUDE template does not define rolling iteration planning"
-require_pattern 'change tasks 支持 Iteration Plan' "$init_skill" \
+require_pattern '全部任务分配到.*Iteration，只展开当前 Iteration 目录和当前 Cycle' "$claude_template" \
+  "CLAUDE template does not define logical Iteration and execution Cycle planning"
+require_pattern 'change tasks 支持逻辑 Iteration Plan' "$init_skill" \
   "openspec-init does not validate iteration planning support"
-require_pattern 'tasks.md.*预先规划全部 Iteration.*只为当前轮创建' "$ROOT/README.md" \
-  "README does not describe rolling iteration planning"
+require_pattern 'tasks.md.*预先规划全部逻辑 Iteration.*Map 不记录执行尝试次数' "$ROOT/README.md" \
+  "README does not separate the Iteration Map from execution Cycles"
 
 snapshot_template="$ROOT/openspec-init/references/spec-templates.md"
 require_pattern 'SNAPSHOT 只描述项目现在是什么' "$claude_template" \
@@ -500,7 +529,7 @@ require_pattern '只有审核结果为 `PASS`.*生成下一批任务' "$claude_t
   "CLAUDE template can advance after unverified external evidence"
 require_pattern '验证失败时保留当前任务，不执行下游任务' "$claude_template" \
   "CLAUDE template can advance after failed verification"
-require_pattern '没有后续任务不表示 change、iteration 或当前阶段已经完成' "$claude_template" \
+require_pattern '没有后续任务不表示 change、Iteration、Cycle 或当前阶段已经完成' "$claude_template" \
   "CLAUDE template treats an empty task batch as workflow completion"
 
 agents_adapter="$ROOT/openspec-init/references/agents-adapter.md"
@@ -519,7 +548,7 @@ require_pattern '`hephaestus`.*明确契约的复杂实现' "$omo_ulw" \
   "omo-ulw does not constrain deep implementation"
 require_pattern '`ulw` 不得把 Plan 完成视为 Act 授权' "$omo_ulw" \
   "omo-ulw breaks the Plan-to-Act authorization boundary"
-require_pattern '不使用 OMO 的持久化状态替代 change、iteration、Evidence 或 Response' "$omo_ulw" \
+require_pattern '不使用 OMO 的持久化状态替代 change、Iteration、Cycle、Evidence 或 Response' "$omo_ulw" \
   "omo-ulw can replace OpenSpec persistence with OMO state"
 require_pattern 'Plan、Act Response、Plan Review、编号和生命周期修改必须只有一个所有者' "$omo_ulw" \
   "omo-ulw does not protect single-writer OpenSpec artifacts"

@@ -24,7 +24,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 2. 读取 SNAPSHOT、project-model、decisions、knowledge 和 references 中与目标相关的内容。
 3. 检查 `.claude/analysis/` 是否已有同主题文档。
 4. 检查活跃 OpenSpec change。
-5. 调查涉及实施结论时，读取相关 iteration、Act Response 和已有 Evidence。
+5. 调查涉及实施结论时，读取相关 Iteration、Cycle、Act Response 和已有 Evidence。
 6. 明确目标、范围和 3-8 个需要回答的问题。
 
 已有分析足够时复用，不重复生成。
@@ -37,7 +37,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 深度以回答目标问题为限。
 - 所有代码事实给出文件和符号位置。
 - 当前项目描述以 SNAPSHOT 为准。分析文档不复制完整项目概览，只保留目标所需的历史现场。
-- Evidence 只能支持其记录的环境和结论；引用时给出 change、iteration 和文件路径。
+- Evidence 只能支持其记录的环境和结论；引用时给出 change、Iteration、Cycle 和文件路径。
 - 遇到 `Mxx/Dxx/Kxx/Rxx/Ixx` 或旧编号归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
 - 只做网页搜索不能构成项目分析；必须读取实际项目文件。
 

@@ -31,7 +31,7 @@ Act 可以列出 Experience Candidates，但候选不构成创建授权，也不
 
 来源可以是：
 
-- `reported` 或 `blocked` iteration。
+- `reported` 或 `blocked` Cycle。
 - Act Response 和 change 内 Evidence。
 - 用户提供的命令、日志、截图、时间线或环境信息。
 - 已有 Runbook、Incident 及其 R 索引。

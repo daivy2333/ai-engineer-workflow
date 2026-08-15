@@ -1,31 +1,42 @@
-# Change iteration 模板
+# Change Cycle 模板
 
-将下面内容生成到 `.claude/docs/templates/change-iteration.md`。Plan 按此模板在 change 的 `iterations/` 下创建每一轮上下文。
+将下面内容生成到 `.claude/docs/templates/change-cycle.md`。Plan 在 change 的 `iterations/<III-title>/` 下为每次执行闭环创建一个 Cycle 文件。
 
 ```markdown
-# Iteration <NNN>: <TITLE>
+# Iteration <III> / Cycle <CCC>: <TITLE>
 
 ## Plan Context
 
 - Status: ready
-- Round: <NNN>
-- Parent: <NONE_OR_PARENT>
+- Iteration: <III-title>
+- Cycle: <CCC-title>
+- Cycle Type: initial | rework
+- Parent cycle: None | <relative-path>
 
 **Iteration Scope**
 
-- Change tasks: <本轮 task ID>
+- Change tasks: <本逻辑 Iteration 的 task ID>
 - Depends on: <前序 Iteration 或 None>
-- Stable baseline: <完成后下一轮可依赖的结果>
+- Stable baseline: <完成后下一 Iteration 可依赖的结果>
+- Verification boundary: <逻辑 Iteration 的独立完成判据>
 - Diagnostic boundary: <失败时的排查范围>
 - Deferred tasks: <后续 Iteration 的 task ID 或 None>
 
+**Cycle Scope**
+
+- Trigger: initial | rework-required
+- Acceptance gaps: <本 Cycle 必须关闭的既有验收缺口；initial 写 None>
+- Repair items: <T2-R1 等本地 repair item；initial 写 None>
+- Inherited scope: <继续有效的 requirement、task 和约束>
+- Excluded scope: <不属于当前 Iteration 的新需求、清理或其他工作>
+
 **Objective**
 
-<本轮可验证结果>
+<本 Cycle 完成后应达到的可验证结果；rework 仍服务于原 Iteration Acceptance>
 
 **Background**
 
-<需求来源、历史问题和本轮原因>
+<需求来源、历史问题和本 Cycle 原因>
 
 **Current Baseline**
 
@@ -53,13 +64,13 @@
 
 **Change Surface**
 
-| Task | Requirement/Scenario | File/Symbol | Current Responsibility | Planned Change |
+| Task/Repair | Requirement/Scenario | File/Symbol | Current Responsibility | Planned Change |
 |---|---|---|---|---|
 | T1 | R1/S1 | `<path::symbol>` | <当前职责> | <计划变化> |
 
 **Task Contracts**
 
-对每个任务记录：
+对 initial Cycle 中的 task 或 rework Cycle 中的 repair item 记录：
 
 - 依赖和执行顺序。
 - 当前行为和目标行为。
@@ -74,7 +85,7 @@
 
 **Non-goals**
 
-<本轮不处理的内容>
+<本 Cycle 不处理的内容；rework 不得扩大原 Iteration 范围>
 
 **Acceptance**
 
@@ -90,7 +101,8 @@
 |---|---|---|
 | Investigation | PASS/BLOCKED/WAIVED | <当前实现与影响面证据> |
 | Design | PASS/BLOCKED/WAIVED | <行为和接口设计证据> |
-| Iteration Plan | PASS/BLOCKED/WAIVED | <任务分轮、依赖和平衡审计> |
+| Iteration Plan | PASS/BLOCKED/WAIVED | <逻辑 Iteration 的任务、依赖和平衡审计> |
+| Cycle Scope | PASS/BLOCKED/WAIVED | <initial 范围或 rework Acceptance gap 与 repair item> |
 | Task Contracts | PASS/BLOCKED/WAIVED | <任务可执行性证据> |
 | Traceability | PASS/BLOCKED/WAIVED | <RTM 证据> |
 | Verification | PASS/BLOCKED/WAIVED | <测试和通过条件> |
@@ -125,10 +137,10 @@
 
 <正常完成写 None；blocked 时填写：>
 
-- Discovered at: <task / step / Gate>
+- Discovered at: <task / repair item / step / Gate>
 - Expected: <Plan 预期>
 - Actual: <实际情况>
-- Impact: <为何不能按原计划继续>
+- Impact: <为何不能按当前 Cycle 继续>
 - Completed work: <已完成任务>
 - Partial work: <部分修改>
 - Unstarted work: <未开始任务>
@@ -136,7 +148,7 @@
 - Gates: <已通过和阻塞的 Gate>
 - Evidence: <证据编号、路径或 None required>
 - Plan decision needed: <需要 Plan 重新决定的问题>
-- Resume condition: <当前 iteration 可恢复的条件；需改 Plan 时说明>
+- Resume condition: <当前 Cycle 可恢复的条件；需 Review 时说明>
 
 **Blocker Resolution**
 
@@ -164,7 +176,7 @@
 
 **Persisted Evidence**
 
-<`None required`，或 `../evidence/<NNN-title>/README.md` 及证据编号>
+<`None required`，或 `../../evidence/<III-title>/<CCC-title>/README.md` 及证据编号>
 
 **Experience Candidates**
 
@@ -188,15 +200,23 @@
 
 **Review Result**
 
-<follow-up-required | no-follow-up>
+<accepted | rework-required | replan-required>
 
 **Findings**
 
-<基于代码、diff 和验证证据的发现>
+<基于代码、diff 和验证证据的发现；区分阻塞 Acceptance 与非阻塞 Minor finding>
 
 **Deviation Classification**
 
 <PLAN-OMISSION | PLAN-INVALID | ACT-DEVIATION | BASELINE-CHANGED | NEW-EVIDENCE | None>
+
+**Acceptance Gaps**
+
+<未满足的既有 Acceptance 及证据；没有则写 None>
+
+**Convergence**
+
+<Acceptance gap 相比父 Cycle 为 reduced | unchanged | expanded；initial Cycle 无父项时写 N/A>
 
 **Evidence**
 
@@ -204,31 +224,39 @@
 
 **Follow-up Decision**
 
-<下一步和范围>
+<为何接受、为何在同一 Iteration 返工，或为何必须重新规划>
 
 **Iteration Plan Update**
 
-<Review 修复、未完成任务与原计划下一轮任务的合并、顺延或拆分；没有则写 None>
+<`rework-required` 必须写 None；`replan-required` 记录目标、范围、依赖或验收边界变化；`accepted` 时记录 None>
+
+**Next Cycle**
+
+<同一 Iteration 内的新 Cycle 路径；没有则写 None>
 
 **Next Iteration**
 
-<新 iteration 路径或 None>
+<当前 Iteration 被接受后展开的下一逻辑 Iteration 路径；没有则写 None>
 ```
 
 ## 写入规则
 
-- Plan 创建文件并填写 `Plan Context`。
-- Plan 在 change `tasks.md` 中规划全部 Iteration，但每次只创建当前一个 Iteration 文件。
+- Plan 创建 Iteration 目录和 Cycle 文件，并填写 `Plan Context`。
+- Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，但只展开当前 Iteration 和当前 Cycle。
+- 每个 Iteration 从 `000-initial.md` 开始；只有 `rework-required` 才在同一目录创建下一编号的 `rework` Cycle。
+- Rework Cycle 使用本地 repair item 完成既有 Acceptance，不新增全局 change task，不修改 Iteration Map。
 - Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`。
-- Act 只填写 `Act Response`。
+- Act 只填写当前 Cycle 的 `Act Response`。
 - Act 在 Experience Candidates 中记录有证据的 Runbook 或 Incident 候选；没有则写 `None`。
 - 正常完成时，Act 把状态从 `pending` 改为 `reported`。
 - 计划偏差阻塞时，Act 填写 Blocker Handoff 并把状态改为 `blocked`。
-- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，执行 `blocked → pending` 后恢复当前 iteration。
-- 已创建后继 iteration 时，不再恢复旧 iteration。
+- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，执行 `blocked → pending` 后恢复当前 Cycle。
+- 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
 - `required` 时，Act 按自身 Evidence 格式创建对应目录；`none` 时不创建占位目录。
 - Plan Review 只填写 `Plan Review`。
+- `accepted` 才能完成当前 Iteration 并展开 Map 中的下一 Iteration。
+- `rework-required` 只能创建同一 Iteration 内的下一 Cycle。
+- `replan-required` 才能调整 Iteration Plan；旧 Cycle 不改写。
 - Experience Candidates 不构成 Recorder 授权，也不是 Act 完成 Gate。
 - 已交接的区域只追加所属角色预留内容，不改写历史。
-- Review 合并必要修复、当前轮未完成任务和原计划下一轮任务，重新平衡后只创建下一编号文件。
-- 文件名使用 `NNN-title.md`，编号从 `000` 递增。
+- Iteration 目录使用 `<III-title>/`，Cycle 文件使用 `<CCC-title>.md`；两级编号都从 `000` 递增。

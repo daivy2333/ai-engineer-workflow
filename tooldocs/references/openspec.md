@@ -43,17 +43,22 @@ openspec/
 
 ```text
 changes/<change>/
-├── iterations/             ← 多轮 Plan、Act 和 Review
+├── iterations/             ← 逻辑 Iteration 目录与执行 Cycle
+│   └── <III-title>/
+│       ├── 000-initial.md
+│       └── 001-rework.md
 └── evidence/               ← 仅在需要留存证据时创建
     ├── README.md
-    └── <NNN-title>/
+    └── <III-title>/
         ├── README.md
-        └── <日志、调试输出或其他证据>
+        └── <CCC-title>/
+            ├── README.md
+            └── <日志、调试输出或其他证据>
 ```
 
 Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存验证摘要；`required` 时 Act 保存指定文件。Evidence 属于 change，不登记 R，随 change 归档。
 
-本仓库还要求 Plan 在 change 的 `tasks.md` 中把全部任务预先分配到一个或多个 Iteration，但每次只生成当前轮文件。Plan Review 把必要修复、当前轮未完成任务和原计划下一轮任务重新平衡后，再生成一个后继 Iteration。
+本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan 在 `tasks.md` 中预先分配全部 Iteration，只展开当前 Iteration 的当前 Cycle。Review 返回 `rework-required` 时在同一目录增加 Cycle，不修改 Map；返回 `replan-required` 时才调整逻辑 Iteration。
 
 ---
 

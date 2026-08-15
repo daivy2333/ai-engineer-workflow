@@ -43,8 +43,8 @@
 | `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
 | `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
 | `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
-| `openspec-plan` | BDD、实现调查、可执行计划、iteration 创建和实施反馈 Review |
-| `openspec-act` | 执行当前 iteration、TDD、Review、验证和反馈 |
+| `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
+| `openspec-act` | 执行当前 Cycle、TDD、Review、验证和反馈 |
 | `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Incident |
 | `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、限定 R 登记和指定 change 收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
@@ -79,10 +79,10 @@ openspec-plan
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
   → 定义行为变化、完整任务和 Iteration Plan
-  → 按稳定基线、验证与诊断边界平衡每轮工作
+  → 按稳定基线、验证与诊断边界平衡每个逻辑 Iteration
   → Gate 2：Execution Readiness
   → 声明 Persisted Evidence：none|required
-  → 只写入当前 iterations/000-initial.md
+  → 只写入当前 iterations/000-initial/000-initial.md
   → 终止，等待用户审计
 openspec-act
   → Gate 3：计划基线与测试见证
@@ -90,7 +90,7 @@ openspec-act
   → Gate 5：新鲜验证证据
   → Gate 6：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
-  → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 iteration
+  → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 Cycle
   → 按需保存 act-added / BLOCKED Evidence
   → Response 前重新审查完整 diff
   → 修复计划内发现并重跑受影响 Gate
@@ -106,8 +106,9 @@ openspec-experience-recorder
 openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
   → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
-  → 合并必要修复、未完成任务和原计划下一轮任务
-  → 重新平衡后只创建下一轮
+  → accepted：完成当前逻辑 Iteration，按 Map 展开下一 Iteration
+  → rework-required：在同一 Iteration 目录创建下一 Cycle，不修改 Map
+  → replan-required：重新规划目标、范围、依赖或验收边界
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
 ```
@@ -130,11 +131,11 @@ openspec-docs-maintainer
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
 | Runbooks | 已验证、可重复或高风险的操作 | `.claude/runbooks/` |
 | Incidents | 已发生的重要故障和后续动作 | `.claude/incidents/` |
-| Evidence | 按需保存某次 iteration 的日志和数据 | `openspec/changes/<change>/evidence/` |
+| Evidence | 按需保存某次 Cycle 的日志和数据 | `openspec/changes/<change>/evidence/` |
 
 Architecture 的当前约束进入 Project Model，选择历史进入 Decisions。Learned 中的稳定结论进入 Knowledge，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
 
-Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；Plan 明确要求持久化，或 Act 需要保留长日志、特殊格式和难以复现的输出时，才创建对应 iteration 的 Evidence 目录。Evidence 随 change 归档，不创建空占位目录。
+Evidence 属于 change，不登记 R。普通验证结果写入 Act Response；Plan 明确要求持久化，或 Act 需要保留长日志、特殊格式和难以复现的输出时，才创建对应 Iteration/Cycle 的 Evidence 目录。Evidence 随 change 归档，不创建空占位目录。
 
 ### OS 与驱动
 
@@ -204,13 +205,17 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 
 ## 设计约束
 
+- 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态或中间产物。
+- 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
+- OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
-- change 的多轮沟通写入 `iterations/NNN-title.md`。
-- change 的 `tasks.md` 预先规划全部 Iteration，但只为当前轮创建详细文件；后续轮次由 Plan Review 滚动生成。
-- change 的按需证据写入 `evidence/<NNN-title>/`，目录名与 iteration 对齐。
+- change 的 `tasks.md` 预先规划全部逻辑 Iteration，Map 不记录执行尝试次数。
+- 每个逻辑 Iteration 使用 `iterations/<III-title>/` 目录；首次执行写入 `000-initial.md`，返工写入同目录的后续 rework Cycle。
+- `rework-required` 不新增全局 Iteration 或顺延 Map；只有 `replan-required` 才调整目标、范围、依赖或验收边界。
+- change 的按需证据写入 `evidence/<III-title>/<CCC-title>/`，与 Iteration/Cycle 层级对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。
 - 平台专属 frontmatter 不写入通用技能。

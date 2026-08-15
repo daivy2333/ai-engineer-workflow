@@ -48,7 +48,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 规划、拆分、合并或重排 milestones | `openspec-milestone-planner` |
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
-| Review 实现、生成下一轮上下文 | `openspec-plan` |
+| Review 实现、生成 rework Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
 | 创建、更新或恢复 Runbook、Incident | `openspec-experience-recorder` |
 | 更新状态、M/D/K/R/I 或收尾 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
@@ -61,9 +61,9 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 - SNAPSHOT 中的当前项目描述和 `current/stale` 状态。
 - 工作状态或其他查询结果，并标明对应权威文档。
 - 活跃 change。
-- change 的当前 Iteration、后续 Iteration Plan 和剩余 tasks。
+- change 的当前逻辑 Iteration、最新 Cycle、后续 Iteration Plan 和剩余 tasks。
 - 证据路径。
-- 相关 iteration 要求的 Evidence 路径；未创建时说明 `none` 或不存在原因。
+- 相关 Cycle 要求的 Evidence 路径；未创建时说明 `none` 或不存在原因。
 - 后续应使用的 skill。
 
 ## 禁止

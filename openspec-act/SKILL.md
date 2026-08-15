@@ -1,18 +1,18 @@
 ---
 name: openspec-act
-description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD、Gate 验证、任务自检、全量 diff Review，并记录实现反馈和工程经验候选。用于存在获批 change 和待执行 iteration，且用户要求实现或验证本轮任务时；不归档、不维护全局状态。
+description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD、Gate 验证、任务自检、全量 diff Review，并记录实现反馈和工程经验候选。用于存在获批 change 和待执行 Cycle，且用户要求实现或验证本次执行时；不归档、不维护全局状态。
 ---
 
 # OpenSpec Act
 
-完成当前迭代的实施、验证和反馈。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已显式豁免并留下记录。
+完成当前逻辑 Iteration 中当前 Cycle 的实施、验证和反馈。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已显式豁免并留下记录。
 
 ## 前置规则
 
 1. 读取 `CLAUDE.md`、SNAPSHOT、tasks、相关 M/D/K 和 change 基线。
-2. 读取 `.claude/docs/templates/change-iteration.md`。
-3. 找到最新且 `Plan Context` 为 `ready` 的迭代。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
-4. 核对 change `tasks.md` 的 Iteration Plan，只执行当前 Plan Context 列出的任务。
+2. 读取 `.claude/docs/templates/change-cycle.md`。
+3. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready` 的 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
+4. 核对 change `tasks.md` 的 Iteration Plan，只执行当前 Cycle 的 Plan Context 列出的 task 或 repair item。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
@@ -22,25 +22,29 @@ description: 按已批准的 OpenSpec 计划和当前迭代上下文执行 TDD�
 
 ## Gate 3：Plan Baseline and Test Witness
 
-每个任务开始前确认：
+当前 Cycle 开始时确认一次：
 
-- Plan 已列出变更符号、调用者、影响范围和任务停止条件。
-- 实际代码仍符合 Plan 的 Current-State Evidence。
-- 计划指定的测试存在，或可按计划建立。
-- 已运行当前状态验证。
-- 新功能和 Bug 修复已观察到预期 RED。
-- 重构已观察到变更前 GREEN。
+- Plan Context 状态为 `ready`。
+- Plan 已提供目标符号、调用者、影响范围、Task Contract、测试位置和停止条件。
+- 计划指定的目标文件、符号和测试入口可以定位。
+- 当前已知状态没有与 Plan Context 明显冲突。
 
-计划基线失效、关键调用者遗漏或测试无法证明目标时，执行阻塞交接并返回 Plan。Act 不重新选择接口语义、状态所有权、架构或测试策略。
+Plan Context 是本 Cycle 的实施基线。Act 不重新调查调用链、影响范围或 Current-State Evidence，也不为基线重复生成证据。实施过程中发现实际代码与 Plan 不一致时，执行阻塞交接并返回 Plan。Act 不重新选择接口语义、状态所有权、架构或测试策略。
+
+每个 task 修改前只建立测试见证：
+
+- 新功能和 Bug 修复观察预期 RED。
+- 重构观察变更前 GREEN。
+- 测试不存在、无法运行或不能证明目标时，执行阻塞交接并返回 Plan。
 
 铁律：`NO CHANGE WITHOUT TEST WITNESS`。
 
 ## Phase 3：EXECUTE
 
-对每个 OpenSpec task 执行：
+完成本 Cycle 的一次 Gate 3 计划基线确认后，对每个 OpenSpec task 或 repair item 执行：
 
 1. 标记任务进行中。
-2. 建立 Gate 3 证据。
+2. 建立当前 task 的测试见证。
 3. 新功能和 Bug 验证预期 RED；重构验证变更前 GREEN。
 4. 按任务执行契约做满足当前任务的最小改动。
 5. 运行 GREEN → 验证 GREEN。
@@ -103,16 +107,16 @@ Code quality review 检查：
 |---|---|---|---|
 | 测试 | `<command>` | `<fresh output>` | PASS/FAIL |
 
-Gate 需要可验证依据，但不要求每轮都创建持久化 Evidence。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的文件。
+Gate 需要可验证依据，但不要求每个 Cycle 都创建持久化 Evidence。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的文件。
 
 ## 按需 Evidence
 
-Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/`。只有以下情况才创建：
+Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只有以下情况才创建：
 
 - Plan 把 Persisted Evidence 设为 `required`。
 - Act 需要保留长日志、特殊格式、难以复现的环境输出或意外故障信息。
 
-首次创建时生成 change 级 `evidence/README.md` 和 iteration 级 `README.md`。目录名与 iteration 文件名一致。结构化说明使用 Markdown，原始文本输出使用 `.log`，其他证据保留原格式。
+首次创建时生成 change 级 `evidence/README.md`、Iteration 级 `README.md` 和 Cycle 级 `README.md`。目录名分别与 Iteration 目录和 Cycle 文件名一致。结构化说明使用 Markdown，原始文本输出使用 `.log`，其他证据保留原格式。
 
 每项证据记录来源、结论、采集环境、结果和限制。Plan 要求的文件缺失时，对应 Gate 不得通过。Act 主动增加证据时，在 README 和 Act Response 中说明原因。失败、超时和跳过也是证据。
 
@@ -160,17 +164,17 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 用户补充事实、给出解决办法或接受风险，并明确要求继续时：
 
 1. 读取 Blocker Handoff、已有 Evidence 和工作区状态。
-2. 确认当前 iteration 没有后继 iteration，Plan Review 仍为 `pending`。
+2. 确认当前 Cycle 没有后继 Cycle，Plan Review 仍为 `pending`。
 3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
 4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
 5. 将状态从 `blocked` 改为 `pending`。
 6. 重跑受影响的 Gate 3，再从恢复点继续。
 
-不得只因 iteration 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
+不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
 
 ## Phase 4：REPORT
 
-本轮全部任务正常完成后：
+当前 Cycle 的全部 task 或 repair item 正常完成后：
 
 1. 重新读取 Plan Context、requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
 2. 审查完整 diff，不只复用逐任务结论。
@@ -180,8 +184,8 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 6. 新设计、范围或测试策略问题按 Gate 6 阻塞并返回 Plan。
 7. 运行完整验证套件。
 8. 验证 OpenSpec change。
-9. 只更新 change 内本轮任务状态。
-10. 只填写当前迭代的 `Act Response`：
+9. initial Cycle 只更新所属 Iteration 的 change task 状态；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
+10. 只填写当前 Cycle 的 `Act Response`：
    - 实际改动。
    - 文件和符号。
    - 与计划的偏差及原因。
@@ -194,7 +198,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 11. 将 `Act Response` 状态改为 `reported`。
 12. 终止并等待用户审计。
 
-不得填写 `Plan Review`，不得创建下一轮 iteration。
+不得填写 `Plan Review`，不得创建下一 Cycle 或下一 Iteration。
 
 Experience Candidates 只记录可能满足以下条件的实施经验：
 
@@ -224,7 +228,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 任务级和全量 diff Self-Review 结果。
 - 已修复发现和遗留 Minor 问题。
 - 验证命令、输出摘录和退出码。
-- 当前 iteration 路径和 Act Response 状态。
+- 当前 Iteration、Cycle 路径和 Act Response 状态。
 - `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
 - 恢复过阻塞时的 Blocker Resolution 和重跑 Gate。
 - Persisted Evidence 路径，或未创建的原因。
@@ -235,7 +239,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - 实现反馈已等待审计。
 - 需要检查或修订时调用 `openspec-plan`。
-- 调用 `openspec-plan` Review 本轮结果并生成下一轮；Review 确认没有后续任务后，才调用 `openspec-docs-maintainer` 收尾。
+- 调用 `openspec-plan` Review 当前 Cycle；Review 返回 `rework-required` 时由 Plan 在同一 Iteration 创建下一 Cycle，返回 `accepted` 且没有剩余 Iteration 后才调用 `openspec-docs-maintainer` 收尾。
 - 未归档 change，未同步全局文档，未清理分支。
 
 ## 禁止
@@ -255,5 +259,5 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 覆盖 Plan Context 或填写 Plan Review。
 - 自行补全 Plan 遗漏的设计或扩大变更面。
 - 把平台专属工具名写成流程前提。
-- 为每轮 iteration 强制创建空 Evidence 目录。
+- 为每个 Cycle 强制创建空 Evidence 目录。
 - 把 change 内 Evidence 登记为 R 或单独执行 Artifact-Archive。

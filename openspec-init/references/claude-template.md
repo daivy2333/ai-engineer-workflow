@@ -22,7 +22,7 @@
 | 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| 迭代模板 | `.claude/docs/templates/change-iteration.md` | `openspec-init` |
+| Cycle 模板 | `.claude/docs/templates/change-cycle.md` | `openspec-init` |
 | 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
 | 决策 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
 | 知识 | `openspec/specs/knowledge/spec.md` | `openspec-docs-maintainer` |
@@ -38,8 +38,8 @@
 
 - 新会话：CLAUDE → SNAPSHOT → tasks → active changes。
 - 新功能或 Bug：相关 project-model → decisions → knowledge → plan。
-- 实施：change 基线 → 最新 iteration → 按需 Evidence → act。
-- 实现 Review：当前 iteration → 实际代码、Act Response 和要求的 Evidence → plan。
+- 实施：change 基线 → 当前 Iteration 的最新 Cycle → 按需 Evidence → act。
+- 实现 Review：当前 Cycle → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
 - 故障复盘：Incident → knowledge → decisions/model → improvements/change。
 - 查询：assistant。
@@ -50,7 +50,7 @@
 
 - `openspec-assistant`：只读。
 - `openspec-milestone-planner`：规划 `MSxx` 路线，平衡工作量、验证边界和诊断边界；不创建 change。
-- `openspec-plan`：需求、BDD、实现调查、change 任务分轮、当前 iteration 和实施 Review。
+- `openspec-plan`：需求、BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I 和指定 change 收尾，并处理限定 R 登记。
@@ -106,11 +106,11 @@
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
 - 已发生的重要故障由 Recorder 写入 Incident，并登记 R。
 - 详细调查、实验和评估写 analysis，并登记 R。
-- iteration 的持久化日志和数据写 change 内 Evidence，不登记 R。
+- Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence，不登记 R。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
-Analysis、iteration、Act Response、Evidence 和 Incident 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
+Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
 
 ## 旧体系迁移
 
@@ -239,34 +239,39 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 
 每批任务只覆盖当前位置到最近边界之前的工作。边界和等待事项不作为可执行任务。等待原因、证据要求和恢复条件写入权威产物；没有持久化产物时保留在当前对话。
 
-没有后续任务不表示 change、iteration 或当前阶段已经完成。恢复执行时重新检查最近边界。用户或外部环境提交结果后，只有审核结果为 `PASS`，才能生成下一批任务。
+没有后续任务不表示 change、Iteration、Cycle 或当前阶段已经完成。恢复执行时重新检查最近边界。用户或外部环境提交结果后，只有审核结果为 `PASS`，才能生成下一批任务。
 
 agent 可执行的测试和 Review 不形成边界。验证失败时保留当前任务，不执行下游任务；重试和阻塞遵守当前 skill 的规则。
 
-## 迭代线程
+## Iteration 与 Cycle 线程
 
-- Plan 在 change `tasks.md` 中把全部任务分配到工作量适中、可独立验证和诊断的 Iteration，只创建当前轮文件。
-- 每个 change 从 `iterations/000-initial.md` 开始；后续轮次由 Plan Review 按零填充编号逐轮创建。
-- 每个任务只归属一个 Iteration；首轮与后续轮次使用相同的聚合、拆分标准。
-- Plan 只写 `Plan Context` 和 `Plan Review`。
-- Plan Context 包含 Current-State Evidence、行为变化、变更面、任务契约和停止条件。
+- Iteration 是 change Map 中的逻辑工作单元；Cycle 是该 Iteration 内的一次 Plan、Act、Review 执行闭环。
+- Plan 在 change `tasks.md` 中把全部任务分配到工作量适中、可独立验证和诊断的 Iteration，只展开当前 Iteration 目录和当前 Cycle。
+- 每个 change 从 `iterations/000-initial/000-initial.md` 开始；每个后续 Iteration 也从本目录的 `000-initial.md` 开始。
+- 每个任务只归属一个 Iteration；首个与后续 Iteration 使用相同的聚合、拆分标准。
+- Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不占用全局 Iteration 编号，不修改 Iteration Map。
+- Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
+- Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
-- Act 只写 `Act Response`。
-- Act 每个任务完成后执行 Gate 4，并在 Response 前重新审查完整 diff。
-- Act 修复计划范围内的问题；新设计或范围问题返回 Plan。
+- Act 只写当前 Cycle 的 `Act Response`。
+- Act 每个 task 或 repair item 完成后执行 Gate 4，并在 Response 前重新审查完整 diff。
+- Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
 - Act Response 记录有证据的 Runbook、Incident 候选；没有则写 `None`。
 - Act Response 状态允许 `pending → reported`、`pending → blocked` 和用户解决阻塞后的 `blocked → pending`。
 - 计划偏差时，Act 写 Blocker Handoff，并按需保存 `act-added / BLOCKED` Evidence。
-- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 iteration。
-- 已创建后继 iteration 时，不再恢复旧 iteration。
-- Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<NNN-title>/`。
-- Evidence 目录名与 iteration 文件名一致，随 change 归档，不登记 R。
+- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
+- 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
+- Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<iteration>/<cycle>/`。
+- Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。
-- Act 不得创建下一轮 iteration。
+- Act 不得创建下一 Cycle 或下一 Iteration。
 - Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。
-- Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据。
-- Plan Review 合并当前轮未完成任务、必要修复和原计划下一轮任务，重新平衡后只创建一个新 Iteration，不覆盖旧记录。
+- Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
+- Review Result 使用 `accepted | rework-required | replan-required`。
+- `rework-required` 只在同一 Iteration 内创建下一 Cycle；`replan-required` 才允许调整目标、范围、依赖、验收边界和未完成 Iteration Plan。
+- 连续两个 rework Cycle 未缩小同一 Acceptance gap 时重新检查 Plan、设计和需求假设；同一问题三次失败后不得创建第四次同类 Cycle。
+- 当前 Iteration 只有在 Review Result 为 `accepted` 后才能完成并展开 Map 中的下一 Iteration。
 
 ## 验证
 

@@ -12,7 +12,7 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 - Status: active
 - Last validated: YYYY-MM-DD
 - Environment: <平台、工具链、模式和关键版本>
-- Source: <Act iteration、Evidence 或外部证据>
+- Source: <Act Cycle、Evidence 或外部证据>
 
 ## 适用范围
 
@@ -55,7 +55,7 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 - Status: open | mitigated | resolved
 - Occurred: <时间或时间范围>
 - Environment: <平台、工具链、模式和关键版本>
-- Source: <Act iteration、Evidence 或外部证据>
+- Source: <Act Cycle、Evidence 或外部证据>
 
 ## 影响
 

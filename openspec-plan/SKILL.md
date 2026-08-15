@@ -1,22 +1,22 @@
 ---
 name: openspec-plan
-description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需求与 BDD、实现调查、change 任务和 Iteration 规划，或 Review openspec-act 反馈并滚动生成下一轮；只调查、规划和 Review，不修改产品代码。
+description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需求与 BDD、实现调查、change 任务和逻辑 Iteration 规划，或 Review openspec-act 反馈并在 Iteration 内生成返工 Cycle；只调查、规划和 Review，不修改产品代码。
 ---
 
 # OpenSpec Plan
 
-完成需求确认、实现调查、实施计划和迭代 Review。不要在本 skill 中修改产品代码。
+完成需求确认、实现调查、实施计划和 Cycle Review。不要在本 skill 中修改产品代码。
 
 ## 前置规则
 
 1. 读取项目 `CLAUDE.md`。它是公共执行规则的唯一事实来源。
 2. 读取 SNAPSHOT、tasks、相关 project-model、decisions、knowledge 和 change。
-3. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-iteration.md`，先使用 `openspec-init`。
+3. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-cycle.md`，先使用 `openspec-init`。
 4. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 5. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
 6. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
 7. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
-8. 制定 change 计划或 Review iteration 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
+8. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
 
 ## Phase 1：CLARIFY
 
@@ -92,7 +92,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 2：闭合设计
 
-把调查结论写入 specs、design 和当前 iteration：
+把调查结论写入 specs、design 和当前 Cycle：
 
 - 描述当前行为和目标行为。
 - 明确输入、输出、状态、错误和兼容性语义。
@@ -121,12 +121,12 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 任务说明固定行为契约和责任边界，不规定变量名、辅助函数拆分等局部表达。
 
-把全部任务写入 change 的 `tasks.md`，再按引用规则规划 Iteration：
+把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
 - 每个任务只归属一个 Iteration，并满足依赖顺序。
-- 每轮记录阶段结果、稳定基线、验证边界、诊断边界和 Non-goals。
-- 对每轮执行聚合和拆分审计，避免过碎或过重。
-- 只展开第一轮；后续轮次此时不创建 Iteration 文件。
+- 每个 Iteration 记录阶段结果、稳定基线、验证边界、诊断边界和 Non-goals。
+- 对每个 Iteration 执行聚合和拆分审计，避免过碎或过重。
+- 只展开第一个 Iteration 目录及其 `000-initial.md`；后续 Iteration 此时不创建目录或 Cycle 文件。
 
 计划过长时分段写入，避免一次性覆盖整个文件。
 
@@ -158,14 +158,14 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
-9. 新会话中的 Act 是否无需重新设计就能执行当前轮。
+9. 新会话中的 Act 是否无需重新设计就能执行当前 Cycle。
 
-### Step 6：创建首个实施迭代
+### Step 6：创建首个 Iteration 和 Cycle
 
-按 `.claude/docs/templates/change-iteration.md` 创建：
+按 `.claude/docs/templates/change-cycle.md` 创建：
 
 ```text
-openspec/changes/<change>/iterations/000-initial.md
+openspec/changes/<change>/iterations/000-initial/000-initial.md
 ```
 
 `Plan Context` 必须包含：
@@ -179,11 +179,11 @@ openspec/changes/<change>/iterations/000-initial.md
 - RTM、验收条件、验证方法和条件性风险。
 - Gate 2 各检查项的状态和证据。
 - `Persisted Evidence` 模式：`none` 或 `required`。
-- 当前轮在 `tasks.md` 中的任务和边界；后续任务只作为 Deferred Tasks 引用。
+- 当前逻辑 Iteration 在 `tasks.md` 中的任务和边界；当前 Cycle Type 为 `initial`，后续任务只作为 Deferred Tasks 引用。
 
 `none` 表示命令、关键输出、退出码、修改文件和符号写入 Act Response 即可。`required` 时逐项写明关联 Gate、证据内容、文件格式、采集环境和通过条件。Plan 只提出要求，不创建 `evidence/` 或实际证据文件。
 
-交接后不得改写 `Plan Context`。后续反馈使用迭代 Review 流程。
+交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
 ## Gate 2：Execution Readiness
 
@@ -198,7 +198,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
 - 没有影响实现的未知项、TBD 或需要 Act 决定的设计问题。
-- OpenSpec tasks、specs、design 和当前 iteration 一致。
+- OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确，`required` 项能映射到 Gate 和验收条件。
 - 用户批准计划。
 
@@ -229,21 +229,27 @@ openspec/changes/<change>/iterations/000-initial.md
 
 用户要求检查 Act 结果时：
 
-1. 读取 `reported` 或 `blocked` iteration 的 `Plan Context` 和 `Act Response`。
+1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，并确认其所属逻辑 Iteration。
 2. 检查实际代码、diff、Act Response、Self-Review 和计划要求的 Evidence。
 3. Act 的 Self-Review 只作为输入，不得代替 Plan 的独立检查。
 4. 状态为 `blocked` 时，检查 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
-5. `required` 时检查 `evidence/<iteration>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
+5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
-7. 在当前文件的 `Plan Review` 追加结论。
-8. 按需更新 change 的 tasks、specs 或 design，并保留 requirement 映射。
-9. 按引用规则合并当前轮未完成任务、必要修复和原计划下一轮任务，重新平衡剩余 Iteration Plan。
-10. 仍有工作时只创建一个下一编号文件；新文件使用当前代码补齐独立上下文并重新通过 Gate 2。
-11. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` iteration。已创建后继 iteration 时，不再恢复旧 iteration。
-12. 没有修复和剩余任务时记录 `no-follow-up`，但不归档或同步状态。
-13. 输出结果后终止，等待用户审计和下一步指令。
+7. 判断每项 finding 是否阻塞当前 Iteration 的既有 Acceptance，并给出以下结果之一：
+   - `accepted`：Acceptance 已满足，只有非阻塞 Minor finding 或没有问题。
+   - `rework-required`：需要修复实现、Act 偏离，或补足达到既有 Acceptance 必需的 Plan 遗漏。
+   - `replan-required`：目标、范围、依赖、requirement、设计或验收边界必须改变。
+8. 在当前 Cycle 的 `Plan Review` 追加结论、Acceptance Gaps 和收敛状态。
+9. `rework-required` 时，为验收缺口建立映射到原 task 的本地 repair item；不得新增全局 change task 或修改 Iteration Map。
+10. `rework-required` 时只在当前 Iteration 目录创建一个下一编号的 rework Cycle。新 Cycle 使用当前代码补齐独立上下文并重新通过 Gate 2。
+11. `replan-required` 时才按需更新 change 的 tasks、specs、design 和未完成 Iteration Plan，并保留 requirement 映射；不得把范围变化伪装成普通返工。
+12. `accepted` 且仍有计划中的逻辑 Iteration 时，按既有 Map 只展开下一个 Iteration 目录及其 `000-initial.md`，不因当前 Iteration 的 Cycle 数量顺延编号。
+13. `accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`，但不归档或同步状态。
+14. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` Cycle。已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
+15. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，重新检查 Plan、设计和需求假设；同一问题三次失败后停止，不创建第四次同类 Cycle。
+16. 输出结果后终止，等待用户审计和下一步指令。
 
-旧迭代只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
+旧 Cycle 只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
 
 ## 输出与终止
 
@@ -255,7 +261,7 @@ openspec/changes/<change>/iterations/000-initial.md
 - Requirements Traceability Matrix。
 - change tasks 中的 Iteration Plan 和平衡审计结果。
 - OpenSpec change 路径。
-- 当前迭代路径和编号。
+- 当前 Iteration、Cycle 路径和编号。
 - Persisted Evidence 模式和 `required` 项，或 `none`。
 - Gate 1、Gate 2 检查项、状态和证据。
 - 所有显式跳过项及原因。
@@ -264,15 +270,15 @@ Review 模式改为交付：
 
 - 实际代码和证据的检查结果。
 - Blocker Handoff 的处理结果，或正常完成说明。
-- 当前 iteration 的 Plan Review 状态。
-- Iteration Plan 的任务合并、顺延或拆分结果。
-- 新 iteration 路径，或 `no-follow-up`。
+- 当前 Cycle 的 Plan Review 状态与 `accepted | rework-required | replan-required` 结果。
+- Acceptance Gaps、收敛判断和 Iteration Plan 是否保持不变。
+- 新 Cycle 路径、新 Iteration 路径，或 None。
 - 未确认问题和用户需决定的内容。
 
 然后终止。提醒用户：
 
-- 本轮 Plan 产物已等待审计。
-- 存在待执行 iteration 时，审计通过后可调用 `openspec-act`。
+- 当前 Plan/Cycle 产物已等待审计。
+- 存在待执行 Cycle 时，审计通过后可调用 `openspec-act`。
 - 没有后续任务时，可调用 `openspec-docs-maintainer` 收尾。
 - 未调用 Act、Maintainer 或其他 Skill。
 
@@ -287,6 +293,8 @@ Review 模式改为交付：
 - 把 `openspec-assistant` 当作写入者。
 - 自动调用 Act 或 Maintainer。
 - 自动同步 tasks、SNAPSHOT 或归档 change。
-- 覆盖旧迭代的 Plan Context、Act Response 或 Plan Review。
+- 覆盖旧 Cycle 的 Plan Context、Act Response 或 Plan Review。
+- 把 `rework-required` 作为新增全局 task 或修改 Iteration Map 的理由。
+- 把新目标、范围变化或验收变化伪装为 rework Cycle。
 - 在原计划为 `none` 时，把缺少 Evidence 目录本身作为 Review 问题。
 - 依赖某个平台专属任务工具或 slash command 才能执行流程。

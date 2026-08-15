@@ -78,7 +78,7 @@ Archivist 只核验：
 - 表格行。
 - checkbox 任务。
 - Analysis、Runbook、Incident 与 R 索引。
-- 活跃 change 的 iteration、Act Response 和按需 Evidence。
+- 活跃 change 的 Iteration、Cycle、Act Response 和按需 Evidence。
 
 ### Step 3：交叉引用
 

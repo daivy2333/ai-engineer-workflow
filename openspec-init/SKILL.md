@@ -12,7 +12,7 @@ description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目
 - 生成 `CLAUDE.md` 前完整读取 [references/claude-template.md](references/claude-template.md)。
 - 为 Codex 和 OpenCode 生成规则入口前完整读取 [references/agents-adapter.md](references/agents-adapter.md)。
 - 生成 specs 前完整读取 [references/spec-templates.md](references/spec-templates.md)。
-- 生成迭代模板前完整读取 [references/iteration-template.md](references/iteration-template.md)。
+- 生成 Cycle 模板前完整读取 [references/iteration-template.md](references/iteration-template.md)。
 - 检测到旧文档结构时完整读取 [references/migration.md](references/migration.md)。
 
 ## Phase 0：环境检查
@@ -79,10 +79,10 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 
 - 重建 `.claude/docs/SNAPSHOT.md`。
 - 创建或合并 `.claude/docs/tasks.md`。
-- 按当前模板生成 `.claude/docs/templates/change-iteration.md`。
+- 按当前模板生成 `.claude/docs/templates/change-cycle.md`。
 
 SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
-迭代模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部 Iteration，每次只生成当前轮文件。Evidence 位于 `openspec/changes/<change>/evidence/`，按需由 Act 创建；初始化时不创建占位目录。
+Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，只展开当前 Iteration 目录及其当前 Cycle；返工在同一目录增加 Cycle，不修改 Iteration Map。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
 
@@ -157,11 +157,12 @@ SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约�
 - CLAUDE 和 SNAPSHOT 已按新体系重建，且不在迁移覆盖清单或 carrier 中。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
-- 迭代模板存在，Plan、Act 和 Review 区域职责分离。
-- change tasks 支持 Iteration Plan，后续轮次由 Plan Review 滚动生成。
+- Cycle 模板存在，Plan、Act 和 Review 区域职责分离。
+- change tasks 支持逻辑 Iteration Plan；`rework-required` 在同一 Iteration 内增加 Cycle，不顺延后续 Iteration。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
-- iteration 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
-- iteration 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。
+- Cycle 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
+- Cycle 模板能记录 `accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
+- Cycle 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - Git diff 没有覆盖用户无关内容。
 
 ## 输出

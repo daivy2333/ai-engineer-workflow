@@ -20,7 +20,7 @@ description: 在 OMO ultrawork 模式下按需为 OpenSpec 工作分配代理。
 
 `sisyphus` 决定为什么做、做什么和何时整体完成。`hephaestus` 只决定如何完成一个封闭实现单元。目标、范围、约束和独立验收方式都明确后，才能调用它。
 
-`hephaestus` 可以修改同一目标下的多个文件，也可以补充测试和运行验证。需要改变 requirement、设计、milestone、change、iteration 或验收标准时，立即停止并返回证据。
+`hephaestus` 可以修改同一目标下的多个文件，也可以补充测试和运行验证。需要改变 requirement、设计、milestone、change、Iteration、Cycle 或验收标准时，立即停止并返回证据。
 
 ## 按需分工
 
@@ -48,7 +48,7 @@ description: 在 OMO ultrawork 模式下按需为 OpenSpec 工作分配代理。
 
 子任务必须包含：
 
-- 当前 OpenSpec skill 和 iteration。
+- 当前 OpenSpec skill、Iteration 和 Cycle。
 - 目标、范围和依赖。
 - Task Contract、不可修改项和停止条件。
 - 需要加载的领域 skill。
@@ -75,7 +75,7 @@ description: 在 OMO ultrawork 模式下按需为 OpenSpec 工作分配代理。
 - `ulw` 不得把 Plan 完成视为 Act 授权。
 - `ulw` 不得把 Act 完成视为 Review、维护或归档授权。
 - 不创建 `.omo` 计划或状态作为 OpenSpec 的事实来源。
-- 不使用 OMO 的持久化状态替代 change、iteration、Evidence 或 Response。
+- 不使用 OMO 的持久化状态替代 change、Iteration、Cycle、Evidence 或 Response。
 - 子代理不得改变 requirement、设计、Gate、任务状态或证据标准。
 - 子代理发现计划偏差时停止并返回当前 OpenSpec skill。
 - 最终结论必须由当前 OpenSpec skill 根据新鲜证据给出。

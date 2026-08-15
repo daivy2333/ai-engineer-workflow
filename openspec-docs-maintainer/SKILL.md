@@ -63,7 +63,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。确认全部 change tasks 完成、Iteration Plan 无剩余任务、最新 Plan Review 为 `no-follow-up`，再检查 Act Response 和 `required` Evidence；validate 通过后归档并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。确认全部 change tasks 完成、Iteration Plan 无剩余任务、最新 Cycle 的 Plan Review 为 `accepted` 且 `Next Iteration: None`，再检查 Act Response 和 `required` Evidence；validate 通过后归档并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -85,7 +85,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
-- 检查每个 `required` Evidence 目录和 README 可定位；`none` 的 iteration 不要求 Evidence 目录。
+- 检查每个 `required` Iteration/Cycle Evidence 目录和 README 可定位；`none` 的 Cycle 不要求 Evidence 目录。
 - 涉及 OpenSpec 时运行相应 validate。
 - 报告修改文件、编号和条目。
 
