@@ -60,7 +60,7 @@ HIGH 风险项必须获得用户确认。
 
 旧体系全量迁移开始后，旧来源文档和 migration carrier 不得压缩。分类迁移和旧文档完整归档交给 `openspec-init` 与 `openspec-archivist`。
 
-Change Evidence 保存采集时的原始输出和审计上下文，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件。
+Change Evidence 只保存预算内且无法由 Act Response 充分表达的决定性产物，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件，也不得通过压缩绕过 Evidence 预算。
 
 Runbook 和 Incident 保存已验证操作与事件历史，由 `openspec-experience-recorder` 精准更新。不要压缩或改写其正文。
 

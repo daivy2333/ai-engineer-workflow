@@ -121,7 +121,9 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 
 - Mode: none | required
 
-<`none` 表示 Act Response 足以承载验证结果；`required` 时列出 Gate、文件、格式和通过条件>
+<`none` 表示 Act Response 足以承载验证结果；`required` 时逐项列出 Acceptance、Act Response 不足原因、不可低成本重跑原因、缺失时受阻决定、文件和通过条件>
+
+- Budget: 本 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB；超限需要用户明确批准。
 
 **Risks and Notes**
 
@@ -182,7 +184,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 
 **Verification Evidence**
 
-<命令或操作、关键输出、退出码和结论>
+<命令或操作、每项不超过 20 行的决定性输出、退出码、支持的 Acceptance 和结论>
 
 **Persisted Evidence**
 
@@ -255,7 +257,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 - Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，但只展开当前 Iteration 和当前 Cycle。
 - 每个 Iteration 从 `000-initial.md` 开始；只有 `rework-required` 才在同一目录创建下一编号的 `rework` Cycle。
 - Rework Cycle 使用本地 repair item 完成既有 Acceptance，不新增全局 change task，不修改 Iteration Map。
-- Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`。
+- Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 仅用于用户明确要求、无法低成本复现、一次性环境、Incident/Blocker 现场，或摘要会丢失决定性结构的结果。
 - Act 只填写当前 Cycle 的 `Act Response`。
 - Act 不复核 Plan 基线，直接按 ready 的 Task Contract 建立测试见证并实施。
 - Act 在契约内处理非实质局部差异并记录；只有实质冲突才填写 Blocker Handoff。
@@ -264,7 +266,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 - 计划偏差构成公共规则定义的实质问题，导致契约无法继续时，Act 填写 Blocker Handoff 并把状态改为 `blocked`。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，执行 `blocked → pending` 后恢复当前 Cycle。
 - 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
-- `required` 时，Act 按自身 Evidence 格式创建对应目录；`none` 时不创建占位目录。
+- `required` 时，Act 按自身 Evidence 格式和公共预算创建对应目录；`none` 时不创建占位目录。
 - Plan Review 只填写 `Plan Review`。
 - `accepted` 才能完成当前 Iteration 并展开 Map 中的下一 Iteration。
 - `rework-required` 只能创建同一 Iteration 内的下一 Cycle。

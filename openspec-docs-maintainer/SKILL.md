@@ -87,7 +87,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
-- 检查每个 `required` Iteration/Cycle Evidence 目录和 README 可定位；`none` 的 Cycle 不要求 Evidence 目录。
+- 检查每个 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。`none` 的 Cycle 不要求 Evidence 目录。
 - 涉及 OpenSpec 时运行相应 validate。
 - 报告修改文件、编号和条目。
 

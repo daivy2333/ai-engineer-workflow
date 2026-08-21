@@ -34,7 +34,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 8. carrier 归档成功前不删除源条目。
 9. 每次清理使用独立 carrier，不跨清理批次合并。
 10. 活跃文档的表达压缩交给 compressor。
-11. Init 全量迁移不重新判断信息价值；覆盖清单中的全部来源单元都必须保留。
+11. Init 全量迁移不重新判断信息价值；覆盖清单中的全部语义条目都必须保留。
 12. 旧经验文档只能完整 Archive，不得 Delete 或 Compress-Archive。
 13. Change Evidence 不执行 Artifact-Archive，不登记 R，随所属 change 由 OpenSpec 集成归档。
 
@@ -44,16 +44,16 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 Archivist 只核验：
 
-- 每个旧来源单元已映射并验证。
+- 每个旧来源语义条目已映射并验证。
 - 覆盖率为 100%，`unmapped = 0`，`skipped = 0`。
-- 来源 hash 与当前旧文档一致。
-- carrier 包含覆盖清单、编号映射和每份活动经验源完整原文。
+- 来源 mtime 未变化；变化的来源已重新读取并更新受影响映射。
+- carrier 包含语义条目覆盖清单、编号映射和每份活动经验源的一份完整原文。
 - 新目标、活动引用和恢复入口均可定位。
 - CLAUDE 和 SNAPSHOT 不在覆盖清单、原文副本或归档队列中。
 
 核验通过后使用完整 Archive 归档 migration carrier，再退出旧活动路径。不得重新筛选、合并掉来源映射或要求用户逐条确认。任一条件失败时保留全部旧活动文件并返回 Init 修复。
 
-已归档 legacy carrier 不重复装入或归档。Archivist 核验其路径、hash、全部来源单元映射和新目标，保持历史载体不可变。
+已归档 legacy carrier 不重复装入或归档。Archivist 核验其路径、语义条目映射和新目标，保持历史载体不可变。
 
 ## Phase 1：ANALYZE
 
@@ -155,8 +155,8 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 - 源文档结构完整。
 - 详细产物移动后 R 路径已更新。
 - change 归档后，其已有 Evidence 目录和文件仍完整可定位。
-- Init 迁移的覆盖清单为 100%，且没有未映射或跳过单元。
-- migration carrier 保存每份活动经验源完整原文和来源 hash。
+- Init 迁移的语义条目覆盖率为 100%，且没有未映射或跳过项。
+- migration carrier 保存每份活动经验源的一份完整原文，不保存内容哈希或核对过程日志。
 - migration carrier 成功归档后，旧体系活动路径和活动引用均不存在。
 
 ## 恢复

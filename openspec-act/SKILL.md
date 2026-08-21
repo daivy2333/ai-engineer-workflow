@@ -78,9 +78,9 @@ Code quality review 检查：
 任何完成声明都按以下顺序：
 
 1. 确定能证明声明的命令或操作。
-2. 运行完整验证。
-3. 读取完整输出和退出码。
-4. 摘录关键输出。
+2. 完整运行所选验证，不因“更保险”追加等价命令或扩大到无关测试。
+3. 读取足以判断结果的输出和退出码；不要为了留证回显或复制完整长日志。
+4. 每项只摘录不超过 20 行的决定性输出。
 5. 判断证据是否支持声明。
 6. 证据支持后再声明。
 
@@ -101,22 +101,26 @@ Code quality review 检查：
 |---|---|---|---|
 | 测试 | `<command>` | `<fresh output>` | PASS/FAIL |
 
-Gate 需要可验证依据，但不要求每个 Cycle 都创建持久化 Evidence。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的文件。
+Gate 需要新鲜验证结果，但不要求原始输出文件。按直接目标、受影响边界、必要集成或全量 Gate 的顺序递增验证；结果足以判断 Acceptance 后停止。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
 
 ## 按需 Evidence
 
 Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只有以下情况才创建：
 
-- Plan 把 Persisted Evidence 设为 `required`。
-- Act 需要保留长日志、特殊格式、难以复现的环境输出或意外故障信息。
+- 用户明确要求保留。
+- 结果无法低成本复现，或一次性环境即将消失。
+- Incident 或实质 Blocker 需要保存关键现场。
+- 摘要会丢失影响 Acceptance 判断的结构化信息。
 
-首次创建时生成 change 级 `evidence/README.md`、Iteration 级 `README.md` 和 Cycle 级 `README.md`。目录名分别与 Iteration 目录和 Cycle 文件名一致。结构化说明使用 Markdown，原始文本输出使用 `.log`，其他证据保留原格式。
+Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。Plan 要求不满足白名单或必要性问题时，不收集并在 Act Response 记录偏差，交由 Plan Review 判断。
 
-每项证据记录来源、结论、采集环境、结果和限制。Plan 要求的文件缺失时，对应 Gate 不得通过。Act 主动增加证据时，在 README 和 Act Response 中说明原因。失败、超时和跳过也是证据。
+Evidence 目录只创建 Cycle 级 `README.md` 和实际必要文件，不创建 change 级或 Iteration 级 README。目录名与 Iteration/Cycle 一致。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本、完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。二进制文件或超限产物必须在收集前获得用户明确批准。
 
-Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录。Act Response 引用证据文件或编号，不复制长日志；状态变为 `reported` 后，不静默覆盖已有证据。
+每项证据记录来源、支持的 Acceptance、结论、采集环境、结果和限制。Act 主动增加证据时，在 README 和 Act Response 中说明白名单理由。失败、超时和跳过只在会改变验收、阻塞或恢复决定时持久化。
 
-计划偏差简单且可复现时，只在 Act Response 记录。需要保留长日志、复杂调用链、结构化数据或难复现输出时，创建 `act-added / BLOCKED` Evidence。
+Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录。Act Response 引用证据文件或编号，不复制长日志；状态变为 `reported` 后，不静默覆盖已有证据。预算超限本身不阻塞实现或 Acceptance；先停止收集并请求用户决定是否批准例外。
+
+计划偏差可复现或可用 20 行以内说明时，只在 Act Response 记录。只有实质 Blocker 满足上述白名单时才创建 `act-added / BLOCKED` Evidence。
 
 ## Gate 6：Stop on Blocker
 
@@ -255,4 +259,6 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 自行补全 Plan 遗漏的设计或扩大变更面。
 - 把平台专属工具名写成流程前提。
 - 为每个 Cycle 强制创建空 Evidence 目录。
+- 保存完整日志目录、源码副本、完整测试输出，或拆分、压缩产物绕过预算。
+- 仅因日志较长、便于审计或以后可能有用而创建 Evidence。
 - 把 change 内 Evidence 登记为 R 或单独执行 Artifact-Archive。

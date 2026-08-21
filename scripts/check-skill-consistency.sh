@@ -123,6 +123,9 @@ require_pattern 'Compare runtime bytes at PC with bytes from the exact artifact'
   "low-level execution debugging does not reconcile runtime bytes"
 require_pattern 'Do not trust a debugger session until its symbols match the running image' "$execution_debug_skill" \
   "low-level execution debugging permits stale symbols"
+require_pattern 'existing Build ID.*Do not generate or persist a hash solely for debugging or evidence' \
+  "$execution_debug_skill" \
+  "low-level execution debugging generates artifact hashes for workflow evidence"
 require_pattern 'JTAG and OpenOCD prove the attached target state' "$execution_debug_skill" \
   "low-level execution debugging lacks hardware probe boundaries"
 for reference in address-reconciliation debugger-evidence failure-patterns architecture-checks; do
@@ -311,7 +314,7 @@ require_pattern '随 change 一起归档' "$evidence_template" \
 require_pattern 'Task Contract 与实际代码存在实质冲突' "$evidence_template" \
   "Evidence template lacks material contract-conflict evidence"
 
-require_pattern '默认用 Act Response 保存 Gate 证据' "$ROOT/openspec-plan/SKILL.md" \
+require_pattern '默认用 Act Response 保存 Gate 结果' "$ROOT/openspec-plan/SKILL.md" \
   "openspec-plan does not default to inline response evidence"
 require_pattern '`none` 时不得仅因 Evidence 目录不存在提出问题' \
   "$ROOT/openspec-plan/SKILL.md" \
@@ -323,6 +326,19 @@ require_pattern '没有保存需要时不创建空目录' "$ROOT/openspec-act/SK
   "openspec-act can create empty Evidence directories"
 require_pattern 'Evidence 不登记 R，不单独归档' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act gives Evidence an independent lifecycle"
+require_pattern '每个 Cycle 最多 5 个文件.*整个 change 最多 20 个 Evidence 文件.*单个文本文件最多 500 行.*256 KiB' \
+  "$ROOT/openspec-act/SKILL.md" \
+  "openspec-act does not bound persisted Evidence"
+require_pattern '不创建 change 级或 Iteration 级 README' "$evidence_template" \
+  "Evidence format creates redundant index files"
+require_pattern '禁止保存完整日志目录、源码副本或完整测试套件输出' "$evidence_template" \
+  "Evidence format permits unbounded raw capture"
+require_pattern '禁止通过增加 Cycle、拆分、压缩、编码或改格式绕过' "$evidence_template" \
+  "Evidence format can evade its artifact budget"
+require_pattern '超限本身不阻塞实现或 Acceptance' "$evidence_template" \
+  "Evidence budget can block an otherwise verified result"
+require_pattern '每项验证输出不超过 20 行' "$evidence_template" \
+  "Act Response can copy excessive verification output"
 require_pattern 'Experience Candidates' "$ROOT/openspec-act/SKILL.md" \
   "openspec-act does not report experience candidates"
 require_pattern 'Act 不创建持久化产物' "$ROOT/openspec-act/SKILL.md" \
@@ -419,7 +435,7 @@ for path in project-model decisions knowledge references improvements; do
 done
 require_pattern '覆盖率为 100%.*`unmapped = 0`.*`skipped = 0`' "$init_skill" \
   "openspec-init does not require complete legacy migration"
-require_pattern '每份活动经验源完整原文' "$init_skill" \
+require_pattern '每份活动经验源的一份完整原文' "$init_skill" \
   "openspec-init migration carrier does not preserve full legacy sources"
 require_pattern 'CLAUDE 和 SNAPSHOT 已按新体系重建' "$init_skill" \
   "openspec-init does not rebuild replaceable documents"
@@ -427,18 +443,24 @@ require_pattern '选择性、部分或抽样迁移旧经验文档' "$init_skill"
   "openspec-init does not explicitly forbid partial legacy migration"
 
 migration_ref="$ROOT/openspec-init/references/migration.md"
-require_pattern 'source units = mapped source units' "$migration_ref" \
+require_pattern 'semantic entries = mapped entries' "$migration_ref" \
   "migration reference lacks source-to-target coverage invariant"
 require_pattern 'unmapped = 0' "$migration_ref" \
   "migration reference allows unmapped source units"
 require_pattern 'skipped = 0' "$migration_ref" \
   "migration reference allows skipped source units"
-require_pattern '每份活动经验源完整原文' "$migration_ref" \
+require_pattern '每份活动经验源的一份原始全文' "$migration_ref" \
   "migration reference does not preserve full legacy documents"
 require_pattern '两者不进入覆盖清单、MIG 原文副本和恢复范围' "$migration_ref" \
   "migration reference treats CLAUDE or SNAPSHOT as legacy experience"
 require_pattern '禁止 Delete 和 Compress-Archive' "$migration_ref" \
   "migration reference permits destructive legacy retirement"
+require_pattern '不为正向核对、反向核对或格式元素创建额外清单和日志' "$migration_ref" \
+  "migration reference can generate proof-of-proof artifacts"
+forbid_pattern 'source hash|来源 hash|来源哈希|<hash>' "$init_skill" \
+  "openspec-init still requires source hashes"
+forbid_pattern 'source hash|来源 hash|来源哈希|<hash>' "$migration_ref" \
+  "migration reference still requires source hashes"
 
 archivist_skill="$ROOT/openspec-archivist/SKILL.md"
 require_pattern 'Init 迁移请求已构成完整 Archive 的确认' "$archivist_skill" \
@@ -453,6 +475,12 @@ require_pattern '不能代替 Archive、Compress-Archive 或 Delete 前.*新鲜�
 carrier_ref="$ROOT/openspec-archivist/references/carrier-protocol.md"
 require_pattern 'Carrier spec 必须逐文件保存活动经验源完整原文' "$carrier_ref" \
   "migration carrier does not retain exact legacy documents"
+require_pattern 'semantic entries = mapped entries = verified entries' "$carrier_ref" \
+  "migration carrier lacks semantic-entry coverage"
+forbid_pattern 'source hash|来源 hash|来源哈希|<hash>' "$archivist_skill" \
+  "openspec-archivist still requires source hashes"
+forbid_pattern 'source hash|来源 hash|来源哈希|<hash>' "$carrier_ref" \
+  "carrier protocol still requires source hashes"
 require_pattern 'Migration carrier 只允许 Archive' "$carrier_ref" \
   "migration carrier permits delete or compression"
 
@@ -474,6 +502,29 @@ for file in "${active_model_files[@]}"; do
 done
 
 claude_template="$ROOT/openspec-init/references/claude-template.md"
+require_pattern '\*\*Scope Control\*\*' "$claude_template" \
+  "CLAUDE template lacks shared scope control"
+require_pattern '审查、查询和监控任务默认只读' "$claude_template" \
+  "CLAUDE template does not preserve read-only task modes"
+require_pattern '省略后是否会导致当前任务失败' "$claude_template" \
+  "CLAUDE template lacks a necessity test for extra work"
+require_pattern '最小正确结果，不是最少文件或最少代码' "$claude_template" \
+  "CLAUDE template confuses minimal output with correct scope"
+require_pattern '默认禁止新增哈希、校验和或内容指纹' "$claude_template" \
+  "CLAUDE template does not reject speculative hashing by default"
+require_pattern '产品数据格式、外部兼容性、安全、完整性要求及 Acceptance' "$claude_template" \
+  "CLAUDE template does not preserve justified hashing exceptions"
+require_pattern '本工作流自身不得成为引入理由' "$claude_template" \
+  "CLAUDE template lets workflow rules justify hashing"
+require_pattern '不因未来可能有用而增加依赖、兼容层、迁移、抽象、配置、通用化、额外代理或防御性加固' "$claude_template" \
+  "CLAUDE template permits speculative engineering"
+require_pattern '证据足以支持当前结论后停止搜索、测试和 Review' "$claude_template" \
+  "CLAUDE template lacks a stopping rule for redundant audits"
+require_pattern '每个 Cycle 的 Evidence 目录最多 5 个文件.*整个 change 最多 20 个 Evidence 文件.*单个文本文件最多 500 行.*256 KiB' \
+  "$claude_template" \
+  "CLAUDE template lacks a bounded Evidence budget"
+require_pattern '每项不超过 20 行的决定性输出' "$claude_template" \
+  "CLAUDE template permits excessive inline verification output"
 require_pattern 'Skill 切换本身不触发重复读取' "$claude_template" \
   "CLAUDE template does not reuse current-session context"
 require_pattern 'Assistant 只恢复 OpenSpec 体系文档上下文' "$claude_template" \

@@ -119,12 +119,12 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 
 ## 旧体系迁移
 
-- 升级必须沿文档地图、引用、归档指引和历史 carrier 发现来源，读取全文，逐信息单元迁移。
+- 升级必须沿文档地图、引用、归档指引和历史 carrier 发现来源，读取全文，按已有编号、可独立路由的同级标题或短文档整体迁移。
 - 重复和过时信息仍要建立来源映射，并保留独有信息、状态和时间边界。
 - 已归档 legacy carrier 保持不可变，但其中的信息也要迁移和验证。
 - CLAUDE 和 SNAPSHOT 按新体系重建，不进入迁移清单或 carrier。
 - 覆盖率达到 100%，且 `unmapped = 0`、`skipped = 0` 后才能归档旧文档。
-- migration carrier 保存覆盖清单、编号映射和每份旧文档完整原文。
+- 迁移期间旧来源保持只读，不生成内容哈希。migration carrier 保存语义条目覆盖清单、编号映射、验证摘要和每份旧文档的一份完整原文，不保存核对过程日志。
 - 旧体系文档只允许完整 Archive，不允许 Delete 或 Compress-Archive。
 
 ## 记录边界
@@ -149,11 +149,15 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 - 多种解释会改变结果时请求用户决定。
 - 不隐藏不确定性。
 
-**Simplicity First**
+**Scope Control**
 
-- 不添加未要求功能。
-- 不为一次使用提前抽象。
-- 不增加无需求依据的配置。
+- 审查、查询和监控任务默认只读；没有明确的修改授权，不改变文件或外部状态。
+- 修改任务只包含用户明确要求和完成结果不可缺少的必要后果。候选工作无法关联到用户目标、已批准 requirement、Acceptance 或可达代码和数据时，不实施。
+- 增加用户未点名的工作前依次确认：用户是否要求；是否是完成结果的必要条件；哪些可达代码、数据、用户决定、法律、平台或验收证据证明必要；省略后是否会导致当前任务失败。任一项无法成立时停止扩展。
+- 必要后果可以包含调用者、夹具、测试、可访问性、安全、兼容性和迁移，但必须有当前任务的可达证据。目标是最小正确结果，不是最少文件或最少代码。
+- 默认禁止新增哈希、校验和或内容指纹。只有用户明确要求，或产品数据格式、外部兼容性、安全、完整性要求及 Acceptance 直接证明必要时才允许；本工作流自身不得成为引入理由，也不得把哈希用于无依据的变更检测、缓存、身份、去重或未来扩展。
+- 不因未来可能有用而增加依赖、兼容层、迁移、抽象、配置、通用化、额外代理或防御性加固。
+- 证据足以支持当前结论后停止搜索、测试和 Review。可选改进仅在有助于用户决策时报告，不纳入当前实现。
 
 **Surgical Changes**
 
@@ -232,7 +236,7 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 
 - 每个 Phase 和可验证 Step 有状态。
 - 任务列表只保存当前已授权且可执行的工作；完整状态以 OpenSpec 产物为准。
-- 非迁移步骤的跳过项标记 `SKIPPED: <reason>`；旧体系信息单元不得跳过。
+- 非迁移步骤的跳过项标记 `SKIPPED: <reason>`；旧体系语义条目不得跳过。
 - 只有验证通过后才能标记完成。
 - 最终报告前检查全部任务状态。
 
@@ -271,7 +275,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 计划偏差时，Act 写 Blocker Handoff，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
 - 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
-- Act 只在 `required` 或实际需要保留长日志、特殊格式和难复现输出时创建 `evidence/<iteration>/<cycle>/`。
+- Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。
 - Act 不得创建下一 Cycle 或下一 Iteration。
@@ -287,11 +291,15 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 完成声明必须包含：
 
 - 验证命令或操作。
-- 关键输出。
+- 每项不超过 20 行的决定性输出；输出更长时只保留能判断结果的片段。
 - 退出码或明确结果。
 - 证据支持的结论。
 
-Gate 必须有可验证依据，但持久化 Evidence 是按需产物。`none` 时由 Act Response 保存验证摘要；`required` 时对应文件缺失会阻塞 Gate。
+Gate 必须有新鲜验证结果，但不要求原始输出文件。验证按影响范围递增：直接目标测试 → 受影响边界 → 必要的集成或全量 Gate；现有结果足以判断 Acceptance 后停止。
+
+Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。
+
+每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
 
 禁止使用“应该、大概、基本完成”替代证据。
 

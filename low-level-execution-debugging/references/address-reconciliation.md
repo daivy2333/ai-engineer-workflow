@@ -55,7 +55,7 @@ Also inspect:
 - Linker map.
 - Loader configuration.
 - Raw image conversion command.
-- Build ID or artifact hash.
+- Existing Build ID when the artifact provides one; do not generate a hash only to satisfy the debugging workflow.
 - Separate or split debug information.
 
 Do not run `addr2line` on a runtime address until relocation has been removed or the tool has been given the runtime layout.

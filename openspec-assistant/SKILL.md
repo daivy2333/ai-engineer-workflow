@@ -21,7 +21,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 只读取回答问题和路由所需的体系文档。输出标明来源路径、可用细节和已知新鲜度，供当前会话中的后续 Skill 直接复用；不创建专用交接产物。Assistant 的读取不构成代码调查，也不替代后续 Skill 对实际操作对象和新鲜运行证据的检查。
 
-新项目记忆不存在但发现 architecture、learned 或 optimization 时，按只读方式查询旧内容，标记为 legacy，并建议使用 `openspec-init` 逐信息单元全量迁移。不得建议选择性迁移或直接删除旧文档。
+新项目记忆不存在但发现 architecture、learned 或 optimization 时，按只读方式查询旧内容，标记为 legacy，并建议使用 `openspec-init` 按语义条目全量迁移。不得建议选择性迁移或直接删除旧文档。
 
 ## 文档地图
 

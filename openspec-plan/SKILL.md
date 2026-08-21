@@ -106,7 +106,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 3：制定任务和 Iteration Plan
 
-按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 证据，不因存在 Gate 自动要求 Evidence 目录。
+按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
 Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implementation Guidance 不得给出冲突指令，也不规定非实质实现选择。
 
@@ -167,7 +167,9 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 
 Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务。
 
-`none` 表示命令、关键输出、退出码、修改文件和符号写入 Act Response 即可。`required` 时逐项写明关联 Gate、证据内容、文件格式、采集环境和通过条件。Plan 只提出要求，不创建 `evidence/` 或实际证据文件。
+`none` 表示命令、每项不超过 20 行的决定性输出、退出码、修改文件和符号写入 Act Response 即可。只有用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时才能设为 `required`。
+
+每个 `required` 项必须写明：支持的 Acceptance；Act Response 为什么不足；为什么无法低成本重跑；缺少它会阻止的决定；文件和通过条件。任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
@@ -185,7 +187,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
-- Persisted Evidence 模式明确，`required` 项能映射到 Gate 和验收条件。
+- Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
 为每个检查项记录 `PASS`、`BLOCKED` 或 `WAIVED` 及证据。只有全部 `PASS`，或用户明确承担风险的 `WAIVED`，Gate 2 才能通过。

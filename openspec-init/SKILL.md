@@ -1,6 +1,6 @@
 ---
 name: openspec-init
-description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、decisions、knowledge、references、improvements，逐条全量迁移并归档旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
+description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、decisions、knowledge、references、improvements，按语义条目全量迁移并归档旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
 ---
 
 # OpenSpec Init
@@ -27,7 +27,7 @@ description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目
 3. 检查 Git 状态和现有用户修改。
 4. 任一目标已存在时先确定处理策略。CLAUDE 和 SNAPSHOT 可重建；其他文档不覆盖原内容。
 5. 发现旧体系文档时进入全量迁移模式，沿文档地图、引用、归档指引和历史 carrier 建立来源清单；不得按固定路径、价值或相关性选择迁移范围。
-6. 从来源清单排除 CLAUDE 和 SNAPSHOT。修改其他旧文档或新目标前创建 MIG 工作载体，保存每份活动经验源原始全文和 hash，并登记已归档 legacy carrier 的路径和 hash。
+6. 从来源清单排除 CLAUDE 和 SNAPSHOT。迁移期间保持旧经验来源只读；记录路径、mtime、工作区状态和已归档 legacy carrier 路径，不生成内容哈希。
 
 OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验证的替代结构。
 
@@ -107,18 +107,18 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 仅在发现旧体系文档时执行。
 
 1. 按 migration 引用读取每份活动经验源和已归档 legacy carrier 全文；CLAUDE 和 SNAPSHOT 按新体系重建。
-2. 把全部正文拆成可定位的信息单元，记录来源 hash。
-3. 为每个单元登记一个或多个新目标；分类不能成为淘汰条件。
+2. 按已有编号、可独立路由的同级标题或短文档整体拆成语义条目；不把段落、列表项和表格行机械拆开。
+3. 为每个语义条目登记一个或多个新目标；分类不能成为淘汰条件。
 4. 逐条迁移，并保留 Legacy ID、来源、独有事实、状态和时间边界。
-5. 正向核对每个来源单元，反向核对每个新目标。
-6. 把覆盖清单、编号映射和核对结果写入 Phase 0 创建的 MIG 工作载体。
-7. 只有在覆盖率为 100%、`unmapped = 0`、`skipped = 0` 时才完成并验证载体。
+5. 检查每个语义条目都有可定位目标，只记录覆盖计数和未解决项，不生成正向、反向核对日志。
+6. 覆盖率为 100%、`unmapped = 0`、`skipped = 0` 后，创建 MIG 工作载体，保存覆盖清单、编号映射、验证摘要、历史 carrier 指针和每份活动经验源的一份原始全文。
+7. 重新检查来源 mtime；变化时只重读和更新受影响映射及载体原文。
 8. 调用 `openspec-archivist` 核验并完整归档载体。
 9. 载体归档成功后退出旧活动路径，再次扫描旧路径和旧引用。
 
-用户要求升级或迁移即构成 Phase 0 的载体创建和本阶段步骤 6-9 的授权，不需要为旧文档完整 Archive 重复请求确认。该授权不包括 Delete、Compress-Archive 或其他生命周期清理。
+用户要求升级或迁移即构成本阶段步骤 6-9 的授权，不需要为 migration carrier 和旧文档完整 Archive 重复请求确认。该授权不包括 Delete、Compress-Archive 或其他生命周期清理。
 
-任一单元未分类、来源发生变化、验证失败或 carrier 归档失败时停止。不得留下部分迁移后仍被宣称完成的状态，也不得移除旧活动文件。
+任一语义条目未分类、来源发生变化、验证失败或 carrier 归档失败时停止。不得留下部分迁移后仍被宣称完成的状态，也不得移除旧活动文件。
 
 ## Phase 7：跨平台安装
 
@@ -149,10 +149,10 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/D/K/R/I` 编号。
 - 新项目不创建 architecture、learned 或 optimization spec。
-- 升级项目的全部旧经验单元已映射并验证，覆盖率为 100%。
+- 升级项目的全部旧经验语义条目已映射并验证，覆盖率为 100%。
 - 迁移清单满足 `unmapped = 0` 和 `skipped = 0`。
-- migration carrier 包含每份活动经验源完整原文、来源 hash 和编号映射。
-- 已归档 legacy carrier 的全部信息单元已迁移，历史载体本身没有改写或重复归档。
+- migration carrier 包含每份活动经验源的一份完整原文、语义条目覆盖清单和编号映射，不包含内容哈希或核对过程日志。
+- 已归档 legacy carrier 的全部语义条目已迁移，历史载体本身没有改写或重复归档。
 - migration carrier 已归档，旧体系活动路径和活动引用均已退出。
 - 旧经验文档没有使用 Delete 或 Compress-Archive。
 - CLAUDE 和 SNAPSHOT 已按新体系重建，且不在迁移覆盖清单或 carrier 中。
@@ -173,7 +173,7 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - OpenSpec 验证输出。
 - 三端入口路径。
 - 旧编号到 M/D/K/R/I 的迁移映射。
-- 逐信息单元覆盖统计和未映射计数。
+- 语义条目覆盖统计和未映射计数。
 - migration carrier 及恢复入口。
 - 旧体系活动路径和旧引用的最终扫描结果。
 - 按需产物目录的支持状态。

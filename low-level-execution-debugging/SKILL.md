@@ -20,7 +20,7 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
    - Record the exact ELF, image, debug symbols, linker script, map file, and build command.
    - Record target triple, ISA features, endianness, optimization, relocation mode, and debug-info mode.
    - Record the loader, load address, entry point, debugger, transport, target, CPU count, and current CPU or hart.
-   - Capture a hash or Build ID when possible.
+   - Use an existing Build ID when the artifact already provides one. Do not generate or persist a hash solely for debugging or evidence.
    - Do not trust a debugger session until its symbols match the running image.
 
 2. Build an address ledger.
@@ -79,7 +79,7 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
 
 ## Evidence Checklist
 
-- Exact artifact, hash or Build ID, and build configuration.
+- Exact artifact, existing Build ID when available, and build configuration.
 - Target, architecture, CPU or hart, privilege, and debugger transport.
 - Link address, load address, runtime address, and translation method.
 - Symbol and section evidence.

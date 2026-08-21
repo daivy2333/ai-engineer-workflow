@@ -48,15 +48,13 @@ changes/<change>/
 │       ├── 000-initial.md
 │       └── 001-rework.md
 └── evidence/               ← 仅在需要留存证据时创建
-    ├── README.md
     └── <III-title>/
-        ├── README.md
         └── <CCC-title>/
             ├── README.md
-            └── <日志、调试输出或其他证据>
+            └── <最多四个实际证据文件>
 ```
 
-Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存验证摘要；`required` 时 Act 保存指定文件。Evidence 属于 change，不登记 R，随 change 归档。
+Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存每项不超过 20 行的决定性输出；`required` 只用于用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个，单个文本文件最多 500 行且不超过 256 KiB；禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
 
 本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan 在 `tasks.md` 中预先分配全部 Iteration，只展开当前 Iteration 的当前 Cycle。Review 返回 `rework-required` 时在同一目录增加 Cycle，不修改 Map；返回 `replan-required` 时才调整逻辑 Iteration。
 
