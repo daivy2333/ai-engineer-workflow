@@ -160,6 +160,7 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 
 `Plan Context` 按 Cycle 模板写入：
 
+- 状态先写为 `draft`。
 - Cycle 身份、范围、目标、背景和当前基线。
 - Current-State Evidence、关键路径、行为变化和 Change Surface。
 - Task Contracts、共享不变量、非目标、RTM、Acceptance 和 Verification。
@@ -194,6 +195,8 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 
 用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。轻量模式不构成自动豁免。
 
+Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计划后，Plan 最后把当前 `Plan Context` 状态从 `draft` 改为 `ready`。Gate 未通过时保持 `draft`，不得交给 Act。
+
 ## 轻量模式
 
 仅在以下条件全部满足时使用：
@@ -217,7 +220,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 
 用户要求检查 Act 结果时：
 
-1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，并确认其所属逻辑 Iteration。
+1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
 2. 检查实际代码、diff、Act Response、Self-Review 和计划要求的 Evidence。
 3. Act 的 Self-Review 只作为输入，不得代替 Plan 的独立检查。
 4. 状态为 `blocked` 时，检查 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
@@ -225,19 +228,10 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
-7. 判断每项 finding 是否阻塞当前 Iteration 的既有 Acceptance，并给出以下结果之一：
-   - `accepted`：Acceptance 已满足，只有非阻塞 Minor finding、已记录的非实质偏差或没有问题。
-   - `rework-required`：实现未满足既有 Acceptance、Act 出现实质偏离，或必须补足达到既有 Acceptance 的 Plan 遗漏。
-   - `replan-required`：目标、范围、依赖、requirement、设计或验收边界必须改变。
-8. 在当前 Cycle 的 `Plan Review` 追加结论、Acceptance Gaps 和收敛状态。
-9. `rework-required` 时，为验收缺口建立映射到原 task 的本地 repair item；不得新增全局 change task 或修改 Iteration Map。
-10. `rework-required` 时只在当前 Iteration 目录创建一个下一编号的 rework Cycle。新 Cycle 使用当前代码补齐独立上下文并重新通过 Gate 2。
-11. `replan-required` 时才按需更新 change 的 tasks、specs、design 和未完成 Iteration Plan，并保留 requirement 映射；不得把范围变化伪装成普通返工。
-12. `accepted` 且仍有计划中的逻辑 Iteration 时，按既有 Map 只展开下一个 Iteration 目录及其 `000-initial.md`，不因当前 Iteration 的 Cycle 数量顺延编号。
-13. `accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`，但不归档或同步状态。
-14. 用户可在 Plan Review 完成前让 Act 恢复 `blocked` Cycle。已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
-15. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，重新检查 Plan、设计和需求假设；同一问题三次失败后停止，不创建第四次同类 Cycle。
-16. 输出结果后终止，等待用户审计和下一步指令。
+7. 按 [references/iteration-planning.md](references/iteration-planning.md) 的 Review 分类判断 `accepted | rework-required | replan-required`，并在当前 Cycle 的 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
+8. 按该引用创建同一 Iteration 的 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`，但不归档或同步状态。
+9. 当前 `Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复 `blocked` Cycle。
+10. 输出结果后终止，等待用户审计和下一步指令。
 
 不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建 rework Cycle。记录 finding 并返回 `accepted`。
 
@@ -262,7 +256,7 @@ Review 模式改为交付：
 
 - 实际代码和证据的检查结果。
 - Blocker Handoff 的处理结果，或正常完成说明。
-- 当前 Cycle 的 Plan Review 状态与 `accepted | rework-required | replan-required` 结果。
+- 当前 Cycle 的 `Review Result`。
 - Acceptance Gaps、收敛判断和 Iteration Plan 是否保持不变。
 - 新 Cycle 路径、新 Iteration 路径，或 None。
 - 未确认问题和用户需决定的内容。

@@ -46,10 +46,10 @@
 | `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 Cycle、TDD、Review、验证和反馈 |
 | `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Incident |
-| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、限定 R 登记和指定 change 收尾 |
+| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、限定 R 登记、change 结果同步和正常收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
-| `openspec-archivist` | 生命周期判断、carrier 归档、删除和墓碑 |
+| `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、carrier 归档、删除和墓碑 |
 | `omo-ulw` | 在 OMO ultrawork 下为 OpenSpec 阶段分配代理、Category 和模型 |
 
 职责规则：
@@ -81,9 +81,9 @@ openspec-plan
   → 调查实际代码、调用链、状态、测试和影响面
   → 定义行为变化、完整任务和 Iteration Plan
   → 按稳定基线、验证与诊断边界平衡每个逻辑 Iteration
+  → 只写入当前 Cycle，Plan Context 先设为 draft，并声明 Persisted Evidence：none|required
   → Gate 2：Execution Readiness
-  → 声明 Persisted Evidence：none|required
-  → 只写入当前 iterations/000-initial/000-initial.md
+  → Gate 通过或明确豁免且计划获批后，将 Plan Context 改为 ready
   → 终止，等待用户审计
 openspec-act
   → 直接消费 Plan Context，不重新建立计划基线
@@ -109,8 +109,8 @@ openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
   → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
   → accepted：完成当前逻辑 Iteration，按 Map 展开下一 Iteration
-  → rework-required：在同一 Iteration 目录创建下一 Cycle，不修改 Map
-  → replan-required：重新规划目标、范围、依赖或验收边界
+  → rework-required：在同一 Iteration 目录创建 rework Cycle，不修改 Map
+  → replan-required：更新 change 和 Iteration Plan，在同一 Iteration 创建 replan Cycle
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
 ```
@@ -187,40 +187,20 @@ OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs
 
 OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同一台机器同时启用 `.claude/skills` 和 `.agents/skills`，OpenCode 可能发现两个同名入口。此时为 OpenCode 单独执行 `--platform opencode`，并在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
 
-## 验证
-
-```bash
-./scripts/check-skill-consistency.sh
-```
-
-检查内容：
-
-- 目录名与 frontmatter `name` 一致。
-- `SKILL.md` 必要字段存在。
-- references 链接存在。
-- README 技能数量与目录一致。
-- 不存在旧技能名称。
-- assistant 没有写入职责。
-- OpenSpec 主技能没有硬绑定平台任务 API。
-- V2 项目记忆路径和 M/D/K/R/I 编号齐全。
-- 新项目不再生成 architecture、learned 或 optimization spec。
-- 旧体系升级按语义条目达到 100% 映射和验证。
-- 旧经验文档完整原文进入 migration carrier 后才退出活动路径。
-
 ## 设计约束
 
 - 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态或中间产物。
 - 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
-- 更新 OpenSpec 技能时控制提示词体积；新增规则前先合并或替换重复内容，不在 Skill、公共模板和引用中重复解释同一约束。
+- 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
 - OpenSpec Skill 复用当前会话中来源明确且未变化的上下文，只补读缺失信息和实际操作对象；不得因 Skill 切换重复恢复项目状态。
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的 `tasks.md` 预先规划全部逻辑 Iteration，Map 不记录执行尝试次数。
-- 每个逻辑 Iteration 使用 `iterations/<III-title>/` 目录；首次执行写入 `000-initial.md`，返工写入同目录的后续 rework Cycle。
-- `rework-required` 不新增全局 Iteration 或顺延 Map；只有 `replan-required` 才调整目标、范围、依赖或验收边界。
+- 每个逻辑 Iteration 使用 `iterations/<III-title>/` 目录；首次执行写入 `000-initial.md`，后继执行写入同目录的 rework 或 replan Cycle。
+- `rework-required` 不修改 Iteration Map；`replan-required` 调整目标、范围、依赖、验证契约或验收边界，并创建后继 replan Cycle。
 - change 的按需证据写入 `evidence/<III-title>/<CCC-title>/`，与 Iteration/Cycle 层级对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。

@@ -82,7 +82,7 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 - 按当前模板生成 `.claude/docs/templates/change-cycle.md`。
 
 SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
-Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，只展开当前 Iteration 目录及其当前 Cycle；返工在同一目录增加 Cycle，不修改 Iteration Map。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
+Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，只展开当前 Iteration 目录及其当前 Cycle；`rework-required` 在同一目录增加 rework Cycle，`replan-required` 更新计划后增加 replan Cycle。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
 
@@ -106,19 +106,11 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 
 仅在发现旧体系文档时执行。
 
-1. 按 migration 引用读取每份活动经验源和已归档 legacy carrier 全文；CLAUDE 和 SNAPSHOT 按新体系重建。
-2. 按已有编号、可独立路由的同级标题或短文档整体拆成语义条目；不把段落、列表项和表格行机械拆开。
-3. 为每个语义条目登记一个或多个新目标；分类不能成为淘汰条件。
-4. 逐条迁移，并保留 Legacy ID、来源、独有事实、状态和时间边界。
-5. 检查每个语义条目都有可定位目标，只记录覆盖计数和未解决项，不生成正向、反向核对日志。
-6. 覆盖率为 100%、`unmapped = 0`、`skipped = 0` 后，创建 MIG 工作载体，保存覆盖清单、编号映射、验证摘要、历史 carrier 指针和每份活动经验源的一份原始全文。
-7. 重新检查来源 mtime；变化时只重读和更新受影响映射及载体原文。
-8. 调用 `openspec-archivist` 核验并完整归档载体。
-9. 载体归档成功后退出旧活动路径，再次扫描旧路径和旧引用。
+完整执行 [references/migration.md](references/migration.md) 的来源发现、语义条目映射、覆盖验证、MIG 载体和失败处理。Init 负责迁移和生成载体；`openspec-archivist` 只核验并完整归档载体。载体归档成功后才能退出旧活动路径。
 
-用户要求升级或迁移即构成本阶段步骤 6-9 的授权，不需要为 migration carrier 和旧文档完整 Archive 重复请求确认。该授权不包括 Delete、Compress-Archive 或其他生命周期清理。
+用户要求升级或迁移即构成创建、归档 migration carrier 和退出旧活动路径的授权，不需要重复确认。该授权不包括 Delete、Compress-Archive 或其他生命周期清理。
 
-任一语义条目未分类、来源发生变化、验证失败或 carrier 归档失败时停止。不得留下部分迁移后仍被宣称完成的状态，也不得移除旧活动文件。
+任一 migration Gate 失败时停止并保留旧活动文件，不得把部分迁移声明为完成。
 
 ## Phase 7：跨平台安装
 
@@ -144,25 +136,21 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - SNAPSHOT 不包含工作状态、操作流程、约束、原因或历史。
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
-- maintainer 是日常状态和知识写入者。
+- Maintainer 是日常状态和知识写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
 - experience-recorder 是 Runbook 和 Incident 正文的唯一写入者。
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/D/K/R/I` 编号。
 - 新项目不创建 architecture、learned 或 optimization spec。
-- 升级项目的全部旧经验语义条目已映射并验证，覆盖率为 100%。
-- 迁移清单满足 `unmapped = 0` 和 `skipped = 0`。
-- migration carrier 包含每份活动经验源的一份完整原文、语义条目覆盖清单和编号映射，不包含内容哈希或核对过程日志。
-- 已归档 legacy carrier 的全部语义条目已迁移，历史载体本身没有改写或重复归档。
-- migration carrier 已归档，旧体系活动路径和活动引用均已退出。
-- 旧经验文档没有使用 Delete 或 Compress-Archive。
-- CLAUDE 和 SNAPSHOT 已按新体系重建，且不在迁移覆盖清单或 carrier 中。
+- 升级项目通过 [references/migration.md](references/migration.md) 的全部覆盖、载体和失败检查，满足 `semantic entries = mapped entries = verified entries`、`unmapped = 0`、`skipped = 0`。
+- migration carrier 保存完整原文和映射且不含内容哈希或核对过程日志；历史 carrier 保持不可变，CLAUDE 和 SNAPSHOT 已重建且不进入迁移载体。
+- migration carrier 归档成功后才退出旧活动路径；旧经验文档未使用 Delete 或 Compress-Archive。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
-- Cycle 模板存在，Plan、Act 和 Review 区域职责分离。
-- change tasks 支持逻辑 Iteration Plan；`rework-required` 在同一 Iteration 内增加 Cycle，不顺延后续 Iteration。
+- Cycle 模板存在，Plan、Act 和 Review 区域职责分离；Plan Context 支持 `draft → ready`。
+- change tasks 支持逻辑 Iteration Plan；`rework-required` 和 `replan-required` 在同一 Iteration 内创建对应后继 Cycle，只有后者修改未完成计划。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
-- Cycle 模板能声明 `none|required`，公共规则规定 Evidence 按需创建且不登记 R。
-- Cycle 模板能记录 `accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
+- Cycle 模板能声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
+- Cycle 模板能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
 - Cycle 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - Git diff 没有覆盖用户无关内容。
 

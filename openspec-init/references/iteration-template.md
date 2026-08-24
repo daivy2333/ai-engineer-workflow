@@ -7,10 +7,10 @@
 
 ## Plan Context
 
-- Status: ready
+- Status: draft
 - Iteration: <III-title>
 - Cycle: <CCC-title>
-- Cycle Type: initial | rework
+- Cycle Type: initial | rework | replan
 - Parent cycle: None | <relative-path>
 
 **Iteration Scope**
@@ -24,9 +24,9 @@
 
 **Cycle Scope**
 
-- Trigger: initial | rework-required
+- Trigger: initial | rework-required | replan-required
 - Acceptance gaps: <本 Cycle 必须关闭的既有验收缺口；initial 写 None>
-- Repair items: <T2-R1 等本地 repair item；initial 写 None>
+- Repair items: <T2-R1 等本地 repair item；initial 和 replan 写 None>
 - Inherited scope: <继续有效的 requirement、task 和约束>
 - Excluded scope: <不属于当前 Iteration 的新需求、清理或其他工作>
 
@@ -70,7 +70,7 @@
 
 **Task Contracts**
 
-Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rework repair item 使用：
+Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task 或 rework repair item 使用：
 
 ### <Task/Repair ID>: <可验证结果>
 
@@ -208,11 +208,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 
 ## Plan Review
 
-- Status: pending
-
-**Review Result**
-
-<accepted | rework-required | replan-required>
+- Review Result: pending
 
 **Findings**
 
@@ -240,23 +236,24 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 
 **Iteration Plan Update**
 
-<`rework-required` 必须写 None；`replan-required` 记录目标、范围、依赖或验收边界变化；`accepted` 时记录 None>
+<`rework-required` 必须写 None；`replan-required` 记录目标、范围、依赖、验证契约或验收边界变化；`accepted` 时记录 None>
 
 **Next Cycle**
 
-<同一 Iteration 内的新 Cycle 路径；没有则写 None>
+<`rework-required` 或 `replan-required` 创建的同一 Iteration 后继 Cycle；没有则写 None>
 
 **Next Iteration**
 
-<当前 Iteration 被接受后展开的下一逻辑 Iteration 路径；没有则写 None>
+<仅在当前 Iteration 被接受后记录下一逻辑 Iteration 路径；没有则写 None>
 ```
 
 ## 写入规则
 
-- Plan 创建 Iteration 目录和 Cycle 文件，并填写 `Plan Context`。
+- Plan 创建 Iteration 目录和 Cycle 文件时把 `Plan Context` 状态设为 `draft`；Gate 2 全部通过或被用户明确豁免且计划获批后，最后改为 `ready`。未通过时保持 `draft`，不得交给 Act。
 - Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，但只展开当前 Iteration 和当前 Cycle。
-- 每个 Iteration 从 `000-initial.md` 开始；只有 `rework-required` 才在同一目录创建下一编号的 `rework` Cycle。
+- 每个 Iteration 从 `000-initial.md` 开始；`rework-required` 和 `replan-required` 分别在同一目录创建下一编号的 `rework` 或 `replan` Cycle。
 - Rework Cycle 使用本地 repair item 完成既有 Acceptance，不新增全局 change task，不修改 Iteration Map。
+- Replan Cycle 使用更新后的 change tasks、specs、design 和 Iteration Plan 建立新 Plan Context，允许改变目标、范围、依赖、验证契约或 Acceptance，并重新通过 Gate 2。
 - Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 仅用于用户明确要求、无法低成本复现、一次性环境、Incident/Blocker 现场，或摘要会丢失决定性结构的结果。
 - Act 只填写当前 Cycle 的 `Act Response`。
 - Act 不复核 Plan 基线，直接按 ready 的 Task Contract 建立测试见证并实施。
@@ -265,12 +262,13 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial task 或 rewo
 - 正常完成时，Act 把状态从 `pending` 改为 `reported`。
 - 计划偏差构成公共规则定义的实质问题，导致契约无法继续时，Act 填写 Blocker Handoff 并把状态改为 `blocked`。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，执行 `blocked → pending` 后恢复当前 Cycle。
-- 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
-- `required` 时，Act 按自身 Evidence 格式和公共预算创建对应目录；`none` 时不创建占位目录。
-- Plan Review 只填写 `Plan Review`。
+- 已创建后继 Cycle 或 `Review Result` 不再为 `pending` 时，不再恢复旧 Cycle。
+- 有效的 `required` 由 Act 按自身 Evidence 格式和公共预算创建对应目录；`none` 时不创建占位目录。`required` 不再满足白名单、必要性、预算或可采集性时，Act 按 Gate 6 改为 `blocked` 并返回 Plan，不强行收集。
+- `Plan Review` 的 `Review Result` 初始为 `pending`。Plan 写完 Review，完成所需计划更新，并写入、验证后继 Cycle 或 Iteration 后，最后改为 `accepted`、`rework-required` 或 `replan-required`。
+- Review 重入时，若 `Review Result` 仍为 `pending`，但已存在 `Next Cycle` 或 `Next Iteration` 指向的产物，Plan 验证一致后复用，不重复创建。
 - `accepted` 才能完成当前 Iteration 并展开 Map 中的下一 Iteration。
 - `rework-required` 只能创建同一 Iteration 内的下一 Cycle。
-- `replan-required` 才能调整 Iteration Plan；旧 Cycle 不改写。
+- `replan-required` 才能调整 Iteration Plan，并在同一 Iteration 创建下一 `replan` Cycle；旧 Cycle 不改写。
 - Experience Candidates 不构成 Recorder 授权，也不是 Act 完成 Gate。
 - 已交接的区域只追加所属角色预留内容，不改写历史。
 - Iteration 目录使用 `<III-title>/`，Cycle 文件使用 `<CCC-title>.md`；两级编号都从 `000` 递增。

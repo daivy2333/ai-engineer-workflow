@@ -1,4 +1,4 @@
 interface:
   display_name: "OpenSpec Docs Maintainer"
-  short_description: "维护状态、项目记忆、检索索引和 change 收尾。"
-  default_prompt: "Use $openspec-docs-maintainer to update OpenSpec state, project memory, references, or a user-authorized change lifecycle action."
+  short_description: "维护 OpenSpec 状态、项目记忆、change 结果同步和正常收尾。"
+  default_prompt: "Use $openspec-docs-maintainer to update OpenSpec state or project memory, synchronize a requested change result, or close a fully accepted change."

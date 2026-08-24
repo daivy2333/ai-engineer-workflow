@@ -67,7 +67,7 @@ Act Response 引用证据编号。没有保存需要时写 `None required`，不
 ## 规则
 
 - Plan 只声明通过白名单、必要性问题和预算检查的证据要求，不生成实际证据。
-- `required` 项只有在它直接支持 Acceptance 且满足上述条件时才构成 Gate 要求；无依据或超预算要求返回 Plan Review，不自动扩大收集。
+- `required` 项只有在它直接支持 Acceptance 且满足上述条件时才构成 Gate 要求；无依据、超预算或无法安全采集时，Act 不收集并通过 Gate 6 以 `blocked` 返回 Plan Review。
 - Act 可保存计划外证据，但必须在 Cycle README 和 Act Response 中说明白名单理由。
 - Act Response 引用具体文件或证据编号，不复制长日志，每项验证输出不超过 20 行。
 - Response 标记 `reported` 或 `blocked` 后，不静默覆盖已有证据。

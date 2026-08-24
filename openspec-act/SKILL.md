@@ -10,7 +10,7 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 ## 前置规则
 
 1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `CLAUDE.md`。
-2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready` 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
+2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending` 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
 3. 只执行当前 Plan Context 列出的 task 或 repair item。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
 4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
@@ -22,7 +22,7 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 ## Gate 3：Test Witness
 
-Plan 对基线和 Gate 2 负责。`Plan Context: ready` 即构成 Act 的执行授权；Act 不确认、复核或重新建立计划基线，也不为基线生成证据。每个 task 修改前直接建立测试见证：
+Plan 对基线和 Gate 2 负责。`Plan Context: ready` 即构成 Act 的执行授权；Act 不确认、复核或重新建立计划基线，也不为基线生成证据。完成前置读取后，当前 Cycle 不再经过新的执行就绪判断，直接进入首个 task 的测试见证；后续 task 也在修改前建立对应见证：
 
 - 新功能和 Bug 修复观察预期 RED。
 - 重构观察变更前 GREEN。
@@ -112,13 +112,9 @@ Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只�
 - Incident 或实质 Blocker 需要保存关键现场。
 - 摘要会丢失影响 Acceptance 判断的结构化信息。
 
-Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。Plan 要求不满足白名单或必要性问题时，不收集并在 Act Response 记录偏差，交由 Plan Review 判断。
+Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 6 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
-Evidence 目录只创建 Cycle 级 `README.md` 和实际必要文件，不创建 change 级或 Iteration 级 README。目录名与 Iteration/Cycle 一致。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本、完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。二进制文件或超限产物必须在收集前获得用户明确批准。
-
-每项证据记录来源、支持的 Acceptance、结论、采集环境、结果和限制。Act 主动增加证据时，在 README 和 Act Response 中说明白名单理由。失败、超时和跳过只在会改变验收、阻塞或恢复决定时持久化。
-
-Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录。Act Response 引用证据文件或编号，不复制长日志；状态变为 `reported` 后，不静默覆盖已有证据。预算超限本身不阻塞实现或 Acceptance；先停止收集并请求用户决定是否批准例外。
+决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
 计划偏差可复现或可用 20 行以内说明时，只在 Act Response 记录。只有实质 Blocker 满足上述白名单时才创建 `act-added / BLOCKED` Evidence。
 
@@ -130,6 +126,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 - 当前状态验证失败且原因未知。
 - Task Contract 无法覆盖达到既有 Acceptance 所需的工作。
 - 实际代码与契约存在实质冲突，或继续实施会构成实质问题。
+- `required` Evidence 不再满足白名单、必要性、预算或当前可采集性。
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
@@ -163,7 +160,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 用户补充事实、给出解决办法或接受风险，并明确要求继续时：
 
 1. 读取 Blocker Handoff、已有 Evidence 和工作区状态。
-2. 确认当前 Cycle 没有后继 Cycle，Plan Review 仍为 `pending`。
+2. 确认当前 Cycle 没有后继 Cycle，`Review Result` 仍为 `pending`。
 3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
 4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
 5. 将状态从 `blocked` 改为 `pending`。
@@ -183,7 +180,7 @@ Evidence 不登记 R，不单独归档。没有保存需要时不创建空目录
 6. 实质问题按 Gate 6 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
 7. 运行完整验证套件。
 8. 验证 OpenSpec change。
-9. initial Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
+9. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 10. 只填写当前 Cycle 的 `Act Response`：
    - 实际改动。
    - 文件和符号。
@@ -238,7 +235,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - 实现反馈已等待审计。
 - 需要检查或修订时调用 `openspec-plan`。
-- 调用 `openspec-plan` Review 当前 Cycle；Review 返回 `rework-required` 时由 Plan 在同一 Iteration 创建下一 Cycle，返回 `accepted` 且没有剩余 Iteration 后才调用 `openspec-docs-maintainer` 收尾。
+- 调用 `openspec-plan` Review 当前 Cycle；`rework-required` 或 `replan-required` 时由 Plan 在同一 Iteration 创建对应后继 Cycle，`accepted` 且没有剩余 Iteration 后才调用 `openspec-docs-maintainer` 收尾。
 - 未归档 change，未同步全局文档，未清理分支。
 
 ## 禁止

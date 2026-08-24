@@ -57,10 +57,10 @@
 - `openspec-plan`：需求、BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
-- `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I 和指定 change 收尾，并处理限定 R 登记。
+- `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
-- `openspec-archivist`：生命周期清理和 carrier 归档。
+- `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和 carrier 归档。
 
 ## 阶段边界
 
@@ -156,7 +156,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 - 增加用户未点名的工作前依次确认：用户是否要求；是否是完成结果的必要条件；哪些可达代码、数据、用户决定、法律、平台或验收证据证明必要；省略后是否会导致当前任务失败。任一项无法成立时停止扩展。
 - 必要后果可以包含调用者、夹具、测试、可访问性、安全、兼容性和迁移，但必须有当前任务的可达证据。目标是最小正确结果，不是最少文件或最少代码。
 - 默认禁止新增哈希、校验和或内容指纹。只有用户明确要求，或产品数据格式、外部兼容性、安全、完整性要求及 Acceptance 直接证明必要时才允许；本工作流自身不得成为引入理由，也不得把哈希用于无依据的变更检测、缓存、身份、去重或未来扩展。
-- 不因未来可能有用而增加依赖、兼容层、迁移、抽象、配置、通用化、额外代理或防御性加固。
+- 对已确认需要实施的工作，在同样满足 Acceptance 的方案中，依次优先复用项目已有实现、使用语言或平台原生能力、使用已有依赖，最后才新增最小必要代码或依赖；不为尚未发生的需求扩大当前实现。
 - 证据足以支持当前结论后停止搜索、测试和 Review。可选改进仅在有助于用户决策时报告，不纳入当前实现。
 
 **Surgical Changes**
@@ -258,9 +258,9 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Plan 在 change `tasks.md` 中把全部任务分配到工作量适中、可独立验证和诊断的 Iteration，只展开当前 Iteration 目录和当前 Cycle。
 - 每个 change 从 `iterations/000-initial/000-initial.md` 开始；每个后续 Iteration 也从本目录的 `000-initial.md` 开始。
 - 每个任务只归属一个 Iteration；首个与后续 Iteration 使用相同的聚合、拆分标准。
-- Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不占用全局 Iteration 编号，不修改 Iteration Map。
+- Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不修改 Iteration Map；Replan Cycle 使用同一目录的后继编号执行修订后的计划。两者都不占用全局 Iteration 编号。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
-- Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件。
+- Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
 - Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文。
 - Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
@@ -272,17 +272,17 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
 - Act Response 记录有证据的 Runbook、Incident 候选；没有则写 `None`。
 - Act Response 状态允许 `pending → reported`、`pending → blocked` 和用户解决阻塞后的 `blocked → pending`。
-- 计划偏差时，Act 写 Blocker Handoff，并按需保存 `act-added / BLOCKED` Evidence。
+- 计划偏差或 `required` Evidence 不再满足白名单、必要性、预算或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
-- 已创建后继 Cycle 或完成 Plan Review 时，不再恢复旧 Cycle。
+- 已创建后继 Cycle 或 `Review Result` 不再为 `pending` 时，不再恢复旧 Cycle。
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - 交接后的 Plan Context 不得改写。
 - Act 不得创建下一 Cycle 或下一 Iteration。
 - Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。
 - Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
-- Review Result 使用 `accepted | rework-required | replan-required`。
-- `rework-required` 只在同一 Iteration 内创建下一 Cycle；`replan-required` 才允许调整目标、范围、依赖、验收边界和未完成 Iteration Plan。
+- Review Result 使用 `pending → accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新终态。
+- `rework-required` 在同一 Iteration 创建 rework Cycle，且不修改 Map；`replan-required` 调整目标、范围、依赖、验证契约、验收边界和未完成 Iteration Plan，并在同一 Iteration 创建 replan Cycle。
 - 连续两个 rework Cycle 未缩小同一 Acceptance gap 时重新检查 Plan、设计和需求假设；同一问题三次失败后不得创建第四次同类 Cycle。
 - 当前 Iteration 只有在 Review Result 为 `accepted` 后才能完成并展开 Map 中的下一 Iteration。
 

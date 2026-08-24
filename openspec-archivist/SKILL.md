@@ -1,6 +1,6 @@
 ---
 name: openspec-archivist
-description: 清理 OpenSpec 条目和持久化产物的生命周期，判断归档、压缩归档、保留、删除、过期预警、提升、合并或 Artifact 归档。仅在用户明确要求清理项目模型、决策、知识、参考、改进、任务、Analysis、Runbook 或 Incident 时使用。
+description: 清理 OpenSpec 条目、无法正常收尾的 change 和持久化产物的生命周期，判断归档、压缩归档、保留、删除、过期预警、提升、合并或 Artifact 归档。仅在用户明确要求生命周期清理时使用；正常完成的 change 由 openspec-docs-maintainer 收尾。
 ---
 
 # OpenSpec Archivist
@@ -16,7 +16,7 @@ description: 清理 OpenSpec 条目和持久化产物的生命周期，判断归
 ## 职责边界
 
 - `openspec-assistant`：只读查询。
-- `openspec-docs-maintainer`：日常写入和归档恢复。
+- `openspec-docs-maintainer`：日常写入、归档恢复和正常完成的 change 收尾。
 - `openspec-compressor`：活跃文档原地压缩。
 - `openspec-archivist`：生命周期判断、归档、删除、arc 墓碑和预警。
 
@@ -29,7 +29,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 3. Archive 和 Delete 前扫描交叉引用。
 4. `CLAUDE.md` 永不自动归档，只能建议审查。
 5. 进行中任务永不归档。
-6. OpenSpec change 使用 OpenSpec 集成归档，不手工移动 change。
+6. 无法满足 Maintainer 正常收尾条件的 OpenSpec change 经用户确认后使用 OpenSpec 集成归档，不手工移动；正常完成的 change 交给 Maintainer 收尾。
 7. Archive 和 Compress-Archive 使用独立 carrier change。
 8. carrier 归档成功前不删除源条目。
 9. 每次清理使用独立 carrier，不跨清理批次合并。
@@ -42,16 +42,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 这是普通生命周期清理的窄例外，只接收 `openspec-init` 已完成的新体系写入和迁移清单。
 
-Archivist 只核验：
-
-- 每个旧来源语义条目已映射并验证。
-- 覆盖率为 100%，`unmapped = 0`，`skipped = 0`。
-- 来源 mtime 未变化；变化的来源已重新读取并更新受影响映射。
-- carrier 包含语义条目覆盖清单、编号映射和每份活动经验源的一份完整原文。
-- 新目标、活动引用和恢复入口均可定位。
-- CLAUDE 和 SNAPSHOT 不在覆盖清单、原文副本或归档队列中。
-
-核验通过后使用完整 Archive 归档 migration carrier，再退出旧活动路径。不得重新筛选、合并掉来源映射或要求用户逐条确认。任一条件失败时保留全部旧活动文件并返回 Init 修复。
+按 [references/carrier-protocol.md](references/carrier-protocol.md) 的 Migration carrier 要求核验覆盖、mtime、完整原文、新目标和恢复入口。核验通过后完整归档 carrier 并退出旧活动路径；不得重新判断信息价值、改写来源映射或要求用户逐条确认。任一条件失败时保留全部旧活动文件并返回 Init 修复。
 
 已归档 legacy carrier 不重复装入或归档。Archivist 核验其路径、语义条目映射和新目标，保持历史载体不可变。
 
@@ -129,7 +120,7 @@ Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”�
 
 按顺序执行：
 
-1. 处理用户批准的 OpenSpec change 归档；Init 迁移先核验 migration carrier。
+1. 处理用户批准且无法满足正常收尾条件的 OpenSpec change；Init 迁移先核验 migration carrier。
 2. Promote。
 3. Merge。
 4. 预检活跃 changes。
@@ -155,9 +146,7 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 - 源文档结构完整。
 - 详细产物移动后 R 路径已更新。
 - change 归档后，其已有 Evidence 目录和文件仍完整可定位。
-- Init 迁移的语义条目覆盖率为 100%，且没有未映射或跳过项。
-- migration carrier 保存每份活动经验源的一份完整原文，不保存内容哈希或核对过程日志。
-- migration carrier 成功归档后，旧体系活动路径和活动引用均不存在。
+- Init 迁移通过 [references/carrier-protocol.md](references/carrier-protocol.md) 的覆盖、完整原文、归档和旧活动路径退出检查。
 
 ## 恢复
 

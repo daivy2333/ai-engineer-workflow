@@ -46,7 +46,8 @@ changes/<change>/
 ├── iterations/             ← 逻辑 Iteration 目录与执行 Cycle
 │   └── <III-title>/
 │       ├── 000-initial.md
-│       └── 001-rework.md
+│       ├── 001-rework.md
+│       └── 002-replan.md
 └── evidence/               ← 仅在需要留存证据时创建
     └── <III-title>/
         └── <CCC-title>/
@@ -54,9 +55,9 @@ changes/<change>/
             └── <最多四个实际证据文件>
 ```
 
-Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存每项不超过 20 行的决定性输出；`required` 只用于用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个，单个文本文件最多 500 行且不超过 256 KiB；禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
+Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存每项不超过 20 行的决定性输出；`required` 只用于用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构。若 `required` 在执行时不再合法或可采集，Act 以 `blocked` 返回 Plan，不强行收集。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个，单个文本文件最多 500 行且不超过 256 KiB；禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
 
-本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan 在 `tasks.md` 中预先分配全部 Iteration，只展开当前 Iteration 的当前 Cycle。Review 返回 `rework-required` 时在同一目录增加 Cycle，不修改 Map；返回 `replan-required` 时才调整逻辑 Iteration。
+本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan Context 从 `draft` 开始，Gate 2 通过或明确豁免且计划获批后变为 `ready`。Review Result 从 `pending` 进入 `accepted | rework-required | replan-required`；`rework-required` 在同一目录增加 rework Cycle 且不修改 Map，`replan-required` 更新计划后在同一目录增加 replan Cycle。
 
 上下文按职责传递：Assistant 恢复 OpenSpec 体系文档，Explorer 调查实际代码，Plan 复用探索结果并只补查缺失或失效事实，再把 Act 所需内容直接写入自包含 Plan Context。Act 不回读 Explorer 或重新建立计划基线，只读取当前 Cycle、目标代码和测试。局部实现差异和不影响 Acceptance 的 Minor finding 记录后继续；需要改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 时才阻塞。
 

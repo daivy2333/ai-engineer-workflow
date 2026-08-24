@@ -7,7 +7,7 @@ Iteration = 逻辑工作单元，进入 change 的 Iteration Plan
 Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 ```
 
-返工不自动产生新 Iteration。只有目标、范围、依赖或验收边界发生实质变化时，才调整 Iteration Plan。
+返工不自动产生新 Iteration。只有目标、范围、依赖、验证契约或验收边界发生实质变化时，才调整 Iteration Plan，并在当前 Iteration 建立后继 replan Cycle。
 
 ## Iteration Plan
 
@@ -27,7 +27,7 @@ Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 - 每个 task 只分配给一个 Iteration，依赖只能指向同一或更早的 Iteration。
 - Iteration 按依赖顺序编号。Plan 只为当前 Iteration 创建目录和当前 Cycle 文件；后续 Iteration 保留在 `tasks.md`。
 - 不按固定 task 数、文件数或代码行数切分。小 change 经审计后可以只有一个 Iteration。
-- Cycle 在所属 Iteration 内从 `000-initial.md` 开始，返工按 `001-rework.md`、`002-rework.md` 递增，不占用全局 Iteration 编号。
+- Cycle 在所属 Iteration 内从 `000-initial.md` 开始，后继 Cycle 按 `001-rework.md`、`002-replan.md` 等递增，不占用全局 Iteration 编号。
 
 目录结构：
 
@@ -49,7 +49,7 @@ openspec/changes/<change>/iterations/
 - 跨模块不自动要求拆分；共同形成一个可验证结果时可以保留。
 - 首个 Iteration 不得因编号为 `000` 而承载整个 change；单 Iteration 也必须通过相同审计。
 
-Cycle 不重新执行 Iteration 平衡审计。它只能完成所属 Iteration 的既有 Acceptance，不能引入新成果或扩大范围。
+Initial 和 rework Cycle 只能完成所属 Iteration 的既有 Acceptance，不能引入新成果或扩大范围。Replan Cycle 在更新 Iteration Plan 后重新执行平衡审计，并以修订后的 Acceptance 为边界。
 
 ## Review 分类
 
@@ -59,7 +59,7 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 |---|---|---|
 | 实现不达标、Act 偏离计划，或 Plan 遗漏了达到既有 Acceptance 必需的工作 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
 | 只有不阻塞 Acceptance 的 Minor finding | `accepted` | 记录 finding；按职责决定是否另建后续 task，不强制返工 |
-| 目标、范围、依赖、requirement、设计或验收边界需要改变 | `replan-required` | 停止普通返工，更新 change 和 Iteration Plan |
+| 目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变 | `replan-required` | 停止普通返工；更新 change 和未完成 Iteration Plan，再创建后继 replan Cycle |
 | Acceptance 已满足且没有阻塞项 | `accepted` | 完成当前 Iteration；存在后续 Iteration 时只展开下一个 |
 
 判断问题：
@@ -69,6 +69,11 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 ```
 
 答案为“是”时留在当前 Iteration；答案为“否”时不得以返工名义扩大当前 Cycle。
+范围或验证契约变化必须使用 `replan-required`，不得伪装为普通返工。
+
+`Review Result` 初始为 `pending`。Plan 写完 Review、所需计划更新和后继产物并验证后，最后将它改为终态；写入失败时保持 `pending`。
+
+Review 重入时，若 `Review Result` 仍为 `pending`，但 `Next Cycle` 或 `Next Iteration` 指向的产物已经存在，Plan 验证它与当前 Review 一致后复用并继续，不创建重复后继产物。
 
 ## Rework Cycle
 
@@ -80,6 +85,17 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 4. Act 和 Plan 分别填写新 Cycle 的 Act Response 与 Plan Review；旧 Cycle 不改写。
 5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，Review 必须检查 Plan、设计和需求假设。同一问题连续失败三次时触发三次失败规则，不创建第四次同类 Cycle。
 
+## Replan Cycle
+
+`replan-required` 时：
+
+1. 按需更新 change 的 tasks、specs、design 和未完成 Iteration Plan，保留 requirement 映射；不得改写已交接 Cycle。
+2. 在当前 Iteration 目录创建下一编号的 replan Cycle，记录父 Cycle、变化原因、修订后的任务和 Acceptance。
+3. Replan Cycle 使用更新后的全局 task，不创建 rework repair item；Plan Context 从 `draft` 开始并重新通过 Gate 2 后变为 `ready`。
+4. 当前 Iteration 在 replan Cycle 获得 `accepted` 前保持未完成；后续 Iteration 只保留在修订后的 Map 中。
+
+Act 因 `required` Evidence 不再满足白名单、必要性、预算或可采集性而阻塞时，Plan Review 将其分类为 `PLAN-INVALID` 或 `NEW-EVIDENCE`，使用 `replan-required` 修正 Evidence 契约，不要求 Act 按原计划继续收集。父 Cycle 的无效 `required` 由该 Review 和 `Next Cycle` 形成的 replan 链替代，正常收尾不再要求为它补建 Evidence。
+
 ## 推进下一 Iteration
 
 只有当前 Cycle 的 Review Result 为 `accepted`，当前 Iteration 才算完成。
@@ -87,4 +103,4 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 1. 若 `tasks.md` 仍有后续 Iteration，Plan 按既有 Map 展开下一个 Iteration 目录及其 `000-initial.md`，不因当前 Iteration 的 Cycle 数量修改或顺延编号。
 2. 若没有剩余 Iteration，在当前 Cycle 的 Plan Review 记录 `accepted` 和 `Next Iteration: None`。
 3. `rework-required` 只创建同目录的下一 Cycle。
-4. `replan-required` 才允许调整未完成的 Iteration Plan；已交接的 Cycle 文件保持不可变。
+4. `replan-required` 调整未完成的 Iteration Plan，并创建同目录的下一 replan Cycle；已交接的 Cycle 文件保持不可变。

@@ -1,11 +1,11 @@
 ---
 name: openspec-docs-maintainer
-description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R/I，或同步、收尾、归档指定 change。用户直接调用时默认刷新 SNAPSHOT；也接收 Explorer、Recorder 只写 R 的限定登记请求。
+description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R/I，同步指定 change 结果，或收尾最终 Review Result 为 accepted 的 change。用户直接调用时默认刷新 SNAPSHOT；也接收 Explorer、Recorder 只写 R 的限定登记请求。
 ---
 
 # OpenSpec Docs Maintainer
 
-负责状态、项目记忆、检索索引和用户指定的 change 收尾。查询交给 `openspec-assistant`，工程经验正文交给 `openspec-experience-recorder`，表达压缩交给 `openspec-compressor`，生命周期清理交给 `openspec-archivist`。
+负责状态、项目记忆、检索索引、指定 change 结果同步和正常收尾。无法满足正常收尾条件的 change 由 `openspec-archivist` 处理；查询交给 `openspec-assistant`，工程经验正文交给 `openspec-experience-recorder`，表达压缩交给 `openspec-compressor`。
 
 ## 写入范围
 
@@ -65,7 +65,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。确认全部 change tasks 完成、Iteration Plan 无剩余任务、最新 Cycle 的 Plan Review 为 `accepted` 且 `Next Iteration: None`，再检查 Act Response 和 `required` Evidence；validate 通过后归档并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在、运行 validate 后归档，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -87,7 +87,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - 检查编号唯一且递增。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
-- 检查每个 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。`none` 的 Cycle 不要求 Evidence 目录。
+- 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
 - 涉及 OpenSpec 时运行相应 validate。
 - 报告修改文件、编号和条目。
 

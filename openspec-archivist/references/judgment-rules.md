@@ -156,7 +156,8 @@ Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创
 **OpenSpec changes**
 
 - 活跃：Keep。
-- 完成：建议使用 OpenSpec 集成归档。
+- 满足 Maintainer 正常收尾条件：交给 Maintainer 收尾。
+- 无法满足正常收尾条件且不再进行：提交用户判定，包括废弃和 legacy/非标准 change。
 - 超过 90 天无活动：提交用户判定。
 - 空 change：提交用户判定。
 - change 内 Evidence 随 change 处理，不单独判断、登记 R 或 Artifact-Archive。
