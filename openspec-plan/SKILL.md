@@ -228,14 +228,14 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
-7. 按 [references/iteration-planning.md](references/iteration-planning.md) 的 Review 分类判断 `accepted | rework-required | replan-required`，并在当前 Cycle 的 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
-8. 按该引用创建同一 Iteration 的 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`，但不归档或同步状态。
-9. 当前 `Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复 `blocked` Cycle。
+7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
+8. 有限修复受当前执行契约约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
+9. 当前 Cycle 修复完成后重新 Review。`Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复有明确当前 Cycle 反馈的 `reported` Cycle，或已解决阻塞的 `blocked` Cycle。
 10. 输出结果后终止，等待用户审计和下一步指令。
 
-不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建 rework Cycle。记录 finding 并返回 `accepted`。
+不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行契约的有限修复留在当前 Cycle。
 
-旧 Cycle 只允许追加对应角色的空白区域。不得重写历史指令、反馈或 Review。
+Plan Context 始终不可改写。当前活跃 Cycle 的 Review 保持 `pending` 且没有后继 Cycle 时，Plan 只覆盖 `Plan Review` 为最新完整状态；进入终态或创建后继 Cycle 后不得重写。
 
 ## 输出与终止
 
@@ -258,13 +258,14 @@ Review 模式改为交付：
 - Blocker Handoff 的处理结果，或正常完成说明。
 - 当前 Cycle 的 `Review Result`。
 - Acceptance Gaps、收敛判断和 Iteration Plan 是否保持不变。
+- 当前 Cycle 修复意见，或无需当前 Cycle 修复。
 - 新 Cycle 路径、新 Iteration 路径，或 None。
 - 未确认问题和用户需决定的内容。
 
 然后终止。提醒用户：
 
 - 当前 Plan/Cycle 产物已等待审计。
-- 存在待执行 Cycle 时，审计通过后可调用 `openspec-act`。
+- Plan Review 要求当前 Cycle 修复或存在待执行 Cycle 时，审计通过后可调用 `openspec-act`。
 - 没有后续任务时，可调用 `openspec-docs-maintainer` 收尾。
 - 未调用 Act、Maintainer 或其他 Skill。
 
@@ -279,7 +280,7 @@ Review 模式改为交付：
 - 把 `openspec-assistant` 当作写入者。
 - 自动调用 Act 或 Maintainer。
 - 自动同步 tasks、SNAPSHOT 或归档 change。
-- 覆盖旧 Cycle 的 Plan Context、Act Response 或 Plan Review。
+- 覆盖 Plan Context、其他角色区域，或已经终结、已有后继产物的 Cycle。
 - 把 `rework-required` 作为新增全局 task 或修改 Iteration Map 的理由。
 - 把新目标、范围变化或验收变化伪装为 rework Cycle。
 - 在原计划为 `none` 时，把缺少 Evidence 目录本身作为 Review 问题。

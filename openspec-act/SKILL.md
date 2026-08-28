@@ -10,8 +10,8 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 ## 前置规则
 
 1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `CLAUDE.md`。
-2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending` 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`，或为已获用户恢复指令的 `blocked`。
-3. 只执行当前 Plan Context 列出的 task 或 repair item。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
+2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending`、没有后继 Cycle 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`、有明确当前 Cycle 修复意见的 `reported`，或为已获用户恢复指令的 `blocked`。
+3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行契约约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
 4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
@@ -19,6 +19,8 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 8. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
 9. 修改产品代码前建立测试见证。
 10. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
+
+Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `reported` 改为 `pending`，只消费最新 Review，不恢复已被覆盖的文字历史。缺少具体修复目标、Acceptance gap、证据或验证依据时不恢复，返回 Plan 补全 Review。
 
 ## Gate 3：Test Witness
 
@@ -153,7 +155,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 8. 将 Act Response 状态从 `pending` 改为 `blocked`。
 9. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
 
-状态流转包括 `pending → reported`、`pending → blocked` 和 `blocked → pending`。恢复后必须先回到 `pending`，不得越过它改成 `reported`。
+状态流转包括 `pending → reported`、`pending → blocked`、`blocked → pending`，以及 Plan 明确要求当前 Cycle 修复时的 `reported → pending`。恢复后必须先回到 `pending`，不得越过它改成 `reported`。
 
 **恢复阻塞**
 
@@ -181,7 +183,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 7. 运行完整验证套件。
 8. 验证 OpenSpec change。
 9. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
-10. 只填写当前 Cycle 的 `Act Response`：
+10. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
    - 实际改动。
    - 文件和符号。
    - 与计划的偏差及原因。
@@ -235,7 +237,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - 实现反馈已等待审计。
 - 需要检查或修订时调用 `openspec-plan`。
-- 调用 `openspec-plan` Review 当前 Cycle；`rework-required` 或 `replan-required` 时由 Plan 在同一 Iteration 创建对应后继 Cycle，`accepted` 且没有剩余 Iteration 后才调用 `openspec-docs-maintainer` 收尾。
+- 调用 `openspec-plan` Review 当前 Cycle；有限修复按 Review 继续当前 Cycle，`rework-required` 或 `replan-required` 时由 Plan 创建对应后继 Cycle，`accepted` 且没有剩余 Iteration 后才调用 `openspec-docs-maintainer` 收尾。
 - 未归档 change，未同步全局文档，未清理分支。
 
 ## 禁止

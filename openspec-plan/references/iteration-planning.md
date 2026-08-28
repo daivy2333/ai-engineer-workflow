@@ -57,7 +57,8 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 
 | 发现 | Review Result | 后续动作 |
 |---|---|---|
-| 实现不达标、Act 偏离计划，或 Plan 遗漏了达到既有 Acceptance 必需的工作 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
+| 既有 Acceptance 未满足，但修复仍受当前 Plan Context 约束，不需要新的执行上下文 | 保持 `pending` | Plan 在 Review 给出当前 Cycle 修复意见；不创建后继 Cycle |
+| 实现不达标、Act 偏离计划，或 Plan 遗漏需要新的 Current-State Evidence、repair item、Task Contract 或 Gate 2 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
 | 只有不阻塞 Acceptance 的 Minor finding | `accepted` | 记录 finding；按职责决定是否另建后续 task，不强制返工 |
 | 目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变 | `replan-required` | 停止普通返工；更新 change 和未完成 Iteration Plan，再创建后继 replan Cycle |
 | Acceptance 已满足且没有阻塞项 | `accepted` | 完成当前 Iteration；存在后续 Iteration 时只展开下一个 |
@@ -71,9 +72,23 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 答案为“是”时留在当前 Iteration；答案为“否”时不得以返工名义扩大当前 Cycle。
 范围或验证契约变化必须使用 `replan-required`，不得伪装为普通返工。
 
+当前 Cycle 修复与 rework Cycle 的边界不是文件数、代码行数或预计时间，而是 Act 是否需要新的自包含执行契约。Plan Review 已能给出有限修复目标，且原 Task Contract、Change Surface、不变量和验证方法仍足以约束 Act 时，留在当前 Cycle；需要重新调查、拆分 repair item、建立新基线或重新通过 Gate 2 时，创建 rework Cycle。
+
 `Review Result` 初始为 `pending`。Plan 写完 Review、所需计划更新和后继产物并验证后，最后将它改为终态；写入失败时保持 `pending`。
 
 Review 重入时，若 `Review Result` 仍为 `pending`，但 `Next Cycle` 或 `Next Iteration` 指向的产物已经存在，Plan 验证它与当前 Review 一致后复用并继续，不创建重复后继产物。
+
+## 当前 Cycle 修复
+
+Plan 判断有限修复可由当前执行契约覆盖时：
+
+1. 覆盖当前 `Plan Review` 为最新完整审查，填写具体 Findings、Acceptance Gaps、Evidence 和 Convergence；`Iteration Plan Update`、`Next Cycle`、`Next Iteration` 均为 `None`。
+2. 最后在 `Follow-up Decision` 明确要求 Act 在当前 Cycle 修复，`Review Result` 保持 `pending`。该字段写完前，`reported` 的 Act 不得恢复。
+3. Act 把状态从 `reported` 改为 `pending`，只读取最新 Review 和修复所需的任务局部上下文，按当前契约建立测试见证并实施。
+4. Act 完成后覆盖 `Act Response` 为当前 Cycle 的最新完整快照，再改为 `reported`；Plan 随后覆盖 Review 并重新判断。
+5. 覆盖前若已有当前 Cycle 反馈，Convergence 与上一版 Acceptance Gaps 比较；否则沿用父 Cycle 比较规则。gap 为 `reduced` 且剩余修复仍受当前契约约束时可以继续；`unchanged`、`expanded` 或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 6 约束。
+
+覆盖只适用于 `Review Result: pending`、没有后继 Cycle 的当前活跃 Cycle。Plan Context 始终不可改写；Plan 和 Act 只能覆盖各自区域，且覆盖内容必须是当前 Cycle 的完整最新状态，不保存逐轮文字历史。Review 进入终态或后继 Cycle 已创建后，Cycle 冻结。Blocked Handoff、Resolution 和持久化 Evidence 仍按各自规则保留。
 
 ## Rework Cycle
 
@@ -83,7 +98,7 @@ Review 重入时，若 `Review Result` 仍为 `pending`，但 `Next Cycle` 或 `
 2. 在当前 Iteration 目录创建下一 Cycle 文件，记录父 Cycle、偏差分类、Acceptance gap、继承范围、repair item、当前代码基线、验证方法和停止条件。
 3. Plan 根据父 Cycle、Act Response 和当前代码补齐 Acceptance gap 所需的 Current-State Evidence，并重新通过 Gate 2；不重复调查未变化范围。新 Cycle 仍直接写入 Act 所需事实，不要求 Act 回读父 Cycle。
 4. Act 和 Plan 分别填写新 Cycle 的 Act Response 与 Plan Review；旧 Cycle 不改写。
-5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，Review 必须检查 Plan、设计和需求假设。同一问题连续失败三次时触发三次失败规则，不创建第四次同类 Cycle。
+5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，Review 必须检查 Plan、设计和需求假设；只有确认目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变时才进入 replan。同一问题连续失败三次时触发三次失败规则，不创建第四次同类 Cycle。
 
 ## Replan Cycle
 

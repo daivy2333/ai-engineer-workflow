@@ -108,8 +108,9 @@ openspec-experience-recorder
 openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
   → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
+  → 当前执行契约足以约束有限修复：覆盖 Review 并让 Act 继续当前 Cycle
   → accepted：完成当前逻辑 Iteration，按 Map 展开下一 Iteration
-  → rework-required：在同一 Iteration 目录创建 rework Cycle，不修改 Map
+  → rework-required：需要新执行契约时，在同一 Iteration 目录创建 rework Cycle，不修改 Map
   → replan-required：更新 change 和 Iteration Plan，在同一 Iteration 创建 replan Cycle
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
@@ -200,7 +201,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的 `tasks.md` 预先规划全部逻辑 Iteration，Map 不记录执行尝试次数。
 - 每个逻辑 Iteration 使用 `iterations/<III-title>/` 目录；首次执行写入 `000-initial.md`，后继执行写入同目录的 rework 或 replan Cycle。
-- `rework-required` 不修改 Iteration Map；`replan-required` 调整目标、范围、依赖、验证契约或验收边界，并创建后继 replan Cycle。
+- 有限修复沿用当前执行契约和 Cycle；需要新执行契约时使用 `rework-required`，且不修改 Iteration Map；`replan-required` 调整目标、范围、依赖、验证契约或验收边界。
 - change 的按需证据写入 `evidence/<III-title>/<CCC-title>/`，与 Iteration/Cycle 层级对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。

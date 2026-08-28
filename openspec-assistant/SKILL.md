@@ -50,7 +50,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 规划、拆分、合并或重排 milestones | `openspec-milestone-planner` |
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
-| Review 实现、生成 rework/replan Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
+| Review 实现、反馈当前 Cycle 修复、生成 rework/replan Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
 | 创建、更新或恢复 Runbook、Incident | `openspec-experience-recorder` |
 | 更新状态、M/D/K/R/I，同步指定 change 结果，或正常收尾最终 `Review Result: accepted` 的 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
