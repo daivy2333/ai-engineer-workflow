@@ -2,6 +2,8 @@
 
 Evidence 是 change 内按需保存、会改变验收或恢复决定且无法用 Act Response 充分表达的实施事实。普通验证结果写入 Act Response；Gate、测试、Review 数量和长输出本身不构成持久化理由。
 
+Evidence 只保存目标行为结果，不建立公共规则禁止的测试材料身份或运行归属系统。环境信息只用于解释适用范围，不能作为 Acceptance 证据。
+
 只有用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/实质 Blocker 需要保留现场，或摘要会丢失决定性结构时才创建 Evidence。
 
 ## 目录
@@ -30,7 +32,6 @@ openspec/changes/<change>/evidence/
 - Iteration: <III-title>
 - Cycle: <CCC-title>
 - Captured at: <time>
-- Revision: <commit 或 worktree 状态>
 - Environment: <工具链、平台和模式>
 
 | ID | Origin | Acceptance | Claim | Artifact | Result |
@@ -67,6 +68,7 @@ Act Response 引用证据编号。没有保存需要时写 `None required`，不
 ## 规则
 
 - Plan 只声明通过白名单、必要性问题和预算检查的证据要求，不生成实际证据。
+- Evidence 必须直接支持目标状态、输出、错误结果、协议结果或退出码；材料身份、来源匹配和时间顺序不能单独支持 Acceptance。
 - `required` 项只有在它直接支持 Acceptance 且满足上述条件时才构成 Gate 要求；无依据、超预算或无法安全采集时，Act 不收集并通过 Gate 6 以 `blocked` 返回 Plan Review。
 - Act 可保存计划外证据，但必须在 Cycle README 和 Act Response 中说明白名单理由。
 - Act Response 引用具体文件或证据编号，不复制长日志，每项验证输出不超过 20 行。

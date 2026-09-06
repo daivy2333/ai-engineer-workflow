@@ -194,6 +194,9 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同�
 - 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
 - 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
+- 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
+- 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明“这是同一次运行”，也不得为解决证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
+- 发现上述身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，随后重新运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
 - OpenSpec Skill 复用当前会话中来源明确且未变化的上下文，只补读缺失信息和实际操作对象；不得因 Skill 切换重复恢复项目状态。
 - `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。

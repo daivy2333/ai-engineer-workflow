@@ -72,6 +72,7 @@ Code quality review 检查：
 - 没有新增警告、死代码、重复实现或无依据复杂度。
 - 测试不会因错误原因通过。
 - 命名和局部结构符合项目惯例。
+- 没有身份型证据机制、自引用验证或只证明 capture、audit、qualification 工具自身正确的测试。
 
 计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4。实质问题按 Gate 6 阻塞。Minor 问题可以记录并继续，不得伪装成已解决。
 
@@ -85,6 +86,8 @@ Code quality review 检查：
 4. 每项只摘录不超过 20 行的决定性输出。
 5. 判断证据是否支持声明。
 6. 证据支持后再声明。
+
+只有目标状态、输出、错误结果、协议结果或退出码等可观察行为可以支持 Acceptance。Hash、revision、run-id、peer、manifest 或时间顺序只能描述材料或现场，不能使验证通过。
 
 验证范围按变更选择：
 
@@ -115,6 +118,8 @@ Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只�
 - 摘要会丢失影响 Acceptance 判断的结构化信息。
 
 Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 6 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
+
+不得为 Evidence 新增身份字段、握手、pin、freeze、manifest、Hash 链、时间顺序检查或 capture/audit/qualification 工具。Evidence 输出改变 worktree 或现场时，只记录该限制；不得创建排除路径或二级验证来维持身份检查。
 
 决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
@@ -261,3 +266,4 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 保存完整日志目录、源码副本、完整测试输出，或拆分、压缩产物绕过预算。
 - 仅因日志较长、便于审计或以后可能有用而创建 Evidence。
 - 把 change 内 Evidence 登记为 R 或单独执行 Artifact-Archive。
+- 实现公共规则禁止的身份型证据工程。

@@ -101,6 +101,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 记录关键技术选择、替代方案和选择理由。
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
+- 验证设计直接观察目标状态、输出、错误结果或退出码，不建立测试材料或运行轮次的身份系统。
 
 影响契约语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
 
@@ -109,6 +110,8 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
 Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implementation Guidance 不得给出冲突指令，也不规定非实质实现选择。
+
+不得规划公共规则禁止的身份型证据工程。产品 requirement 明确要求的认证、完整性校验或多会话协议必须作为目标行为进入 requirement、scenario 和 Acceptance，不能以证据需要为理由引入。
 
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
@@ -149,6 +152,7 @@ Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implem
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
 9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个测试见证并执行。
 10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
+11. 验证是否直接证明目标行为，且没有身份型证据工程、自引用验证或为工具测试工具。
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
@@ -186,6 +190,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 - 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
+- 验证没有用 Hash、revision、run-id、peer、manifest、时间顺序或专用审计工具替代目标行为，也没有为同一运行归属叠加身份机制。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
@@ -228,6 +233,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
+   - 身份型证据工程属于 `PLAN-INVALID`：Plan 把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
 7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
 8. 有限修复受当前执行契约约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
 9. 当前 Cycle 修复完成后重新 Review。`Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复有明确当前 Cycle 反馈的 `reported` Cycle，或已解决阻塞的 `blocked` Cycle。
@@ -284,4 +290,5 @@ Review 模式改为交付：
 - 把 `rework-required` 作为新增全局 task 或修改 Iteration Map 的理由。
 - 把新目标、范围变化或验收变化伪装为 rework Cycle。
 - 在原计划为 `none` 时，把缺少 Evidence 目录本身作为 Review 问题。
+- 规划公共规则禁止的身份型证据工程。
 - 依赖某个平台专属任务工具或 slash command 才能执行流程。
