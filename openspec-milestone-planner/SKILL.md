@@ -17,7 +17,7 @@ description: 将项目目标规划为工作量适中、可独立验证和排障�
 - 读取项目目标、SNAPSHOT、tasks、M/D/K/R 和已有 analysis。
 - 创建、拆分、合并、排序尚未执行的 `MSxx`。
 - 定义阶段成果、工作范围、稳定基线、验证边界和诊断边界。
-- 只在用户批准后写入 `.claude/docs/tasks.md`。
+- 只在用户批准后写入 `.agents/docs/tasks.md`。
 - 不要求 Explorer、Plan、Act 或 Maintainer 生成专用交接。
 - 不调用其他 skill，不创建 OpenSpec change，不修改产品代码。
 - 不替代 `openspec-plan` 的 BDD、实现调查、设计和 Task Contract。
@@ -30,7 +30,7 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 
 复用当前会话中 Assistant 已读取且未变化的体系上下文，只补读规划所缺的信息：
 
-1. `CLAUDE.md`、`.claude/docs/SNAPSHOT.md` 和 `.claude/docs/tasks.md`；当前上下文没有具体内容时再读取。
+1. `AGENTS.md`、`.agents/docs/SNAPSHOT.md` 和 `.agents/docs/tasks.md`；当前上下文没有具体内容时再读取。
 2. 相关 project-model、decisions、knowledge 和 references。
 3. 已存在且与目标相关的 analysis。
 4. 活跃 change 的名称、目标和状态。
@@ -72,7 +72,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 
 ## Phase 5：WRITE
 
-按模板精准更新 `.claude/docs/tasks.md`：
+按模板精准更新 `.agents/docs/tasks.md`：
 
 1. 读取现有最大 `MSxx` 后递增。
 2. 保留现有 `Txx`、change 状态和用户无关内容。

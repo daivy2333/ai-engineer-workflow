@@ -9,12 +9,12 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ## 前置规则
 
-1. 复用当前会话中已读取且未变化的 CLAUDE、SNAPSHOT、tasks、M/D/K/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
+1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、tasks、M/D/K/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
 2. 新计划先消费当前会话中的 Explorer 结论或相关 Analysis，检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有 Explorer 输入时由 Plan 完成所需调查。
 3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
-4. 若项目缺少规则、OpenSpec 结构或 `.claude/docs/templates/change-cycle.md`，先使用 `openspec-init`。
+4. 若项目缺少 `AGENTS.md`、`.agents/` 结构或 `.agents/docs/templates/change-cycle.md`，先使用 `openspec-init`。
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
-6. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
+6. change 是 `.agents/changes/<name>/` 下的普通目录和 markdown 文件，用文件操作创建和检查，不依赖平台专属命令或外部 CLI。
 7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
 8. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
 9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
@@ -51,9 +51,9 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 可观察结果。
 - 失败结果或边界条件。
 
-### Step 4：建立需求基线和 OpenSpec change
+### Step 4：建立需求基线和 change
 
-使用可用的 OpenSpec 集成生成或完善：
+创建 `.agents/changes/<name>/` 目录并生成或完善：
 
 - `proposal.md`
 - Delta specs
@@ -69,7 +69,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - BDD 缺口扫描完成。
 - 用户已处理场景缺口。
 - 场景草图存在。
-- OpenSpec change 存在。
+- change 目录存在。
 - 用户批准需求和范围。
 
 用户显式要求跳过 Gate 1 时，将原话和风险写入 proposal；不要静默豁免。
@@ -156,10 +156,10 @@ Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implem
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
-按 `.claude/docs/templates/change-cycle.md` 创建：
+按 `.agents/docs/templates/change-cycle.md` 创建：
 
 ```text
-openspec/changes/<change>/iterations/000-initial/000-initial.md
+.agents/changes/<change>/iterations/000-initial/000-initial.md
 ```
 
 `Plan Context` 按 Cycle 模板写入：
@@ -192,7 +192,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
 - 验证没有用 Hash、revision、run-id、peer、manifest、时间顺序或专用审计工具替代目标行为，也没有为同一运行归属叠加身份机制。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
-- OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
+- change 的 tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
@@ -217,7 +217,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 - BDD 缺口扫描。
 - 场景草图。
 - 聚焦的实现调查和 Current-State Evidence。
-- OpenSpec change。
+- change 目录。
 - 精简版 Requirements Traceability Matrix。
 - 用户批准 Gate 1 和 Gate 2，除非用户显式豁免。
 
@@ -252,7 +252,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的 Review 保持 `pending`
 - Current-State Evidence 和未确认项。
 - Requirements Traceability Matrix。
 - change tasks 中的 Iteration Plan 和平衡审计结果。
-- OpenSpec change 路径。
+- change 路径。
 - 当前 Iteration、Cycle 路径和编号。
 - Persisted Evidence 模式和 `required` 项，或 `none`。
 - Gate 1、Gate 2 检查项、状态和证据。

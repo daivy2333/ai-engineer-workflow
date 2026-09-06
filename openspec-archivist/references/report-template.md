@@ -13,7 +13,7 @@
 
 - `<编号>`：建议动作；不确定原因；可选处理。
 
-### OpenSpec changes
+### changes
 
 - `<change>`：状态；建议。
 
@@ -25,7 +25,7 @@
 附带：
 
 - carrier ID 和归档路径。
-- OpenSpec validate 输出。
+- 归档目录路径和 git mv 记录。
 - arc 指引计数。
 - 未执行条目及原因。
 - 失败和恢复入口。

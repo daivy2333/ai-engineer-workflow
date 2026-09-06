@@ -4,7 +4,7 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 
 ## Runbook
 
-路径：`.claude/runbooks/<topic>.md`
+路径：`.agents/runbooks/<topic>.md`
 
 ```markdown
 # <操作名称>
@@ -47,7 +47,7 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 
 ## Incident
 
-路径：`.claude/incidents/YYYY-MM-DD-<topic>.md`
+路径：`.agents/incidents/YYYY-MM-DD-<topic>.md`
 
 ```markdown
 # <事件名称>

@@ -31,7 +31,7 @@ Explorer 文档模式自动调用 `openspec-docs-maintainer` 登记 R。其他�
 ```text
 类型: analysis
 主题: <分析主题>
-路径: .claude/analysis/<file>.md
+路径: .agents/analysis/<file>.md
 日期: YYYY-MM-DD
 用途: <文档覆盖内容>
 状态: active

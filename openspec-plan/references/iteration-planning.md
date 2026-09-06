@@ -32,7 +32,7 @@ Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 目录结构：
 
 ```text
-openspec/changes/<change>/iterations/
+.agents/changes/<change>/iterations/
 ├── 000-foundation/
 │   ├── 000-initial.md
 │   └── 001-rework.md

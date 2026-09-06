@@ -1,6 +1,6 @@
 # Change Cycle 模板
 
-将下面内容生成到 `.claude/docs/templates/change-cycle.md`。Plan 在 change 的 `iterations/<III-title>/` 下为每次执行闭环创建一个 Cycle 文件。
+将下面内容生成到 `.agents/docs/templates/change-cycle.md`。Plan 在 change 的 `iterations/<III-title>/` 下为每次执行闭环创建一个 Cycle 文件。
 
 ```markdown
 # Iteration <III> / Cycle <CCC>: <TITLE>

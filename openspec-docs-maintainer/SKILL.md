@@ -11,13 +11,13 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 
 | 文档 | 编号 |
 |---|---|
-| `.claude/docs/tasks.md` | `Txx`；已有 `MSxx` 的状态和 change 引用 |
-| `.claude/docs/SNAPSHOT.md` | 无 |
-| `openspec/specs/project-model/spec.md` | `Mxx` |
-| `openspec/specs/decisions/spec.md` | `Dxx` |
-| `openspec/specs/knowledge/spec.md` | `Kxx` |
-| `openspec/specs/references/spec.md` | `Rxx` |
-| `openspec/specs/improvements/spec.md` | `Ixx` |
+| `.agents/docs/tasks.md` | `Txx`；已有 `MSxx` 的状态和 change 引用 |
+| `.agents/docs/SNAPSHOT.md` | 无 |
+| `.agents/memory/project-model.md` | `Mxx` |
+| `.agents/memory/decisions.md` | `Dxx` |
+| `.agents/memory/knowledge.md` | `Kxx` |
+| `.agents/memory/references.md` | `Rxx` |
+| `.agents/memory/improvements.md` | `Ixx` |
 
 ## 约束
 
@@ -27,7 +27,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 4. 直接调用时 SNAPSHOT 默认增量更新；其他已有文档只做精准修改。
 5. 不删除或归档 M/D/K/R/I 等条目；这类操作交给 archivist。
 6. 不改变 Explorer、Recorder 管理的持久化产物正文。
-7. change 元数据由 OpenSpec 集成管理。
+7. change 的活跃状态由 `.agents/changes/` 目录存在性表达；change 内文档由 plan 和 act 维护。
 8. 直接调用默认刷新 SNAPSHOT；限定 R 登记跳过 SNAPSHOT。同步不隐含归档，归档不隐含其他清理。
 9. Plan 和 Act 的完成报告不是写入授权。
 10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。
@@ -46,7 +46,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - 直接调用时比较当前 Git 状态，确定能否可靠计算 SNAPSHOT 增量；没有可靠同步基线时记录全量刷新原因。
 - 搜索已有条目。
 - 先搜索相关 M/D/K/R/I 重复项，只读取命中内容和必要邻近上下文。
-- 涉及 change 时读取 `openspec list` 和对应 tasks。
+- 涉及 change 时用 `ls .agents/changes/` 确认活跃 change，并读取对应 tasks。
 - 列出本次允许修改的文件。
 
 ### 2. UPDATE
@@ -65,7 +65,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/D/K/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在、运行 validate 后归档，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，用 `git mv` 把 `.agents/changes/<name>` 移入 `.agents/archive/changes/<date>-<name>`，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -88,7 +88,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/D/K/R
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
-- 涉及 OpenSpec 时运行相应 validate。
+- 归档后检查 `.agents/archive/changes/` 下的 change 完整可定位。
 - 报告修改文件、编号和条目。
 
 ## 恢复归档条目
@@ -105,7 +105,7 @@ Carrier 条目：
 Analysis：
 
 1. 从 R 条目定位 `archive/` 路径。
-2. 恢复到 `.claude/analysis/`。
+2. 恢复到 `.agents/analysis/`。
 3. 更新 R 路径和状态。
 4. 检查交叉引用。
 
@@ -119,7 +119,7 @@ Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`。Main
 - 在 SNAPSHOT 回退以外全量覆盖已有文档。
 - 删除或归档文档条目。
 - 压缩活跃文档。
-- 手工修改 OpenSpec change 元数据。
+- 修改 change 内 Plan Context、Act Response 或 Review 正文。
 - 根据 Plan 或 Act 的完成声明自动写入或归档。
 - 借 Explorer 自动登记修改 R 以外的文档。
 - 借 Recorder 自动登记修改 R 以外的文档。

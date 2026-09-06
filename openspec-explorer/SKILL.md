@@ -1,6 +1,6 @@
 ---
 name: openspec-explorer
-description: 深度阅读整个项目、模块、调用链或子系统，按宏观或微观范围生成即时回答或 .claude/analysis/ 分析文档。文档模式完成后自动调用 openspec-docs-maintainer 登记对应 R 引用；不修改产品代码。
+description: 深度阅读整个项目、模块、调用链或子系统，按宏观或微观范围生成即时回答或 .agents/analysis/ 分析文档。文档模式完成后自动调用 openspec-docs-maintainer 登记对应 R 引用；不修改产品代码。
 ---
 
 # OpenSpec Explorer
@@ -13,16 +13,16 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 - 宏观范围：分析整个项目或多个模块。执行前完整读取 [references/macro-workflow.md](references/macro-workflow.md)。
 - 微观范围：分析一个模块、流程、符号或问题。执行前完整读取 [references/micro-workflow.md](references/micro-workflow.md)。
-- 即时回答：只向用户报告，不创建 `.claude/analysis/` 文档，也不调用 Maintainer。
+- 即时回答：只向用户报告，不创建 `.agents/analysis/` 文档，也不调用 Maintainer。
 - 文档模式：生成分析文档。完整读取 [references/persistence-formats.md](references/persistence-formats.md)，并在文档验证后自动登记 R 引用。
 
 用户明确指定输出方式时服从用户。未指定时，仅在结果需要跨会话复用、多主题索引或后续计划依赖时使用文档模式。
 
 ## 前置检查
 
-1. 复用当前会话中已读取且未变化的 CLAUDE、SNAPSHOT、project-model、decisions、knowledge、references 和 change 信息，只补读目标所需的缺失内容。
+1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、project-model、decisions、knowledge、references 和 change 信息，只补读目标所需的缺失内容。
 2. Assistant 提供的体系文档上下文不能替代本次目标代码调查。
-3. 检查 `.claude/analysis/` 是否已有同主题文档。
+3. 检查 `.agents/analysis/` 是否已有同主题文档。
 4. 检查活跃 OpenSpec change。
 5. 调查涉及实施结论时，读取相关 Iteration、Cycle、Act Response 和已有 Evidence。
 6. 明确目标、范围和 3-8 个需要回答的问题。
@@ -46,7 +46,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 ## 文档模式
 
-写入 `.claude/analysis/<topic>.md`。每份文档包含：
+写入 `.agents/analysis/<topic>.md`。每份文档包含：
 
 - SNAPSHOT 路径、采集 revision、分支和日期。
 - 目标与范围。
@@ -66,7 +66,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 1. 为每份新建或实质更新的分析文档生成 R 候选。
 2. 自动调用 `openspec-docs-maintainer`。
-3. 授权范围只限于去重并写入 `openspec/specs/references/spec.md`。
+3. 授权范围只限于去重并写入 `.agents/memory/references.md`。
 4. 报告 R 编号和分析文档路径。
 5. 登记失败时保留分析文档并报告原因，不扩大写入范围。
 
@@ -92,6 +92,6 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 自行写 M/D/K/R/I。
 - 生成无来源结论。
 - 重复已有分析。
-- 把分析文档写入 `openspec/specs/`。
+- 把分析文档写入 `.agents/memory/`。
 - 即时回答模式创建分析文档或调用 Maintainer。
 - 借自动 R 登记写入 M/D/K/I、tasks、SNAPSHOT 或 change。

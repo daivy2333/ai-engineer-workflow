@@ -9,7 +9,7 @@ Evidence 只保存目标行为结果，不建立公共规则禁止的测试材�
 ## 目录
 
 ```text
-openspec/changes/<change>/evidence/
+.agents/changes/<change>/evidence/
 └── <III-title>/
     └── <CCC-title>/
         ├── README.md

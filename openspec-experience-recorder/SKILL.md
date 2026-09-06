@@ -11,8 +11,8 @@ description: 根据已经发生且有证据的实施或运行过程，创建、�
 
 ## 职责
 
-- 创建、更新和恢复 `.claude/runbooks/` 中的 Runbook。
-- 创建、更新和恢复 `.claude/incidents/` 中的 Incident。
+- 创建、更新和恢复 `.agents/runbooks/` 中的 Runbook。
+- 创建、更新和恢复 `.agents/incidents/` 中的 Incident。
 - 从 Act Response、Evidence、命令输出、日志、时间线或现有产物提取事实。
 - 区分事实、推断和未确认项。
 - 为新建、实质更新或恢复的产物请求 R 登记或索引更新。
@@ -62,7 +62,7 @@ Incident 至少满足一项：
 
 ## 1. LOAD
 
-1. 复用当前会话中已读取且未变化的 `CLAUDE.md` 和体系上下文，读取格式规则、同主题持久化产物及其 R 索引。
+1. 复用当前会话中已读取且未变化的 `AGENTS.md` 和体系上下文，读取格式规则、同主题持久化产物及其 R 索引。
 2. 涉及 Act 时优先读取 Act Response 和实际存在的 Evidence；只有范围、前置条件或环境无法由这些来源确定时，才补读 Plan Context 的相关部分。
 3. 记录来源 revision、环境、命令、结果和证据路径。
 4. 搜索同主题 Runbook、Incident 和 R，避免重复。
@@ -80,8 +80,8 @@ Incident 至少满足一项：
 
 按格式文件精准创建或更新：
 
-- Runbook：`.claude/runbooks/<topic>.md`
-- Incident：`.claude/incidents/YYYY-MM-DD-<topic>.md`
+- Runbook：`.agents/runbooks/<topic>.md`
+- Incident：`.agents/incidents/YYYY-MM-DD-<topic>.md`
 
 更新 Runbook 时保留仍有效的边界和失败处理，并刷新验证日期、环境与证据。更新 Incident 时追加时间线和状态，不改写已发生的历史。
 

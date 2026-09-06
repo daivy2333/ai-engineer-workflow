@@ -9,14 +9,14 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 ## 前置规则
 
-1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `CLAUDE.md`。
+1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `AGENTS.md`。
 2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending`、没有后继 Cycle 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`、有明确当前 Cycle 修复意见的 `reported`，或为已获用户恢复指令的 `blocked`。
 3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行契约约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
 4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-8. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
+8. 按 change 的 `tasks.md` 维护任务状态；报告前对照公共规则自检 change 文件结构。
 9. 修改产品代码前建立测试见证。
 10. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
 
@@ -98,7 +98,6 @@ Code quality review 检查：
 - API 调用。
 - UI 检查。
 - 配置加载。
-- OpenSpec validate。
 
 报告格式：
 
@@ -110,7 +109,7 @@ Gate 需要新鲜验证结果，但不要求原始输出文件。按直接目标
 
 ## 按需 Evidence
 
-Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只有以下情况才创建：
+Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只有以下情况才创建：
 
 - 用户明确要求保留。
 - 结果无法低成本复现，或一次性环境即将消失。
@@ -186,7 +185,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 5. 对每项修复重跑受影响的 Gate 4 和 Gate 5。
 6. 实质问题按 Gate 6 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
 7. 运行完整验证套件。
-8. 验证 OpenSpec change。
+8. 自检 change 文件结构。
 9. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 10. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
    - 实际改动。

@@ -39,7 +39,7 @@
 
 当条目职责改变时迁移到目标类型：
 
-- K 成为强制约束时，候选提升到 M 或 CLAUDE。
+- K 成为强制约束时，候选提升到 M 或 AGENTS.md。
 - I 获准实施时，提升为 change，并标记 `promoted`。
 
 提升写入交给 Maintainer。原条目保留目标编号或路径。
@@ -65,20 +65,6 @@
 | 已解决 Incident | 无活跃后续动作且必要关联已记录 | Artifact-Archive |
 
 时间结论需要 Git 历史或文档日期支持，不能只按当前日期推断。
-
-## Init 全量迁移例外
-
-旧体系迁移不使用价值、时效、重复度、引用数或相关性阈值决定去留。
-
-- 每个来源语义条目必须进入一个或多个新目标。
-- 重复内容可以在新目标合并，但每个来源映射都保留。
-- 过时或失效内容仍要迁移，并保留状态和时间边界。
-- 无法分类时停止并返回 Init，不得改判 Delete、Keep 或跳过。
-- 100% 映射并验证后，旧经验文档整份进入 migration carrier。
-- 旧经验文档只允许 Archive，不允许 Compress-Archive 或 Delete。
-- CLAUDE 和 SNAPSHOT 按新体系重建，不参与迁移判断或归档。
-
-这项例外只适用于 Init 的旧体系升级，不改变日常生命周期清理规则。
 
 ## 分文档规则
 
@@ -112,7 +98,7 @@
 - 已验证且仍适用：Keep。
 - 失效但可能再次遇到：Archive。
 - 单纯路径、签名或链接：迁移到 R。
-- 强制约束：Promote 到 M 或 CLAUDE。
+- 强制约束：Promote 到 M 或 AGENTS.md。
 
 **references**
 
@@ -149,11 +135,11 @@ Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创
 - `stale` 状态：保留并交给 Maintainer 刷新。
 - 工作状态、操作流程、约束、原因或历史记录：移出 SNAPSHOT 后按对应类型判断。
 
-**CLAUDE.md**
+**AGENTS.md**
 
 永不自动修改。只能报告 `SUGGEST-REVIEW` 或 `SUGGEST-MERGE`。
 
-**OpenSpec changes**
+**changes**
 
 - 活跃：Keep。
 - 满足 Maintainer 正常收尾条件：交给 Maintainer 收尾。
@@ -168,5 +154,4 @@ Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创
 - 同级条目标题到下一个同级标题。
 - 表格中每个数据行为独立条目。
 - checkbox 每行为独立任务。
-- 没有编号的旧条目在写入前分配编号。
-- 迁移条目的 Legacy ID 属于对应新条目。
+- 编号唯一且递增；无编号条目在写入前分配编号。

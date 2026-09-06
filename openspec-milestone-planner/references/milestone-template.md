@@ -1,6 +1,6 @@
 # Milestone Roadmap 格式
 
-在 `.claude/docs/tasks.md` 中使用独立的 Milestone Roadmap。保留原有全局任务和 change 状态。
+在 `.agents/docs/tasks.md` 中使用独立的 Milestone Roadmap。保留原有全局任务和 change 状态。
 
 ```markdown
 ## Milestone Roadmap

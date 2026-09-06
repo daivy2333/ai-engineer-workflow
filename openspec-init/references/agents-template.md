@@ -1,6 +1,6 @@
-# CLAUDE.md 模板
+# AGENTS.md 模板
 
-此模板只生成项目公共规范。当前项目描述写入 SNAPSHOT，工作状态写入 tasks 或 change。
+此模板生成项目公共规范。当前项目描述写入 SNAPSHOT，工作状态写入 tasks 或 change。
 
 ## 模板目录
 
@@ -12,34 +12,34 @@
 - 文件编辑与完成检查
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 ## 文档地图
 
 | 内容 | 路径 | 写入者 |
 |---|---|---|
-| 公共规则 | `CLAUDE.md` | 人工或 `openspec-init` |
-| 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
-| Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
-| 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| Cycle 模板 | `.claude/docs/templates/change-cycle.md` | `openspec-init` |
-| 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
-| 决策 | `openspec/specs/decisions/spec.md` | `openspec-docs-maintainer` |
-| 知识 | `openspec/specs/knowledge/spec.md` | `openspec-docs-maintainer` |
-| 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
-| 改进 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
-| 活跃变更 | `openspec/changes/` | OpenSpec、plan、act |
-| Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act` |
-| 分析文档 | `.claude/analysis/` | `openspec-explorer` |
-| Runbook | `.claude/runbooks/` | `openspec-experience-recorder` |
-| Incident | `.claude/incidents/` | `openspec-experience-recorder` |
+| 公共规则 | `AGENTS.md` | 人工或 `openspec-init` |
+| 当前项目描述 | `.agents/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
+| Milestone roadmap | `.agents/docs/tasks.md` | `openspec-milestone-planner` |
+| 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
+| Cycle 模板 | `.agents/docs/templates/change-cycle.md` | `openspec-init` |
+| 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
+| 决策 | `.agents/memory/decisions.md` | `openspec-docs-maintainer` |
+| 知识 | `.agents/memory/knowledge.md` | `openspec-docs-maintainer` |
+| 参考 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
+| 改进 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
+| 活跃变更 | `.agents/changes/` | plan、act |
+| Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act` |
+| 分析文档 | `.agents/analysis/` | `openspec-explorer` |
+| Runbook | `.agents/runbooks/` | `openspec-experience-recorder` |
+| Incident | `.agents/incidents/` | `openspec-experience-recorder` |
 
 ## 读取顺序
 
-- 新会话：assistant 读取 CLAUDE → SNAPSHOT → tasks → active changes，并按问题补充相关 M/D/K/R/I 和持久化产物。
+- 新会话：assistant 读取 AGENTS.md → SNAPSHOT → tasks → active changes，并按问题补充相关 M/D/K/R/I 和持久化产物。
 - 当前会话中来源明确、细节仍可用且读取后未变化的信息直接复用；Skill 切换本身不触发重复读取。
 - 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新鲜运行证据时，才重新读取对应权威来源。
-- Assistant 只恢复 OpenSpec 体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
+- Assistant 只恢复体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
 - 探索：复用体系上下文 → 读取目标代码和测试 → 形成即时结论或 Analysis。
 - 计划：复用 Explorer 的当前会话结论或 Analysis → 只补查缺失或失效的实现事实 → 形成自包含 Plan Context。
 - 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
@@ -58,7 +58,7 @@
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
 - `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
-- `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
+- `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和 carrier 归档。
 
@@ -91,7 +91,7 @@
 | 精准编辑 | 只修改相关片段 |
 | 命令执行 | 保留命令、输出和退出码 |
 | 并行委托 | 仅在环境支持且任务可独立时使用 |
-| OpenSpec 集成 | 按当前职责创建、应用、验证或归档 change |
+| 变更文件操作 | 用目录创建、git 移动和引用扫描完成 change 生命周期 |
 
 平台工具名只是适配，不改变上述语义。
 
@@ -101,7 +101,7 @@
 - SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录。
 - 其他文档只引用 SNAPSHOT，不复制当前项目描述。
 - 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
-- 已承诺工作写 tasks 或 OpenSpec change。
+- 已承诺工作写 tasks 或 change。
 - 当前跨模块约束写 project-model，编号 `Mxx`。
 - 有替代方案的长期选择写 decisions，编号 `Dxx`。
 - 已验证、非显然且可复用的结论写 knowledge，编号 `Kxx`。
@@ -116,16 +116,6 @@
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
 Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
-
-## 旧体系迁移
-
-- 升级必须沿文档地图、引用、归档指引和历史 carrier 发现来源，读取全文，按已有编号、可独立路由的同级标题或短文档整体迁移。
-- 重复和过时信息仍要建立来源映射，并保留独有信息、状态和时间边界。
-- 已归档 legacy carrier 保持不可变，但其中的信息也要迁移和验证。
-- CLAUDE 和 SNAPSHOT 按新体系重建，不进入迁移清单或 carrier。
-- 覆盖率达到 100%，且 `unmapped = 0`、`skipped = 0` 后才能归档旧文档。
-- 迁移期间旧来源保持只读，不生成内容哈希。migration carrier 保存语义条目覆盖清单、编号映射、验证摘要和每份旧文档的一份完整原文，不保存核对过程日志。
-- 旧体系文档只允许完整 Archive，不允许 Delete 或 Compress-Archive。
 
 ## 记录边界
 
@@ -237,8 +227,8 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 ## 任务批次与续跑边界
 
 - 每个 Phase 和可验证 Step 有状态。
-- 任务列表只保存当前已授权且可执行的工作；完整状态以 OpenSpec 产物为准。
-- 非迁移步骤的跳过项标记 `SKIPPED: <reason>`；旧体系语义条目不得跳过。
+- 任务列表只保存当前已授权且可执行的工作；完整状态以 change 产物为准。
+- 跳过项标记 `SKIPPED: <reason>`。
 - 只有验证通过后才能标记完成。
 - 最终报告前检查全部任务状态。
 
@@ -305,6 +295,8 @@ Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪
 每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
 
 禁止使用“应该、大概、基本完成”替代证据。
+
+change 结构自检覆盖：tasks 状态与实际完成一致，specs、design 与已实现行为一致，Iteration 与 Cycle 文件齐全，`Review Result` 与流程状态一致。
 
 ## 三次失败
 
