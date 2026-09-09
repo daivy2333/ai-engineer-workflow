@@ -191,7 +191,7 @@ Plan 在制定任务前读取实际代码并记录：
 
 - 入口、目标符号、调用者和被调用者。
 - 数据流、状态变化、错误和并发边界。
-- 现有测试、验证命令和基线结果。
+- 现有测试、验证命令和基线结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可采信结论时运行基线验证。
 - 当前行为、目标行为和影响范围。
 
 影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。
@@ -219,7 +219,7 @@ Plan 在制定任务前读取实际代码并记录：
 - Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪；非实质未知项不阻塞。
 - Gate 3：每个任务在修改前有测试见证。
 - Gate 4：每个任务先 spec review，后 code review。
-- Gate 5：完成声明有新鲜证据。
+- Gate 5：完成声明有新鲜证据或可采信的未失效结论。
 - Gate 6：阻塞即停；三次失败后反思。
 
 Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
@@ -276,6 +276,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Review Result 的终态为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。
 - 连续两个 rework Cycle 未缩小同一 Acceptance gap 时重新检查 Plan、设计和需求假设；同一问题三次失败后不得创建第四次同类 Cycle。
 - 当前 Iteration 只有在 Review Result 为 `accepted` 后才能完成并展开 Map 中的下一 Iteration。
+- 展开后继 Iteration 时，Current Baseline 优先引用前一 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的代码表面。
 
 ## 验证
 
@@ -287,6 +288,22 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 证据支持的结论。
 
 Gate 必须有新鲜验证结果，但不要求原始输出文件。验证按影响范围递增：直接目标测试 → 受影响边界 → 必要的集成或全量 Gate；现有结果足以判断 Acceptance 后停止。
+
+验证结论的新鲜指产生时真实运行过且覆盖范围自产生后未变化，不要求本次会话重新运行。覆盖范围未变化的结论可以被后续角色和时间点采信：
+
+- 采信方做一次只读基线检查（`git status`、`git diff`），确认覆盖范围内的材料与结论产生时一致。
+- 在自己的 Review 或 Response 中注明来源和结论，不复制长输出；采信不创建 Evidence。
+- 采信错误结论的责任跟随结论产生方，如同 Act 不复核 ready 的 Plan Context。
+
+出现以下情况时重跑，不采信：
+
+- 结论与代码、diff 或其他证据矛盾，或输出可疑。
+- 验证本身不确定：已知 flaky、时序、性能或并发竞争类。
+- 覆盖范围无法映射到当前要判断的 Acceptance。
+- 用户显式要求独立复现。
+- 采信方即将修改覆盖范围内的代码。修改前的测试见证观察当前基线；基线未变化时，既有结论就是当前基线的合法观察，恢复阻塞和 rework 场景按此采信。
+
+基线检查用 git 现状判断覆盖范围是否变化，属于定位现场，不是身份型证据工程；Acceptance 仍由原始行为输出支持。
 
 命令顺序由当前工作流状态和退出结果表达，时间戳只能辅助诊断。Hash、revision、run-id、peer、manifest 或时间顺序一致均不能使 Gate 通过；没有目标状态、输出、错误结果或退出码等行为证据时，验证结论为失败。
 

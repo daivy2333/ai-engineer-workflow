@@ -10,7 +10,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 ## 前置规则
 
 1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、tasks、M/D/K/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
-2. 新计划先消费当前会话中的 Explorer 结论或相关 Analysis，检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有 Explorer 输入时由 Plan 完成所需调查。
+2. 新计划先消费当前会话中的 Explorer 结论、相关 Analysis，以及后继 Iteration 对应的前一 Iteration 最终 Act Response 和 accepted Review；检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有可采信输入时由 Plan 完成所需调查。
 3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
 4. 若项目缺少 `AGENTS.md`、`.agents/` 结构或 `.agents/docs/templates/change-cycle.md`，先使用 `openspec-init`。
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
@@ -78,7 +78,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 1：调查当前实现
 
-制定计划前，先整理 Explorer 已确认且仍适用于当前工作区的事实，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
+制定计划前，先整理 Explorer 已确认且仍适用于当前工作区的事实和前序 Iteration 最终 Act Response 的结论，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
 
 - 定位入口、目标文件、符号及职责。
 - 追踪调用者、被调用者和动态调用边。
@@ -86,7 +86,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 检查错误、取消、超时、并发和资源生命周期。
 - 定位现有测试、测试夹具和验证命令。
 - 检查相关 M/D/K、活跃 change 和兼容性约束。
-- 运行必要的只读基线验证，记录命令、关键输出和退出码。
+- 只在缺少可采信结论时运行只读基线验证；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用并注明来源。补跑时记录命令、关键输出和退出码。
 - 列出影响实现的未知项；只有实质未知项才阻塞。
 
 不得无条件重复 Explorer 已完成且仍有效的调用链或影响面调查。调查深度以支持本次修改为限；计划不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act。
@@ -226,9 +226,9 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 用户要求检查 Act 结果时：
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
-2. 检查实际代码、diff、Act Response、Self-Review 和计划要求的 Evidence。
-3. Act 的 Self-Review 只作为输入，不得代替 Plan 的独立检查。
-4. 状态为 `blocked` 时，检查 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
+2. 独立阅读实际代码和 diff，检查 Act Response、Self-Review 和计划要求的 Evidence。
+3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；结论矛盾、输出可疑、验证不确定、覆盖不足或用户要求独立复现时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
+4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
    - 非实质 finding 不阻塞。

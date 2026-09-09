@@ -74,7 +74,7 @@ Code quality review 检查：
 - 命名和局部结构符合项目惯例。
 - 没有身份型证据机制、自引用验证或只证明 capture、audit、qualification 工具自身正确的测试。
 
-计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4。实质问题按 Gate 6 阻塞。Minor 问题可以记录并继续，不得伪装成已解决。
+计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 4；未受影响且覆盖范围未变化的验证结论继续有效。实质问题按 Gate 6 阻塞。Minor 问题可以记录并继续，不得伪装成已解决。
 
 ## Gate 5：Evidence-Based Verification
 
@@ -86,6 +86,8 @@ Code quality review 检查：
 4. 每项只摘录不超过 20 行的决定性输出。
 5. 判断证据是否支持声明。
 6. 证据支持后再声明。
+
+按覆盖范围记录验证结论（命令、行为和涉及的代码表面），使 Plan Review、后继 Cycle 和阻塞恢复可以采信。当前 Cycle 内早期验证的结论在覆盖范围未变化时直接引用，不重复运行；修改覆盖范围内的代码后才重新运行。
 
 只有目标状态、输出、错误结果、协议结果或退出码等可观察行为可以支持 Acceptance。Hash、revision、run-id、peer、manifest 或时间顺序只能描述材料或现场，不能使验证通过。
 
@@ -101,11 +103,11 @@ Code quality review 检查：
 
 报告格式：
 
-| 验证项 | 命令或操作 | 输出摘录 | 结论 |
-|---|---|---|---|
-| 测试 | `<command>` | `<fresh output>` | PASS/FAIL |
+| 验证项 | 命令或操作 | 输出摘录 | 覆盖范围 | 结论 |
+|---|---|---|---|---|
+| 测试 | `<command>` | `<fresh output>` | `<行为或代码表面>` | PASS/FAIL |
 
-Gate 需要新鲜验证结果，但不要求原始输出文件。按直接目标、受影响边界、必要集成或全量 Gate 的顺序递增验证；结果足以判断 Acceptance 后停止。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
+Gate 需要新鲜验证结果——产生时真实运行过且覆盖范围未变化——但不要求原始输出文件。按直接目标、受影响边界、必要集成或全量 Gate 的顺序递增验证；结果足以判断 Acceptance 后停止。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
 
 ## 按需 Evidence
 
@@ -170,7 +172,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
 4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
 5. 将状态从 `blocked` 改为 `pending`。
-6. 重新建立受影响 task 的测试见证，再从恢复点继续。
+6. 对恢复点之后将要修改且既有见证已失效的 task 重新建立测试见证；工作区自阻塞前结论产生后未变化的部分直接采信既有见证并注明来源，再从恢复点继续。
 
 不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
 
@@ -182,7 +184,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 2. 审查完整 diff，不只复用逐任务结论。
 3. 检查跨任务交互、遗漏实现、计划外修改、回归风险和测试有效性。
 4. 修复计划范围内的 Critical 和 Important 问题。
-5. 对每项修复重跑受影响的 Gate 4 和 Gate 5。
+5. 对每项修复重跑受影响的 Gate 4 和 Gate 5；未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
 6. 实质问题按 Gate 6 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
 7. 运行完整验证套件。
 8. 自检 change 文件结构。

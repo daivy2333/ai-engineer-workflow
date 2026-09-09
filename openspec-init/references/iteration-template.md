@@ -40,7 +40,7 @@
 
 **Current Baseline**
 
-<revision、当前实现、已有能力、已知限制和基线验证结果>
+<revision、当前实现、已有能力、已知限制和基线验证结果；可引用未失效的既有结论并注明来源>
 
 **Current-State Evidence**
 
@@ -186,7 +186,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 
 **Verification Evidence**
 
-<命令或操作、每项不超过 20 行的决定性输出、退出码、支持的 Acceptance 和结论>
+<命令或操作、每项不超过 20 行的决定性输出、退出码、覆盖范围、支持的 Acceptance 和结论>
 
 **Persisted Evidence**
 
@@ -230,7 +230,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 
 **Evidence**
 
-<文件、符号、命令和输出>
+<文件、符号、命令和输出；采信 Act Response 未失效结论时注明来源>
 
 **Follow-up Decision**
 
@@ -260,6 +260,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 - Plan 和 Act 不得用身份绑定、运行归属、manifest、Hash 链或时间顺序代替行为验证，也不得为 Evidence 创建专用 capture、audit、qualification 子系统。
 - Act 只填写当前 Cycle 的 `Act Response`；Plan 明确要求当前 Cycle 修复时执行 `reported → pending`，完成后覆盖为包含原实施和最新修复的完整 Response，再改为 `reported`。
 - Act 不复核 Plan 基线，直接按 ready 的 Task Contract 建立测试见证并实施。
+- 验证结论在覆盖范围未变化时可被 Plan Review、后继 Cycle 和阻塞恢复采信；采信方注明来源并做只读基线检查，矛盾、不确定、覆盖不足或用户要求独立复现时重跑。
 - Act 在契约内处理非实质局部差异并记录；只有实质冲突才填写 Blocker Handoff。
 - Act 在 Experience Candidates 中记录有证据的 Runbook 或 Incident 候选；没有则写 `None`。
 - 正常完成时，Act 把状态从 `pending` 改为 `reported`。
