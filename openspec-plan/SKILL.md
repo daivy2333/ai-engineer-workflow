@@ -12,12 +12,12 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、tasks、M/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
 2. 新计划先消费当前会话中的 Explorer 结论、相关 Analysis，以及后继 Iteration 对应的前一 Iteration 最终 Act Response 和 accepted Review；检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有可采信输入时由 Plan 完成所需调查。
 3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
-4. 若项目缺少 `AGENTS.md`、`.agents/` 结构或 `.agents/docs/templates/change-cycle.md`，先使用 `openspec-init`。
+4. 若项目缺少 `AGENTS.md` 或 `.agents/` 结构，先使用 `openspec-init`。
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 6. change 是 `.agents/changes/<name>/` 下的普通目录和 markdown 文件，用文件操作创建和检查，不依赖平台专属命令或外部 CLI。
 7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
 8. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
-9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)。
+9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)；创建 Cycle 文件前完整读取 [references/cycle-template.md](references/cycle-template.md)。
 
 ## Phase 1：CLARIFY
 
@@ -157,7 +157,7 @@ Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implem
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
-按 `.agents/docs/templates/change-cycle.md` 创建：
+按 [references/cycle-template.md](references/cycle-template.md) 创建：
 
 ```text
 .agents/changes/<change>/iterations/000-initial/000-initial.md

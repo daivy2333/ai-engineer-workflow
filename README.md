@@ -18,13 +18,13 @@
 
 三端差异只在技能发现目录。项目规则入口统一为 `AGENTS.md`，公共规则只保存这一份，不生成平台专属规则副本：
 
-| 平台 | 项目技能目录 | 用户技能目录 |
-|---|---|---|
-| Claude Code | `.claude/skills/`，符号链接指向 `.agents/skills/` | `~/.claude/skills/` |
-| Codex | `.agents/skills/` | `~/.agents/skills/` |
-| OpenCode | `.agents/skills/` 或 `.claude/skills/` | `~/.config/opencode/skills/` 或复用上述用户目录 |
+| 平台 | 用户技能目录 |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex | `~/.agents/skills/` |
+| OpenCode | `~/.config/opencode/skills/`，或复用上述任一目录 |
 
-同一份技能内容以 `.agents/skills/` 为项目级源目录。项目状态文档统一放在 `.agents/` 下：`docs/`（SNAPSHOT、tasks、Cycle 模板）、`memory/`（项目记忆）、`specs/`（行为语料库）、`changes/`、`archive/`、`analysis/`、`runbooks/`、`incidents/`。
+技能组是用户级资产，项目仓库只承载 `.agents/` 下的数据：`docs/`（SNAPSHOT、tasks）、`memory/`（项目记忆）、`specs/`（行为语料库）、`changes/`、`archive/`、`analysis/`、`runbooks/`、`incidents/`。初始化不向项目写入技能或模板副本；能运行体系技能即证明技能组已装载。
 
 目标项目以 `AGENTS.md` 保存公共规则，工作流不依赖外部 CLI 工具；change 的创建、验证和归档使用文件目录和 git 操作完成。
 
@@ -40,7 +40,7 @@
 
 | Skill | 职责 |
 |---|---|
-| `openspec-init` | 初始化规则、项目记忆、状态文档和三端入口 |
+| `openspec-init` | 初始化规则、项目记忆和状态文档结构 |
 | `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
 | `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
 | `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
@@ -162,7 +162,7 @@ Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保
 
 ## 安装
 
-技能以符号链接安装，同一份内容不维护副本。用户级安装把每个技能目录链接到对应平台目录：
+技能装载到用户级目录，目标项目仓库不保存技能副本。在技能源目录执行：
 
 ```bash
 cd ai-engineer-workflow
@@ -174,9 +174,7 @@ for dir in */; do
 done
 ```
 
-项目级安装把技能目录链接到目标项目的 `.agents/skills/`。Claude Code 如需项目级发现，再建立 `.claude/skills/<name>` 指向 `.agents/skills/<name>` 的符号链接；OpenCode 能读取 `.agents/skills/` 或 `.claude/skills/` 任一目录。
-
-OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台机器同时启用 `.agents/skills` 和 `.claude/skills` 时，OpenCode 可能发现两个同名入口；在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
+OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台机器同时向 `~/.claude/skills` 和 `~/.agents/skills` 装载时，OpenCode 可能发现两个同名入口；在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
 
 ## 设计约束
 

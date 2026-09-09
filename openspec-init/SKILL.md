@@ -1,6 +1,6 @@
 ---
 name: openspec-init
-description: 初始化或升级项目规则、状态、change 和项目记忆体系。用于新项目创建 AGENTS.md 公共规则、.agents/ 文档结构、memory 项目记忆、Cycle 模板和三端技能入口；不做旧体系迁移和兼容适配。
+description: 初始化或升级项目规则、状态、change 和项目记忆体系。用于新项目创建 AGENTS.md 公共规则和 .agents/ 文档结构、memory 项目记忆；技能由用户级装载，Cycle 模板随 plan 技能分发，均不生成项目级副本。
 ---
 
 # OpenSpec Init
@@ -11,7 +11,6 @@ description: 初始化或升级项目规则、状态、change 和项目记忆体
 
 - 生成 `AGENTS.md` 前完整读取 [references/agents-template.md](references/agents-template.md)。
 - 生成 memory 记忆文件前完整读取 [references/spec-templates.md](references/spec-templates.md)。
-- 生成 Cycle 模板前完整读取 [references/iteration-template.md](references/iteration-template.md)。
 
 ## Phase 0：环境检查
 
@@ -59,11 +58,10 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 
 - 重建 `.agents/docs/SNAPSHOT.md`。
 - 创建或合并 `.agents/docs/tasks.md`。
-- 按当前模板生成 `.agents/docs/templates/change-cycle.md`。
 
 SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
 
-Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，只展开当前 Iteration 目录及其当前 Cycle；有限修复沿用当前 Cycle，需要新执行契约时才增加 rework Cycle，`replan-required` 更新计划后增加 replan Cycle。Evidence 位于 `.agents/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
+Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` 下不设 templates 目录，不生成模板副本。Evidence 位于 `.agents/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
 
 ## Phase 4：公共规则
 
@@ -80,15 +78,6 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - 精准编辑和证据要求。
 
 已有 `AGENTS.md` 时按模板合并，保留项目原有说明。禁止把任何平台专属任务 API、agent 配置或工具名写成唯一合法实现。
-
-## Phase 5：跨平台安装
-
-技能内容保持同一份，项目级源目录为 `.agents/skills/`。按平台建立入口：
-
-- Codex 和 OpenCode：直接读取 `.agents/skills/`
-- Claude Code：`.claude/skills/<name>/SKILL.md`，用符号链接指向 `.agents/skills/<name>`；不需要项目级发现时使用用户级 `~/.claude/skills/`
-
-复制或符号链接都可以。不要维护多份内容副本。
 
 ## Gate
 
@@ -109,13 +98,14 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - 行为语料库位于 `.agents/specs/`，首次合并前不创建文件。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
-- Cycle 模板存在，Plan、Act 和 Review 区域职责分离；Plan Context 支持 `draft → ready`。
+- 本 skill 能运行即证明技能组已装载；项目内不生成技能副本，装载入口由 README 的安装说明提供。
+- Cycle 文件由 plan 按技能内模板创建，`.agents/docs/` 下无 templates 目录。
 - change 目录支持逻辑 Iteration Plan；`rework-required` 和 `replan-required` 在同一 Iteration 内创建对应后继 Cycle，只有后者修改未完成计划。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
-- Cycle 模板能声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
-- 公共规则、Plan、Act 和 Cycle 模板禁止身份型证据工程，要求 Gate 只由目标行为、状态、输出、错误结果或退出码通过。
-- Cycle 模板能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
-- Cycle 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。
+- Cycle 格式支持声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
+- 公共规则、Plan 和 Act 禁止身份型证据工程，要求 Gate 只由目标行为、状态、输出、错误结果或退出码通过。
+- Cycle 格式能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
+- Cycle 格式能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - 活跃 change 通过 `.agents/changes/` 目录存在性表达，不引入元数据文件。
 - Git diff 没有覆盖用户无关内容。
 
@@ -124,7 +114,6 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - 检测结果。
 - 创建和合并的文件。
 - 记忆条目编号。
-- 三端入口路径。
 - 按需产物目录的支持状态。
 - 跳过项及原因。
 - 需要用户决定的冲突。

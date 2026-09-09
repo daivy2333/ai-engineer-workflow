@@ -22,7 +22,6 @@
 | 当前项目描述 | `.agents/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | Milestone roadmap | `.agents/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
-| Cycle 模板 | `.agents/docs/templates/change-cycle.md` | `openspec-init` |
 | 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
 | 参考 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
 | 改进 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
