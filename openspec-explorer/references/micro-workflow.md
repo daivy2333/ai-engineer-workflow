@@ -11,7 +11,7 @@
 ## Phase 1：聚焦
 
 1. 把用户目标改写成 3-8 个可回答问题。
-2. 检查已有 analysis、project-model、decisions、knowledge 和相关 change。
+2. 检查已有 analysis、project-model、references 和相关 change。
 3. 确定入口文件、关键接口、状态和依赖深度。
 4. 确定即时回答或文档模式。
 5. 范围不确定时请求用户确认。

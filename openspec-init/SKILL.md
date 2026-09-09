@@ -40,14 +40,14 @@ description: 初始化或升级项目规则、状态、change 和项目记忆体
 按 [references/spec-templates.md](references/spec-templates.md) 创建或合并：
 
 - `.agents/memory/project-model.md`
-- `.agents/memory/decisions.md`
-- `.agents/memory/knowledge.md`
 - `.agents/memory/references.md`
 - `.agents/memory/improvements.md`
 
 已有内容时合并，保留有效条目和编号。每个记忆文件包含模板定义的字段结构，条目使用递增编号。
 
 公共规则只存在于 `AGENTS.md`，不创建单独的规则文件。
+
+`.agents/specs/` 是行为语料库，按域由 maintainer 在 change 收尾时合并增量规格创建，init 不创建占位文件。
 
 `.agents/analysis/`、`.agents/runbooks/` 和 `.agents/incidents/` 是按需产物目录。没有内容时不创建占位文件。
 
@@ -101,11 +101,12 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - 可复用的构建、测试和其他命令行操作流程进入 Runbook。
 - SNAPSHOT 不包含工作状态、操作流程、约束、原因或历史。
 - assistant 是只读角色。
-- Maintainer 是日常状态和知识写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
+- Maintainer 是日常状态、项目记忆和行为规格写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
 - experience-recorder 是 Runbook 和 Incident 正文的唯一写入者。
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
-- 活跃项目记忆使用 `M/D/K/R/I` 编号，位于 `.agents/memory/`。
-- 五个记忆文件存在且字段结构完整，条目可检索。
+- 活跃项目记忆使用 `M/R/I` 编号，位于 `.agents/memory/`。
+- 三个记忆文件存在且字段结构完整，条目可检索。
+- 行为语料库位于 `.agents/specs/`，首次合并前不创建文件。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - Cycle 模板存在，Plan、Act 和 Review 区域职责分离；Plan Context 支持 `draft → ready`。

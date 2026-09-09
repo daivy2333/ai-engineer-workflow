@@ -1,6 +1,6 @@
 ---
 name: openspec-assistant
-description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更、项目模型、决策、知识、参考、改进、Runbook、Incident 和分析文档。用于询问项目现状、已有依据、文档位置或应使用哪个 OpenSpec skill；不执行写入。
+description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更、项目模型、参考、改进、行为规格、Runbook、Incident 和分析文档。用于询问项目现状、已有依据、文档位置或应使用哪个 OpenSpec skill；不执行写入。
 ---
 
 # OpenSpec Assistant
@@ -15,7 +15,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 2. `.agents/docs/SNAPSHOT.md`
 3. `.agents/docs/tasks.md`
 4. `ls .agents/changes/`
-5. 与问题相关的 M/D/K/R/I、changes、change 内 Evidence 或持久化产物
+5. 与问题相关的 M/R/I、changes、change 内 Evidence 或持久化产物
 
 文件不存在时报告缺失，不创建模板。
 
@@ -30,10 +30,9 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | Milestone roadmap | `.agents/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
 | 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
-| 决策记录 | `.agents/memory/decisions.md` | `openspec-docs-maintainer` |
-| 项目知识 | `.agents/memory/knowledge.md` | `openspec-docs-maintainer` |
 | 参考索引 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
 | 改进候选 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
+| 行为规格 | `.agents/specs/<domain>.md` | `openspec-docs-maintainer` 收尾合并 |
 | 活跃变更 | `.agents/changes/` | plan/act，按需创建 |
 | Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act`，按需创建 |
 | 深度分析 | `.agents/analysis/` | `openspec-explorer` |
@@ -50,7 +49,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、反馈当前 Cycle 修复、生成 rework/replan Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
 | 创建、更新或恢复 Runbook、Incident | `openspec-experience-recorder` |
-| 更新状态、M/D/K/R/I，同步指定 change 结果，或正常收尾最终 `Review Result: accepted` 的 change | `openspec-docs-maintainer` |
+| 更新状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，或正常收尾最终 `Review Result: accepted` 的 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
 | 原地压缩表达 | `openspec-compressor` |
 | 清理无法满足正常收尾条件的 change，或处理归档、删除、墓碑 | `openspec-archivist` |
@@ -71,6 +70,6 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 - 修改任何文件。
 - 同步任务。
-- 追加项目模型、决策、知识或其他记录。
+- 追加项目模型、参考、改进或其他记录。
 - 压缩、归档、删除或恢复条目。
 - 忽略活跃 change。

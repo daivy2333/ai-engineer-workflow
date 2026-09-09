@@ -24,10 +24,9 @@
 | 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
 | Cycle 模板 | `.agents/docs/templates/change-cycle.md` | `openspec-init` |
 | 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
-| 决策 | `.agents/memory/decisions.md` | `openspec-docs-maintainer` |
-| 知识 | `.agents/memory/knowledge.md` | `openspec-docs-maintainer` |
 | 参考 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
 | 改进 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
+| 行为规格 | `.agents/specs/<domain>.md` | `openspec-docs-maintainer` 收尾合并 |
 | 活跃变更 | `.agents/changes/` | plan、act |
 | Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act` |
 | 分析文档 | `.agents/analysis/` | `openspec-explorer` |
@@ -36,7 +35,7 @@
 
 ## 读取顺序
 
-- 新会话：assistant 读取 AGENTS.md → SNAPSHOT → tasks → active changes，并按问题补充相关 M/D/K/R/I 和持久化产物。
+- 新会话：assistant 读取 AGENTS.md → SNAPSHOT → tasks → active changes，并按问题补充相关 M/R/I 和持久化产物。
 - 当前会话中来源明确、细节仍可用且读取后未变化的信息直接复用；Skill 切换本身不触发重复读取。
 - 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新鲜运行证据时，才重新读取对应权威来源。
 - Assistant 只恢复体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
@@ -45,7 +44,7 @@
 - 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
 - 实现 Review：当前 Cycle → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
-- 故障复盘：Incident → knowledge → decisions/model → improvements/change。
+- 故障复盘：Incident → analysis → project-model → specs → improvements/change。
 - 查询：assistant。
 - 路线规划：milestone-planner。
 - 日常文档写入：docs-maintainer。
@@ -57,7 +56,7 @@
 - `openspec-plan`：需求、BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
-- `openspec-docs-maintainer`：显式维护状态、M/D/K/R/I，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
+- `openspec-docs-maintainer`：显式维护状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和 carrier 归档。
@@ -72,7 +71,7 @@
 - Explorer 即时回答后终止，不调用 Maintainer。
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
 - Recorder 生成、更新或恢复 Runbook、Incident 后，可自动调用 Maintainer 创建或更新对应 R。
-- 上述自动授权只覆盖对应 R，不覆盖 M/D/K/I、tasks 或 change。
+- 上述自动授权只覆盖对应 R，不覆盖 M/I、tasks 或 change。
 - Maintainer 由用户直接调用时刷新 SNAPSHOT；Explorer、Recorder 的限定 R 登记不刷新 SNAPSHOT。
 - Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
@@ -102,9 +101,9 @@
 - 其他文档只引用 SNAPSHOT，不复制当前项目描述。
 - 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
 - 已承诺工作写 tasks 或 change。
-- 当前跨模块约束写 project-model，编号 `Mxx`。
-- 有替代方案的长期选择写 decisions，编号 `Dxx`。
-- 已验证、非显然且可复用的结论写 knowledge，编号 `Kxx`。
+- 当前开发约束写 project-model，编号 `Mxx`。
+- 长期选择及其理由写 change 的 `design.md`，随 change 归档。
+- 系统当前行为写 specs 语料库；maintainer 在 change 收尾时合并增量规格。
 - 指针和检索元数据写 references，编号 `Rxx`。
 - 有证据但未承诺实施的问题写 improvements，编号 `Ixx`。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
@@ -119,9 +118,8 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 
 ## 记录边界
 
-- Model 只保存当前有效约束，不保存选择历史。
-- Decision 被替代后保留，并标记 `superseded`。
-- Knowledge 不保存单纯路径、API 签名、链接或未验证猜测。
+- Model 只保存当前开发约束，不保存选择历史和行为描述。
+- 语料库只保存验收过的行为；计划外的已验证结论沉淀在 analysis，可表达为行为要求的事实随下一个 change 进入语料库。
 - Reference 不复制目标正文。
 - Improvement 只保存未承诺工作；批准后创建 change 并标记 `promoted`。
 - Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
@@ -192,6 +190,7 @@ Plan 在制定任务前读取实际代码并记录：
 - 入口、目标符号、调用者和被调用者。
 - 数据流、状态变化、错误和并发边界。
 - 现有测试、验证命令和基线结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可采信结论时运行基线验证。
+- 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
 - 当前行为、目标行为和影响范围。
 
 影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。

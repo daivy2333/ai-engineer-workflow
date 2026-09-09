@@ -14,7 +14,7 @@ description: 将项目目标规划为工作量适中、可独立验证和排障�
 
 ## 职责边界
 
-- 读取项目目标、SNAPSHOT、tasks、M/D/K/R 和已有 analysis。
+- 读取项目目标、SNAPSHOT、tasks、M/R 和已有 analysis。
 - 创建、拆分、合并、排序尚未执行的 `MSxx`。
 - 定义阶段成果、工作范围、稳定基线、验证边界和诊断边界。
 - 只在用户批准后写入 `.agents/docs/tasks.md`。
@@ -31,7 +31,7 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 复用当前会话中 Assistant 已读取且未变化的体系上下文，只补读规划所缺的信息：
 
 1. `AGENTS.md`、`.agents/docs/SNAPSHOT.md` 和 `.agents/docs/tasks.md`；当前上下文没有具体内容时再读取。
-2. 相关 project-model、decisions、knowledge 和 references。
+2. 相关 project-model 和 references。
 3. 已存在且与目标相关的 analysis。
 4. 活跃 change 的名称、目标和状态。
 

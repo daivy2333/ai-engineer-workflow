@@ -20,7 +20,7 @@ description: 清理 OpenSpec 条目、无法正常收尾的 change 和持久化�
 - `openspec-compressor`：活跃文档原地压缩。
 - `openspec-archivist`：生命周期判断、归档、删除、arc 墓碑和预警。
 
-Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
+Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 
 ## 不可违反的约束
 
@@ -42,7 +42,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/D/K/R/I。
 
 复用当前会话中 Assistant 已读取且未变化的项目地图和状态概览。先读取用户指定目标和判断所需的索引，再按搜索命中补读相关内容：
 
-- 目标所在的 project-model、decisions、knowledge、references、improvements、SNAPSHOT 或 tasks
+- 目标所在的 project-model、references、improvements、SNAPSHOT 或 tasks
 - 目标 Analysis、Runbook、Incident 及其 R 索引
 - 与目标有关的活跃 change（`ls .agents/changes/`）
 
@@ -52,8 +52,8 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive�
 
 按编号和结构识别条目：
 
-- `Mxx/Dxx/Kxx/Rxx/Ixx/MSxx/Txx`
-- 决策、模型、知识和改进标题。
+- `Mxx/Rxx/Ixx/MSxx/Txx`
+- 模型、参考和改进标题。
 - 表格行。
 - checkbox 任务。
 - Analysis、Runbook、Incident 与 R 索引。
@@ -135,7 +135,7 @@ Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”�
 
 ## 恢复
 
-M/D/K/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`，R 路径和状态由其限定请求交给 Maintainer 更新。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
+M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`，R 路径和状态由其限定请求交给 Maintainer 更新。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
 
 ## 禁止
 

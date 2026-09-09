@@ -59,7 +59,7 @@ Proposal 映射表至少包含：
 
 entries/<source-domain>.md 保留：
 
-- 原 `M/D/K/R/I/MS/T` 编号。
+- 原 `M/R/I/MS/T` 编号。
 - Archive 的完整内容。
 - Compress-Archive 的关键事实、状态和替代方案。
 

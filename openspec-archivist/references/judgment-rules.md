@@ -39,7 +39,6 @@
 
 当条目职责改变时迁移到目标类型：
 
-- K 成为强制约束时，候选提升到 M 或 AGENTS.md。
 - I 获准实施时，提升为 change，并标记 `promoted`。
 
 提升写入交给 Maintainer。原条目保留目标编号或路径。
@@ -84,21 +83,6 @@
 - 当前有效约束：Keep。
 - 已失效且有历史价值：Archive。
 - 与当前代码冲突但无法判定：Stale-Warn。
-- 选择原因混入 M：迁移到 D。
-
-**decisions**
-
-- accepted：Keep。
-- superseded：保留替代编号；按引用决定 Keep 或 Archive。
-- 疑似被替代但无明确关系：Stale-Warn。
-- 当前约束正文重复：保留 D 原因，M 保存现行约束。
-
-**knowledge**
-
-- 已验证且仍适用：Keep。
-- 失效但可能再次遇到：Archive。
-- 单纯路径、签名或链接：迁移到 R。
-- 强制约束：Promote 到 M 或 AGENTS.md。
 
 **references**
 
@@ -127,7 +111,7 @@
 - 已解决但必要关联尚未记录：Keep。
 - 已解决且结论、决策、动作或 Runbook 已有目标引用：Artifact-Archive。
 
-Incident 的 M/D/K/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结事件经验。
+Incident 的 M/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结事件经验。
 
 **SNAPSHOT**
 

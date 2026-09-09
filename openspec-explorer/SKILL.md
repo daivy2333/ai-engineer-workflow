@@ -5,7 +5,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 # OpenSpec Explorer
 
-读取代码和项目文档，生成有依据的分析。不要修改产品代码，也不要自行修改 M/D/K/R/I。
+读取代码和项目文档，生成有依据的分析。不要修改产品代码，也不要自行修改 M/R/I。
 
 ## 选择模式
 
@@ -20,7 +20,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 ## 前置检查
 
-1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、project-model、decisions、knowledge、references 和 change 信息，只补读目标所需的缺失内容。
+1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、project-model、references 和 change 信息，只补读目标所需的缺失内容。
 2. Assistant 提供的体系文档上下文不能替代本次目标代码调查。
 3. 检查 `.agents/analysis/` 是否已有同主题文档。
 4. 检查活跃 OpenSpec change。
@@ -41,7 +41,8 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 记录与目标有关的现有测试、验证入口和已实际运行的结果；没有运行时明确说明。
 - 当前项目描述以 SNAPSHOT 为准。分析文档不复制完整项目概览，只保留目标所需的历史现场。
 - Evidence 只能支持其记录的环境和结论；引用时给出 change、Iteration、Cycle 和文件路径。
-- 遇到 `Mxx/Dxx/Kxx/Rxx/Ixx` 或旧编号归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
+- 相关域行为可引用 `.agents/specs/` 语料库，但结论以实际代码为准；两者矛盾时记入未确认项。
+- 遇到 `Mxx/Rxx/Ixx` 或 `<!-- arc:` 归档指引时，跳转到 carrier archive。
 - 只做网页搜索不能构成项目分析；必须读取实际项目文件。
 
 ## 文档模式
@@ -70,7 +71,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 4. 报告 R 编号和分析文档路径。
 5. 登记失败时保留分析文档并报告原因，不扩大写入范围。
 
-发现 M、D、K 或 I 候选时只在结果中列出。除非用户明确授权，不自动登记这些候选、tasks 或 SNAPSHOT。
+发现 M 或 I 候选时只在结果中列出。除非用户明确授权，不自动登记这些候选、tasks 或 SNAPSHOT。
 
 即时回答模式不生成候选、不调用 Maintainer。
 
@@ -89,9 +90,9 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 - 在目标不清楚时开始深挖。
 - 修改源码。
-- 自行写 M/D/K/R/I。
+- 自行写 M/R/I。
 - 生成无来源结论。
 - 重复已有分析。
 - 把分析文档写入 `.agents/memory/`。
 - 即时回答模式创建分析文档或调用 Maintainer。
-- 借自动 R 登记写入 M/D/K/I、tasks、SNAPSHOT 或 change。
+- 借自动 R 登记写入 M/I、tasks、SNAPSHOT 或 change。
