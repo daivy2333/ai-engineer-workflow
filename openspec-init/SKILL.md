@@ -12,7 +12,6 @@ description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目
 - 生成 `CLAUDE.md` 前完整读取 [references/claude-template.md](references/claude-template.md)。
 - 为 Codex 和 OpenCode 生成规则入口前完整读取 [references/agents-adapter.md](references/agents-adapter.md)。
 - 生成 specs 前完整读取 [references/spec-templates.md](references/spec-templates.md)。
-- 生成 Cycle 模板前完整读取 [references/iteration-template.md](references/iteration-template.md)。
 - 检测到旧文档结构时完整读取 [references/migration.md](references/migration.md)。
 
 ## Phase 0：环境检查
@@ -79,10 +78,9 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-exp
 
 - 重建 `.claude/docs/SNAPSHOT.md`。
 - 创建或合并 `.claude/docs/tasks.md`。
-- 按当前模板生成 `.claude/docs/templates/change-cycle.md`。
 
 SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
-Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan Review 的共享格式。Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，只展开当前 Iteration 目录及其当前 Cycle；有限修复沿用当前 Cycle，需要新执行契约时才增加 rework Cycle，`replan-required` 更新计划后增加 replan Cycle。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
+Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.claude/docs/` 下不设 templates 目录，不生成模板副本。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
 
 ## Phase 5：公共规则
 
@@ -147,13 +145,13 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - migration carrier 归档成功后才退出旧活动路径；旧经验文档未使用 Delete 或 Compress-Archive。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
-- Cycle 模板存在，Plan、Act 和 Review 区域职责分离；Plan Context 支持 `draft → ready`。
+- Cycle 文件由 plan 按技能内模板创建，`.claude/docs/` 下无 templates 目录；Plan、Act 和 Review 区域职责分离，Plan Context 支持 `draft → ready`。
 - change tasks 支持逻辑 Iteration Plan；`rework-required` 和 `replan-required` 在同一 Iteration 内创建对应后继 Cycle，只有后者修改未完成计划。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
-- Cycle 模板能声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
-- 公共规则、Plan、Act 和 Cycle 模板禁止身份型证据工程，要求 Gate 只由目标行为、状态、输出、错误结果或退出码通过。
-- Cycle 模板能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
-- Cycle 模板能记录 Experience Candidates，且候选不构成 Recorder 授权。
+- Cycle 格式能声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
+- 公共规则、Plan 和 Act 禁止身份型证据工程，要求 Gate 只由目标行为、状态、输出、错误结果或退出码通过。
+- Cycle 格式能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
+- Cycle 格式能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - Git diff 没有覆盖用户无关内容。
 
 ## 输出

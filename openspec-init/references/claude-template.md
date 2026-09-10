@@ -22,7 +22,6 @@
 | 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
 | Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
 | 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| Cycle 模板 | `.claude/docs/templates/change-cycle.md` | `openspec-init` |
 | 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
 | 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
 | 改进 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
