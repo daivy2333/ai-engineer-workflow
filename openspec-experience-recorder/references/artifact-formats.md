@@ -77,7 +77,7 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 
 ## 后续动作
 
-<关联 change、Runbook 或经用户授权写入的 M/D/K/I>
+<关联 change、Runbook 或经用户授权写入的 M/I>
 
 ## 证据
 

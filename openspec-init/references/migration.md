@@ -6,10 +6,10 @@
 
 | 旧来源 | 新目标 |
 |---|---|
-| `.claude/docs/architecture.md` | project-model 和 decisions |
-| `openspec/specs/architecture/spec.md` | project-model 和 decisions |
-| `.claude/docs/learned.md` | knowledge、references、runbooks、incidents 或其他匹配类型 |
-| `openspec/specs/learned/spec.md` | knowledge、references、runbooks、incidents 或其他匹配类型 |
+| `.claude/docs/architecture.md` | project-model；选择历史保留在 migration carrier 原文 |
+| `openspec/specs/architecture/spec.md` | project-model；选择历史保留在 migration carrier 原文 |
+| `.claude/docs/learned.md` | references、runbooks、incidents、analysis 或其他匹配类型 |
+| `openspec/specs/learned/spec.md` | references、runbooks、incidents、analysis 或其他匹配类型 |
 | `.claude/docs/references.md` | references |
 | `openspec/specs/references/spec.md` | 新 references，R 编号保持不变 |
 | `.claude/docs/optimization.md` | improvements |
@@ -47,8 +47,8 @@
 - 项目路线和阶段基线进入 milestone roadmap。
 - 已承诺工作进入 tasks 或 change。
 - 跨模块约束进入 project-model。
-- 选择、原因和替代方案进入 decisions。
-- 已验证结论进入 knowledge。
+- 选择、原因和替代方案保留在对应 change 的 design；旧体系选择保留在 migration carrier 原文。
+- 已验证结论进入 analysis；可表达为行为要求的事实作为 spec 候选进入行为语料库。
 - 路径、链接和检索元数据进入 references。
 - 未承诺问题进入 improvements。
 - 可复用的构建、测试和其他命令行操作流程进入 runbooks。
@@ -64,7 +64,7 @@
 
 | Source | Semantic Entry | Target Type | Target ID/Path | Status |
 |---|---|---|---|---|
-| `<path>` | `<id/heading/document>` | `M/D/K/R/I/...` | `<id/path>` | `mapped` |
+| `<path>` | `<id/heading/document>` | `M/R/I/...` | `<id/path>` | `mapped` |
 
 规则：
 
@@ -86,10 +86,10 @@ skipped = 0
 
 ## 编号迁移
 
-新活动编号为 `Mxx/Dxx/Kxx/Rxx/Ixx/MSxx/Txx`。
+新活动编号为 `Mxx/Rxx/Ixx/MSxx/Txx`。
 
-- 旧 `Axx` 按内容拆分为 M、D 或其他匹配类型。
-- 旧 `Lxx` 按内容拆分为 K、R、Runbook、Incident 或其他匹配类型。
+- 旧 `Axx` 按内容拆分为 M 或其他匹配类型。
+- 旧 `Lxx` 按内容拆分为 R、Runbook、Incident、analysis 或其他匹配类型。
 - 旧 `Rxx` 保留编号。
 - 旧 `Oxx` 迁移为 I；已完成也迁移并标记状态。
 - 每个改号条目保留 `Legacy ID`。

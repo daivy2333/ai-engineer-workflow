@@ -11,7 +11,7 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 1. 复用当前会话中已读取且未变化的公共规则；缺失时读取 `CLAUDE.md`。
 2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending`、没有后继 Cycle 的 Cycle，完整读取当前 Cycle。Act Response 应为 `pending`、有明确当前 Cycle 修复意见的 `reported`，或为已获用户恢复指令的 `blocked`。
-3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行契约约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/D/K、Explorer Analysis、change 基线或 Cycle 模板。
+3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行契约约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/R/I、Explorer Analysis、change 基线或 Cycle 模板。
 4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。

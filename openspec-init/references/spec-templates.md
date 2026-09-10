@@ -1,21 +1,20 @@
 # OpenSpec spec 模板
 
-所有 spec 使用当前 OpenSpec 支持的 Requirement 和 Scenario 结构。初始化后按项目事实填充，不创建占位条目。
+记忆域使用 OpenSpec 支持的 Requirement 和 Scenario 结构。行为语料库按产品域组织，由 maintainer 在 change 收尾时合并增量规格。初始化后按项目事实填充，不创建占位条目。
 
 ## 目录
 
 - Project Model
-- Decisions
-- Knowledge
 - References
 - Improvements
+- 行为语料库
 - 状态文档
 
 ## Project Model
 
 路径：`openspec/specs/project-model/spec.md`
 
-记录当前有效的跨模块模型和约束，不记录历史选择过程。条目使用 `Mxx`。
+记录当前有效的开发约束：代码结构和贡献者必须遵守的跨模块规则，不是产品行为描述。条目使用 `Mxx`。
 
 分类可以是：
 
@@ -41,59 +40,6 @@
 
 - **WHEN** 已验证某项约束会影响多个模块或后续变更
 - **THEN** 使用递增 M 编号记录分类、范围、不变量、证据和状态
-```
-
-## Decisions
-
-路径：`openspec/specs/decisions/spec.md`
-
-记录有替代方案且影响长期维护的选择。条目使用 `Dxx`，被替代后保留历史。
-
-```markdown
-## Purpose
-
-记录重要选择的原因、替代方案、影响和状态。
-
-## Requirements
-
-### Requirement: 决策可追溯
-
-重要选择 SHALL 记录决定、原因、替代方案、影响、状态和关联模型。
-
-#### Scenario: 接受长期选择
-
-- **WHEN** 开发者确认跨模块、兼容性或长期设计选择
-- **THEN** 使用递增 D 编号记录 accepted 决策
-
-#### Scenario: 替代旧决策
-
-- **WHEN** 新决策替代已有选择
-- **THEN** 保留旧条目并标记 superseded 和替代编号
-```
-
-## Knowledge
-
-路径：`openspec/specs/knowledge/spec.md`
-
-记录已验证、非显然且可能复用的知识。条目使用 `Kxx`。
-
-不要记录单纯文件位置、可从签名读取的 API、未验证猜测或一次性实现细节。
-
-```markdown
-## Purpose
-
-记录已验证的行为、根因、适用范围和失效边界。
-
-## Requirements
-
-### Requirement: 项目知识可复用
-
-项目知识 SHALL 包含结论、证据、适用范围和边界。
-
-#### Scenario: 验证非显然知识
-
-- **WHEN** 问题根因或行为规律已经验证且可能再次使用
-- **THEN** 使用递增 K 编号记录结论、证据、范围和边界
 ```
 
 ## References
@@ -160,6 +106,35 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 - **WHEN** 用户批准实施改进项
 - **THEN** 创建 OpenSpec change 并把原条目标记 promoted
 ```
+
+## 行为语料库
+
+路径：`openspec/specs/<domain>/spec.md`
+
+记录已验收的系统当前行为，是行为权威描述。域按产品结构划分，与 project-model、references、improvements 三个记忆域共存于 `openspec/specs/`；行为域由 maintainer 在 change 收尾时合并增量规格创建和更新，不手工撰写，首次合并前不创建域文件。
+
+条目使用 Requirement 和 Scenario 结构：
+
+```markdown
+### Requirement: <可验证行为>
+
+<系统 SHALL ...>
+
+#### Scenario: <场景名>
+
+- **WHEN** <前置与触发>
+- **THEN** <可观察结果>
+```
+
+合并规则：
+
+- ADDED Requirements 追加到对应域文件，域文件不存在时创建。
+- MODIFIED Requirements 替换同名 Requirement；被替换的历史保留在归档 change 中。
+- REMOVED Requirements 从域文件删除。
+- 合并冲突（同名不同义、增量与域文件矛盾）时停止并请求用户决定。
+- archivist 归档的异常 change 不合并。
+
+计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，故障事件写 Incident。
 
 ## 状态文档
 

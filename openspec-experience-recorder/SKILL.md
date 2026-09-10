@@ -106,9 +106,9 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 - 去重并创建对应 R。
 - 更新本次产物已有 R 的路径、日期、用途或状态。
 
-不得携带 M/D/K/I、tasks、SNAPSHOT、change、同步或归档请求。登记失败时保留已验证产物并报告失败原因。
+不得携带 M/I、tasks、SNAPSHOT、change、同步或归档请求。登记失败时保留已验证产物并报告失败原因。
 
-发现 M、D、K 或 I 候选时只在结果中列出。用户明确授权后再由 Maintainer 写入，不在 Recorder 中总结到项目记忆。
+发现 M 或 I 候选时只在结果中列出。用户明确授权后再由 Maintainer 写入，不在 Recorder 中总结到项目记忆。
 
 ## Gate
 
@@ -130,7 +130,7 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 - 门槛判断和证据。
 - R 编号或登记失败原因。
 - 未确认项。
-- 未自动登记的 M/D/K/I 候选。
+- 未自动登记的 M/I 候选。
 
 ## 禁止
 
@@ -139,6 +139,6 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 - 把普通失败或预期 RED 写成 Incident。
 - 把未确认根因写成事实。
 - 修改 Act Response、Plan Review、change tasks 或 Evidence。
-- 创建、修改或归档 M/D/K/I、tasks、SNAPSHOT 或 change。
+- 创建、修改或归档 M/I、tasks、SNAPSHOT 或 change。
 - 自动归档产物。
 - 调用 Compressor 改写 Runbook 或 Incident。

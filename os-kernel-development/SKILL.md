@@ -34,10 +34,10 @@ Use this skill for kernel work where a bug or feature crosses boot, memory, task
    - Workload or benchmark.
    - Hardware or SMP proof if the claim depends on hardware or SMP.
 
-5. Update persistent knowledge.
+5. Update persistent artifacts.
    - Record current cross-subsystem constraints in the project model.
-   - Record long-lived choices and alternatives as decisions.
-   - Record verified non-obvious traps as knowledge.
+   - Record behavior changes as requirement deltas; long-lived choices and alternatives live in the change design.
+   - Capture verified non-obvious traps in an analysis document; promote behavior facts to specs through the next change.
    - Index commands and file locations as references.
    - Record repeatable recovery procedures as runbooks.
    - Archive or tombstone stale plans after the active state moves elsewhere.

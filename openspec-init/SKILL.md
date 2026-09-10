@@ -1,6 +1,6 @@
 ---
 name: openspec-init
-description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、decisions、knowledge、references、improvements，按语义条目全量迁移并归档旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
+description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、references、improvements 记忆域与行为语料库，按语义条目全量迁移并归档旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
 ---
 
 # OpenSpec Init
@@ -60,14 +60,14 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 创建或合并：
 
 - `openspec/specs/project-model/spec.md`
-- `openspec/specs/decisions/spec.md`
-- `openspec/specs/knowledge/spec.md`
 - `openspec/specs/references/spec.md`
 - `openspec/specs/improvements/spec.md`
 
 不创建 `rules/spec.md`。公共规则只存在于 `CLAUDE.md`。
 
 所有 spec 必须满足 OpenSpec 当前格式要求，并包含可验证 Scenario。
+
+行为语料库位于 `openspec/specs/` 的行为域，按产品结构划分，由 maintainer 在 change 收尾时合并增量规格创建，init 不创建占位域文件。
 
 `.claude/analysis/`、`.claude/runbooks/` 和 `.claude/incidents/` 是按需产物目录。没有内容时不创建占位文件。
 
@@ -136,10 +136,11 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - SNAPSHOT 不包含工作状态、操作流程、约束、原因或历史。
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
-- Maintainer 是日常状态和知识写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
+- Maintainer 是日常状态、项目记忆和行为规格写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
 - experience-recorder 是 Runbook 和 Incident 正文的唯一写入者。
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
-- 活跃项目记忆使用 `M/D/K/R/I` 编号。
+- 活跃项目记忆使用 `M/R/I` 编号，位于 `openspec/specs/` 的记忆域。
+- 行为语料库位于 `openspec/specs/` 的行为域，首次合并前不创建域文件。
 - 新项目不创建 architecture、learned 或 optimization spec。
 - 升级项目通过 [references/migration.md](references/migration.md) 的全部覆盖、载体和失败检查，满足 `semantic entries = mapped entries = verified entries`、`unmapped = 0`、`skipped = 0`。
 - migration carrier 保存完整原文和映射且不含内容哈希或核对过程日志；历史 carrier 保持不可变，CLAUDE 和 SNAPSHOT 已重建且不进入迁移载体。
@@ -161,7 +162,7 @@ Cycle 模板定义 Plan Context、Act Response、Experience Candidates 和 Plan 
 - 创建和合并的文件。
 - OpenSpec 验证输出。
 - 三端入口路径。
-- 旧编号到 M/D/K/R/I 的迁移映射。
+- 旧编号到 M/R/I 的迁移映射。
 - 语义条目覆盖统计和未映射计数。
 - migration carrier 及恢复入口。
 - 旧体系活动路径和旧引用的最终扫描结果。

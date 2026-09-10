@@ -46,7 +46,7 @@
 | `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 Cycle、TDD、Review、验证和反馈 |
 | `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Incident |
-| `openspec-docs-maintainer` | 维护状态、M/D/K/R/I、限定 R 登记、change 结果同步和正常收尾 |
+| `openspec-docs-maintainer` | 维护状态、M/R/I、行为规格合并、限定 R 登记、change 结果同步和正常收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、carrier 归档、删除和墓碑 |
@@ -59,7 +59,7 @@ assistant 只读
 explorer 只写 analysis
 milestone-planner 只规划 MSxx 路线
 experience-recorder 只写 Runbook 和 Incident
-maintainer 写状态、项目记忆和检索索引
+maintainer 写状态、项目记忆、检索索引，收尾时合并行为规格
 compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
@@ -126,11 +126,10 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 
 | 类型 | 职责 | 编号或路径 |
 |---|---|---|
-| Project Model | 当前有效的跨模块约束 | `Mxx` |
-| Decisions | 长期选择、原因和替代方案 | `Dxx` |
-| Knowledge | 已验证、非显然且可复用的结论 | `Kxx` |
+| Project Model | 当前有效的开发约束 | `Mxx` |
 | References | 只保存检索元数据 | `Rxx` |
 | Improvements | 有证据但未承诺实施的问题 | `Ixx` |
+| 行为规格 | 验收过的系统当前行为，收尾时合并增量 | `openspec/specs/<domain>/spec.md` |
 | Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
@@ -138,7 +137,7 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 | Incidents | 已发生的重要故障和后续动作 | `.claude/incidents/` |
 | Evidence | 按需保存某次 Cycle 无法充分摘要的决定性产物 | `openspec/changes/<change>/evidence/` |
 
-Architecture 的当前约束进入 Project Model，选择历史进入 Decisions。Learned 中的稳定结论进入 Knowledge，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
+Architecture 的当前约束进入 Project Model，选择历史随对应 change 的 design 归档。Learned 中可表达为行为要求的事实随下一个 change 进入行为语料库，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
 
 Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
 

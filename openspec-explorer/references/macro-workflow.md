@@ -11,7 +11,7 @@
 ## Phase 1：规划
 
 1. 扫描仓库结构、入口、构建文件和主要模块。
-2. 复用当前会话中已有的 SNAPSHOT、分析、project-model、decisions、knowledge 和活跃 change 信息，只补读当前主题缺失内容。
+2. 复用当前会话中已有的 SNAPSHOT、分析、project-model、references 和活跃 change 信息，只补读当前主题缺失内容。
 3. 对已有主题做去重检查。
 4. 拆分 3-8 个主题：
    - 当前项目描述引用 SNAPSHOT，不设独立概览主题。
@@ -73,4 +73,4 @@
 - 与用户目标和活跃 change 的关系。
 - 未确认问题。
 - 文档模式下的 R 登记结果。
-- 未自动登记的 M/D/K/I 候选。
+- 未自动登记的 M/I 候选。
