@@ -63,7 +63,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/I 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `openspec/specs/`，再运行 validate 归档，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `openspec/specs/`；`.openspec.yaml` 标记 `skip_specs: true` 的 change 没有增量规格，跳过合并。两种情况都运行 validate 归档，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 
@@ -83,7 +83,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 直接调用时检查 SNAPSHOT 的同步 revision、时间和 `current/stale` 状态与本次刷新结果一致。
 - 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
 - 检查编号唯一且递增。
-- 检查已收尾 change 的增量规格已合并到 `openspec/specs/`。
+- 检查已收尾 change 的增量规格已合并到 `openspec/specs/`；`skip_specs` 的 change 无增量，不要求合并。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Incident 和 analysis 有 R 索引。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。

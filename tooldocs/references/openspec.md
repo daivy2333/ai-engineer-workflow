@@ -1,6 +1,6 @@
 ---
 name: openspec
-description: OpenSpec 是一个 **AI 协作规范工具**，让人类和 AI 编码助手在写代码之前先就"要建什么"达成一致。核心理念：
+description: OpenSpec 是一个 **AI 协作规范工具**，让人类和 AI 编码助手在写代码之前先就"要建什么"达成一致。核心理念：fluid not rigid、iterative not waterfall、easy not complex、brownfield-first。
 ---
 # OpenSpec 精简使用手册
 
@@ -27,17 +27,20 @@ openspec/
 │       └── spec.md
 ├── changes/            ← 提议修改（每个修改一个文件夹）
 │   └── <change-name>/
+│       ├── README.md       ← 修改说明
+│       ├── .openspec.yaml  ← 元数据：schema、创建日期、skip_specs
 │       ├── proposal.md     ← 为什么做、做什么
 │       ├── specs/          ← 增量规格（ADDED/MODIFIED/REMOVED）
 │       ├── design.md       ← 技术方案
-│       ├── tasks.md        ← 实施清单
-│       └── .openspec.yaml  ← 元数据
+│       └── tasks.md        ← 实施清单
 └── config.yaml             ← 项目配置
 ```
 
 **两个关键目录：**
 - `specs/` — 系统当前行为的真相源
 - `changes/` — 提议的修改，完成后归档合并回 `specs/`
+
+`openspec new change` 只创建目录、`README.md` 和 `.openspec.yaml`；各产物由 AI 按 `openspec instructions` 的指引生成。
 
 本仓库的 Plan/Act 工作流允许在 change 内按需增加：
 
@@ -81,7 +84,7 @@ openspec init --tools claude --force
 openspec --version
 ```
 
-初始化时使用 `--tools` 参数指定 AI 工具（Claude Code、Cursor、Windsurf 等 30+ 种），生成 skills/commands 配置文件。
+初始化时使用 `--tools` 参数指定 AI 工具（claude、codex、opencode、zcode、cursor 等 40 种，支持 `all` 或 `none`），生成 skills/commands 配置文件。`--language` 预设产物语言，`--profile` 覆盖工作流 profile。
 
 ---
 
@@ -108,18 +111,15 @@ Claude Code、OpenCode 和 Codex 共用本仓库的 `SKILL.md`。安装目录和
 
 ### OpenSpec profile
 
-默认 `core` profile 的常见入口：
+默认 `core` profile 生成六个命令：
 
 ```
-/opsx:propose → /opsx:apply → /opsx:sync → /opsx:archive
+/opsx:explore  /opsx:propose  /opsx:apply  /opsx:update  /opsx:sync  /opsx:archive
 ```
 
-扩展命令需要启用 custom profile：
+可选工作流（如逐产物审阅）通过交互式 `openspec config profile` 添加，再用 `openspec update` 重新生成入口文件。profile 预设只有 `core`，`openspec config profile custom` 会报错。
 
-```bash
-openspec config profile    # 选择 custom
-openspec update            # 应用变更
-```
+未安装命令文件时，CLI 的 `new change`、`status` 和 `instructions` 覆盖同一流程。
 
 可用命令取决于 OpenSpec 版本和当前工具适配。
 
@@ -134,19 +134,19 @@ openspec update            # 应用变更
 | `/opsx:propose` | 一步创建修改+所有规划产物 | 快速默认路径 |
 | `/opsx:explore` | 探索想法，不创建任何产物 | 需求不明确时 |
 | `/opsx:apply` | 按任务清单实施 | 准备写代码 |
+| `/opsx:update` | 修订已有规划产物并保持一致 | 计划中途调整（实验性） |
 | `/opsx:sync` | 将增量规格合并到主规格 | 长期修改中途同步（可选，archive 会自动提示） |
 | `/opsx:archive` | 归档完成的修改 | 全部工作完成 |
 
-### 扩展命令（需开启）
+### CLI 逐产物推进
 
-| 命令 | 用途 | 何时用 |
-|------|------|--------|
-| `/opsx:new` | 创建修改骨架 | 想逐步控制产物生成 |
-| `/opsx:continue` | 逐一创建下一个产物 | 复杂修改，想审阅每步 |
-| `/opsx:ff` | 快进：一次创建所有规划产物 | 范围明确，想快速推进 |
-| `/opsx:verify` | 验证实施是否匹配规格 | 归档前的质量检查 |
-| `/opsx:bulk-archive` | 批量归档多个完成修改 | 并行工作流完成后 |
-| `/opsx:onboard` | 引导式教程 | 新用户首次使用 |
+不依赖命令文件时，用 CLI 逐产物推进：
+
+```bash
+openspec status --change <name>                    # 查看产物进度和下一产物
+openspec instructions <artifact> --change <name>   # 获取该产物的写作指引
+openspec templates [--schema <name>]               # 查看各产物模板路径
+```
 
 ### 平台命令不是流程约束
 
@@ -176,6 +176,8 @@ openspec update            # 应用变更
 - 一目了然看到变化
 - 多个修改可并行不冲突
 - 审阅效率高
+
+**没有行为变化的修改**：`openspec validate` 拒绝没有 delta 的 change。纯重构、工具或文档类修改在该 change 的 `.openspec.yaml` 中写 `skip_specs: true` 显式豁免，不为通过验证编造需求；归档这类修改时也可用 `openspec archive --skip-specs` 跳过规格合并。
 
 ---
 
@@ -212,10 +214,19 @@ rules:                               # 只注入到对应产物
     - 使用 Given/When/Then 格式
   design:
     - 复杂流程需包含序列图
+
+operations:                          # apply 与 archive 的建议性指导
+  apply:
+    guidance:
+      - 保持测试摘要简短
+  archive:
+    guidance:
+      - 收尾前总结归档结果
 ```
 
 - **context** → 出现在所有产物生成请求中
 - **rules** → 仅出现在对应 artifact 的请求中
+- **operations** → apply 和 archive 的建议性指导，与产物 rules 分开
 - context 上限 50KB，保持精炼
 
 ---
@@ -223,6 +234,10 @@ rules:                               # 只注入到对应产物
 ## 九、自定义 Schema（工作流）
 
 ```bash
+# 查看可用 schema 和解析来源
+openspec schemas
+openspec schema which spec-driven
+
 # 从现有 schema fork
 openspec schema fork spec-driven my-workflow
 
@@ -232,6 +247,8 @@ openspec schema init rapid --artifacts "proposal,tasks" --default
 # 验证
 openspec schema validate my-workflow
 ```
+
+当前包内置 schema 为 `spec-driven`（proposal → specs → design → tasks）。
 
 Schema 结构：
 ```yaml
@@ -255,35 +272,56 @@ Schema 优先级：CLI flag → 修改元数据 → 项目 config → 默认 `sp
 ## 十、CLI 常用命令
 
 ```bash
-# 初始化
+# 初始化与更新
 openspec init --tools claude --force    # 初始化项目（--tools 指定 AI 工具，--force 跳过交互）
+openspec update [--force]               # 刷新 AI 工具配置文件
 
 # 查看状态
 openspec list                           # 列出活跃修改
 openspec list --specs                   # 列出规格
-openspec show add-dark-mode             # 查看修改详情
-openspec status --change <name>         # 查看产物进度
-openspec schemas                        # 列出可用 schema
+openspec list --sort name --json        # 按名称排序，JSON 输出
+openspec view                           # specs 和 changes 的交互式仪表盘
+openspec status --change <name>         # 查看修改的产物完成进度
+openspec status --all                   # 所有活跃修改的进度
+openspec show <item> --type change      # 查看修改或规格详情
+openspec show <item> --diff             # 按 requirement 显示增量差异
+openspec spec list | spec show <id> | spec validate <id>
+openspec change show <name> | change validate <name>   # change list 已废弃，用 openspec list
+
+# 创建
+openspec new change <name> [--schema <name>] [--goal <text>] [--description <text>]
 
 # 验证
+openspec validate <item> --type change|spec   # 验证单个修改或规格
 openspec validate --specs               # 验证所有规格
 openspec validate --changes             # 验证所有修改
 openspec validate --all                 # 验证全部
-openspec validate architecture          # 验证单个 spec（不带 spec/ 前缀）
+openspec validate --archived --strict   # 检查归档修改的任务全部完成（适合 pre-commit）
 
 # 归档
-openspec archive <name>                 # 归档修改
+openspec archive <name>                 # 归档修改并合并增量规格
+openspec archive <name> -y              # 跳过确认
+openspec archive <name> --skip-specs    # 跳过规格合并（infra、工具或文档类修改）
+
+# AI 与 agent 接口
+openspec instructions <artifact> --change <name>   # 输出产物写作指引
+openspec templates                      # 显示 schema 各产物的模板路径
+openspec schemas                        # 列出可用 schema
+openspec context [--json]               # 输出当前 root 的工作上下文
+openspec doctor                         # 报告 OpenSpec root 的结构健康
 
 # 配置
-openspec config profile                 # 配置工作流 profile
-openspec update                         # 刷新 AI 工具配置文件
+openspec config profile [preset]        # 配置工作流 profile（预设只有 core）
+openspec config list | get <key> | set <key> <value> | path
 ```
 
 **⚠️ 常见错误**：
 - `openspec init --ai claude` → 错误，应该用 `--tools claude`
-- `openspec validate` → 错误，必须带子参数：`--specs`、`--changes` 或 `--all`
-- `openspec validate spec/architecture` → 错误，应该用 `openspec validate architecture`
+- `openspec validate`（无参数无 item）→ 错误，需要 `--specs`、`--changes`、`--all` 或指定 item 名
+- `openspec validate spec/architecture` → 错误，应该用 `openspec validate architecture`；change 与 spec 同名歧义时加 `--type`
 - `openspec validate --verbose` → 错误，没有 `--verbose` 选项
+- `openspec config profile custom` → 错误，profile 预设只有 `core`，自定义组合走交互式 `openspec config profile`
+- `openspec instructions proposal` → 错误，必须带 `--change <name>`
 
 ---
 
@@ -298,21 +336,35 @@ context: |
   技术术语如 API、REST 保持英文原样。
 ```
 
+初始化时也可以用 `openspec init --language "简体中文"` 预设新产物的语言。
+
 ---
 
-## 十二、Workspace 协调（Beta）
+## 十二、跨仓库工作（store 与 workset）
 
-跨多个 repo/文件夹工作时使用：
+store 是注册到本机的独立 OpenSpec 仓库：
 
 ```bash
-openspec workspace setup                                 # 交互式创建
-openspec workspace setup --name platform --link /repos/api  # 非交互
-openspec workspace list                                  # 列出 workspace
-openspec workspace doctor                                # 检查健康状态
-openspec workspace open                                  # 打开工作集
+openspec store setup <id> --path ~/openspec/<id>   # 创建并注册本地 store
+openspec store register <path>                     # 注册已有 OpenSpec 仓库
+openspec store list                                # 列出已注册 store
+openspec store doctor [<id>]                       # 检查注册和元数据
+openspec store unregister <id>                     # 只取消注册，不删文件
+openspec store remove <id>                         # 取消注册并删除本地目录
 ```
 
-Workspace 是本地协调视图，不是实施产物的存放地。
+注册后，读写 changes 和 specs 的命令用 `--store <id>` 指定根目录：`list`、`view`、`show`、`validate`、`archive`、`status`、`instructions`、`doctor`、`context`、`schemas` 和 `new change`。
+
+workset 保存个人工作视图，纯本地，不触碰成员目录：
+
+```bash
+openspec workset create <name> --member <path> [--member <name>=<path>] [--tool <id>]
+openspec workset list
+openspec workset open <name>    # 在编辑器或 agent 会话中打开
+openspec workset remove <name>
+```
+
+旧版的 `openspec workspace` 命令已由 `store` 和 `workset` 取代。store 和 workset 都是本地协调视图，不是实施产物的存放地。
 
 ---
 
@@ -320,7 +372,7 @@ Workspace 是本地协调视图，不是实施产物的存放地。
 
 | 场景 | 操作 |
 |------|------|
-| 同意图，微调执行 | **更新**现有修改 |
+| 同意图，微调执行 | **更新**现有修改（`/opsx:update`） |
 | 范围缩小（先做 MVP） | **更新**然后归档，再新建下一阶段 |
 | 意图根本变了 | **新建**修改 |
 | 范围膨胀超50% | **新建**修改 |
@@ -333,10 +385,11 @@ Workspace 是本地协调视图，不是实施产物的存放地。
 | 问题 | 解决 |
 |------|------|
 | 命令不被识别 | `openspec init` + `openspec update`，重启 IDE |
-| 产物生成不理想 | 在 `config.yaml` 加更多 context/rules，或用 `/opsx:continue` 替代 `/opsx:ff` |
+| 产物生成不理想 | 在 `config.yaml` 加更多 context/rules，或改用 CLI 逐产物推进（`status` + `instructions`） |
 | Schema 未找到 | `openspec schemas` 查看可用列表 |
 | 配置不生效 | 确认是 `config.yaml`（非 `.yml`），检查 YAML 语法 |
 | 修改找不到 | 用 `openspec list` 确认存在，或显式指定 `/opsx:apply <name>` |
+| 结构关系可疑 | `openspec doctor` 报告 OpenSpec root 的健康状态 |
 
 ---
 
@@ -348,4 +401,4 @@ openspec init    # 或 openspec update
 # 旧 project.md → 手动迁移到 config.yaml，然后删除
 ```
 
-旧命令映射：`/openspec:proposal` → `/opsx:propose`
+旧命令映射：`/openspec:proposal` → `/opsx:propose`；`openspec workspace` → `store` 与 `workset`。

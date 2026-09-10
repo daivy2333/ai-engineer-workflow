@@ -1,4 +1,0 @@
-interface:
-  display_name: "OMO ULW OpenSpec Router"
-  short_description: "Route OpenSpec work across OMO models and agents"
-  default_prompt: "Use $omo-ulw to route this OpenSpec stage across OMO models without changing its workflow boundaries."

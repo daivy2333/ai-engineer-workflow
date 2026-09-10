@@ -55,8 +55,10 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 使用可用的 OpenSpec 集成生成或完善：
 
-- `proposal.md`
+- `proposal.md`，包含 `## Why` 和 `## What Changes` 章节
 - Delta specs
+
+本次修改不改变任何行为域的 requirement（纯重构、工具或文档类）时，在 change 的 `.openspec.yaml` 中设置 `skip_specs: true`，不生成 Delta specs。该标记只是对 OpenSpec 校验的豁免，不是需求裁剪；BDD 扫描、Task Contract、RTM 和验证要求不变。
 
 若当前 schema 同时生成 `design.md` 和 `tasks.md`，此时只把它们视为草稿。完成实现调查前，不得把设计、任务或 Gate 2 标记为 ready。
 
