@@ -78,16 +78,11 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 1：调查当前实现
 
-制定计划前，先整理 Explorer 已确认且仍适用于当前工作区的事实和前序 Iteration 最终 Act Response 的结论，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
+制定计划前，先按前置规则 2 整理可采信输入，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
 
-- 定位入口、目标文件、符号及职责。
-- 追踪调用者、被调用者和动态调用边。
-- 记录数据流、状态变化和状态所有权。
-- 检查错误、取消、超时、并发和资源生命周期。
-- 定位现有测试、测试夹具和验证命令。
+- 入口、目标符号、调用者与被调用者、数据流、状态变化、错误和并发边界、现有测试、夹具、验证命令和基线结论按公共规则 › Plan 调查 记录；补跑基线时记录命令、关键输出和退出码。
+- 追踪动态调用边，记录状态所有权，检查取消、超时和资源生命周期。
 - 检查相关 M/R/I、活跃 change 和兼容性约束。
-- 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
-- 基线验证与结论引用按公共规则 › Plan 调查 执行；补跑时记录命令、关键输出和退出码。
 - 列出影响实现的未知项；只有实质未知项才阻塞。
 
 不得无条件重复 Explorer 已完成且仍有效的调用链或影响面调查。调查深度以支持本次修改为限；计划不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act。
@@ -102,7 +97,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 记录关键技术选择、替代方案和选择理由；选择理由随 change 归档，是长期决策的权威记录。
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
-- 验证设计直接观察目标状态、输出、错误结果或退出码，不建立测试材料或运行轮次的身份系统。
+- 验证设计直接观察目标状态、输出、错误结果或退出码，不建立身份型证据系统（公共规则 › 行为约束）。
 
 影响契约语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
 
@@ -110,7 +105,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
-Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implementation Guidance 不得给出冲突指令，也不规定非实质实现选择。
+背景、调查证据和 Implementation Guidance 不得给出与 Task Contract 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
 
 不得规划公共规则禁止的身份型证据工程。产品 requirement 明确要求的认证、完整性校验或多会话协议必须作为目标行为进入 requirement、scenario 和 Acceptance，不能以证据需要为理由引入。
 
@@ -171,11 +166,11 @@ Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implem
 - 行为变化，以及 Task Contracts（含变更面）、共享不变量、非目标、RTM、Acceptance 和 Verification。
 - Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
 
-Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务。
+Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
 `none` 表示命令、决定性输出、退出码、修改文件和符号写入 Act Response 即可，输出上限见公共规则 › 验证。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
 
-每个 `required` 项必须写明：支持的 Acceptance；Act Response 为什么不足；为什么无法低成本重跑；缺少它会阻止的决定；文件和通过条件。任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
+每个 `required` 项按公共规则 › 验证 说明必要性，并按 Cycle 模板列出文件和通过条件；任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
