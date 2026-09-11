@@ -80,16 +80,11 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 1：调查当前实现
 
-制定计划前，先整理 Explorer 已确认且仍适用于当前工作区的事实和前序 Iteration 最终 Act Response 的结论，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
+制定计划前，先按前置规则 2 整理可采信输入，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
 
-- 定位入口、目标文件、符号及职责。
-- 追踪调用者、被调用者和动态调用边。
-- 记录数据流、状态变化和状态所有权。
-- 检查错误、取消、超时、并发和资源生命周期。
-- 定位现有测试、测试夹具和验证命令。
+- 入口、目标符号、调用者与被调用者、数据流、状态变化、错误和并发边界、现有测试、夹具、验证命令和基线结论按公共规则 › Plan 调查 记录；补跑基线时记录命令、关键输出和退出码。
+- 追踪动态调用边，记录状态所有权，检查取消、超时和资源生命周期。
 - 检查相关 M/R/I、活跃 change 和兼容性约束。
-- 相关域行为可引用 `openspec/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
-- 运行必要的只读基线验证，记录命令、关键输出和退出码。
 - 列出影响实现的未知项；只有实质未知项才阻塞。
 
 不得无条件重复 Explorer 已完成且仍有效的调用链或影响面调查。调查深度以支持本次修改为限；计划不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act。
@@ -104,7 +99,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 记录关键技术选择、替代方案和选择理由；选择理由随 change 归档，是长期决策的权威记录。
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
-- 验证设计直接观察目标状态、输出、错误结果或退出码，不建立测试材料或运行轮次的身份系统。
+- 验证设计直接观察目标状态、输出、错误结果或退出码，不建立身份型证据系统（公共规则 › 行为约束）。
 
 影响契约语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
 
@@ -173,11 +168,11 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 - Task Contracts、共享不变量、非目标、RTM、Acceptance 和 Verification。
 - Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
 
-Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务。
+Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务；自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
-`none` 表示命令、每项不超过 20 行的决定性输出、退出码、修改文件和符号写入 Act Response 即可。只有用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时才能设为 `required`。
+`none` 表示命令、决定性输出、退出码、修改文件和符号写入 Act Response 即可，输出上限见公共规则 › 验证。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
 
-每个 `required` 项必须写明：支持的 Acceptance；Act Response 为什么不足；为什么无法低成本重跑；缺少它会阻止的决定；文件和通过条件。任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
+每个 `required` 项按公共规则 › 验证 说明必要性，并按 Cycle 模板列出文件和通过条件；任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
@@ -193,7 +188,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 - 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
-- 验证没有用 Hash、revision、run-id、peer、manifest、时间顺序或专用审计工具替代目标行为，也没有为同一运行归属叠加身份机制。
+- 验证没有用身份型证据工程替代目标行为（公共规则 › 行为约束）。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - OpenSpec tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
@@ -230,7 +225,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
 2. 独立阅读实际代码和 diff，检查 Act Response、Self-Review 和计划要求的 Evidence。
-3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；结论矛盾、输出可疑、验证不确定、覆盖不足或用户要求独立复现时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
+3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
 4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
@@ -244,7 +239,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 
 不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行契约的有限修复留在当前 Cycle。
 
-Plan Context 始终不可改写。当前活跃 Cycle 的 Review 保持 `pending` 且没有后继 Cycle 时，Plan 只覆盖 `Plan Review` 为最新完整状态；进入终态或创建后继 Cycle 后不得重写。
+Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
 ## 输出与终止
 

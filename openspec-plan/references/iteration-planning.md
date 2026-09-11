@@ -88,7 +88,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 4. Act 完成后覆盖 `Act Response` 为当前 Cycle 的最新完整快照，再改为 `reported`；Plan 随后覆盖 Review 并重新判断。
 5. 覆盖前若已有当前 Cycle 反馈，Convergence 与上一版 Acceptance Gaps 比较；否则沿用父 Cycle 比较规则。gap 为 `reduced` 且剩余修复仍受当前契约约束时可以继续；`unchanged`、`expanded` 或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 6 约束。
 
-覆盖只适用于 `Review Result: pending`、没有后继 Cycle 的当前活跃 Cycle。Plan Context 始终不可改写；Plan 和 Act 只能覆盖各自区域，且覆盖内容必须是当前 Cycle 的完整最新状态，不保存逐轮文字历史。Review 进入终态或后继 Cycle 已创建后，Cycle 冻结。Blocked Handoff、Resolution 和持久化 Evidence 仍按各自规则保留。
+覆盖与冻结的适用条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
 ## Rework Cycle
 

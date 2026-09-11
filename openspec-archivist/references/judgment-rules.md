@@ -137,4 +137,4 @@ Incident 的 M/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建�
 - 同级条目标题到下一个同级标题。
 - 表格中每个数据行为独立条目。
 - checkbox 每行为独立任务。
-- 没有编号的旧条目在写入前分配编号。
+- 编号唯一且递增；无编号条目在写入前分配编号。

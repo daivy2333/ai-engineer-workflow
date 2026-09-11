@@ -6,10 +6,12 @@
 
 - 文档地图与读取顺序
 - Skill 职责与阶段边界
+- 通用能力
 - 信息路由与记录边界
-- BDD、TDD、Gate 和验证
-- 任务追踪与迭代线程
-- 文件编辑与完成检查
+- 行为约束与执行约束
+- BDD、Plan 调查、TDD、Gate、验证和三次失败
+- 任务批次与续跑边界、Iteration 与 Cycle 线程
+- 文件编辑与完成前五问
 
 ```markdown
 # CLAUDE.md
@@ -109,7 +111,7 @@
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
 - 已发生的重要故障由 Recorder 写入 Incident，并登记 R。
 - 详细调查、实验和评估写 analysis，并登记 R。
-- Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence，不登记 R。
+- Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
