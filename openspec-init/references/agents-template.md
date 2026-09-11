@@ -109,7 +109,7 @@
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
 - 已发生的重要故障由 Recorder 写入 Incident，并登记 R。
 - 详细调查、实验和评估写 analysis，并登记 R。
-- Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence，不登记 R。
+- Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
@@ -307,7 +307,7 @@ Gate 必须有新鲜验证结果，但不要求原始输出文件。验证按影
 
 Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。
 
-每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
+每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩、编码或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
 
 禁止使用“应该、大概、基本完成”替代证据。
 

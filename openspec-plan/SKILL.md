@@ -173,7 +173,7 @@ Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implem
 
 Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务。
 
-`none` 表示命令、每项不超过 20 行的决定性输出、退出码、修改文件和符号写入 Act Response 即可。只有用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时才能设为 `required`。
+`none` 表示命令、决定性输出、退出码、修改文件和符号写入 Act Response 即可，输出上限见公共规则 › 验证。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
 
 每个 `required` 项必须写明：支持的 Acceptance；Act Response 为什么不足；为什么无法低成本重跑；缺少它会阻止的决定；文件和通过条件。任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
 

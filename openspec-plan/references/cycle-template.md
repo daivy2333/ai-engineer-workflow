@@ -125,7 +125,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 
 不得规划公共规则禁止的身份型证据工程。
 
-- Budget: 本 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB；超限需要用户明确批准。
+- Budget: 按 Evidence 预算执行（公共规则 › 验证）。
 
 **Risks and Notes**
 
@@ -256,7 +256,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 - 每个 Iteration 从 `000-initial.md` 开始；`rework-required` 和 `replan-required` 分别在同一目录创建下一编号的 `rework` 或 `replan` Cycle。
 - Rework Cycle 使用本地 repair item 完成既有 Acceptance，不新增全局 change task，不修改 Iteration Map。
 - Replan Cycle 使用更新后的 change tasks、specs、design 和 Iteration Plan 建立新 Plan Context，允许改变目标、范围、依赖、验证契约或 Acceptance，并重新通过 Gate 2。
-- Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 仅用于用户明确要求、无法低成本复现、一次性环境、Incident/Blocker 现场，或摘要会丢失决定性结构的结果。
+- Plan 必须把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 仅用于满足公共规则 Evidence 白名单的结果（公共规则 › Iteration 与 Cycle 线程）。
 - Plan 和 Act 不得用身份绑定、运行归属、manifest、Hash 链或时间顺序代替行为验证，也不得为 Evidence 创建专用 capture、audit、qualification 子系统。
 - Act 只填写当前 Cycle 的 `Act Response`；Plan 明确要求当前 Cycle 修复时执行 `reported → pending`，完成后覆盖为包含原实施和最新修复的完整 Response，再改为 `reported`。
 - Act 不复核 Plan 基线，直接按 ready 的 Task Contract 建立测试见证并实施。

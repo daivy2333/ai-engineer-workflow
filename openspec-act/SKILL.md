@@ -83,7 +83,7 @@ Code quality review 检查：
 1. 确定能证明声明的命令或操作。
 2. 完整运行所选验证，不因“更保险”追加等价命令或扩大到无关测试。
 3. 读取足以判断结果的输出和退出码；不要为了留证回显或复制完整长日志。
-4. 每项只摘录不超过 20 行的决定性输出。
+4. 每项只摘录满足输出上限（公共规则 › 验证）的决定性输出。
 5. 判断证据是否支持声明。
 6. 证据支持后再声明。
 
@@ -111,12 +111,7 @@ Gate 需要新鲜验证结果——产生时真实运行过且覆盖范围未变
 
 ## 按需 Evidence
 
-Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只有以下情况才创建：
-
-- 用户明确要求保留。
-- 结果无法低成本复现，或一次性环境即将消失。
-- Incident 或实质 Blocker 需要保存关键现场。
-- 摘要会丢失影响 Acceptance 判断的结构化信息。
+Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只有满足公共规则白名单的情形才创建（公共规则 › Iteration 与 Cycle 线程）。
 
 Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 6 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
@@ -124,7 +119,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 
 决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
-计划偏差可复现或可用 20 行以内说明时，只在 Act Response 记录。只有实质 Blocker 满足上述白名单时才创建 `act-added / BLOCKED` Evidence。
+计划偏差可复现或可简短说明时，只在 Act Response 记录。只有实质 Blocker 满足公共规则白名单时才创建 `act-added / BLOCKED` Evidence。
 
 ## Gate 6：Stop on Blocker
 
