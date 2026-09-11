@@ -50,7 +50,6 @@
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、carrier 归档、删除和墓碑 |
-| `omo-ulw` | 在 OMO ultrawork 下为 OpenSpec 阶段分配代理、Category 和模型 |
 
 职责规则：
 
@@ -161,36 +160,35 @@ Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 21 个技能。
+当前仓库共 20 个技能。
 
 OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
 ## 安装
 
-使用同一份源目录创建符号链接：
+技能内容只有一份源目录，安装就是把每个技能目录链接到对应平台的发现位置。用户级安装：
 
 ```bash
-./scripts/install-skills.sh --platform all --scope user
+cd ai-engineer-workflow
+mkdir -p ~/.claude/skills ~/.agents/skills
+for dir in */; do
+  name="${dir%/}"
+  ln -s "$PWD/$name" "$HOME/.claude/skills/$name"   # Claude Code
+  ln -s "$PWD/$name" "$HOME/.agents/skills/$name"   # Codex
+done
 ```
 
-可选参数：
+项目级安装把同样的链接建到当前项目的 `.claude/skills/` 和 `.agents/skills/`，只覆盖当前项目。OpenCode 能读取上述任一目录，不额外创建副本。
 
-```text
---platform claude|codex|opencode|all
---scope user|project
---mode link|copy
-```
-
-项目级安装会写入当前项目对应的隐藏技能目录。用户级安装写入各平台的用户技能目录。
-
-手动安装时，将每个技能目录复制或链接到上表对应位置。`all` 会建立 Claude Code 和 Codex 两组入口，不额外创建 OpenCode 副本，因为 OpenCode 能读取这两种兼容目录。
-
-OpenCode 官方要求技能名在所有发现目录中保持唯一。如果同一台机器同时启用 `.claude/skills` 和 `.agents/skills`，OpenCode 可能发现两个同名入口。此时为 OpenCode 单独执行 `--platform opencode`，并在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
+OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台机器同时启用 `.claude/skills` 和 `.agents/skills` 时，OpenCode 可能发现两个同名入口；在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
 
 ## 设计约束
 
-- 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态或中间产物。
+- 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态、Gate、状态迁移、授权例外或中间产物。
 - 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
+- 非必要不增加流程。新增规则、Gate、状态、迁移或授权例外前，先说明删除它会导致哪个具体错误行为、它改变哪个决策；说明不了就不加。跨 Skill 生效的规则只在权威位置保留一份正文，其余位置按名引用。
+- 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有落点，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱防线是否有其他角色检查点兜底，语义变化是否与去重分离并声明损失。
+- 体系更新按可独立回滚的批次提交；发现执行退化时，优先把检查点指针恢复为局部规则，不整体回退。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
 - 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
 - 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
