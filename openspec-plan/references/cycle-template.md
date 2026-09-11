@@ -38,21 +38,11 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 <需求来源、历史问题和本 Cycle 原因>
 
-**Current Baseline**
+**Investigation Facts**
 
-<revision、当前实现、已有能力、已知限制和基线验证结果；可引用未失效的既有结论并注明来源>
-
-**Current-State Evidence**
-
-<Plan 已确认且与实施直接相关的入口、目标符号、调用者、被调用者、动态边、状态、错误路径和测试入口；可引用 Explorer 来源，但不得要求 Act 回读才能执行>
-
-**Relevant Code**
-
-<文件、模块、符号及其职责>
-
-**Critical Path**
-
-<入口、调用链、数据流、状态变化和外部影响>
+- Current Baseline: <revision、当前实现、已有能力、已知限制和基线验证结果；可引用未失效的既有结论并注明来源>
+- Current-State Evidence: <Plan 已确认且与实施直接相关的入口、目标符号、调用者、被调用者、动态边、状态、错误路径和测试入口；可引用 Explorer 来源，但不得要求 Act 回读才能执行>
+- Code and Critical Path: <文件、模块、符号及其职责；入口、调用链、数据流、状态变化和外部影响>
 
 **Implementation Guidance**
 
@@ -62,15 +52,9 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 <当前行为、目标行为、接口、状态和错误语义的变化>
 
-**Change Surface**
-
-| Task/Repair | Requirement/Scenario | File/Symbol | Current Responsibility | Planned Change |
-|---|---|---|---|---|
-| T1 | R1/S1 | `<path::symbol>` | <当前职责> | <计划变化> |
-
 **Task Contracts**
 
-Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task 或 rework repair item 使用：
+Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required behavior 和 Preserve/Forbidden 共同表达变更面与责任边界。对每个 initial/replan task 或 rework repair item 使用：
 
 ### <Task/Repair ID>: <可验证结果>
 
@@ -107,23 +91,13 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 
 **Gate 2 Readiness**
 
-| Dimension | Status | Evidence |
-|---|---|---|
-| Investigation | PASS/BLOCKED/WAIVED | <当前实现与影响面证据> |
-| Design | PASS/BLOCKED/WAIVED | <行为和接口设计证据> |
-| Iteration Plan | PASS/BLOCKED/WAIVED | <逻辑 Iteration 的任务、依赖和平衡审计> |
-| Cycle Scope | PASS/BLOCKED/WAIVED | <initial 范围或 rework Acceptance gap 与 repair item> |
-| Task Contracts | PASS/BLOCKED/WAIVED | <只读当前 Cycle 即可建立测试见证并实施的证据> |
-| Traceability | PASS/BLOCKED/WAIVED | <RTM 证据> |
-| Verification | PASS/BLOCKED/WAIVED | <目标行为、测试和通过条件；确认没有身份型证据工程> |
+<Gate 2 各检查项逐项记录 PASS/BLOCKED/WAIVED 及证据；检查项清单见 openspec-plan 的 Gate 2>
 
 **Persisted Evidence**
 
 - Mode: none | required
 
 <`none` 表示 Act Response 足以承载验证结果；`required` 时逐项列出 Acceptance、Act Response 不足原因、不可低成本重跑原因、缺失时受阻决定、文件和通过条件>
-
-不得规划公共规则禁止的身份型证据工程。
 
 - Budget: 按 Evidence 预算执行（公共规则 › 验证）。
 

@@ -250,7 +250,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 每个任务只归属一个 Iteration；首个与后续 Iteration 使用相同的聚合、拆分标准。
 - Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不修改 Iteration Map；Replan Cycle 使用同一目录的后继编号执行修订后的计划。两者都不占用全局 Iteration 编号。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
-- Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
+- Plan Context 包含所属 Iteration、Cycle 类型、Investigation Facts（当前基线、Current-State Evidence、代码与关键路径）、行为变化、任务或 repair item 契约（含变更面）和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
 - Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文。
 - Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
