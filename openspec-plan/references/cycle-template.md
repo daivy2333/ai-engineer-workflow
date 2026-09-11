@@ -198,7 +198,7 @@ Task Contract 是 Act 的任务级执行依据。对每个 initial/replan task �
 |---|---|---|---|
 | Runbook / Incident | <候选主题> | <Act Response 或 Evidence> | <满足产物门槛的原因> |
 
-<没有候选时写 None。候选不构成创建授权>
+<没有候选时写 None>
 
 **Remaining Issues**
 

@@ -16,7 +16,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 6. change 是 `.agents/changes/<name>/` 下的普通目录和 markdown 文件，用文件操作创建和检查，不依赖平台专属命令或外部 CLI。
 7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
-8. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
+8. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。输出交接信息后终止，等待用户决定。
 9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)；创建 Cycle 文件前完整读取 [references/cycle-template.md](references/cycle-template.md)。
 
 ## Phase 1：CLARIFY
@@ -87,7 +87,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 定位现有测试、测试夹具和验证命令。
 - 检查相关 M/R/I、活跃 change 和兼容性约束。
 - 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
-- 只在缺少可采信结论时运行只读基线验证；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用并注明来源。补跑时记录命令、关键输出和退出码。
+- 基线验证与结论引用按公共规则 › Plan 调查 执行；补跑时记录命令、关键输出和退出码。
 - 列出影响实现的未知项；只有实质未知项才阻塞。
 
 不得无条件重复 Explorer 已完成且仍有效的调用链或影响面调查。调查深度以支持本次修改为限；计划不得把定位必要调用者、判断实质影响范围、选择测试策略或决定接口语义留给 Act。
@@ -191,7 +191,7 @@ Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、As
 - 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
 - 验证充分：任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
-- 验证没有用 Hash、revision、run-id、peer、manifest、时间顺序或专用审计工具替代目标行为，也没有为同一运行归属叠加身份机制。
+- 验证没有用身份型证据工程替代目标行为（公共规则 › 行为约束）。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - change 的 tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
 - Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
@@ -228,7 +228,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
 2. 独立阅读实际代码和 diff，检查 Act Response、Self-Review 和计划要求的 Evidence。
-3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；结论矛盾、输出可疑、验证不确定、覆盖不足或用户要求独立复现时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
+3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
 4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
@@ -242,7 +242,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 
 不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行契约的有限修复留在当前 Cycle。
 
-Plan Context 始终不可改写。当前活跃 Cycle 的 Review 保持 `pending` 且没有后继 Cycle 时，Plan 只覆盖 `Plan Review` 为最新完整状态；进入终态或创建后继 Cycle 后不得重写。
+Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
 ## 输出与终止
 

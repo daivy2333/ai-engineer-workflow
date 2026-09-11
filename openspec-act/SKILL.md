@@ -18,7 +18,7 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
 8. 按 change 的 `tasks.md` 维护任务状态；报告前对照公共规则自检 change 文件结构。
 9. 修改产品代码前建立测试见证。
-10. Skill 完成不构成 Review、经验记录、维护或归档授权。写入反馈后终止。
+10. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。写入反馈后终止。
 
 Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `reported` 改为 `pending`，只消费最新 Review，不恢复已被覆盖的文字历史。缺少具体修复目标、Acceptance gap、证据或验证依据时不恢复，返回 Plan 补全 Review。
 
@@ -87,9 +87,9 @@ Code quality review 检查：
 5. 判断证据是否支持声明。
 6. 证据支持后再声明。
 
-按覆盖范围记录验证结论（命令、行为和涉及的代码表面），使 Plan Review、后继 Cycle 和阻塞恢复可以采信。当前 Cycle 内早期验证的结论在覆盖范围未变化时直接引用，不重复运行；修改覆盖范围内的代码后才重新运行。
+按覆盖范围记录验证结论（命令、行为和涉及的代码表面），使 Plan Review、后继 Cycle 和阻塞恢复可以采信。当前 Cycle 内早期验证的结论在覆盖范围未变化时直接引用（公共规则 › 验证）；修改覆盖范围内的代码后才重新运行。
 
-只有目标状态、输出、错误结果、协议结果或退出码等可观察行为可以支持 Acceptance。Hash、revision、run-id、peer、manifest 或时间顺序只能描述材料或现场，不能使验证通过。
+只有目标状态、输出、错误结果、协议结果或退出码等可观察行为可以支持 Acceptance。身份型证据元素只能描述材料或现场，不能使验证通过（公共规则 › 行为约束）。
 
 验证范围按变更选择：
 
@@ -115,7 +115,7 @@ Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只�
 
 Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 6 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
-不得为 Evidence 新增身份字段、握手、pin、freeze、manifest、Hash 链、时间顺序检查或 capture/audit/qualification 工具。Evidence 输出改变 worktree 或现场时，只记录该限制；不得创建排除路径或二级验证来维持身份检查。
+不得为 Evidence 新增身份型证据机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制；不得创建排除路径或二级验证来维持身份检查。
 
 决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
@@ -156,7 +156,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 8. 将 Act Response 状态从 `pending` 改为 `blocked`。
 9. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
 
-状态流转包括 `pending → reported`、`pending → blocked`、`blocked → pending`，以及 Plan 明确要求当前 Cycle 修复时的 `reported → pending`。恢复后必须先回到 `pending`，不得越过它改成 `reported`。
+状态流转按公共规则 › Iteration 与 Cycle 线程 执行。
 
 **恢复阻塞**
 
