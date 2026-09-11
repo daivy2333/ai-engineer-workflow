@@ -31,7 +31,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 9. Plan 和 Act 的完成报告不是写入授权。
 10. Explorer 与 Recorder 的自动登记授权范围按公共规则 › 阶段边界 执行。
 11. Change Evidence 属于 change，不登记 R（公共规则 › Iteration 与 Cycle 线程）。
-12. `MSxx` 的规划与状态同步分工按公共规则 › 信息路由 执行。
+12. `MSxx` 的规划与状态同步分工按公共规则 › 记录边界 执行。
 
 ## 工作流
 
