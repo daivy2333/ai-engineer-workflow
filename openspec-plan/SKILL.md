@@ -163,9 +163,9 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 `Plan Context` 按 Cycle 模板写入：
 
 - 状态先写为 `draft`。
-- Cycle 身份、范围、目标、背景和当前基线。
-- Current-State Evidence、关键路径、行为变化和 Change Surface。
-- Task Contracts、共享不变量、非目标、RTM、Acceptance 和 Verification。
+- Cycle 身份、范围、目标和背景。
+- Investigation Facts：当前基线、Current-State Evidence、代码与关键路径。
+- 行为变化，以及 Task Contracts（含变更面）、共享不变量、非目标、RTM、Acceptance 和 Verification。
 - Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
 
 Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务；自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。

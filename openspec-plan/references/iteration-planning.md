@@ -72,7 +72,7 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 答案为“是”时留在当前 Iteration；答案为“否”时不得以返工名义扩大当前 Cycle。
 范围或验证契约变化必须使用 `replan-required`，不得伪装为普通返工。
 
-当前 Cycle 修复与 rework Cycle 的边界不是文件数、代码行数或预计时间，而是 Act 是否需要新的自包含执行契约。Plan Review 已能给出有限修复目标，且原 Task Contract、Change Surface、不变量和验证方法仍足以约束 Act 时，留在当前 Cycle；需要重新调查、拆分 repair item、建立新基线或重新通过 Gate 2 时，创建 rework Cycle。
+当前 Cycle 修复与 rework Cycle 的边界不是文件数、代码行数或预计时间，而是 Act 是否需要新的自包含执行契约。Plan Review 已能给出有限修复目标，且原 Task Contract（含变更面）、不变量和验证方法仍足以约束 Act 时，留在当前 Cycle；需要重新调查、拆分 repair item、建立新基线或重新通过 Gate 2 时，创建 rework Cycle。
 
 `Review Result` 初始为 `pending`。Plan 写完 Review、所需计划更新和后继产物并验证后，最后将它改为终态；写入失败时保持 `pending`。
 
