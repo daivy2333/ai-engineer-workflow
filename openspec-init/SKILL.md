@@ -65,19 +65,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` �
 
 ## Phase 4：公共规则
 
-根据引用模板生成或合并 `AGENTS.md`：
-
-- 文档地图。
-- 读取顺序。
-- Skill 职责。
-- Skill 终止和显式授权规则。
-- Experience Candidates 与 Recorder 的独立授权边界。
-- 通用能力映射。
-- Requirements Integrity。
-- BDD、TDD、Gate、验证和三次失败规则。
-- 精准编辑和证据要求。
-
-已有 `AGENTS.md` 时按模板合并，保留项目原有说明。禁止把任何平台专属任务 API、agent 配置或工具名写成唯一合法实现。
+按 [references/agents-template.md](references/agents-template.md) 的模板目录生成全部章节。已有 `AGENTS.md` 时按模板合并，保留项目原有说明。禁止把任何平台专属任务 API、agent 配置或工具名写成唯一合法实现。
 
 ## Gate
 
