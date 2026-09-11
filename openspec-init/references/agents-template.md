@@ -6,10 +6,12 @@
 
 - 文档地图与读取顺序
 - Skill 职责与阶段边界
+- 通用能力
 - 信息路由与记录边界
-- BDD、TDD、Gate 和验证
-- 任务追踪与迭代线程
-- 文件编辑与完成检查
+- 行为约束与执行约束
+- BDD、Plan 调查、TDD、Gate、验证和三次失败
+- 任务批次与续跑边界、Iteration 与 Cycle 线程
+- 文件编辑与完成前五问
 
 ```markdown
 # AGENTS.md
