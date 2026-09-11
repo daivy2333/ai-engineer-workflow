@@ -145,6 +145,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 - 验证只证明目标行为。环境、命令、版本和 revision 可以定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
 - 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明同一次运行，也不得为证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
 - 发现身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，再运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
+- 非必要不增加流程。新增规则、Gate、状态、迁移或授权例外前，先说明删除它会导致哪个具体错误行为、它改变哪个决策；说明不了就不加。跨 Skill 生效的规则只在本文件保留一份正文，其他位置按名引用。
 - 对已确认需要实施的工作，在同样满足 Acceptance 的方案中，依次优先复用项目已有实现、使用语言或平台原生能力、使用已有依赖，最后才新增最小必要代码或依赖；不为尚未发生的需求扩大当前实现。
 - 证据足以支持当前结论后停止搜索、测试和 Review。可选改进仅在有助于用户决策时报告，不纳入当前实现。
 
