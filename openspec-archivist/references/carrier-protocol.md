@@ -7,7 +7,6 @@
 - 内容要求
 - 失败处理
 - 恢复要求
-- Migration carrier
 
 ## 路径
 
@@ -30,8 +29,6 @@ openspec/archive/<date>-arc-.../
 ```
 
 不要手工移动 change。
-
-Init 迁移载体使用 `MIG-YYYYMMDDhhmm`，目录结构与 ARC carrier 相同。ID 冲突时使用相同后缀规则。
 
 ## 执行顺序
 
@@ -64,8 +61,7 @@ Proposal 映射表至少包含：
 
 Carrier spec 保留：
 
-- 原 `M/R/I/MS/T` 编号和 Legacy ID。
-- 旧 carrier 继续保留 A/L/R/O/T，不改写历史。
+- 原 `M/R/I/MS/T` 编号。
 - Archive 的完整内容。
 - Compress-Archive 的关键事实、状态和替代方案。
 
@@ -102,37 +98,3 @@ Maintainer 应能：
 6. 追加 restored 标记。
 
 因此不得删除 carrier 映射或原编号。
-
-## Migration carrier
-
-Init 旧体系全量迁移使用独立 migration carrier。其职责是保存可审计映射和旧经验文档完整原文，不是对旧内容再次取舍。
-
-Proposal 除普通映射外必须包含：
-
-- 全部经验来源路径和归档前 mtime。
-- 按已有编号、可独立路由的同级标题或短文档整体建立的语义条目覆盖清单。
-- 旧编号到新编号或路径的映射。
-- 覆盖计数和未解决项；不保存正向、反向核对过程日志。
-- `semantic entries = mapped entries = verified entries`。
-- `unmapped = 0` 和 `skipped = 0`。
-- 旧活动路径退出清单和恢复入口。
-
-Carrier spec 必须逐文件保存活动经验源完整原文。不得摘要、改写、去重原文，也不得使用 Compress-Archive。旧内容即使重复、过时或已失效，也保留在载体中。
-
-已经归档的 legacy carrier 不复制、不改写、不重复归档。覆盖清单记录其不可变路径，并按语义条目确认其中的信息已经进入新目标。
-
-CLAUDE 和 SNAPSHOT 是可重建文档，不是经验源。MIG 载体不保存、映射或归档其旧内容。
-
-执行顺序：
-
-1. Init 枚举来源并保持活动经验源只读。
-2. Init 按语义条目迁移并填写覆盖清单、编号映射和验证摘要。
-3. 覆盖验证通过后创建 MIG 载体，保存历史 carrier 指针和每份活动经验源的一份原始全文。
-4. Archivist 核对覆盖率、mtime、新目标和完整原文；mtime 变化时返回 Init 更新受影响映射。
-5. 验证并归档 carrier。
-6. 归档成功后移除旧体系活动路径。
-7. 扫描旧路径、旧活动引用和新目标。
-
-步骤 1-5 任一失败时保留全部旧活动文件。步骤 6 失败时报告剩余路径并继续完成退出，不重新迁移或删除载体。
-
-Migration carrier 只允许 Archive。旧活动路径退出是完整原文已进入归档后的生命周期移动，不是 Delete。恢复时从 carrier 取回整份原文，或按覆盖清单把语义条目恢复到新目标。

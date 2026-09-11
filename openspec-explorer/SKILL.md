@@ -42,7 +42,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 当前项目描述以 SNAPSHOT 为准。分析文档不复制完整项目概览，只保留目标所需的历史现场。
 - Evidence 只能支持其记录的环境和结论；引用时给出 change、Iteration、Cycle 和文件路径。
 - 相关域行为可引用 `openspec/specs/` 语料库，但结论以实际代码为准；两者矛盾时记入未确认项。
-- 遇到 `Mxx/Rxx/Ixx` 或旧编号归档指引时，按 `<!-- arc:` 跳转到 carrier archive。
+- 遇到 `Mxx/Rxx/Ixx` 或 `<!-- arc:` 归档指引时，跳转到 carrier archive。
 - 只做网页搜索不能构成项目分析；必须读取实际项目文件。
 
 ## 文档模式

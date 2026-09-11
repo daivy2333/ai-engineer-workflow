@@ -136,8 +136,6 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 | Incidents | 已发生的重要故障和后续动作 | `.claude/incidents/` |
 | Evidence | 按需保存某次 Cycle 无法充分摘要的决定性产物 | `openspec/changes/<change>/evidence/` |
 
-Architecture 的当前约束进入 Project Model，选择历史随对应 change 的 design 归档。Learned 中可表达为行为要求的事实随下一个 change 进入行为语料库，路径和链接进入 References。Optimization 改为 Improvements；批准后提升为 OpenSpec change，不与 tasks 重复维护。
-
 Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
 
 ### OS 与驱动
@@ -209,8 +207,6 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台�
 - 平台专属 frontmatter 不写入通用技能。
 - 平台专属工具名不能成为流程前提。
 - 不把 AI 工具写入 Git co-author。
-
-旧体系升级全量迁移经验文档。Init 沿文档地图、引用、归档指引和历史 carrier 发现来源，按已有编号、可独立路由的标题或短文档整体分类，不为段落和格式元素建立清单。重复、过时、已归档或低价值不构成跳过理由。覆盖达到 100%、`unmapped = 0`、`skipped = 0` 后，每份活动经验源只保留一份原文进入 migration carrier，不生成内容哈希或核对过程日志。CLAUDE 和 SNAPSHOT 按新体系重建，不迁移或归档旧内容。
 
 ## License
 

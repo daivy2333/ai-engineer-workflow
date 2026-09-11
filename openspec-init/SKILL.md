@@ -1,6 +1,6 @@
 ---
 name: openspec-init
-description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、references、improvements 记忆域与行为语料库，按语义条目全量迁移并归档旧 architecture、learned、optimization，或配置 Claude Code、OpenCode 和 Codex 共用入口。
+description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目记忆体系。用于新项目设置规范，创建 project-model、references、improvements 记忆域与行为语料库，或配置 Claude Code、OpenCode 和 Codex 共用入口。
 ---
 
 # OpenSpec Init
@@ -12,7 +12,6 @@ description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目
 - 生成 `CLAUDE.md` 前完整读取 [references/claude-template.md](references/claude-template.md)。
 - 为 Codex 和 OpenCode 生成规则入口前完整读取 [references/agents-adapter.md](references/agents-adapter.md)。
 - 生成 specs 前完整读取 [references/spec-templates.md](references/spec-templates.md)。
-- 检测到旧文档结构时完整读取 [references/migration.md](references/migration.md)。
 
 ## Phase 0：环境检查
 
@@ -25,8 +24,6 @@ description: 初始化或升级 OpenSpec 项目规则、状态、变更和项目
    - `CLAUDE.md`
 3. 检查 Git 状态和现有用户修改。
 4. 任一目标已存在时先确定处理策略。CLAUDE 和 SNAPSHOT 可重建；其他文档不覆盖原内容。
-5. 发现旧体系文档时进入全量迁移模式，沿文档地图、引用、归档指引和历史 carrier 建立来源清单；不得按固定路径、价值或相关性选择迁移范围。
-6. 从来源清单排除 CLAUDE 和 SNAPSHOT。迁移期间保持旧经验来源只读；记录路径、mtime、工作区状态和已归档 legacy carrier 路径，不生成内容哈希。
 
 OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验证的替代结构。
 
@@ -100,17 +97,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.claude/docs/` �
 
 禁止把任何平台专属任务 API、agent 配置或工具名写成唯一合法实现。
 
-## Phase 6：旧体系全量迁移
-
-仅在发现旧体系文档时执行。
-
-完整执行 [references/migration.md](references/migration.md) 的来源发现、语义条目映射、覆盖验证、MIG 载体和失败处理。Init 负责迁移和生成载体；`openspec-archivist` 只核验并完整归档载体。载体归档成功后才能退出旧活动路径。
-
-用户要求升级或迁移即构成创建、归档 migration carrier 和退出旧活动路径的授权，不需要重复确认。该授权不包括 Delete、Compress-Archive 或其他生命周期清理。
-
-任一 migration Gate 失败时停止并保留旧活动文件，不得把部分迁移声明为完成。
-
-## Phase 7：跨平台安装
+## Phase 6：跨平台安装
 
 技能内容保持同一份。按平台建立入口：
 
@@ -139,10 +126,6 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.claude/docs/` �
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/R/I` 编号，位于 `openspec/specs/` 的记忆域。
 - 行为语料库位于 `openspec/specs/` 的行为域，首次合并前不创建域文件。
-- 新项目不创建 architecture、learned 或 optimization spec。
-- 升级项目通过 [references/migration.md](references/migration.md) 的全部覆盖、载体和失败检查，满足 `semantic entries = mapped entries = verified entries`、`unmapped = 0`、`skipped = 0`。
-- migration carrier 保存完整原文和映射且不含内容哈希或核对过程日志；历史 carrier 保持不可变，CLAUDE 和 SNAPSHOT 已重建且不进入迁移载体。
-- migration carrier 归档成功后才退出旧活动路径；旧经验文档未使用 Delete 或 Compress-Archive。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - Cycle 文件由 plan 按技能内模板创建，`.claude/docs/` 下无 templates 目录；Plan、Act 和 Review 区域职责分离，Plan Context 支持 `draft → ready`。
@@ -160,22 +143,14 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.claude/docs/` �
 - 创建和合并的文件。
 - OpenSpec 验证输出。
 - 三端入口路径。
-- 旧编号到 M/R/I 的迁移映射。
-- 语义条目覆盖统计和未映射计数。
-- migration carrier 及恢复入口。
-- 旧体系活动路径和旧引用的最终扫描结果。
 - 按需产物目录的支持状态。
-- 非迁移步骤的跳过项及原因。
+- 跳过项及原因。
 - 需要用户决定的冲突。
 
 ## 禁止
 
 - 把 AI 工具列为 Git co-author。
-- 覆盖经验来源或迁移目标；CLAUDE 和 SNAPSHOT 的重建除外。
+- 覆盖用户文档；CLAUDE 和 SNAPSHOT 的重建除外。
 - 创建重复 rules spec。
 - 只检查一个目录就推断初始化完成。
 - 使用某个平台专属 frontmatter 破坏其他平台解析。
-- 选择性、部分或抽样迁移旧经验文档。
-- 把重复、过时、低价值或暂时无法分类作为不迁移理由。
-- 用 Delete 或 Compress-Archive 处理旧经验文档。
-- carrier 完整归档前移除旧活动文件。

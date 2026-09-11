@@ -24,7 +24,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 
 ## 不可违反的约束
 
-1. 用户确认前不移动、删除或归档；用户明确要求 Init 升级或迁移，视为只确认旧经验文档的完整 Archive。
+1. 用户确认前不移动、删除或归档。
 2. 逐条判断，不按整份文件粗略处理。
 3. Archive 和 Delete 前扫描交叉引用。
 4. `CLAUDE.md` 永不自动归档，只能建议审查。
@@ -34,17 +34,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 8. carrier 归档成功前不删除源条目。
 9. 每次清理使用独立 carrier，不跨清理批次合并。
 10. 活跃文档的表达压缩交给 compressor。
-11. Init 全量迁移不重新判断信息价值；覆盖清单中的全部语义条目都必须保留。
-12. 旧经验文档只能完整 Archive，不得 Delete 或 Compress-Archive。
-13. Change Evidence 不执行 Artifact-Archive，不登记 R，随所属 change 由 OpenSpec 集成归档。
-
-## Init 迁移归档
-
-这是普通生命周期清理的窄例外，只接收 `openspec-init` 已完成的新体系写入和迁移清单。
-
-按 [references/carrier-protocol.md](references/carrier-protocol.md) 的 Migration carrier 要求核验覆盖、mtime、完整原文、新目标和恢复入口。核验通过后完整归档 carrier 并退出旧活动路径；不得重新判断信息价值、改写来源映射或要求用户逐条确认。任一条件失败时保留全部旧活动文件并返回 Init 修复。
-
-已归档 legacy carrier 不重复装入或归档。Archivist 核验其路径、语义条目映射和新目标，保持历史载体不可变。
+11. Change Evidence 不执行 Artifact-Archive，不登记 R，随所属 change 由 OpenSpec 集成归档。
 
 ## Phase 1：ANALYZE
 
@@ -54,7 +44,6 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 
 - 目标所在的 project-model、references、improvements、SNAPSHOT 或 tasks
 - 目标 Analysis、Runbook、Incident 及其 R 索引
-- 迁移期间存在的 architecture、learned、optimization
 - 与目标有关的活跃 change 和 `openspec list` 结果
 
 Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive、Compress-Archive 或 Delete 前对目标正文、活动状态和交叉引用的新鲜检查。
@@ -64,7 +53,6 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive�
 按编号和结构识别条目：
 
 - `Mxx/Rxx/Ixx/MSxx/Txx`
-- 旧 `Axx/Lxx/Oxx` 和 Legacy ID。
 - 模型、参考和改进标题。
 - 表格行。
 - checkbox 任务。
@@ -90,8 +78,6 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive�
 - 交叉引用。
 - 恢复条件。
 
-Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”核验全部旧经验文档；不跳过覆盖核验。
-
 ### Step 5：提交用户
 
 展示：
@@ -102,7 +88,7 @@ Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”�
 - 交叉引用警告。
 - OpenSpec change 建议。
 
-用户只需判定不确定项，也可以限制动作类型或文件范围。没有用户确认时停止。Init 迁移请求已构成完整 Archive 的确认，不进入普通候选判定。
+用户只需判定不确定项，也可以限制动作类型或文件范围。没有用户确认时停止。
 
 ## Gate 1：用户判定
 
@@ -120,7 +106,7 @@ Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”�
 
 按顺序执行：
 
-1. 处理用户批准且无法满足正常收尾条件的 OpenSpec change；Init 迁移先核验 migration carrier。
+1. 处理用户批准且无法满足正常收尾条件的 OpenSpec change。
 2. Promote。
 3. Merge。
 4. 预检活跃 changes。
@@ -133,8 +119,6 @@ Init 迁移归档跳过生命周期动作判断，直接按“完整 Archive”�
 
 任何 carrier 步骤失败时停止，不删除源条目。
 
-Migration carrier 归档成功后，按载体协议退出旧体系活动路径，不追加会让旧体系继续处于活动状态的墓碑文件。
-
 ## Gate 2：验证
 
 确认：
@@ -146,7 +130,6 @@ Migration carrier 归档成功后，按载体协议退出旧体系活动路径�
 - 源文档结构完整。
 - 详细产物移动后 R 路径已更新。
 - change 归档后，其已有 Evidence 目录和文件仍完整可定位。
-- Init 迁移通过 [references/carrier-protocol.md](references/carrier-protocol.md) 的覆盖、完整原文、归档和旧活动路径退出检查。
 
 ## 恢复
 
@@ -162,5 +145,3 @@ M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Ru
 - 把 Analysis、Runbook 或 Incident 放进 OpenSpec archive。
 - 脱离所属 change 单独移动、压缩或登记 Evidence。
 - 全量覆盖源文档。
-- 对 Init 迁移内容执行价值、时效或相关性筛选。
-- 删除或压缩归档旧经验文档。
