@@ -107,7 +107,7 @@ Code quality review 检查：
 |---|---|---|---|---|
 | 测试 | `<command>` | `<fresh output>` | `<行为或代码表面>` | PASS/FAIL |
 
-Gate 需要新鲜验证结果——产生时真实运行过且覆盖范围未变化——但不要求原始输出文件。按直接目标、受影响边界、必要集成或全量 Gate 的顺序递增验证；结果足以判断 Acceptance 后停止。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
+Gate 验证的新鲜性、影响范围递增和停止条件按公共规则 › 验证 执行。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
 
 ## 按需 Evidence
 
@@ -115,7 +115,7 @@ Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只�
 
 Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 6 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
-不得为 Evidence 新增身份型证据机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制；不得创建排除路径或二级验证来维持身份检查。
+不得为 Evidence 新增身份型证据机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制。
 
 决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
@@ -133,12 +133,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
-三次失败后：
-
-1. 列出三次尝试和症状。
-2. 检查 shared state、coupling 和错误的需求假设。
-3. 判断应返回架构设计还是需求确认。
-4. 禁止开始第四次同类尝试。
+三次失败后按公共规则 › 三次失败 反思，不开始第四次同类尝试。
 
 非实质差异不命中 Gate 6。Act 在契约内处理并记录，不建立 Blocker Handoff。
 
