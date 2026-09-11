@@ -20,19 +20,18 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 ## 约束
 
-1. 用户直接调用时，除 SNAPSHOT 默认刷新外只修改明确要求的内容；Explorer 和 Recorder 的限定 R 登记只写 references。
+1. 用户直接调用的修改范围、SNAPSHOT 刷新和限定 R 登记边界按公共规则 › 阶段边界 执行。
 2. 写入前搜索重复条目。
 3. 读取最大编号后递增。
 4. 直接调用时 SNAPSHOT 默认增量更新；其他已有文档只做精准修改。
 5. 不删除或归档 M/R/I 等条目；这类操作交给 archivist。
 6. 不改变 Explorer、Recorder 管理的持久化产物正文。
 7. change 的活跃状态由 `.agents/changes/` 目录存在性表达；change 内文档由 plan 和 act 维护。
-8. 直接调用默认刷新 SNAPSHOT；限定 R 登记跳过 SNAPSHOT。同步不隐含归档，归档不隐含其他清理。
+8. 同步不隐含归档，归档不隐含其他清理。
 9. Plan 和 Act 的完成报告不是写入授权。
-10. Explorer 自动请求只授权 Analysis 的 R 登记；Recorder 自动请求只授权本次 Runbook 或 Incident 的 R 创建或更新。
-11. 每项信息只有一个权威位置；其他文档使用编号或路径引用。
-12. Change Evidence 属于 change，不登记 R，也不作为独立持久化产物维护。
-13. `MSxx` 的目标、范围、依赖、验证和诊断边界由 `openspec-milestone-planner` 规划；Maintainer 只同步已有 milestone 的运行状态和 change 引用。
+10. Explorer 与 Recorder 的自动登记授权范围按公共规则 › 阶段边界 执行。
+11. Change Evidence 属于 change，不登记 R（公共规则 › Iteration 与 Cycle 线程）。
+12. `MSxx` 的规划与状态同步分工按公共规则 › 信息路由 执行。
 
 ## 工作流
 

@@ -85,13 +85,4 @@ entries/<source-domain>.md 保留：
 
 ## 恢复要求
 
-Maintainer 应能：
-
-1. 从 arc 指引找到 proposal。
-2. 从映射表找到原编号。
-3. 从 entries 文件读取条目。
-4. 精准插回源位置。
-5. 更新 arc 计数。
-6. 追加 restored 标记。
-
-因此不得删除 proposal 映射或原编号。
+条目恢复由 `openspec-docs-maintainer` 执行。carrier 必须保留 proposal 映射和原编号，使 Maintainer 能从 arc 指引定位 proposal、按原编号读取 entries 并插回源位置。
