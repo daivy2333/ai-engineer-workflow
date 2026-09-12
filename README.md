@@ -1,6 +1,6 @@
 # AI Engineer Workflow Skills
 
-一组可复用的 `SKILL.md` 工作流，覆盖 OpenSpec、OMO 模型编排、Markdown 写作、知识讲授、OS、驱动、QEMU 和真机调试。
+一组可复用的 `SKILL.md` 工作流，覆盖 OpenSpec、Markdown 写作、知识讲授、OS、驱动、QEMU 和真机调试。
 
 ## 支持范围
 
