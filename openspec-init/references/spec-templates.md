@@ -26,7 +26,7 @@
 
 只记录检索元数据，不复制目标正文。条目使用 `Rxx`。
 
-类型：analysis、external-doc、dependency、schema、benchmark、runbook、incident。
+类型：analysis、external-doc、dependency、schema、benchmark、runbook、issue。
 
 条目字段：类型、路径或 URL、版本或日期、用途、状态。
 
@@ -69,7 +69,7 @@ Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 - 合并冲突（同名不同义、增量与域文件矛盾）时停止并请求用户决定。
 - archivist 归档的异常 change 不合并。
 
-计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，故障事件写 Incident。
+计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，缺陷写 Issue。
 
 ## 状态文档
 

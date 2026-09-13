@@ -170,7 +170,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 | Type | Candidate | Evidence | Reason |
 |---|---|---|---|
-| Runbook / Incident | <候选主题> | <Act Response 或 Evidence> | <满足产物门槛的原因> |
+| Runbook / Issue | <候选主题> | <Act Response 或 Evidence> | <满足产物门槛的原因> |
 
 <没有候选时写 None>
 

@@ -43,7 +43,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 复用当前会话中 Assistant 已读取且未变化的项目地图和状态概览。先读取用户指定目标和判断所需的索引，再按搜索命中补读相关内容：
 
 - 目标所在的 project-model、references、improvements、SNAPSHOT 或 tasks
-- 目标 Analysis、Runbook、Incident 及其 R 索引
+- 目标 Analysis、Runbook、Issue 及其 R 索引
 - 与目标有关的活跃 change（`ls .agents/changes/`）
 
 Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive、Compress-Archive 或 Delete 前对目标正文、活动状态和交叉引用的新鲜检查。
@@ -56,7 +56,7 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive�
 - 模型、参考和改进标题。
 - 表格行。
 - checkbox 任务。
-- Analysis、Runbook、Incident 与 R 索引。
+- Analysis、Runbook、Issue 与 R 索引。
 - 活跃 change 的 Iteration、Cycle、Act Response 和按需 Evidence。
 
 ### Step 3：交叉引用
@@ -133,7 +133,7 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive�
 
 ## 恢复
 
-M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`，R 路径和状态由其限定请求交给 Maintainer 更新。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
+M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Runbook 和 Issue 的正文恢复交给 `openspec-experience-recorder`，R 路径和状态由其限定请求交给 Maintainer 更新。条目归档保留 carrier、映射和 arc；Artifact 归档保留 R 编号、路径和状态。
 
 ## 禁止
 
@@ -142,6 +142,6 @@ M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Ru
 - 自动改写或归档 `AGENTS.md`。
 - 未经用户确认移动 change。
 - carrier 失败后删除源条目。
-- 把 Analysis、Runbook 或 Incident 放进 OpenSpec archive。
+- 把 Analysis、Runbook 或 Issue 放进 OpenSpec archive。
 - 脱离所属 change 单独移动、压缩或登记 Evidence。
 - 全量覆盖源文档。

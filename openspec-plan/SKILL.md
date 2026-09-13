@@ -229,6 +229,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
+   - 当前 change 范围外的实质缺陷作为 Issue 候选报告，不落账（公共规则 › Iteration 与 Cycle 线程）。
    - 身份型证据工程属于 `PLAN-INVALID`：Plan 把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
 7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
 8. 有限修复受当前执行契约约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
@@ -262,6 +263,7 @@ Review 模式改为交付：
 - Acceptance Gaps、收敛判断和 Iteration Plan 是否保持不变。
 - 当前 Cycle 修复意见，或无需当前 Cycle 修复。
 - 新 Cycle 路径、新 Iteration 路径，或 None。
+- 报告的 Issue 候选，或 None。
 - 未确认问题和用户需决定的内容。
 
 然后终止。提醒用户：

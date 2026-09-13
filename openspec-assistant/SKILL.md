@@ -1,6 +1,6 @@
 ---
 name: openspec-assistant
-description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更、项目模型、参考、改进、行为规格、Runbook、Incident 和分析文档。用于询问项目现状、已有依据、文档位置或应使用哪个 OpenSpec skill；不执行写入。
+description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更、项目模型、参考、改进、行为规格、Runbook、Issue 和分析文档。用于询问项目现状、已有依据、文档位置或应使用哪个 OpenSpec skill；不执行写入。
 ---
 
 # OpenSpec Assistant
@@ -37,7 +37,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act`，按需创建 |
 | 深度分析 | `.agents/analysis/` | `openspec-explorer` |
 | 操作手册 | `.agents/runbooks/` | `openspec-experience-recorder` |
-| 故障记录 | `.agents/incidents/` | `openspec-experience-recorder` |
+| 缺陷台账 | `.agents/issues/` | `openspec-experience-recorder` |
 
 ## 路由
 
@@ -48,7 +48,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 需求与计划 | `openspec-plan` |
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、反馈当前 Cycle 修复、生成 rework/replan Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
-| 创建、更新或恢复 Runbook、Incident | `openspec-experience-recorder` |
+| 创建、更新或恢复 Runbook、Issue | `openspec-experience-recorder` |
 | 更新状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，或正常收尾最终 `Review Result: accepted` 的 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
 | 原地压缩表达 | `openspec-compressor` |

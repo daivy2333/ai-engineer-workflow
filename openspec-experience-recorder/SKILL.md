@@ -1,6 +1,6 @@
 ---
 name: openspec-experience-recorder
-description: 根据已经发生且有证据的实施或运行过程，创建、更新或恢复 OpenSpec Runbook 和 Incident。用于 openspec-act 完成或阻塞后记录可重复操作与重要故障，也用于根据外部日志、命令、时间线和既有产物独立维护工程经验；不预先探索、不实施、不修改 change 或项目记忆。
+description: 根据已经发生且有证据的实施或运行过程，创建、更新或恢复 OpenSpec Runbook 和 Issue（缺陷台账）。用于 openspec-act 完成或阻塞后记录可重复操作、登记缺陷与故障事件，也用于根据外部日志、命令、时间线和既有产物独立维护工程经验；不预先探索、不实施、不修改 change 或项目记忆。
 ---
 
 # OpenSpec Experience Recorder
@@ -12,7 +12,7 @@ description: 根据已经发生且有证据的实施或运行过程，创建、�
 ## 职责
 
 - 创建、更新和恢复 `.agents/runbooks/` 中的 Runbook。
-- 创建、更新和恢复 `.agents/incidents/` 中的 Incident。
+- 创建、更新和恢复 `.agents/issues/` 中的 Issue。
 - 从 Act Response、Evidence、命令输出、日志、时间线或现有产物提取事实。
 - 区分事实、推断和未确认项。
 - 为新建、实质更新或恢复的产物请求 R 登记或索引更新。
@@ -25,16 +25,16 @@ Act 可以列出 Experience Candidates，但候选不构成创建授权，也不
 
 - `runbook-create`：把已跑通路径记录为 Runbook。
 - `runbook-update`：用新的执行证据更新已有 Runbook。
-- `incident-create`：记录已经发生的重要故障。
-- `incident-update`：补充影响、时间线、根因、恢复或后续状态。
-- `restore`：按用户明确要求恢复已归档的 Runbook 或 Incident。
+- `issue-create`：为有证据的实质缺陷开 Issue，分配 ISSxx 并登记 R。
+- `issue-update`：补充缺陷描述或事件段，或按用户指令执行 close、reopen。
+- `restore`：按用户明确要求恢复已归档的 Runbook 或 Issue。
 
 来源可以是：
 
 - `reported` 或 `blocked` Cycle。
-- Act Response 和 change 内 Evidence。
+- Act Response、Plan Review 和 Explorer 报告中的 Issue 候选，以及 change 内 Evidence。
 - 用户提供的命令、日志、截图、时间线或环境信息。
-- 已有 Runbook、Incident 及其 R 索引。
+- 已有 Runbook、Issue 及其 R 索引。
 
 缺少 Act 或 change 不是阻塞条件。缺少支持目标内容的证据时停止，不通过重新实施或主动探索补造事实。
 
@@ -50,7 +50,9 @@ Runbook 必须同时满足：
 
 一次性命令、计划中的步骤、未验证建议和仅在错误原因下通过的操作不得创建 Runbook。
 
-Incident 至少满足一项：
+Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）：影响行为、接口、错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题。普通测试失败、预期 RED、已知且无额外影响的错误不得创建 Issue。
+
+事件段在缺陷实际引发故障时补记，至少满足一项：
 
 - 造成用户、数据、服务、硬件或交付影响。
 - 暴露跨模块或系统性失效。
@@ -58,32 +60,32 @@ Incident 至少满足一项：
 - 现场难以复现，需要保留时间线和证据。
 - 同一问题三次失败后停止，并形成可复用诊断信息。
 
-普通测试失败、预期 RED、已知且无额外影响的错误不得创建 Incident。根因未确认时允许记录，但必须标记 `unconfirmed`。
+根因未确认时允许记录，但必须标记 `unconfirmed`。
 
 ## 1. LOAD
 
 1. 复用当前会话中已读取且未变化的 `AGENTS.md` 和体系上下文，读取格式规则、同主题持久化产物及其 R 索引。
 2. 涉及 Act 时优先读取 Act Response 和实际存在的 Evidence；只有范围、前置条件或环境无法由这些来源确定时，才补读 Plan Context 的相关部分。
 3. 记录来源 revision、环境、命令、结果和证据路径。
-4. 搜索同主题 Runbook、Incident 和 R，避免重复。
+4. 搜索同主题 Runbook、Issue 和 R，避免重复；同类缺陷并入已有 Issue 追加 occurrence，不新开文件。
 
 ## 2. QUALIFY
 
-1. 选择 Runbook 或 Incident，不把同一正文混为两类。
+1. 选择 Runbook 或 Issue，不把同一正文混为两类。
 2. 对照产物门槛逐项判断。
 3. 标记证据支持的事实、合理推断和未知项。
 4. 证据不足时报告缺口并停止。
 
-`reported` Act 中通过 Gate 5 的路径可以支持 Runbook。`blocked` Act 通常只支持 Incident；其中独立验证成功的恢复路径可以支持 Runbook。
+`reported` Act 中通过 Gate 5 的路径可以支持 Runbook。`blocked` Act 通常只支持 Issue；其中独立验证成功的恢复路径可以支持 Runbook。
 
 ## 3. WRITE
 
 按格式文件精准创建或更新：
 
 - Runbook：`.agents/runbooks/<topic>.md`
-- Incident：`.agents/incidents/YYYY-MM-DD-<topic>.md`
+- Issue：`.agents/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增
 
-更新 Runbook 时保留仍有效的边界和失败处理，并刷新验证日期、环境与证据。更新 Incident 时追加时间线和状态，不改写已发生的历史。
+更新 Runbook 时保留仍有效的边界和失败处理，并刷新验证日期、环境与证据。更新 Issue 时追加事件段和状态迁移记录（日期、原因、指针），不改写已发生的历史；close 和 reopen 只按用户指令执行。
 
 Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文件数和大小预算；外部长日志只引用位置，并摘录支持结论的最小片段，不复制或重新收集完整日志。
 
@@ -118,7 +120,7 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 - 每项操作或事件事实有证据。
 - 推断和未知项已标明。
 - Runbook 的验证、失败处理和回滚完整。
-- Incident 的影响、时间线、恢复状态和证据完整。
+- Issue 的缺陷描述、事件段、处置指针和证据完整。
 - 路径与交叉引用有效。
 - 新建、更新或恢复的产物已有 R 结果或失败说明。
 - 未修改产品代码、change、Evidence 或项目记忆。
@@ -136,9 +138,9 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 
 - 为生成产物而重新实施或主动探索。
 - 根据计划或猜测创建 Runbook。
-- 把普通失败或预期 RED 写成 Incident。
+- 把普通失败或预期 RED 写成 Issue。
 - 把未确认根因写成事实。
 - 修改 Act Response、Plan Review、change tasks 或 Evidence。
 - 创建、修改或归档 M/I、tasks、SNAPSHOT 或 change。
 - 自动归档产物。
-- 调用 Compressor 改写 Runbook 或 Incident。
+- 调用 Compressor 改写 Runbook 或 Issue。

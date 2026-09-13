@@ -59,7 +59,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 改进：记录有证据但未承诺实施的问题、影响、建议和状态。
 - change 同步：仅在用户明确要求时，同步指定 propose、apply 或 archive 结果。
 - explorer 自动登记：只处理分析文档 R 候选，去重后写入 references。
-- recorder 自动登记：只处理本次 Runbook 或 Incident 的 R 候选或索引更新，去重后写入 references。
+- recorder 自动登记：只处理本次 Runbook 或 Issue 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M/I 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M/I 候选仅在用户明确要求时去重和写入。
 - change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `.agents/specs/`，再用 `git mv` 把 `.agents/changes/<name>` 移入 `.agents/archive/changes/<date>-<name>`，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
@@ -74,7 +74,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 指针和检索元数据写 R。
 - 未承诺改进写 I；批准后创建 change 并标记 `promoted`。
 - 可复用的构建、测试和其他命令行操作流程写 Runbook。
-- Runbook 和 Incident 正文交给 `openspec-experience-recorder`。
+- Runbook 和 Issue 正文交给 `openspec-experience-recorder`。
 
 ### 3. VERIFY
 
@@ -84,7 +84,8 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 检查编号唯一且递增。
 - 检查已收尾 change 的增量规格已合并到 `.agents/specs/`。
 - 检查 I 与 tasks/change 没有重复活跃工作。
-- 检查 Runbook、Incident 和 analysis 有 R 索引。
+- 检查 Runbook、Issue 和 analysis 有 R 索引。
+- 收尾 change 的 Plan Review 或 Act Response 存在未处理 Issue 候选时报告（不阻塞、不写入）。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
 - 归档后检查 `.agents/archive/changes/` 下的 change 完整可定位。
 - 报告修改文件、编号和条目。
@@ -107,7 +108,7 @@ Analysis：
 3. 更新 R 路径和状态。
 4. 检查交叉引用。
 
-Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`。Maintainer 只接受其限定请求更新 R 路径和状态。
+Runbook 和 Issue 的正文恢复交给 `openspec-experience-recorder`。Maintainer 只接受其限定请求更新 R 路径和状态。
 
 ## 禁止
 
@@ -121,7 +122,7 @@ Runbook 和 Incident 的正文恢复交给 `openspec-experience-recorder`。Main
 - 根据 Plan 或 Act 的完成声明自动写入或归档。
 - 借 Explorer 自动登记修改 R 以外的文档。
 - 借 Recorder 自动登记修改 R 以外的文档。
-- 创建、修改或恢复 Runbook 和 Incident 正文。
+- 创建、修改或恢复 Runbook 和 Issue 正文。
 - 把已承诺工作继续作为活跃 I 保留。
 - 创建、拆分、合并或重排 `MSxx`。
 - 在 R 中复制目标文档正文。

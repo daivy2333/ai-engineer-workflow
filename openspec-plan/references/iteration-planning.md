@@ -59,7 +59,7 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 |---|---|---|
 | 既有 Acceptance 未满足，但修复仍受当前 Plan Context 约束，不需要新的执行上下文 | 保持 `pending` | Plan 在 Review 给出当前 Cycle 修复意见；不创建后继 Cycle |
 | 实现不达标、Act 偏离计划，或 Plan 遗漏需要新的 Current-State Evidence、repair item、Task Contract 或 Gate 2 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
-| 只有不阻塞 Acceptance 的 Minor finding | `accepted` | 记录 finding；按职责决定是否另建后续 task，不强制返工 |
+| 只有不阻塞 Acceptance 的 Minor finding | `accepted` | 记录 finding；范围外实质缺陷报告为 Issue 候选（公共规则 › Iteration 与 Cycle 线程）；按职责决定是否另建后续 task，不强制返工 |
 | 目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变 | `replan-required` | 停止普通返工；更新 change 和未完成 Iteration Plan，再创建后继 replan Cycle |
 | Acceptance 已满足且没有阻塞项 | `accepted` | 完成当前 Iteration；存在后续 Iteration 时只展开下一个 |
 

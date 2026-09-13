@@ -32,7 +32,7 @@
 | Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act` |
 | 分析文档 | `.agents/analysis/` | `openspec-explorer` |
 | Runbook | `.agents/runbooks/` | `openspec-experience-recorder` |
-| Incident | `.agents/incidents/` | `openspec-experience-recorder` |
+| Issue（缺陷台账） | `.agents/issues/` | `openspec-experience-recorder` |
 
 ## 读取顺序
 
@@ -45,7 +45,7 @@
 - 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
 - 实现 Review：当前 Cycle → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
-- 故障复盘：Incident → analysis → project-model → specs → improvements/change。
+- 缺陷查询与复盘：issues → analysis → project-model → specs → improvements/change。
 - 查询：assistant。
 - 路线规划：milestone-planner。
 - 日常文档写入：docs-maintainer。
@@ -56,7 +56,7 @@
 - `openspec-milestone-planner`：规划 `MSxx` 路线，平衡工作量、验证边界和诊断边界；不创建 change。
 - `openspec-plan`：需求、BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施 Review。
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
-- `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Incident。
+- `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Issue。
 - `openspec-docs-maintainer`：显式维护状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
@@ -71,7 +71,7 @@
 - Plan Review 后终止，不自动调用 Act 或 Maintainer。
 - Explorer 即时回答后终止，不调用 Maintainer。
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
-- Recorder 生成、更新或恢复 Runbook、Incident 后，可自动调用 Maintainer 创建或更新对应 R。
+- Recorder 生成、更新或恢复 Runbook、Issue 后，可自动调用 Maintainer 创建或更新对应 R。
 - 上述自动授权只覆盖对应 R，不覆盖 M/I、tasks 或 change。
 - Maintainer 由用户直接调用时刷新 SNAPSHOT；Explorer、Recorder 的限定 R 登记不刷新 SNAPSHOT。
 - Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
@@ -109,13 +109,14 @@
 - 有证据但未承诺实施的问题写 improvements，编号 `Ixx`。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
-- 已发生的重要故障由 Recorder 写入 Incident，并登记 R。
+- 实施或探索中发现的实质缺陷由 Recorder 登记为 Issue，并登记 R。
+- 缺陷状态与处置的权威在 issues/，调查正文留在 analysis 和 change 产物，不复制。
 - 详细调查、实验和评估写 analysis，并登记 R。
 - Cycle 的持久化日志和数据按 Iteration/Cycle 层级写入 change 内 Evidence。
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
-Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
+Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
 
 ## 记录边界
 
@@ -125,9 +126,9 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Incident 可以保留
 - Improvement 只保存未承诺工作；批准后创建 change 并标记 `promoted`。
 - Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
 - Tasks 不保存未批准想法。
-- 普通测试失败不创建 Incident。
+- 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 准入为实质缺陷（› Plan 调查）。
 - 一次性命令不创建 Runbook。
-- Runbook 和 Incident 不由 Compressor 改写。
+- Runbook 和 Issue 不由 Compressor 改写。
 - 普通验证结果写 Act Response；没有持久化要求时不创建 Evidence 占位目录。
 
 ## 行为约束
@@ -263,12 +264,13 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 可处理非实质局部差异并在 Response 记录；实质问题返回 Plan。
 - Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录 Self-Review、已修复发现和遗留 Minor 问题。
-- Act Response 记录有证据的 Runbook、Incident 候选；没有则写 `None`。
+- Act Response 记录有证据的 Runbook、Issue 候选；没有则写 `None`。
+- 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不落账；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
 - Act Response 状态允许 `pending → reported`、`pending → blocked`、用户解决阻塞后的 `blocked → pending`，以及 Plan 要求当前 Cycle 修复时的 `reported → pending`。
 - 计划偏差或 `required` Evidence 不再满足白名单、必要性、预算或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
 - Review 保持 `pending` 且没有后继 Cycle 时，Plan 和 Act 可分别覆盖自己的区域为最新完整状态；进入终态或创建后继 Cycle 后，Cycle 冻结。Plan Context 始终不可改写。
-- Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
+- Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - Act 不得创建下一 Cycle 或下一 Iteration。
 - Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。

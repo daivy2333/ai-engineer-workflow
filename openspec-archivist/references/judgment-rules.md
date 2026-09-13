@@ -49,7 +49,7 @@
 
 **Artifact-Archive**
 
-移动 Analysis、Runbook 或 Incident 到对应 `archive/` 子目录。保留 R 编号并更新路径和 `[ARCHIVED YYYY-MM-DD]` 状态，不进入 carrier。
+移动 Analysis、Runbook 或 Issue 到对应 `archive/` 子目录。保留 R 编号并更新路径和 `[ARCHIVED YYYY-MM-DD]` 状态，不进入 carrier。
 
 ## 通用阈值
 
@@ -61,7 +61,7 @@
 | 失效参考 | 已确认不可访问或不再使用 | Archive |
 | 孤立 Analysis | 超过 180 天 | Artifact-Archive |
 | 过时 Runbook | 依赖的系统或命令已失效 | Artifact-Archive |
-| 已解决 Incident | 无活跃后续动作且必要关联已记录 | Artifact-Archive |
+| 已关闭 Issue | 关闭指针已记录 | Artifact-Archive |
 
 时间结论需要 Git 历史或文档日期支持，不能只按当前日期推断。
 
@@ -105,13 +105,13 @@
 - 命令或环境疑似过时：Stale-Warn。
 - 被新版替代：Artifact-Archive，并更新 R。
 
-**Incident**
+**Issue**
 
-- 后续动作仍活跃：Keep。
-- 已解决但必要关联尚未记录：Keep。
-- 已解决且结论、决策、动作或 Runbook 已有目标引用：Artifact-Archive。
+- open：Keep。
+- closed 且关闭指针已记录：Artifact-Archive。
+- closed (scheduled) 的 MSxx 被 superseded：Stale-Warn，提示交 Recorder 重开。
 
-Incident 的 M/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结事件经验。
+Issue 的 M/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结缺陷经验，也不改写 Issue 状态或执行 reopen。
 
 **SNAPSHOT**
 
