@@ -38,7 +38,7 @@
 
 当条目职责改变时迁移到目标类型：
 
-- I 获准实施时，提升为 change，并标记 `promoted`。
+- I 获准实施时，纳入 change 或 milestone，并标记 `promoted`。
 
 提升写入交给 Maintainer。原条目保留目标编号或路径。
 
@@ -94,7 +94,7 @@
 **improvements**
 
 - 未承诺且仍相关：Keep。
-- 已批准：Promote 为 change，I 标记 `promoted`。
+- 已批准：纳入 change 或 milestone，I 标记 `promoted`。
 - change 已归档：Archive。
 - 无证据或无法判断：Stale-Warn。
 
@@ -110,7 +110,7 @@
 - closed 且关闭指针已记录：Artifact-Archive。
 - closed (scheduled) 的 MSxx 被 superseded：Stale-Warn，提示交 Recorder 重开。
 
-Issue 的 M/I 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结事件经验，也不改写 Issue 状态或执行 reopen。
+Issue 的 M 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更新时列出。Archivist 只检查引用是否存在，不在清理阶段总结缺陷经验，也不改写 Issue 状态或执行 reopen。
 
 **SNAPSHOT**
 

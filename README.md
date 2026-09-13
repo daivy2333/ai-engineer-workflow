@@ -127,7 +127,7 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 |---|---|---|
 | Project Model | 当前有效的开发约束 | `Mxx` |
 | References | 只保存检索元数据 | `Rxx` |
-| Improvements | 有证据但未承诺实施的问题 | `Ixx` |
+| Improvements | 用户提供的未来工作方向 | `Ixx` |
 | 行为规格 | 验收过的系统当前行为，收尾时合并增量 | `openspec/specs/<domain>/spec.md` |
 | Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |

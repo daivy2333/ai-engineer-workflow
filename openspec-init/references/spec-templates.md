@@ -81,30 +81,28 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 
 路径：`openspec/specs/improvements/spec.md`
 
-记录有证据但尚未承诺实施的问题。条目使用 `Ixx`。
-
-分类可以是性能、可维护性、安全、可靠性、开发体验、技术债、文档或测试。
+记录用户主动提供的未来工作方向，agent 不产生 I 候选。条目使用 `Ixx`。
 
 ```markdown
 ## Purpose
 
-记录尚未承诺实施的改进机会。
+记录用户提供的未来工作方向。
 
 ## Requirements
 
-### Requirement: 改进项可评估
+### Requirement: 改进方向可评估
 
-改进项 SHALL 包含分类、问题、证据、影响、建议和状态。
+改进方向 SHALL 包含方向、依据、影响和状态。
 
-#### Scenario: 发现未排期问题
+#### Scenario: 登记用户方向
 
-- **WHEN** 已有证据表明存在改进机会但尚未批准实施
-- **THEN** 使用递增 I 编号记录
+- **WHEN** 用户明确提供某项未来工作方向且尚未批准实施
+- **THEN** 使用递增 I 编号记录方向、依据、影响和状态
 
 #### Scenario: 批准实施
 
-- **WHEN** 用户批准实施改进项
-- **THEN** 创建 OpenSpec change 并把原条目标记 promoted
+- **WHEN** 用户批准实施某方向
+- **THEN** 纳入 change 或 milestone 并把原条目标记 promoted
 ```
 
 ## 行为语料库
