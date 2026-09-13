@@ -13,11 +13,11 @@ description: 根据已经发生且有证据的实施或运行过程，创建、�
 
 - 创建、更新和恢复 `.agents/runbooks/` 中的 Runbook。
 - 创建、更新和恢复 `.agents/issues/` 中的 Issue。
-- 从 Act Response、Evidence、命令输出、日志、时间线或现有产物提取事实。
+- 从 Act Response、Plan Review、Explorer 报告、Evidence、命令输出、日志、时间线或现有产物提取事实。
 - 区分事实、推断和未确认项。
 - 为新建、实质更新或恢复的产物请求 R 登记或索引更新。
 
-Act 可以列出 Experience Candidates，但候选不构成创建授权，也不证明产物门槛已经满足。用户可以单独调用 Recorder，或预先明确授权 `Act → Recorder` 串联。
+Experience Candidates 和 Issue 候选可以出现在 Act Response、Plan Review 和 Explorer 报告中，但候选不构成创建授权，也不证明产物门槛已经满足。用户可以单独调用 Recorder，或预先明确授权 `Act → Recorder` 串联。
 
 ## 输入与模式
 
@@ -50,7 +50,7 @@ Runbook 必须同时满足：
 
 一次性命令、计划中的步骤、未验证建议和仅在错误原因下通过的操作不得创建 Runbook。
 
-Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）：影响行为、接口、错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题。普通测试失败、预期 RED、已知且无额外影响的错误不得创建 Issue。
+Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）。普通测试失败、预期 RED、已知且无额外影响的错误不得创建 Issue。
 
 事件段在缺陷实际引发故障时补记，至少满足一项：
 

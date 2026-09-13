@@ -39,7 +39,7 @@
 
 当条目职责改变时迁移到目标类型：
 
-- I 获准实施时，提升为 change，并标记 `promoted`。
+- I 获准实施时，纳入 change 或 milestone，并标记 `promoted`。
 
 提升写入交给 Maintainer。原条目保留目标编号或路径。
 
