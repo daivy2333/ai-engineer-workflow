@@ -198,7 +198,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - Runbook：已经端到端验证成功，且可重复或风险较高的操作路径。
-- Incident：造成显著影响、需要异常恢复、难以复现或包含系统性诊断信息的故障。
+- Issue：当前 change 范围外、有证据的实质缺陷（公共规则 › 记录边界）。
 
 候选必须引用 Act Response 或 Evidence。普通测试失败、预期 RED、一次性命令和未验证建议不构成候选。Act 不创建持久化产物；用户可以随后调用 `openspec-experience-recorder`，或预先明确授权串联执行。
 

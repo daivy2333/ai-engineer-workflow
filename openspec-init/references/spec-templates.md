@@ -58,7 +58,7 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 - schema
 - benchmark
 - runbook
-- incident
+- issue
 
 ```markdown
 ## Purpose
@@ -73,7 +73,7 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 
 #### Scenario: 登记持久化产物
 
-- **WHEN** 新分析、Runbook 或 Incident 需要跨会话复用
+- **WHEN** 新分析、Runbook 或 Issue 需要跨会话复用
 - **THEN** 使用递增 R 编号登记检索元数据
 ```
 
@@ -134,7 +134,7 @@ Change Evidence 位于所属 change 内，由 change 提供索引和归档入口
 - 合并冲突（同名不同义、增量与域文件矛盾）时停止并请求用户决定。
 - archivist 归档的异常 change 不合并。
 
-计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，故障事件写 Incident。
+计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，缺陷写 Issue。
 
 ## 状态文档
 

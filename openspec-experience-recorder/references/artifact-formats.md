@@ -1,6 +1,6 @@
 # 工程经验产物格式
 
-Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文引用来源证据，不复制长日志。
+Runbook 和 Issue 按需创建，不生成空目录或占位文档。正文引用来源证据，不复制长日志。
 
 ## Runbook
 
@@ -45,51 +45,45 @@ Runbook 和 Incident 按需创建，不生成空目录或占位文档。正文�
 
 更新时刷新 `Last validated`、环境和证据。未经重新验证，不把过期步骤改写为有效路径。
 
-## Incident
+## Issue
 
-路径：`.claude/incidents/YYYY-MM-DD-<topic>.md`
+路径：`.claude/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增。
 
 ```markdown
-# <事件名称>
+# <缺陷标题>
 
-- Status: open | mitigated | resolved
-- Occurred: <时间或时间范围>
+- Status: open | closed
+- Filed: YYYY-MM-DD
+- Source: <Plan Review / Act Response / Explorer 报告 / 外部证据>
 - Environment: <平台、工具链、模式和关键版本>
-- Source: <Act Cycle、Evidence 或外部证据>
+
+## 缺陷描述
+
+<对已有代码/行为的指控：预期、实际、位置 path::symbol>
 
 ## 影响
 
-<用户、系统、数据、硬件、交付和持续时间>
+<当前与潜在影响；未爆发写 None>
 
-## 时间线
+## 事件记录
 
-<发现、响应、缓解、恢复和确认节点>
+<缺陷实际引发故障时补记：时间线、触发与根因（Confirmed/Inferred/Unconfirmed）、检测与恢复；未爆发写 None>
 
-## 触发与根因
+## 处置
 
-- Confirmed: <已验证事实>
-- Inferred: <证据支持但未完全确认的推断>
-- Unconfirmed: <未知项和待验证假设>
-
-## 检测与恢复
-
-<如何发现、如何恢复、哪些保护失效>
-
-## 后续动作
-
-<关联 change、Runbook 或经用户授权写入的 M/I>
+<关联 change、MSxx 或用户决定；关闭时保留原因和指针：scheduled → MSxx | fixed → change | declined；reopen 追加记录>
 
 ## 证据
 
-<日志、命令、版本、路径、日期和适用限制>
+<Act Response、Evidence、analysis 或外部证据路径；不复制正文>
 ```
 
-更新时追加时间线，不覆盖历史事实。只有证据支持时才能把 `open` 更新为 `mitigated` 或 `resolved`。
+状态迁移追加记录（日期、原因、指针），不改写已发生内容。close 和 reopen 只按用户指令执行。并入同类报告时在缺陷描述追加来源，不新开文件。
 
 ## R 候选
 
 ```text
-类型: runbook | incident
+类型: runbook | issue
 主题: <主题>
 路径: <产物路径>
 日期: YYYY-MM-DD

@@ -33,7 +33,8 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 1. `CLAUDE.md`、`.claude/docs/SNAPSHOT.md` 和 `.claude/docs/tasks.md`；当前上下文没有具体内容时再读取。
 2. 相关 project-model 和 references。
 3. 已存在且与目标相关的 analysis。
-4. 活跃 change 的名称、目标和状态。
+4. 未关闭的 Issue（经 R 索引定位 `.claude/issues/`）。
+5. 活跃 change 的名称、目标和状态。
 
 Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止；不要求 Explorer 扩展职责，也不自行深挖代码。
 
@@ -49,6 +50,8 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 - 能独立判断完成的验证边界。
 - 失败时可限制排查范围的诊断边界。
 - 明确推迟到后续阶段的内容。
+
+未关闭 Issue 作为排期候选输入。
 
 先建立依赖关系，再分配编号。不要按目录、团队、工种或时间段机械切分。
 
@@ -78,9 +81,10 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 2. 保留现有 `Txx`、change 状态和用户无关内容。
 3. 新建 milestone 使用 `planned` 或 `ready`。
 4. 只调整用户批准范围内的 `planned` 和 `ready` 条目。
-5. 检查依赖无环，所有依赖编号存在。
-6. 检查目标覆盖，没有无依据的阶段。
-7. 运行 `git diff --check` 并审查完整 diff。
+5. milestone 条目可引用消耗的 ISSxx。
+6. 检查依赖无环，所有依赖编号存在。
+7. 检查目标覆盖，没有无依据的阶段。
+8. 运行 `git diff --check` 并审查完整 diff。
 
 规划者可以修改 milestone 的目标、范围、顺序和边界。运行中的状态变化由 Maintainer 按用户指令同步。
 
@@ -104,6 +108,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 - 新建、拆分、合并和重排的 `MSxx`。
 - 依赖顺序。
 - 聚合审计与拆分审计结果。
+- 消耗的 ISSxx 清单（供用户交 Recorder 关账）。
 - 修改文件。
 - 未解决的规划缺口。
 - 跳过项及原因。

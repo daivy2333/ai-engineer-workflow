@@ -58,7 +58,7 @@ changes/<change>/
             └── <最多四个实际证据文件>
 ```
 
-Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存每项不超过 20 行的决定性输出；`required` 只用于用户要求、无法低成本复现、一次性环境、Incident/Blocker 现场或不可摘要的决定性结构。若 `required` 在执行时不再合法或可采集，Act 以 `blocked` 返回 Plan，不强行收集。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个，单个文本文件最多 500 行且不超过 256 KiB；禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
+Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时由 Act Response 保存每项不超过 20 行的决定性输出；`required` 只用于用户要求、无法低成本复现、一次性环境、Issue/Blocker 现场或不可摘要的决定性结构。若 `required` 在执行时不再合法或可采集，Act 以 `blocked` 返回 Plan，不强行收集。每个 Cycle 最多 5 个文件（含 README），整个 change 最多 20 个，单个文本文件最多 500 行且不超过 256 KiB；禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
 
 本仓库只用目标状态、输出、错误结果、协议结果和退出码证明行为。禁止为了验证、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、peer/host pin、source/worktree freeze、artifact manifest、日志 Hash 链、时间顺序证明及其审计工具；这些材料身份信息不能替代行为验证。产品 requirement 明确要求的认证、完整性校验或多会话协议仍按目标行为规划和测试。
 

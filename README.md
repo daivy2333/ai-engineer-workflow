@@ -45,7 +45,7 @@
 | `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
 | `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
 | `openspec-act` | 执行当前 Cycle、TDD、Review、验证和反馈 |
-| `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Incident |
+| `openspec-experience-recorder` | 把已验证实施或运行经验记录为 Runbook、Issue（缺陷台账） |
 | `openspec-docs-maintainer` | 维护状态、M/R/I、行为规格合并、限定 R 登记、change 结果同步和正常收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
@@ -57,7 +57,7 @@
 assistant 只读
 explorer 只写 analysis
 milestone-planner 只规划 MSxx 路线
-experience-recorder 只写 Runbook 和 Incident
+experience-recorder 只写 Runbook 和 Issue
 maintainer 写状态、项目记忆、检索索引，收尾时合并行为规格
 compressor 只改表达密度
 archivist 只处理生命周期
@@ -100,8 +100,8 @@ openspec-act
   → 终止，等待用户审计
 openspec-experience-recorder
   → 由用户单独请求，或在 Act 前预先授权串联
-  → 读取 Act Response、Evidence 或外部运行证据
-  → 创建、更新或恢复 Runbook、Incident
+  → 读取 Act Response、Plan Review、Explorer 报告、Evidence 或外部运行证据
+  → 创建、更新或恢复 Runbook、Issue
   → 自动请求 Maintainer 登记对应 R
   → 终止，不修改 change 或项目记忆
 openspec-plan
@@ -133,10 +133,10 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 | Tasks | 已承诺工作 | `Txx` |
 | Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
 | Runbooks | 已验证、可重复或高风险的操作 | `.claude/runbooks/` |
-| Incidents | 已发生的重要故障和后续动作 | `.claude/incidents/` |
+| Issues | 缺陷台账：发现、事件、处置与关闭 | `.claude/issues/` |
 | Evidence | 按需保存某次 Cycle 无法充分摘要的决定性产物 | `openspec/changes/<change>/evidence/` |
 
-Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、结果无法低成本复现、一次性环境即将消失、Incident/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
+Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
 
 ### OS 与驱动
 

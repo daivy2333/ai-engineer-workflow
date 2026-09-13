@@ -65,9 +65,9 @@ OpenSpec 未安装时停止并给出安装命令。不要静默创建不受验�
 
 行为语料库位于 `openspec/specs/` 的行为域，按产品结构划分，由 maintainer 在 change 收尾时合并增量规格创建，init 不创建占位域文件。
 
-`.claude/analysis/`、`.claude/runbooks/` 和 `.claude/incidents/` 是按需产物目录。没有内容时不创建占位文件。
+`.claude/analysis/`、`.claude/runbooks/` 和 `.claude/issues/` 是按需产物目录。没有内容时不创建占位文件。
 
-Analysis 由 `openspec-explorer` 创建。Runbook 和 Incident 由 `openspec-experience-recorder` 根据已发生且有证据的过程创建。
+Analysis 由 `openspec-explorer` 创建。Runbook 和 Issue 由 `openspec-experience-recorder` 根据已发生且有证据的过程创建。
 
 ## Phase 4：状态文档
 
@@ -122,7 +122,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.claude/docs/` �
 - `AGENTS.md` 只做入口适配，没有复制公共规则。
 - assistant 是只读角色。
 - Maintainer 是日常状态、项目记忆和行为规格写入者，负责指定 change 结果同步和正常收尾；无法满足正常收尾条件的 change 由 Archivist 处理。
-- experience-recorder 是 Runbook 和 Incident 正文的唯一写入者。
+- experience-recorder 是 Runbook 和 Issue 正文的唯一写入者。
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/R/I` 编号，位于 `openspec/specs/` 的记忆域。
 - 行为语料库位于 `openspec/specs/` 的行为域，首次合并前不创建域文件。

@@ -1,6 +1,6 @@
 ---
 name: openspec-compressor
-description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/R/I 和 analysis；不处理 Runbook、Incident、行为规格或 change Evidence。
+description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/R/I 和 analysis；不处理 Runbook、Issue、行为规格或 change Evidence。
 ---
 
 # OpenSpec Compressor
@@ -12,7 +12,7 @@ description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不
 - `openspec-assistant`：只读查询。
 - `openspec-docs-maintainer`：日常状态、项目记忆、行为规格和检索索引写入。
 - `openspec-explorer`：生成分析文档。
-- `openspec-experience-recorder`：生成和更新 Runbook、Incident。
+- `openspec-experience-recorder`：生成和更新 Runbook、Issue。
 - `openspec-compressor`：原地压缩表达。
 - `openspec-archivist`：归档、删除、移动和墓碑。
 
@@ -58,7 +58,7 @@ HIGH 风险项必须获得用户确认。
 
 Change Evidence 只保存预算内且无法由 Act Response 充分表达的决定性产物，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件，也不得通过压缩绕过 Evidence 预算。
 
-Runbook 和 Incident 保存已验证操作与事件历史，由 `openspec-experience-recorder` 精准更新。不要压缩或改写其正文。
+Runbook 和 Issue 保存已验证操作与缺陷台账，由 `openspec-experience-recorder` 精准更新。不要压缩或改写其正文。
 
 ## Phase 4：VERIFY
 
@@ -77,4 +77,4 @@ Runbook 和 Incident 保存已验证操作与事件历史，由 `openspec-experi
 - 删除或改写 SNAPSHOT 的同步元数据和职责边界。
 - 为减少行数而删除未解决问题。
 - 压缩或改写 change 内 Evidence。
-- 压缩或改写 Runbook、Incident。
+- 压缩或改写 Runbook、Issue。
