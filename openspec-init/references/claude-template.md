@@ -148,6 +148,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 - 验证只证明目标行为。环境、命令、版本和 revision 可以定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
 - 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明同一次运行，也不得为证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
 - 发现身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，再运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
+- 跨 Skill 生效的规则只在本文件保留一份正文，其他位置按名引用。
 - 对已确认需要实施的工作，在同样满足 Acceptance 的方案中，依次优先复用项目已有实现、使用语言或平台原生能力、使用已有依赖，最后才新增最小必要代码或依赖；不为尚未发生的需求扩大当前实现。
 - 证据足以支持当前结论后停止搜索、测试和 Review。可选改进仅在有助于用户决策时报告，不纳入当前实现。
 
@@ -254,7 +255,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不修改 Iteration Map；Replan Cycle 使用同一目录的后继编号执行修订后的计划。两者都不占用全局 Iteration 编号。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
 - Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
-- Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文。
+- Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文；引用可以保留证据来源，但 Act 不得被要求沿引用链回读。
 - Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写当前 Cycle 的 `Act Response`。
@@ -311,9 +312,11 @@ Gate 必须有新鲜验证结果，但不要求原始输出文件。验证按影
 
 Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。
 
-每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
+每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩、编码或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
 
 禁止使用“应该、大概、基本完成”替代证据。
+
+change 结构自检覆盖：tasks 状态与实际完成一致，specs、design 与已实现行为一致，Iteration 与 Cycle 文件齐全，`Review Result` 与流程状态一致。
 
 ## 三次失败
 

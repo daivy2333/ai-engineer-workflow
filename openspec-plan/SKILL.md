@@ -16,7 +16,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 6. 使用当前环境可用的 OpenSpec 集成创建和检查 change。平台命令只属于适配层，不属于流程语义。
 7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
-8. Skill 完成不构成下一阶段授权。输出交接信息后终止，等待用户决定。
+8. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。输出交接信息后终止，等待用户决定。
 9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)；创建 Cycle 文件前完整读取 [references/cycle-template.md](references/cycle-template.md)。
 
 ## Phase 1：CLARIFY
@@ -107,7 +107,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
-Task Contract 是 Act 的任务级执行依据。背景、调查证据和 Implementation Guidance 不得给出冲突指令，也不规定非实质实现选择。
+背景、调查证据和 Implementation Guidance 不得给出与 Task Contract 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
 
 不得规划公共规则禁止的身份型证据工程。产品 requirement 明确要求的认证、完整性校验或多会话协议必须作为目标行为进入 requirement、scenario 和 Acceptance，不能以证据需要为理由引入。
 
@@ -168,7 +168,7 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 - 行为变化，以及 Task Contracts（含变更面）、共享不变量、非目标、RTM、Acceptance 和 Verification。
 - Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
 
-Plan Context 必须直接写入 Act 所需事实，不以 Explorer Analysis、Assistant 输出或前序 Cycle 引用代替必要正文。引用可以保留证据来源，但 Act 不需要沿引用链才能理解任务；自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
+Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
 `none` 表示命令、决定性输出、退出码、修改文件和符号写入 Act Response 即可，输出上限见公共规则 › 验证。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
 

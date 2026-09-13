@@ -119,6 +119,7 @@ Runbook 和 Issue 的正文恢复交给 `openspec-experience-recorder`。Maintai
 - 删除或归档文档条目。
 - 压缩活跃文档。
 - 手工修改 OpenSpec change 元数据。
+- 修改 change 内 Plan Context、Act Response 或 Review 正文。
 - 根据 Plan 或 Act 的完成声明自动写入或归档。
 - 借 Explorer 自动登记修改 R 以外的文档。
 - 借 Recorder 自动登记修改 R 以外的文档。
