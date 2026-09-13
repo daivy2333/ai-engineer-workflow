@@ -126,7 +126,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 - Improvement 只保存用户提供的未承诺方向；批准后纳入 change 或 milestone，标记 `promoted`。
 - Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
 - Tasks 不保存未批准想法。
-- 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 准入为实质缺陷（公共规则 › Plan 调查）。
+- 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 准入为实质缺陷（› Plan 调查）。
 - 一次性命令不创建 Runbook。
 - Runbook 和 Issue 不由 Compressor 改写。
 - 普通验证结果写 Act Response；没有持久化要求时不创建 Evidence 占位目录。

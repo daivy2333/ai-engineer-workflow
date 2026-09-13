@@ -178,7 +178,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 5. 对每项修复重跑受影响的 Gate 4 和 Gate 5；未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
 6. 实质问题按 Gate 6 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
 7. 运行完整验证套件。
-8. 验证 OpenSpec change。
+8. 验证 OpenSpec change，并按公共规则 › 验证 自检 change 结构。
 9. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 10. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
    - 实际改动。
