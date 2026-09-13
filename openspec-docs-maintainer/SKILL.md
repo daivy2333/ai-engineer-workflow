@@ -56,12 +56,12 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 模型：记录当前有效的开发约束、范围、证据和状态。
 - 行为规格：change 收尾时把 ADDED/MODIFIED/REMOVED 增量应用到 `.agents/specs/<domain>.md`；域文件不存在则创建；合并冲突时停止并请求用户决定；archivist 归档的 change 不合并。
 - 参考：只登记类型、路径或 URL、版本或日期、用途和状态。
-- 改进：记录有证据但未承诺实施的问题、影响、建议和状态。
+- 改进：记录用户提供的方向、依据、影响和状态。
 - change 同步：仅在用户明确要求时，同步指定 propose、apply 或 archive 结果。
 - explorer 自动登记：只处理分析文档 R 候选，去重后写入 references。
 - recorder 自动登记：只处理本次 Runbook 或 Issue 的 R 候选或索引更新，去重后写入 references。
-- explorer 其他交接：M/I 候选仅在用户明确要求时去重和写入。
-- recorder 其他交接：M/I 候选仅在用户明确要求时去重和写入。
+- explorer 其他交接：M 候选仅在用户明确要求时去重和写入。
+- recorder 其他交接：M 候选仅在用户明确要求时去重和写入。
 - change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `.agents/specs/`，再用 `git mv` 把 `.agents/changes/<name>` 移入 `.agents/archive/changes/<date>-<name>`，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
@@ -72,7 +72,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 长期选择及其理由保留在 change 的 design，随 change 归档。
 - 系统当前行为写 specs 语料库。
 - 指针和检索元数据写 R。
-- 未承诺改进写 I；批准后创建 change 并标记 `promoted`。
+- 用户提供且未承诺的方向写 I；批准后纳入 change 或 milestone 并标记 `promoted`。
 - 可复用的构建、测试和其他命令行操作流程写 Runbook。
 - Runbook 和 Issue 正文交给 `openspec-experience-recorder`。
 

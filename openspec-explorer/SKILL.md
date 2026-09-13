@@ -71,7 +71,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 4. 报告 R 编号和分析文档路径。
 5. 登记失败时保留分析文档并报告原因，不扩大写入范围。
 
-发现 M 候选、I 候选和 Issue 候选时只在结果中列出。除非用户明确授权，不自动登记这些候选、tasks 或 SNAPSHOT。
+发现 M 候选和 Issue 候选时只在结果中列出。除非用户明确授权，不自动登记这些候选、tasks 或 SNAPSHOT。
 
 即时回答模式不生成候选、不调用 Maintainer。
 
@@ -95,4 +95,4 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 - 重复已有分析。
 - 把分析文档写入 `.agents/memory/`。
 - 即时回答模式创建分析文档或调用 Maintainer。
-- 借自动 R 登记写入 M/I、tasks、SNAPSHOT 或 change。
+- 借自动 R 登记写入 M、I、tasks、SNAPSHOT 或 change。

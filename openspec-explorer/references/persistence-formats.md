@@ -37,13 +37,12 @@ Explorer 文档模式自动调用 `openspec-docs-maintainer` 登记 R。其他�
 状态: active
 ```
 
-自动登记请求只能包含分析文档路径、主题、日期、用途和 references 目标。不得携带 M/I、tasks、SNAPSHOT、change 或归档请求。
+自动登记请求只能包含分析文档路径、主题、日期、用途和 references 目标。不得携带 M、I、tasks、SNAPSHOT、change 或归档请求。
 
 ## 其他候选
 
 | 类型 | 进入条件 | 必要字段 |
 |---|---|---|
 | M | 当前有效的开发约束 | 分类、范围、不变量、证据、状态 |
-| I | 有证据但未承诺实施 | 分类、问题、证据、影响、建议 |
 
-文件位置、API 签名和链接进入 R。详细调查过程和已验证结论保留在 analysis，不复制进 M/I；能表达为行为要求的事实作为 spec 候选随下一个 change 进入语料库。
+文件位置、API 签名和链接进入 R。详细调查过程和已验证结论保留在 analysis，不复制进 M；能表达为行为要求的事实作为 spec 候选随下一个 change 进入语料库。

@@ -36,11 +36,9 @@ Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 
 路径：`.agents/memory/improvements.md`
 
-记录有证据但尚未承诺实施的问题。条目使用 `Ixx`。
+记录用户主动提供的模块级未来方向，agent 不产生 I 候选。条目使用 `Ixx`。
 
-分类：性能、可维护性、安全、可靠性、开发体验、技术债、文档、测试。
-
-条目字段：分类、问题、证据、影响、建议、状态。批准实施时创建 change，并把原条目标记 `promoted`。
+条目字段：方向、依据、影响、状态。批准实施时纳入 change 或 milestone，并把原条目标记 `promoted`。
 
 ## 行为语料库
 

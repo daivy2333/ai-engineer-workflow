@@ -72,7 +72,7 @@
 - Explorer 即时回答后终止，不调用 Maintainer。
 - Explorer 生成分析文档后，可自动调用 Maintainer 登记对应 R 引用。
 - Recorder 生成、更新或恢复 Runbook、Issue 后，可自动调用 Maintainer 创建或更新对应 R。
-- 上述自动授权只覆盖对应 R，不覆盖 M/I、tasks 或 change。
+- 上述自动授权只覆盖对应 R，不覆盖 M、I、tasks 或 change。
 - Maintainer 由用户直接调用时刷新 SNAPSHOT；Explorer、Recorder 的限定 R 登记不刷新 SNAPSHOT。
 - Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
@@ -106,7 +106,7 @@
 - 长期选择及其理由写 change 的 `design.md`，随 change 归档。
 - 系统当前行为写 specs 语料库；maintainer 在 change 收尾时合并增量规格。
 - 指针和检索元数据写 references，编号 `Rxx`。
-- 有证据但未承诺实施的问题写 improvements，编号 `Ixx`。
+- 用户提供且未承诺的方向写 improvements，编号 `Ixx`。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - 已验证且可重复或高风险的操作由 Recorder 写入 Runbook，并登记 R。
 - 实施或探索中发现的实质缺陷由 Recorder 登记为 Issue，并登记 R。
@@ -123,7 +123,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 - Model 只保存当前开发约束，不保存选择历史和行为描述。
 - 语料库只保存验收过的行为；计划外的已验证结论沉淀在 analysis，可表达为行为要求的事实随下一个 change 进入语料库。
 - Reference 不复制目标正文。
-- Improvement 只保存未承诺工作；批准后创建 change 并标记 `promoted`。
+- Improvement 只保存用户提供的未承诺方向；批准后纳入 change 或 milestone，标记 `promoted`。
 - Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
 - Tasks 不保存未批准想法。
 - 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 准入为实质缺陷（› Plan 调查）。
