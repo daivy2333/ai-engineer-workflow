@@ -68,7 +68,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 - Forbidden: <不得修改或扩大的范围>
 - Test witness: <位置、RED 或变更前 GREEN、命令和预期结果>
 - GREEN condition: <修改后通过条件>
-- Verification: <命令、通过条件和失败含义>
+- Verification: <自动命令或人工步骤、通过条件和失败含义；人工步骤写最短操作与直接可观察结果>
 - Stop when: <契约失效或需要返回 Plan 的实质条件>
 
 变量名、辅助函数拆分和等价局部控制流不写入契约，除非它们影响可观察行为或责任边界。
@@ -87,7 +87,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Verification**
 
-<直接观察目标状态、输出、错误结果或退出码的测试和检查；不得使用身份型证据工程替代行为验证>
+<逐 scenario 的最简直接判定：自动命令或人工步骤与通过依据；不得使用身份型证据工程或判定层替代行为验证（公共规则 › 验证）>
 
 **Gate 2 Readiness**
 
