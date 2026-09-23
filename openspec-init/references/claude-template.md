@@ -273,7 +273,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - Act 不得创建下一 Cycle 或下一 Iteration。
-- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查。
+- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已采信的验证（公共规则 › 验证）。
 - Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
 - 既有 Acceptance 的有限修复仍受当前执行契约约束时，Plan 保持 Review Result 为 `pending` 并要求 Act 继续当前 Cycle；需要新执行契约时才创建 rework Cycle。
 - Review Result 的终态为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。
@@ -292,19 +292,20 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 
 Gate 必须有新鲜验证结果，但不要求原始输出文件。验证按影响范围递增：直接目标测试 → 受影响边界 → 必要的集成或全量 Gate；现有结果足以判断 Acceptance 后停止。
 
-验证结论的新鲜指产生时真实运行过且覆盖范围自产生后未变化，不要求本次会话重新运行。覆盖范围未变化的结论可以被后续角色和时间点采信：
+验证结论的新鲜指产生时真实运行过且覆盖范围自产生后未变化，不要求本次会话重新运行。覆盖范围指验证记录列出的代码表面（文件、符号或行为）及其记录的环境要素；未变化指这些表面涉及的文件自结论记录的 revision 以来 diff 为空，且环境要素未变化。覆盖范围未变化的结论可以被后续角色和时间点采信：
 
-- 采信方做一次只读基线检查（`git status`、`git diff`），确认覆盖范围内的材料与结论产生时一致。
+- 采信方做一次只读基线检查，确认覆盖范围表面涉及的文件自结论记录的 revision 以来 diff 为空、环境要素未变化。
 - 在自己的 Review 或 Response 中注明来源和结论，不复制长输出；采信不创建 Evidence。
 - 采信错误结论的责任跟随结论产生方，如同 Act 不复核 ready 的 Plan Context。
 
 出现以下情况时重跑，不采信：
 
 - 结论与代码、diff 或其他证据矛盾，或输出可疑。
-- 验证本身不确定：已知 flaky、时序、性能或并发竞争类。
 - 覆盖范围无法映射到当前要判断的 Acceptance。
 - 用户显式要求独立复现。
 - 采信方即将修改覆盖范围内的代码。修改前的测试见证观察当前基线；基线未变化时，既有结论就是当前基线的合法观察，恢复阻塞和 rework 场景按此采信。
+
+验证通过一次即为通过；禁止自行重复运行已通过的验证以增强可靠性或信心，禁止重试直至通过。同一验证的重复仅适用于两种情形：计划在通过条件中写明判定方式的不稳定验证（时序、并发或已知不稳定类，如固定重复次数取结果），以及失败后判定是否偶发错误的一次复核；复核通过按通过处理，并在验证记录注明首跑失败。用户显式要求的复现按上述重跑触发情形处理。
 
 基线检查用 git 现状判断覆盖范围是否变化，属于定位现场，不是身份型证据工程；Acceptance 仍由原始行为输出支持。
 
