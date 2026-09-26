@@ -128,7 +128,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Persisted Evidence**
 
-<`None required`，或 `../../evidence/<III-title>/<CCC-title>/README.md` 及证据编号>
+<`None required`，或 `../../evidence/<III-title>/<CCC-title>/README.md` 及所列文件>
 
 **Experience Candidates**
 

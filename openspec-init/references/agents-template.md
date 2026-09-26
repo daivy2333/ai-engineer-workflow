@@ -266,7 +266,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act Response 记录有证据的 Runbook、Issue 候选；没有则写 `None`。
 - 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不落账；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
 - Act Response 状态允许 `pending → reported`、`pending → blocked`、用户解决阻塞后的 `blocked → pending`，以及 Plan 要求当前 Cycle 修复时的 `reported → pending`。
-- 计划偏差或 `required` Evidence 不再满足白名单、必要性、预算或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
+- 计划偏差或 `required` Evidence 不再满足白名单、必要性或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
 - Review 保持 `pending` 且没有后继 Cycle 时，Plan 和 Act 可分别覆盖自己的区域为最新完整状态；进入终态或创建后继 Cycle 后，Cycle 冻结。Plan Context 始终不可改写。
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
@@ -310,9 +310,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 
 命令顺序由当前工作流状态和退出结果表达，时间戳只能辅助诊断。Hash、revision、run-id、peer、manifest 或时间顺序一致均不能使 Gate 通过；没有目标状态、输出、错误结果或退出码等行为证据时，验证结论为失败。
 
-Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。
-
-每个 Cycle 的 Evidence 目录最多 5 个文件（含 README），整个 change 最多 20 个 Evidence 文件；单个文本文件最多 500 行且不超过 256 KiB。禁止保存完整日志目录、源码副本或完整测试套件输出，禁止通过增加 Cycle、拆分、压缩、编码或改格式绕过限制。确有必要超出时，收集前取得用户明确批准；超限本身不阻塞实现或 Acceptance。
+Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。禁止保存完整日志目录、源码副本或完整测试套件输出。
 
 禁止使用“应该、大概、基本完成”替代证据。
 

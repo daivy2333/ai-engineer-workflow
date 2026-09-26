@@ -40,8 +40,8 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 确定写入类型和目标文件。
 - 体系上下文按公共规则 › 读取顺序 复用，只补读支持本次写入所缺的信息。
 - 读取本次实际写入目标；如果目标在当前会话中已完整读取且之后未变化，直接复用。写入前发现目标可能变化时重新读取。
-- 直接调用时读取 SNAPSHOT 的同步 revision、时间和状态；限定 R 登记只读取 references 和目标产物元数据。
-- 直接调用时比较当前 Git 状态，确定能否可靠计算 SNAPSHOT 增量；没有可靠同步基线时记录全量刷新原因。
+- 限定 R 登记只读取 references 和目标产物元数据。
+- 直接调用时对照当前 Git 状态刷新 SNAPSHOT。
 - 搜索已有条目。
 - 先搜索相关 M/R/I 重复项，只读取命中内容和必要邻近上下文。
 - 涉及 change 时用 `ls .agents/changes/` 确认活跃 change，并读取对应 tasks。
@@ -51,8 +51,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 - 任务：维护进行中、待办、阻塞和最近完成，并保留 change 来源。
 - Milestone 状态：按用户指令同步 `active`、`blocked`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
-- 快照：优先按同步 revision 与当前 Git 差异做增量刷新，只更新受影响的项目描述字段。
-- 快照回退：无法可靠计算增量时执行全量刷新；刷新失败时标记 `stale`，记录原因，不声称同步成功。
+- 快照：对照当前 Git 状态刷新项目描述字段，不记录同步元数据。
 - 模型：记录当前有效的开发约束、范围、证据和状态。
 - 行为规格：change 收尾时把 ADDED/MODIFIED/REMOVED 增量应用到 `.agents/specs/<domain>.md`；域文件不存在则创建；合并冲突时停止并请求用户决定；archivist 归档的 change 不合并。
 - 参考：只登记类型、路径或 URL、版本或日期、用途和状态。
@@ -79,14 +78,13 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 ### 3. VERIFY
 
 - 运行 `git diff --check`。
-- 直接调用时检查 SNAPSHOT 的同步 revision、时间和 `current/stale` 状态与本次刷新结果一致。
 - 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
 - 检查编号唯一且递增。
 - 检查已收尾 change 的增量规格已合并到 `.agents/specs/`。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Issue 和 analysis 有 R 索引。
 - 收尾 change 的 Plan Review 或 Act Response 存在未处理 Issue 候选时报告（不阻塞、不写入）。
-- 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位，并符合文件数和文本大小预算；超限时必须能定位用户批准记录。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
+- 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
 - 归档后检查 `.agents/archive/changes/` 下的 change 完整可定位。
 - 报告修改文件、编号和条目。
 

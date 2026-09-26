@@ -71,11 +71,11 @@ Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `
 
 Evidence 使用 `.agents/changes/<change>/evidence/<iteration>/<cycle>/`。只有满足公共规则白名单的情形才创建（公共规则 › Iteration 与 Cycle 线程）。
 
-Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性、预算或当前可采集性时，不收集；按 Gate 5 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
+Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性或当前可采集性时，不收集；按 Gate 5 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
 不得为 Evidence 新增身份型证据机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制。
 
-决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、预算、记录、覆盖和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
+决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、记录和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
 计划偏差可复现或可简短说明时，只在 Act Response 记录。只有实质 Blocker 满足公共规则白名单时才创建 `act-added / BLOCKED` Evidence。
 
@@ -87,7 +87,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 - 当前状态验证失败且原因未知。
 - Task Contract 无法覆盖达到既有 Acceptance 所需的工作。
 - 实际代码与契约存在实质冲突，或继续实施会构成实质问题。
-- `required` Evidence 不再满足白名单、必要性、预算或当前可采集性。
+- `required` Evidence 不再满足白名单、必要性或当前可采集性。
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
@@ -139,7 +139,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
    - 与计划的偏差及原因。
    - 自检发现、已修复内容和遗留 Minor 问题。
    - 验证命令、输出和退出码。
-   - Persisted Evidence 路径和编号，或 `None required`。
+   - Persisted Evidence 路径，或 `None required`。
    - Experience Candidates，或整节省略。
    - 未解决问题。
 8. 将 `Act Response` 状态改为 `reported`。

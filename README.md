@@ -114,8 +114,6 @@ openspec-docs-maintainer
   → 仅按用户指令同步或收尾
 ```
 
-小任务可以使用轻量模式，但仍保留 BDD、change、精简 RTM 和验证要求。
-
 技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 和 Experience Recorder 可在产物验证后自动调用 Maintainer 登记对应 R；该例外不授权其他维护，也不增加审计 Gate。
 
 Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未变化的信息由后续 Skill 复用；Explorer 调查实际代码，Plan 消化探索结论并补齐缺口，Act 只依据自包含 Plan Context、目标代码和测试实施，不沿引用链重建上游调查。非实质的局部实现差异和 Minor finding 记录后继续；只有会改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题才阻塞。

@@ -15,7 +15,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 4. 若项目缺少 `AGENTS.md` 或 `.agents/` 结构，先使用 `openspec-init`。
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
 6. change 是 `.agents/changes/<name>/` 下的普通目录和 markdown 文件，用文件操作创建和检查，不依赖平台专属命令或外部 CLI。
-7. 不因任务小而裁剪用户需求。轻量模式只减少篇幅，不取消 BDD、完整性检查或变更追踪。
+7. 不因任务小而裁剪用户需求；篇幅随任务伸缩，不取消 BDD、完整性检查或变更追踪。
 8. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。输出交接信息后终止，等待用户决定。
 9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)；创建 Cycle 文件前完整读取 [references/cycle-template.md](references/cycle-template.md)。
 
@@ -134,8 +134,6 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 - `Simplified`：存在需求简化，必须获得用户批准；在行内标注。
 - `Missing`：任一必要映射缺失，Gate 2 失败。
 
-轻量模式可以使用精简矩阵，但不能省略覆盖检查。
-
 ### Step 5：审查计划
 
 依次检查：
@@ -172,7 +170,7 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 
 `none` 表示命令、决定性输出、退出码、修改文件和符号写入 Act Response 即可，输出上限见公共规则 › 验证。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
 
-每个 `required` 项按公共规则 › 验证 说明必要性，并按 Cycle 模板列出文件和通过条件；任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件，也不得规划超过公共 Evidence 预算的产物；确需超限时必须先取得用户明确批准。
+每个 `required` 项按公共规则 › 验证 说明必要性，并按 Cycle 模板列出文件和通过条件；任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
@@ -191,33 +189,14 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 - 验证没有用身份型证据工程或判定层替代目标行为（公共规则 › 行为约束）。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - change 的 tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
-- Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
+- Persisted Evidence 模式明确；`required` 项满足白名单和必要性问题，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
 Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `WAIVED` 及证据。全部 `PASS`，或用户明确承担全部 `WAIVED` 风险后，Gate 2 才能通过。
 
-用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。轻量模式不构成自动豁免。
+用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。
 
 Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计划后，`Plan Context` 才能按 Cycle 模板 › 写入规则 离开 `draft`。Gate 未通过时不得交给 Act。
-
-## 轻量模式
-
-仅在以下条件全部满足时使用：
-
-- 改动少于 3 个文件。
-- 实现代码少于 60 行。
-- 不跨模块。
-- 不新增项目模型或长期决策。
-- 不触及安全、数据或性能关键路径。
-
-轻量模式仍要求：
-
-- BDD 缺口扫描。
-- 场景草图。
-- 聚焦的实现调查和 Current-State Evidence。
-- change 目录。
-- 精简版 Requirements Traceability Matrix。
-- 用户批准 Gate 1 和 Gate 2，除非用户显式豁免。
 
 ## 实施反馈 Review
 
@@ -254,7 +233,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按
 - change 路径。
 - 当前 Iteration、Cycle 路径和编号。
 - Persisted Evidence 模式和 `required` 项，或 `none`。
-- Gate 1、Gate 2 检查项、状态和证据。
+- Gate 1、Gate 2 结论、BLOCKED/WAIVED 项和证据。
 - 所有显式跳过项及原因。
 
 Review 模式改为交付：
