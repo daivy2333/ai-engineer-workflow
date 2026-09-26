@@ -48,7 +48,7 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 写入 `.agents/analysis/<topic>.md`。每份文档包含：
 
-- SNAPSHOT 路径、采集 revision、分支和日期。
+- SNAPSHOT 路径、采集 revision 和日期。
 - 目标与范围。
 - 已确认事实、推断和未确认项。
 - 调用链、数据流或状态机。

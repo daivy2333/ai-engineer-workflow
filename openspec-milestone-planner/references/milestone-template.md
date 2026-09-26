@@ -11,13 +11,9 @@
 - Outcome: <完成后项目具备的结果>
 - Rationale: <为何形成独立阶段>
 - Dependencies: <MSxx 或 None>
-- Scope: <包含的能力范围>
+- Scope: <包含的能力范围与工作类别>
 - Non-goals: <推迟到其他阶段的内容>
-- Workload: <足以支撑该阶段的工作类别>
 - Stable baseline: <后续工作可依赖的状态>
-- Verification boundary: <独立完成判据>
-- Diagnostic boundary: <失败时的排查范围>
-- Split signals: <出现什么情况时重新拆分>
 - Related changes: <已有 change 或 None>
 ```
 
@@ -42,7 +38,5 @@
 
 ## 内容限制
 
-- `Workload` 只列工作类别，不写 change tasks。
-- `Verification boundary` 说明阶段完成判据，不替代测试计划。
-- `Diagnostic boundary` 说明故障范围，不要求完整调用链。
+- `Scope` 列能力范围和工作类别，不写 change tasks；验证与诊断边界由所属 Iteration Plan 承载。
 - `Related changes` 只记录已有关系，不预先绑定数量。
