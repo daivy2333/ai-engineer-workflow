@@ -61,7 +61,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - recorder 自动登记：只处理本次 Runbook 或 Issue 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `.agents/specs/`，再用 `git mv` 把 `.agents/changes/<name>` 移入 `.agents/archive/changes/<date>-<name>`，并同步 tasks 与 SNAPSHOT。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，且最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None` 的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `.agents/specs/`，再删除 `.agents/changes/<name>`（随用户提交进入 git 历史），并同步 tasks 与 SNAPSHOT。Evidence 随 change 删除，不单独移动或登记 R。
 
 路由规则：
 
@@ -85,19 +85,17 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 检查 Runbook、Issue 和 analysis 有 R 索引。
 - 收尾 change 的 Plan Review 或 Act Response 存在未处理 Issue 候选时报告（不阻塞、不写入）。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
-- 归档后检查 `.agents/archive/changes/` 下的 change 完整可定位。
+- 已收尾 change 的删除可检索定位（`git log -S '<change 名>'`）。
 - 报告修改文件、编号和条目。
 
 ## 恢复归档条目
 
-Carrier 条目：
+墓碑条目：
 
-1. 从源文档的 `<!-- arc:` 定位 carrier proposal。
-2. 按原编号读取归档条目。
-3. 精准插回源文档。
-4. 更新 arc 计数。
-5. 追加 `<!-- restored: <编号> <日期> -->`。
-6. 验证原编号可搜索且墓碑已按协议处理。
+1. 从源文档的 `<!-- arc:` 墓碑定位 hash，或用 `git log -S '<编号>' -- <路径>` 检索。
+2. `git show <hash>:<路径>` 读取归档前内容。
+3. 按原编号精准插回源文档。
+4. 删除墓碑行。
 
 Analysis：
 

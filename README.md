@@ -49,7 +49,7 @@
 | `openspec-docs-maintainer` | 维护状态、M/R/I、行为规格合并、限定 R 登记、change 结果同步和正常收尾 |
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
-| `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、carrier 归档、删除和墓碑 |
+| `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、归档、删除和墓碑 |
 
 职责规则：
 
