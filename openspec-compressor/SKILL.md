@@ -50,13 +50,12 @@ HIGH 风险项必须获得用户确认。
 必须保留：
 
 - `Mxx/Rxx/Ixx/MSxx/Txx`。
-- SNAPSHOT 的同步 revision、时间和 `current/stale` 状态。
 - 路径、命令、版本、日期和阈值。
 - 失败症状和根因。
 - 约束、例外和风险。
 - 未解决问题。
 
-Change Evidence 只保存预算内且无法由 Act Response 充分表达的决定性产物，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件，也不得通过压缩绕过 Evidence 预算。
+Change Evidence 只保存无法由 Act Response 充分表达的决定性产物，不属于活跃文档压缩范围。不要压缩、改写或删除 `evidence/` 中的文件。
 
 Runbook 和 Issue 保存已验证操作与缺陷台账，由 `openspec-experience-recorder` 精准更新。不要压缩或改写其正文。
 
@@ -74,7 +73,7 @@ Runbook 和 Issue 保存已验证操作与缺陷台账，由 `openspec-experienc
 - 合并不同编号的独立条目。
 - 改变任务状态、模型约束、任务意图或规则含义。
 - 删除 milestone 的工作量依据、稳定基线、验证边界或诊断边界。
-- 删除或改写 SNAPSHOT 的同步元数据和职责边界。
+- 删除或改写 SNAPSHOT 的职责边界。
 - 为减少行数而删除未解决问题。
 - 压缩或改写 change 内 Evidence。
 - 压缩或改写 Runbook、Issue。

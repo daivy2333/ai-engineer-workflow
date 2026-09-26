@@ -58,7 +58,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 - 已读取的文档。
 - 可供当前会话复用的具体事实及其来源；只有概括而缺少细节的内容不标记为可直接执行依据。
-- SNAPSHOT 中的当前项目描述和 `current/stale` 状态。
+- SNAPSHOT 中的当前项目描述。
 - 工作状态或其他查询结果，并标明对应权威文档。
 - 活跃 change。
 - change 的当前逻辑 Iteration、最新 Cycle、后续 Iteration Plan 和剩余 tasks。

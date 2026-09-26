@@ -109,7 +109,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 3. Replan Cycle 使用更新后的全局 task，不创建 rework repair item；Plan Context 从 `draft` 开始并重新通过 Gate 2 后变为 `ready`。
 4. 当前 Iteration 在 replan Cycle 获得 `accepted` 前保持未完成；后续 Iteration 只保留在修订后的 Map 中。
 
-Act 因 `required` Evidence 不再满足白名单、必要性、预算或可采集性而阻塞时，Plan Review 将其分类为 `PLAN-INVALID` 或 `NEW-EVIDENCE`，使用 `replan-required` 修正 Evidence 契约，不要求 Act 按原计划继续收集。父 Cycle 的无效 `required` 由该 Review 和 `Next Cycle` 形成的 replan 链替代，正常收尾不再要求为它补建 Evidence。
+Act 因 `required` Evidence 不再满足白名单、必要性或可采集性而阻塞时，Plan Review 将其分类为 `PLAN-INVALID` 或 `NEW-EVIDENCE`，使用 `replan-required` 修正 Evidence 契约，不要求 Act 按原计划继续收集。父 Cycle 的无效 `required` 由该 Review 和 `Next Cycle` 形成的 replan 链替代，正常收尾不再要求为它补建 Evidence。
 
 ## 推进下一 Iteration
 
