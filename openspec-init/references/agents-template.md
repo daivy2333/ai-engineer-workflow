@@ -116,7 +116,7 @@
 
 一项信息只有一个权威位置。其他文档使用编号或路径引用，不复制正文。
 
-Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采集时的 revision、分支、环境和命令。这些字段属于历史现场，不是当前项目描述。
+Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采集时的 revision、环境和命令。这些字段属于历史现场，不是当前项目描述。
 
 ## 记录边界
 

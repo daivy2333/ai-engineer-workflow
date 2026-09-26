@@ -72,7 +72,7 @@ Runbook 和 Issue 保存已验证操作与缺陷台账，由 `openspec-experienc
 - 移动内容到 archive。
 - 合并不同编号的独立条目。
 - 改变任务状态、模型约束、任务意图或规则含义。
-- 删除 milestone 的工作量依据、稳定基线、验证边界或诊断边界。
+- 删除 milestone 的稳定基线。
 - 删除或改写 SNAPSHOT 的职责边界。
 - 为减少行数而删除未解决问题。
 - 压缩或改写 change 内 Evidence。

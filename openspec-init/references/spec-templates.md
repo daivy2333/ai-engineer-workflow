@@ -86,7 +86,7 @@ SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束�
 `tasks.md` 记录：
 
 - milestone roadmap，使用 `MSxx`。
-- 每个 milestone 的成果、工作量、稳定基线、验证边界、诊断边界和依赖。
+- 每个 milestone 的成果、稳定基线和依赖。
 - 进行中。
 - 已承诺待办。
 - 阻塞。
