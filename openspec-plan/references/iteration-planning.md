@@ -82,11 +82,11 @@ Review 重入时，若 `Review Result` 仍为 `pending`，但 `Next Cycle` 或 `
 
 Plan 判断有限修复可由当前执行契约覆盖时：
 
-1. 覆盖当前 `Plan Review` 为最新完整审查，填写具体 Findings、Acceptance Gaps、Evidence 和 Convergence；`Iteration Plan Update`、`Next Cycle`、`Next Iteration` 均为 `None`。
+1. 覆盖当前 `Plan Review` 为最新完整审查，填写具体 Findings、Acceptance Gaps 和 Evidence；`Iteration Plan Update`、`Next Cycle`、`Next Iteration` 均为 `None`。
 2. 最后在 `Follow-up Decision` 明确要求 Act 在当前 Cycle 修复，`Review Result` 保持 `pending`。该字段写完前，`reported` 的 Act 不得恢复。
 3. Act 把状态从 `reported` 改为 `pending`，只读取最新 Review 和修复所需的任务局部上下文，按当前契约建立测试见证并实施。
 4. Act 完成后覆盖 `Act Response` 为当前 Cycle 的最新完整快照，再改为 `reported`；Plan 随后覆盖 Review 并重新判断。
-5. 覆盖前若已有当前 Cycle 反馈，Convergence 与上一版 Acceptance Gaps 比较；否则沿用父 Cycle 比较规则。gap 为 `reduced` 且剩余修复仍受当前契约约束时可以继续；`unchanged`、`expanded` 或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 5 约束。
+5. 覆盖前若已有当前 Cycle 反馈，比较 Acceptance Gaps 是否缩小：缩小且剩余修复仍受当前契约约束时可以继续；未缩小、扩大或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 5 约束。
 
 覆盖与冻结的适用条件按公共规则 › Iteration 与 Cycle 线程 执行。
 

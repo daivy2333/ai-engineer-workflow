@@ -87,13 +87,12 @@ openspec-plan
 openspec-act
   → 直接消费 Plan Context，不重新建立计划基线
   → 每任务测试见证（公共规则 › TDD）
-  → Gate 3：每任务 Spec Review → Code Review
+  → Gate 3：每任务 Review（spec compliance + code quality）
   → Gate 4：新鲜或未失效的验证证据
   → Gate 5：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
   → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 Cycle
   → 按需保存 act-added / BLOCKED Evidence
-  → Response 前重新审查完整 diff
   → 修复计划内发现并重跑受影响 Gate
   → 按 Plan 要求或实际需要保存 change 内 Evidence
   → 填写 Act Response
