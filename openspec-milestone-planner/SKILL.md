@@ -28,7 +28,7 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 
 ## Phase 1：LOAD
 
-复用当前会话中 Assistant 已读取且未变化的体系上下文，只补读规划所缺的信息：
+体系上下文按公共规则 › 读取顺序 复用，只补读规划所缺的信息：
 
 1. `CLAUDE.md`、`.claude/docs/SNAPSHOT.md` 和 `.claude/docs/tasks.md`；当前上下文没有具体内容时再读取。
 2. 相关 project-model 和 references。

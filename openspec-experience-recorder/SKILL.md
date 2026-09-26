@@ -64,7 +64,7 @@ Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）。普�
 
 ## 1. LOAD
 
-1. 复用当前会话中已读取且未变化的 `CLAUDE.md` 和体系上下文，读取格式规则、同主题持久化产物及其 R 索引。
+1. 按公共规则 › 读取顺序 复用体系上下文；读取格式规则、同主题持久化产物及其 R 索引。
 2. 涉及 Act 时优先读取 Act Response 和实际存在的 Evidence；只有范围、前置条件或环境无法由这些来源确定时，才补读 Plan Context 的相关部分。
 3. 记录来源 revision、环境、命令、结果和证据路径。
 4. 搜索同主题 Runbook、Issue 和 R，避免重复；同类缺陷并入已有 Issue 追加 occurrence，不新开文件。
@@ -76,7 +76,7 @@ Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）。普�
 3. 标记证据支持的事实、合理推断和未知项。
 4. 证据不足时报告缺口并停止。
 
-`reported` Act 中通过 Gate 5 的路径可以支持 Runbook。`blocked` Act 通常只支持 Issue；其中独立验证成功的恢复路径可以支持 Runbook。
+`reported` Act 中通过 Gate 4 的路径可以支持 Runbook。`blocked` Act 通常只支持 Issue；其中独立验证成功的恢复路径可以支持 Runbook。
 
 ## 3. WRITE
 
@@ -138,7 +138,6 @@ Recorder 只记录来源能够支持的内容。Evidence 必须已经满足文�
 
 - 为生成产物而重新实施或主动探索。
 - 根据计划或猜测创建 Runbook。
-- 把普通失败或预期 RED 写成 Issue。
 - 把未确认根因写成事实。
 - 修改 Act Response、Plan Review、change tasks 或 Evidence。
 - 创建、修改或归档 M、I、tasks、SNAPSHOT 或 change。
