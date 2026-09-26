@@ -38,46 +38,22 @@ Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `
 
 只有差异使 Task Contract 无法执行，或继续工作会构成实质问题时，才执行阻塞交接并终止。
 
-## Gate 3：Two-Stage Review
+## Gate 3：Task Review
 
-每个任务完成 GREEN 后，严格按顺序执行：
+每个任务完成 GREEN 后执行一次 review，覆盖两类检查：
 
-1. Spec compliance review。
-2. Code quality review。
-
-Spec review 重新读取任务契约并检查：
-
-- requirement、scenario 和目标行为完整实现。
-- 计划列出的文件、符号、调用者和错误路径均已处理。
-- 不变量、兼容性和禁止修改项未被破坏。
-- 测试见证符合任务类型，修改后 GREEN 能证明目标行为或行为保持。
-- Gate 证据覆盖任务的通过条件。
-
-Code quality review 检查：
-
-- diff 没有计划外修改。
-- 错误、边界、状态和资源生命周期正确。
-- 没有新增警告、死代码、重复实现或无依据复杂度。
-- 测试不会因错误原因通过。
-- 命名和局部结构符合项目惯例。
-- 没有身份型证据机制或判定层（公共规则 › 行为约束）。
+- Spec compliance：requirement、scenario 和目标行为完整实现；计划列出的文件、符号、调用者和错误路径均已处理；不变量、兼容性和禁止修改项未被破坏；测试见证符合任务类型，修改后 GREEN 能证明目标行为或行为保持；Gate 证据覆盖任务的通过条件。
+- Code quality：diff 没有计划外修改；错误、边界、状态和资源生命周期正确；没有新增警告、死代码、重复实现或无依据复杂度；测试不会因错误原因通过；命名和局部结构符合项目惯例；没有身份型证据机制或判定层（公共规则 › 行为约束）。
 
 计划范围内的 Critical 和 Important 问题必须立即修复。修复后重跑受影响验证和 Gate 3；未受影响且覆盖范围未变化的验证结论继续有效。实质问题按 Gate 5 阻塞。Minor 问题可以记录并继续，不得伪装成已解决。
 
 ## Gate 4：Evidence-Based Verification
 
-任何完成声明都按以下顺序：
+任何完成声明都基于：
 
-1. 确定能证明声明的命令或操作。
-2. 完整运行所选验证，不因“更保险”追加等价命令、重复运行同一验证或扩大到无关测试。
-3. 读取足以判断结果的输出和退出码；不要为了留证回显或复制完整长日志。
-4. 每项只摘录满足输出上限（公共规则 › 验证）的决定性输出。
-5. 判断证据是否支持声明。
-6. 证据支持后再声明。
-
-按覆盖范围记录验证结论（命令、行为和涉及的代码表面），使 Plan Review、后继 Cycle 和阻塞恢复可以采信。当前 Cycle 内早期验证的结论在覆盖范围未变化时直接引用（公共规则 › 验证）；修改覆盖范围内的代码后才重新运行。
-
-只有目标状态、输出、错误结果、协议结果或退出码等可观察行为可以支持 Acceptance。身份型证据元素只能描述材料或现场，不能使验证通过（公共规则 › 行为约束）。
+1. 能证明声明的命令或操作，及其决定性输出（每项不超过 20 行，公共规则 › 验证）和退出码。
+2. 证据支持结论后再声明；不因“更保险”追加等价命令、重复运行同一验证或扩大到无关测试。
+3. 采信产生后覆盖范围未变化的既有结论时注明来源（公共规则 › 验证）。
 
 验证范围按变更选择：
 
@@ -90,13 +66,7 @@ Code quality review 检查：
 - 配置加载。
 - OpenSpec validate。
 
-报告格式：
-
-| 验证项 | 命令或操作 | 输出摘录 | 覆盖范围 | 结论 |
-|---|---|---|---|---|
-| 测试 | `<command>` | `<fresh output>` | `<行为或代码表面>` | PASS/FAIL |
-
-Gate 验证的新鲜性、影响范围递增和停止条件按公共规则 › 验证 执行。`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
+`none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
 
 ## 按需 Evidence
 
@@ -160,26 +130,21 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 当前 Cycle 的全部 task 或 repair item 正常完成后：
 
 1. 对照当前 Cycle 的 requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
-2. 审查完整 diff，不只复用逐任务结论。
-3. 检查跨任务交互、遗漏实现、计划外修改、回归风险和测试有效性。
-4. 修复计划范围内的 Critical 和 Important 问题。
-5. 对每项修复重跑受影响的 Gate 3 和 Gate 4；未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
-6. 实质问题按 Gate 5 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
-7. 运行完整验证套件。
-8. 验证 OpenSpec change，并按公共规则 › 验证 自检 change 结构。
-9. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
-10. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
-   - 实际改动。
-   - 文件和符号。
+2. 修复计划范围内的 Critical 和 Important 问题；对每项修复重跑受影响的 Gate 3 和 Gate 4，未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
+3. 实质问题按 Gate 5 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
+4. Cycle 级验证按公共规则 › 验证 的递增范围执行；覆盖未变化的既有结论直接采信。
+5. 验证 OpenSpec change，并按公共规则 › 验证 自检 change 结构。
+6. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
+7. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
+   - 实际改动，含文件和符号。
    - 与计划的偏差及原因。
-   - Self-Review 检查结果、已修复发现和遗留 Minor 问题。
+   - 自检发现、已修复内容和遗留 Minor 问题。
    - 验证命令、输出和退出码。
    - Persisted Evidence 路径和编号，或 `None required`。
-   - Experience Candidates，或 `None`。
+   - Experience Candidates，或整节省略。
    - 未解决问题。
-   - 可选 commit 或 diff 引用。
-11. 将 `Act Response` 状态改为 `reported`。
-12. 终止并等待用户审计。
+8. 将 `Act Response` 状态改为 `reported`。
+9. 终止并等待用户审计。
 
 不得填写 `Plan Review`，不得创建下一 Cycle 或下一 Iteration。
 
@@ -198,9 +163,8 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 4. 完成声明是否有新鲜输出？
 5. `Act Response` 是否与实际代码和证据一致？
 6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
-7. 是否对照当前 Cycle 审查完整 diff？
-8. Self-Review 是否没有未解决的 Critical 或 Important 问题？
-9. Experience Candidates 是否已记录证据或明确写 `None`？
+7. 自检发现是否没有未解决的 Critical 或 Important 问题？
+8. Experience Candidates 是否已记录证据或明确省略？
 
 任一答案为否，不得声明完成。
 
@@ -208,7 +172,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 - 已完成任务。
 - 修改文件。
-- 任务级和全量 diff Self-Review 结果。
+- 任务级 Review 与自检结果。
 - 已修复发现和遗留 Minor 问题。
 - 验证命令、输出摘录和退出码。
 - 当前 Iteration、Cycle 路径和 Act Response 状态。
@@ -227,8 +191,6 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 ## 禁止
 
-- Spec review 前做 code quality review。
-- 只依赖逐任务 Review，跳过 Response 前的完整 diff Review。
 - Self-Review 存在未解决的 Critical 或 Important 问题时标记 `reported`。
 - 从 `blocked` 越过 `pending` 改成 `reported`。
 - 用户已解决阻塞并要求继续时，仅因旧状态为 `blocked` 而拒绝恢复。

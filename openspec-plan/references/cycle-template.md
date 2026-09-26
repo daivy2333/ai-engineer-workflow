@@ -8,23 +8,11 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 ## Plan Context
 
 - Status: draft
-- Iteration: <III-title>
-- Cycle: <CCC-title>
 - Cycle Type: initial | rework | replan
-- Parent cycle: None | <relative-path>
-
-**Iteration Scope**
-
-- Change tasks: <本逻辑 Iteration 的 task ID>
-- Depends on: <前序 Iteration 或 None>
-- Stable baseline: <完成后下一 Iteration 可依赖的结果>
-- Verification boundary: <逻辑 Iteration 的独立完成判据>
-- Diagnostic boundary: <失败时的排查范围>
-- Deferred tasks: <后续 Iteration 的 task ID 或 None>
 
 **Cycle Scope**
 
-- Trigger: initial | rework-required | replan-required
+- Change tasks: <本逻辑 Iteration 的 task ID>
 - Acceptance gaps: <本 Cycle 必须关闭的既有验收缺口；initial 写 None>
 - Repair items: <T2-R1 等本地 repair item；initial 和 replan 写 None>
 - Inherited scope: <继续有效的 requirement、task 和约束>
@@ -36,7 +24,7 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 **Background**
 
-<需求来源、历史问题和本 Cycle 原因>
+<rework 和 replan 记录需求来源、历史问题和本 Cycle 原因；initial 没有新增背景时整节省略>
 
 **Investigation Facts**
 
@@ -48,10 +36,6 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 <建议顺序、必要技术细节和关键取舍；不重复 Task Contract>
 
-**Behavioral Change**
-
-<当前行为、目标行为、接口、状态和错误语义的变化>
-
 **Task Contracts**
 
 Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required behavior 和 Preserve/Forbidden 共同表达变更面与责任边界。对每个 initial/replan task 或 rework repair item 使用：
@@ -62,8 +46,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 - Depends on: <依赖或 None>
 - Targets: <path::symbol，可多项>
 - Current behavior: <当前可观察行为>
-- Required behavior: <完成后可观察行为>
-- Required changes: <必须完成的行为、接口、状态或错误语义变化>
+- Required behavior: <完成后可观察行为，含必须完成的接口、状态或错误语义变化>
 - Preserve: <必须保持的约束>
 - Forbidden: <不得修改或扩大的范围>
 - Test witness: <位置、RED 或变更前 GREEN、命令和预期结果>
@@ -83,7 +66,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Acceptance**
 
-<可观察验收条件及 requirement、scenario、design、task、代码和测试映射>
+<可观察验收条件及 requirement、scenario、design、task、代码和测试映射；跨任务行为语义写在此处或 Invariants>
 
 **Verification**
 
@@ -91,15 +74,13 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Gate 2 Readiness**
 
-<Gate 2 各检查项逐项记录 PASS/BLOCKED/WAIVED 及证据；检查项清单见 openspec-plan 的 Gate 2>
+<一行结论；只逐项列 BLOCKED/WAIVED 及证据。检查项清单见 openspec-plan 的 Gate 2>
 
 **Persisted Evidence**
 
 - Mode: none | required
 
 <`none` 表示 Act Response 足以承载验证结果；`required` 时逐项列出 Acceptance、Act Response 不足原因、不可低成本重跑原因、缺失时受阻决定、文件和通过条件>
-
-- Budget: 按 Evidence 预算执行（公共规则 › 验证）。
 
 **Risks and Notes**
 
@@ -111,36 +92,25 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Implemented**
 
-<实际完成内容>
-
-**Changed Files and Symbols**
-
-<文件、符号和作用>
+<实际完成内容；含修改的文件、符号和作用>
 
 **Deviations from Plan**
 
-<偏差、原因和影响；没有则写 None>
+<偏差、原因和影响；没有则整节省略>
 
 **Blocker Handoff**
 
-<正常完成写 None；blocked 时填写：>
+<正常完成整节省略；blocked 时填写：>
 
 - Discovered at: <task / repair item / step / Gate>
-- Expected: <Plan 预期>
-- Actual: <实际情况>
+- Expected vs Actual: <Plan 预期与实际情况>
 - Impact: <为何不能按当前 Cycle 继续>
-- Completed work: <已完成任务>
-- Partial work: <部分修改>
-- Unstarted work: <未开始任务>
-- Worktree state: <修改文件和安全状态>
-- Gates: <已通过和阻塞的 Gate>
-- Evidence: <证据编号、路径或 None required>
-- Plan decision needed: <需要 Plan 重新决定的问题>
+- Remaining work: <已完成与未开始任务、工作区状态一行>
 - Resume condition: <当前 Cycle 可恢复的条件；需 Review 时说明>
 
 **Blocker Resolution**
 
-<未恢复时写 None；用户要求继续时追加：>
+<未恢复时整节省略；用户要求继续时追加：>
 
 - User instruction: <用户提供的事实、办法或风险豁免>
 - Resolution: <阻塞如何解除>
@@ -150,17 +120,11 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Self-Review**
 
-- Plan compliance: PASS | BLOCKED
-- Full diff reviewed: PASS | BLOCKED
-- Critical findings unresolved: <数量>
-- Important findings unresolved: <数量>
-- Minor findings unresolved: <数量>
-
-<记录 Act 自检发现、已修复内容、重跑验证和遗留 Minor 问题>
+<自检发现、已修复内容和遗留 Minor 问题；没有发现则整节省略>
 
 **Verification Evidence**
 
-<命令或操作、每项不超过 20 行的决定性输出、退出码、覆盖范围、支持的 Acceptance 和结论>
+<命令或操作、每项不超过 20 行的决定性输出、退出码、支持的 Acceptance 和结论；采信既有结论时注明来源>
 
 **Persisted Evidence**
 
@@ -168,19 +132,11 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Experience Candidates**
 
-| Type | Candidate | Evidence | Reason |
-|---|---|---|---|
-| Runbook / Issue | <候选主题> | <Act Response 或 Evidence> | <满足产物门槛的原因> |
-
-<没有候选时写 None>
+<没有候选则整节省略；有候选时记录类型、主题、证据和满足产物门槛的原因>
 
 **Remaining Issues**
 
-<未解决问题或 None>
-
-**Commit or Diff Reference**
-
-<可选引用；本字段不要求创建 Git commit>
+<未解决问题；没有则整节省略>
 
 ## Plan Review
 
@@ -188,19 +144,11 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Findings**
 
-<基于代码、diff 和验证证据的发现；区分阻塞 Acceptance 与非阻塞 Minor finding>
-
-**Deviation Classification**
-
-<PLAN-OMISSION | PLAN-INVALID | ACT-DEVIATION | BASELINE-CHANGED | NEW-EVIDENCE | None>
+<基于代码、diff 和验证证据的发现；区分阻塞 Acceptance 与非阻塞 Minor finding，偏差原因（Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据）并入本节>
 
 **Acceptance Gaps**
 
-<未满足的既有 Acceptance 及证据；没有则写 None>
-
-**Convergence**
-
-<Acceptance gap 相比上一版当前 Cycle Review，首次 Review 则相比父 Cycle：reduced | unchanged | expanded；无比较项时写 N/A>
+<未满足的既有 Acceptance 及证据；没有则整节省略>
 
 **Evidence**
 
@@ -212,7 +160,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Iteration Plan Update**
 
-<仅 `replan-required` 记录目标、范围、依赖、验证契约或验收边界变化；否则写 None>
+<仅 `replan-required` 填写目标、范围、依赖、验证契约或验收边界变化；没有则整节省略>
 
 **Next Cycle**
 

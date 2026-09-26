@@ -122,14 +122,16 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 生成 Requirements Traceability Matrix：
 
-| Requirement | Scenario | Design | Task | Iteration | Code Surface | Test Witness | Simplification | Status |
-|---|---|---|---|---|---|---|---|---|
-| R1 | S1 | D1 | T1 | 000 | `path::symbol` | `test_name` | None | Covered |
+| Requirement | Task | Test Witness | Status |
+|---|---|---|---|
+| R1 | T1 | `test_name` | Covered |
+
+Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、Task Contract 的 Targets 和 change `tasks.md` 承载，不进矩阵。
 
 状态规则：
 
 - `Covered`：需求、场景、设计、任务、代码位置和测试形成可验证链路。
-- `Simplified`：存在需求简化，必须获得用户批准。
+- `Simplified`：存在需求简化，必须获得用户批准；在行内标注。
 - `Missing`：任一必要映射缺失，Gate 2 失败。
 
 轻量模式可以使用精简矩阵，但不能省略覆盖检查。
@@ -155,16 +157,16 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 按 [references/cycle-template.md](references/cycle-template.md) 创建：
 
 ```text
-.agents/changes/<change>/iterations/000-initial/000-initial.md
+openspec/changes/<change>/iterations/000-initial/000-initial.md
 ```
 
 `Plan Context` 按 Cycle 模板写入：
 
 - 状态先写为 `draft`。
-- Cycle 身份、范围、目标和背景。
+- Cycle 范围、目标和背景。
 - Investigation Facts：当前基线、Current-State Evidence、代码与关键路径。
-- 行为变化，以及 Task Contracts（含变更面）、共享不变量、非目标、RTM、Acceptance 和 Verification。
-- Gate 2 证据、风险、`Persisted Evidence` 模式和后续任务边界。
+- Task Contracts（含变更面和行为变化）、共享不变量、非目标、RTM、Acceptance 和 Verification。
+- Gate 2 结论、风险、`Persisted Evidence` 模式和后续任务边界。
 
 Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
@@ -192,7 +194,7 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 - Persisted Evidence 模式明确；`required` 项满足白名单、必要性问题和公共预算，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
-为每个检查项记录 `PASS`、`BLOCKED` 或 `WAIVED` 及证据。只有全部 `PASS`，或用户明确承担风险的 `WAIVED`，Gate 2 才能通过。
+Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `WAIVED` 及证据。全部 `PASS`，或用户明确承担全部 `WAIVED` 风险后，Gate 2 才能通过。
 
 用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。轻量模式不构成自动豁免。
 
@@ -226,12 +228,12 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
 4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
-6. 把偏差分类为 `PLAN-OMISSION`、`PLAN-INVALID`、`ACT-DEVIATION`、`BASELINE-CHANGED` 或 `NEW-EVIDENCE`。
+6. 在 Findings 记录偏差原因：Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
    - 当前 change 范围外的实质缺陷作为 Issue 候选报告，不落账（公共规则 › Iteration 与 Cycle 线程）。
-   - 身份型证据工程属于 `PLAN-INVALID`：Plan 把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
-7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据、Acceptance Gaps 和收敛状态。
+   - 发现身份型证据工程时，把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
+7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据和 Acceptance Gaps。
 8. 有限修复受当前执行契约约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
 9. 当前 Cycle 修复完成后重新 Review。`Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复有明确当前 Cycle 反馈的 `reported` Cycle，或已解决阻塞的 `blocked` Cycle。
 10. 输出结果后终止，等待用户审计和下一步指令。
