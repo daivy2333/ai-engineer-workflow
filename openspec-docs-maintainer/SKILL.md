@@ -90,14 +90,12 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 ## 恢复归档条目
 
-Carrier 条目：
+墓碑条目：
 
-1. 从源文档的 `<!-- arc:` 定位 carrier proposal。
-2. 按原编号读取归档条目。
-3. 精准插回源文档。
-4. 更新 arc 计数。
-5. 追加 `<!-- restored: <编号> <日期> -->`。
-6. 验证原编号可搜索且墓碑已按协议处理。
+1. 从源文档的 `<!-- arc:` 墓碑定位 hash，或用 `git log -S '<编号>' -- <路径>` 检索。
+2. `git show <hash>:<路径>` 读取归档前内容。
+3. 按原编号精准插回源文档。
+4. 删除墓碑行。
 
 Analysis：
 

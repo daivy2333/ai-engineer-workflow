@@ -2,8 +2,8 @@
 
 ## 分析报告
 
-| 文档 | 条目 | Archive | Compress | Delete | Stale | Promote | Merge | Artifact | Keep |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 文档 | 条目 | Archive | Delete | Stale | Promote | Merge | Artifact | Keep |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
 
 ### HIGH 置信度
 
@@ -24,8 +24,7 @@
 
 附带：
 
-- carrier ID 和归档路径。
-- OpenSpec validate 输出。
-- arc 指引计数。
+- 墓碑 hash 列表。
+- 一段可直接抄进提交说明的摘要：动作、理由、交叉引用警告。
 - 未执行条目及原因。
-- 失败和恢复入口。
+- 恢复方式：`git show <hash>:<路径>` 或 `git log -S '<编号>' -- <路径>`。

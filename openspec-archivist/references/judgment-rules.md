@@ -10,13 +10,9 @@
 
 **Archive**
 
-完整内容进入 carrier，源条目移除并留下 arc 指引。
+源条目移除并留墓碑 `<!-- arc: <短hash> -->`，完整内容在被删前所在提交的 git 历史中，用 `git show <hash>:<路径>` 取回。
 
-适用于被替代、有历史价值或仍需恢复的条目。
-
-**Compress-Archive**
-
-压缩内容进入 carrier，源条目移除并留下 arc 指引。有关联引用、回滚价值或有效机制时改用 Archive。
+适用于被替代、有历史价值或仍需恢复的条目。git 历史已保留全文，无需单独的压缩归档动作。
 
 **Keep**
 
@@ -48,7 +44,7 @@
 
 **Artifact-Archive**
 
-移动 Analysis、Runbook 或 Issue 到对应 `archive/` 子目录。保留 R 编号并更新路径和 `[ARCHIVED YYYY-MM-DD]` 状态，不进入 carrier。
+删除 Analysis、Runbook 或 Issue 文件。保留 R 编号，路径改为 `git show <hash>:<原路径>`，状态标 `[ARCHIVED YYYY-MM-DD]`。
 
 ## 通用阈值
 

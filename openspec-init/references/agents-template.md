@@ -60,7 +60,7 @@
 - `openspec-docs-maintainer`：显式维护状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
-- `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和 carrier 归档。
+- `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和归档墓碑。
 
 ## 阶段边界
 
@@ -91,7 +91,7 @@
 | 精准编辑 | 只修改相关片段 |
 | 命令执行 | 保留命令、输出和退出码 |
 | 并行委托 | 仅在环境支持且任务可独立时使用 |
-| 变更文件操作 | 用目录创建、git 移动和引用扫描完成 change 生命周期 |
+| 变更文件操作 | 用 OpenSpec 集成、目录创建和引用扫描完成 change 生命周期 |
 
 平台工具名只是适配，不改变上述语义。
 
