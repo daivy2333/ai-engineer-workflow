@@ -219,10 +219,9 @@ Plan 在制定任务前读取实际代码并记录：
 
 - Gate 1：需求、BDD、场景、范围和 change 获批。
 - Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪；非实质未知项不阻塞。
-- Gate 3：每个任务在修改前有测试见证。
-- Gate 4：每个任务先 spec review，后 code review。
-- Gate 5：完成声明有新鲜证据或可采信的未失效结论。
-- Gate 6：阻塞即停；三次失败后反思。
+- Gate 3：每个任务先 spec review，后 code review。
+- Gate 4：完成声明有新鲜证据或可采信的未失效结论。
+- Gate 5：阻塞即停；三次失败后反思。
 
 Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 
@@ -259,7 +258,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写当前 Cycle 的 `Act Response`。
-- Act 每个 task 或 repair item 完成后执行 Gate 4，并在 Response 前重新审查完整 diff。
+- Act 每个 task 或 repair item 完成后执行 Gate 3，并在 Response 前重新审查完整 diff。
 - Act 不建立或复核 Plan 基线；直接按 ready 的 Plan Context 建立测试见证并实施。
 - Act 可处理非实质局部差异并在 Response 记录；实质问题返回 Plan。
 - Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。

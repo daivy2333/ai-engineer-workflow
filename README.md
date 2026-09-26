@@ -86,10 +86,10 @@ openspec-plan
   → 终止，等待用户审计
 openspec-act
   → 直接消费 Plan Context，不重新建立计划基线
-  → Gate 3：任务测试见证
-  → Gate 4：每任务 Spec Review → Code Review
-  → Gate 5：新鲜或未失效的验证证据
-  → Gate 6：阻塞与三次失败反思
+  → 每任务测试见证（公共规则 › TDD）
+  → Gate 3：每任务 Spec Review → Code Review
+  → Gate 4：新鲜或未失效的验证证据
+  → Gate 5：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
   → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 Cycle
   → 按需保存 act-added / BLOCKED Evidence
@@ -153,7 +153,7 @@ Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保
 
 | Skill | 职责 |
 |---|---|
-| `bettermd` | 编写和修改高信息密度 Markdown |
+| `betteroutput` | 会话回答与 Markdown 文档的输出规范 |
 | `grilling` | 逐项质询计划、决策或想法，确认共同理解后停止 |
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 

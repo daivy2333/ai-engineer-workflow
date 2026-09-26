@@ -86,7 +86,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 2. 最后在 `Follow-up Decision` 明确要求 Act 在当前 Cycle 修复，`Review Result` 保持 `pending`。该字段写完前，`reported` 的 Act 不得恢复。
 3. Act 把状态从 `reported` 改为 `pending`，只读取最新 Review 和修复所需的任务局部上下文，按当前契约建立测试见证并实施。
 4. Act 完成后覆盖 `Act Response` 为当前 Cycle 的最新完整快照，再改为 `reported`；Plan 随后覆盖 Review 并重新判断。
-5. 覆盖前若已有当前 Cycle 反馈，Convergence 与上一版 Acceptance Gaps 比较；否则沿用父 Cycle 比较规则。gap 为 `reduced` 且剩余修复仍受当前契约约束时可以继续；`unchanged`、`expanded` 或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 6 约束。
+5. 覆盖前若已有当前 Cycle 反馈，Convergence 与上一版 Acceptance Gaps 比较；否则沿用父 Cycle 比较规则。gap 为 `reduced` 且剩余修复仍受当前契约约束时可以继续；`unchanged`、`expanded` 或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 5 约束。
 
 覆盖与冻结的适用条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
@@ -98,7 +98,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 2. 在当前 Iteration 目录创建下一 Cycle 文件，记录父 Cycle、偏差分类、Acceptance gap、继承范围、repair item、当前代码基线、验证方法和停止条件。
 3. Plan 根据父 Cycle、Act Response 和当前代码补齐 Acceptance gap 所需的 Current-State Evidence，并重新通过 Gate 2；不重复调查未变化范围。父 Cycle 已 PASS 且材料未变的 Gate 2 维度引用父 Cycle 结论，只补 Acceptance gap 涉及的维度。新 Cycle 仍直接写入 Act 所需事实，不要求 Act 回读父 Cycle。
 4. Act 和 Plan 分别填写新 Cycle 的 Act Response 与 Plan Review；旧 Cycle 不改写。
-5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，Review 必须检查 Plan、设计和需求假设；只有确认目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变时才进入 replan。同一问题连续失败三次时触发三次失败规则，不创建第四次同类 Cycle。
+5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，按公共规则 › Iteration 与 Cycle 线程 重新检查 Plan、设计和需求假设；同一问题连续失败三次按公共规则 › 三次失败 停止。
 
 ## Replan Cycle
 

@@ -9,7 +9,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ## 前置规则
 
-1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、tasks、M/R/I 和 change 信息，只补读当前模式缺失的体系文档；独立调用时按需建立这些上下文。
+1. 按公共规则 › 读取顺序 复用体系上下文，只补读当前模式缺失的体系文档；独立调用时按需建立。
 2. 新计划先消费当前会话中的 Explorer 结论、相关 Analysis，以及后继 Iteration 对应的前一 Iteration 最终 Act Response 和 accepted Review；检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有可采信输入时由 Plan 完成所需调查。
 3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
 4. 若项目缺少 `AGENTS.md` 或 `.agents/` 结构，先使用 `openspec-init`。
@@ -107,7 +107,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 背景、调查证据和 Implementation Guidance 不得给出与 Task Contract 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
 
-不得规划公共规则禁止的身份型证据工程。产品 requirement 明确要求的认证、完整性校验或多会话协议必须作为目标行为进入 requirement、scenario 和 Acceptance，不能以证据需要为理由引入。
+不得规划身份型证据工程或判定层（公共规则 › 行为约束）。产品 requirement 明确要求的认证、完整性校验或多会话协议作为目标行为进入 requirement、scenario 和 Acceptance。
 
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
@@ -196,7 +196,7 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 
 用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。轻量模式不构成自动豁免。
 
-Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计划后，Plan 最后把当前 `Plan Context` 状态从 `draft` 改为 `ready`。Gate 未通过时保持 `draft`，不得交给 Act。
+Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计划后，`Plan Context` 才能按 Cycle 模板 › 写入规则 离开 `draft`。Gate 未通过时不得交给 Act。
 
 ## 轻量模式
 
@@ -275,18 +275,4 @@ Review 模式改为交付：
 
 ## 禁止
 
-- 需求未批准就实现。
-- 需求缺口未扫描就设计。
-- 未调查实际代码就制定实施任务。
-- 把必要调用链、实质影响范围、接口语义或测试策略留给 Act 决定。
-- 让影响契约语义或 Acceptance 的未知项通过 Gate 2。
-- 用轻量模式取消追溯或验证。
-- 把 `openspec-assistant` 当作写入者。
-- 自动调用 Act 或 Maintainer。
-- 自动同步 tasks、SNAPSHOT 或归档 change。
 - 覆盖 Plan Context、其他角色区域，或已经终结、已有后继产物的 Cycle。
-- 把 `rework-required` 作为新增全局 task 或修改 Iteration Map 的理由。
-- 把新目标、范围变化或验收变化伪装为 rework Cycle。
-- 在原计划为 `none` 时，把缺少 Evidence 目录本身作为 Review 问题。
-- 规划公共规则禁止的身份型证据工程或判定层。
-- 依赖某个平台专属任务工具或 slash command 才能执行流程。

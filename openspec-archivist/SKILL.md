@@ -40,7 +40,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 
 ### Step 1：读取
 
-复用当前会话中 Assistant 已读取且未变化的项目地图和状态概览。先读取用户指定目标和判断所需的索引，再按搜索命中补读相关内容：
+体系上下文按公共规则 › 读取顺序 复用。先读取用户指定目标和判断所需的索引，再按搜索命中补读相关内容：
 
 - 目标所在的 project-model、references、improvements、SNAPSHOT 或 tasks
 - 目标 Analysis、Runbook、Issue 及其 R 索引

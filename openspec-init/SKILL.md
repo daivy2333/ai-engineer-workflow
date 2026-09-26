@@ -91,7 +91,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` �
 - change 目录支持逻辑 Iteration Plan；`rework-required` 和 `replan-required` 在同一 Iteration 内创建对应后继 Cycle，只有后者修改未完成计划。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
 - Cycle 格式支持声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
-- 公共规则、Plan 和 Act 禁止身份型证据工程，要求 Gate 只由目标行为、状态、输出、错误结果或退出码通过。
+- 公共规则 › 行为约束 的禁令已生成，Gate 只由目标行为、状态、输出、错误结果或退出码通过。
 - Cycle 格式能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
 - Cycle 格式能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - 活跃 change 通过 `.agents/changes/` 目录存在性表达，不引入元数据文件。

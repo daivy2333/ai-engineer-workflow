@@ -20,12 +20,11 @@ description: 深度阅读整个项目、模块、调用链或子系统，按宏�
 
 ## 前置检查
 
-1. 复用当前会话中已读取且未变化的 AGENTS、SNAPSHOT、project-model、references 和 change 信息，只补读目标所需的缺失内容。
-2. Assistant 提供的体系文档上下文不能替代本次目标代码调查。
-3. 检查 `.agents/analysis/` 是否已有同主题文档。
-4. 检查活跃 OpenSpec change。
-5. 调查涉及实施结论时，读取相关 Iteration、Cycle、Act Response 和已有 Evidence。
-6. 明确目标、范围和 3-8 个需要回答的问题。
+1. 按公共规则 › 读取顺序 复用体系上下文，只补读目标所需的缺失内容。
+2. 检查 `.agents/analysis/` 是否已有同主题文档。
+3. 检查活跃 OpenSpec change。
+4. 调查涉及实施结论时，读取相关 Iteration、Cycle、Act Response 和已有 Evidence。
+5. 明确目标、范围和 3-8 个需要回答的问题。
 
 已有分析足够时复用，不重复生成。
 
