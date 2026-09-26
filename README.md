@@ -16,17 +16,17 @@
 
 每个 `SKILL.md` 的 frontmatter 只使用 `name` 和 `description`。这是 Claude Code、OpenCode 和 Codex 都能识别的公共字段。
 
-三端差异只在发现目录和工具入口：
+三端差异只在技能发现目录。项目规则入口统一为 `AGENTS.md`，公共规则只保存这一份，不生成平台专属规则副本：
 
-| 平台 | 项目技能目录 | 用户技能目录 | 项目规则入口 |
-|---|---|---|---|
-| Claude Code | `.claude/skills/` | `~/.claude/skills/` | `CLAUDE.md` |
-| Codex | `.agents/skills/` | `~/.agents/skills/` | `AGENTS.md` |
-| OpenCode | `.opencode/skills/`、`.claude/skills/` 或 `.agents/skills/` | `~/.config/opencode/skills/`、`~/.claude/skills/` 或 `~/.agents/skills/` | `AGENTS.md`，无该文件时兼容 `CLAUDE.md` |
+| 平台 | 用户技能目录 |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex | `~/.agents/skills/` |
+| OpenCode | `~/.config/opencode/skills/`，或复用上述任一目录 |
 
-同一份技能内容可以在三端使用，不需要维护三个副本。平台专属的任务工具、权限和 slash command 由适配层处理。
+技能组是用户级资产，项目仓库只承载 `.agents/` 下的数据：`docs/`（SNAPSHOT、tasks）、`memory/`（项目记忆）、`analysis/`、`runbooks/`、`issues/`，以及 `openspec/` 下的 `changes/`（变更）、`specs/`（行为语料库）和 change 内 Evidence。初始化不向项目写入技能或模板副本；能运行体系技能即证明技能组已装载。
 
-目标项目仍以 `CLAUDE.md` 保存公共 OpenSpec 规则。`openspec-init` 为 Codex 和 OpenCode 生成薄 `AGENTS.md` 入口，让它们读取同一份规则，不复制规则正文。
+目标项目以 `AGENTS.md` 保存公共规则；change 的创建、验证和归档使用 OpenSpec 集成完成，其余工作流不依赖外部 CLI 工具。
 
 参考：
 
@@ -40,7 +40,7 @@
 
 | Skill | 职责 |
 |---|---|
-| `openspec-init` | 初始化规则、specs、状态文档和三端入口 |
+| `openspec-init` | 初始化 OpenSpec 配置、规则、项目记忆和状态文档结构 |
 | `openspec-assistant` | 只读查询规则、状态、项目记忆和 active changes |
 | `openspec-milestone-planner` | 规划工作量适中、可独立验证和排障的 milestone roadmap |
 | `openspec-plan` | BDD、实现调查、逻辑 Iteration 规划、Cycle 创建和实施反馈 Review |
@@ -131,12 +131,12 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 | 行为规格 | 验收过的系统当前行为，收尾时合并增量 | `openspec/specs/<domain>/spec.md` |
 | Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |
-| Analysis | 调查、实验和评估正文 | `.claude/analysis/` |
-| Runbooks | 已验证、可重复或高风险的操作 | `.claude/runbooks/` |
-| Issues | 缺陷台账：发现、事件、处置与关闭 | `.claude/issues/` |
+| Analysis | 调查、实验和评估正文 | `.agents/analysis/` |
+| Runbooks | 已验证、可重复或高风险的操作 | `.agents/runbooks/` |
+| Issues | 缺陷台账：发现、事件、处置与关闭 | `.agents/issues/` |
 | Evidence | 按需保存某次 Cycle 无法充分摘要的决定性产物 | `openspec/changes/<change>/evidence/` |
 
-Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
+Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保存不超过 20 行的决定性输出。只有用户要求、无法低成本复现、一次性环境即将消失、Issue/Blocker 现场或不可摘要的决定性结构才允许持久化；每个 Cycle 最多 5 个文件，整个 change 最多 20 个，禁止完整日志目录、源码副本和完整测试输出。Evidence 随 change 归档，不创建空占位目录。
 
 ### OS 与驱动
 
@@ -158,13 +158,11 @@ Evidence 属于 change，不登记 R。普通验证结果只在 Act Response 保
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 20 个技能。
-
-OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
+当前仓库共 20 个技能。OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
 ## 安装
 
-技能内容只有一份源目录，安装就是把每个技能目录链接到对应平台的发现位置。用户级安装：
+技能装载到用户级目录，目标项目仓库不保存技能副本。在技能源目录执行：
 
 ```bash
 cd ai-engineer-workflow
@@ -172,29 +170,28 @@ mkdir -p ~/.claude/skills ~/.agents/skills
 for dir in */; do
   name="${dir%/}"
   ln -s "$PWD/$name" "$HOME/.claude/skills/$name"   # Claude Code
-  ln -s "$PWD/$name" "$HOME/.agents/skills/$name"   # Codex
+  ln -s "$PWD/$name" "$HOME/.agents/skills/$name"   # Codex；OpenCode 复用以上任一目录
 done
 ```
 
-项目级安装把同样的链接建到当前项目的 `.claude/skills/` 和 `.agents/skills/`，只覆盖当前项目。OpenCode 能读取上述任一目录，不额外创建副本。
-
-OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台机器同时启用 `.claude/skills` 和 `.agents/skills` 时，OpenCode 可能发现两个同名入口；在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
+OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台机器同时向 `~/.claude/skills` 和 `~/.agents/skills` 装载时，OpenCode 可能发现两个同名入口；在 OpenCode 环境中只保留一个可发现入口。技能内容仍来自同一源目录。
 
 ## 设计约束
 
 - 更新技能时优先精准修改现有规则和字段。现有结构能够表达目标时，不新增目录、文档、模板、协议、状态、Gate、状态迁移、授权例外或中间产物。
 - 新结构必须解决现有载体无法表达的具体问题，并说明新增内容的职责、读取时机和验证收益；不能证明必要性时保持原结构。
 - 非必要不增加流程。新增规则、Gate、状态、迁移或授权例外前，先说明删除它会导致哪个具体错误行为、它改变哪个决策；说明不了就不加。跨 Skill 生效的规则只在权威位置保留一份正文，其余位置按名引用。
-- 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有落点，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱防线是否有其他角色检查点兜底，语义变化是否与去重分离并声明损失。
-- 体系更新按可独立回滚的批次提交；发现执行退化时，优先把检查点指针恢复为局部规则，不整体回退。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
 - 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
+- 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有落点，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱防线是否有其他角色检查点兜底，语义变化是否与去重分离并声明损失。
+- 体系更新按可独立回滚的批次提交；发现执行退化时，优先把检查点指针恢复为局部规则，不整体回退。
 - 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。验证判定依据被测对象与项目测试框架的直接退出码和原生输出，不得为判定测试或验证结果新增脚本、封装命令、专用参数或判定层。
 - 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明“这是同一次运行”，也不得为解决证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
 - 发现上述身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，随后重新运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
+- change 的创建、验证和归档使用 OpenSpec 集成完成，结构检查由技能内自检清单与 OpenSpec validate 执行；其余工作流不依赖外部 CLI 工具。
 - 验证结论在其覆盖范围未变化时可以采信复用。采信方做只读基线检查并注明来源；结论矛盾、输出可疑、覆盖不足或用户要求独立复现时重跑。重复运行相同材料不构成审计；验证通过一次即为通过，不自行重复运行以增强可靠性。
 - OpenSpec Skill 复用当前会话中来源明确且未变化的上下文，只补读缺失信息和实际操作对象；不得因 Skill 切换重复恢复项目状态。
-- `CLAUDE.md` 只保存公共执行规范，不记录项目现状。
+- `AGENTS.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。

@@ -1,6 +1,6 @@
-# CLAUDE.md 模板
+# AGENTS.md 模板
 
-此模板只生成项目公共规范。当前项目描述写入 SNAPSHOT，工作状态写入 tasks 或 change。
+此模板生成项目公共规范。当前项目描述写入 SNAPSHOT，工作状态写入 tasks 或 change。
 
 ## 模板目录
 
@@ -14,32 +14,32 @@
 - 文件编辑与完成前五问
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 ## 文档地图
 
 | 内容 | 路径 | 写入者 |
 |---|---|---|
-| 公共规则 | `CLAUDE.md` | 人工或 `openspec-init` |
-| 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
-| Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
-| 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
-| 参考 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
-| 改进 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
-| 行为规格 | `openspec/specs/<domain>/spec.md` | `openspec-docs-maintainer` 收尾合并 |
-| 活跃变更 | `openspec/changes/` | OpenSpec、plan、act |
-| Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act` |
-| 分析文档 | `.claude/analysis/` | `openspec-explorer` |
-| Runbook | `.claude/runbooks/` | `openspec-experience-recorder` |
-| Issue（缺陷台账） | `.claude/issues/` | `openspec-experience-recorder` |
+| 公共规则 | `AGENTS.md` | 人工或 `openspec-init` |
+| 当前项目描述 | `.agents/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
+| Milestone roadmap | `.agents/docs/tasks.md` | `openspec-milestone-planner` |
+| 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
+| 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
+| 参考 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
+| 改进 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
+| 行为规格 | `.agents/specs/<domain>.md` | `openspec-docs-maintainer` 收尾合并 |
+| 活跃变更 | `.agents/changes/` | plan、act |
+| Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act` |
+| 分析文档 | `.agents/analysis/` | `openspec-explorer` |
+| Runbook | `.agents/runbooks/` | `openspec-experience-recorder` |
+| Issue（缺陷台账） | `.agents/issues/` | `openspec-experience-recorder` |
 
 ## 读取顺序
 
-- 新会话：assistant 读取 CLAUDE → SNAPSHOT → tasks → active changes，并按问题补充相关 M/R/I 和持久化产物。
+- 新会话：assistant 读取 AGENTS.md → SNAPSHOT → tasks → active changes，并按问题补充相关 M/R/I 和持久化产物。
 - 当前会话中来源明确、细节仍可用且读取后未变化的信息直接复用；Skill 切换本身不触发重复读取。
 - 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新鲜运行证据时，才重新读取对应权威来源。
-- Assistant 只恢复 OpenSpec 体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
+- Assistant 只恢复体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
 - 探索：复用体系上下文 → 读取目标代码和测试 → 形成即时结论或 Analysis。
 - 计划：复用 Explorer 的当前会话结论或 Analysis → 只补查缺失或失效的实现事实 → 形成自包含 Plan Context。
 - 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
@@ -58,7 +58,7 @@
 - `openspec-act`：TDD、实施、任务自检、全量 diff Review、验证、按需 Evidence、经验候选和 Act Response。
 - `openspec-experience-recorder`：根据已发生且有证据的过程创建、更新或恢复 Runbook、Issue。
 - `openspec-docs-maintainer`：显式维护状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，收尾最终 Review Result 为 `accepted` 的 change，并处理限定 R 登记。
-- `openspec-explorer`：宏观或微观探索；输出即时回答或 `.claude/analysis/`。
+- `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和 carrier 归档。
 
@@ -91,7 +91,7 @@
 | 精准编辑 | 只修改相关片段 |
 | 命令执行 | 保留命令、输出和退出码 |
 | 并行委托 | 仅在环境支持且任务可独立时使用 |
-| OpenSpec 集成 | 按当前职责创建、应用、验证或归档 change |
+| 变更文件操作 | 用目录创建、git 移动和引用扫描完成 change 生命周期 |
 
 平台工具名只是适配，不改变上述语义。
 
@@ -101,7 +101,7 @@
 - SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录。
 - 其他文档只引用 SNAPSHOT，不复制当前项目描述。
 - 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
-- 已承诺工作写 tasks 或 OpenSpec change。
+- 已承诺工作写 tasks 或 change。
 - 当前开发约束写 project-model，编号 `Mxx`。
 - 长期选择及其理由写 change 的 `design.md`，随 change 归档。
 - 系统当前行为写 specs 语料库；maintainer 在 change 收尾时合并增量规格。
@@ -193,7 +193,7 @@ Plan 在制定任务前读取实际代码并记录：
 - 入口、目标符号、调用者和被调用者。
 - 数据流、状态变化、错误和并发边界。
 - 现有测试、验证命令和基线结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可采信结论时运行基线验证。
-- 相关域行为可引用 `openspec/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
+- 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
 - 当前行为、目标行为和影响范围。
 
 影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。
@@ -228,7 +228,7 @@ Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
 ## 任务批次与续跑边界
 
 - 每个 Phase 和可验证 Step 有状态。
-- 任务列表只保存当前已授权且可执行的工作；完整状态以 OpenSpec 产物为准。
+- 任务列表只保存当前已授权且可执行的工作；完整状态以 change 产物为准。
 - 跳过项标记 `SKIPPED: <reason>`。
 - 只有验证通过后才能标记完成。
 - 最终报告前检查全部任务状态。
@@ -253,7 +253,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 每个任务只归属一个 Iteration；首个与后续 Iteration 使用相同的聚合、拆分标准。
 - Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不修改 Iteration Map；Replan Cycle 使用同一目录的后继编号执行修订后的计划。两者都不占用全局 Iteration 编号。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
-- Plan Context 包含所属 Iteration、Cycle 类型、Current-State Evidence、行为变化、变更面、任务或 repair item 契约和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
+- Plan Context 包含所属 Iteration、Cycle 类型、Investigation Facts（当前基线、Current-State Evidence、代码与关键路径）、行为变化、任务或 repair item 契约（含变更面）和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
 - Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文；引用可以保留证据来源，但 Act 不得被要求沿引用链回读。
 - Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。

@@ -118,7 +118,7 @@ Issue 的 M 或 Runbook 候选由 `openspec-experience-recorder` 在创建或更
 - `stale` 状态：保留并交给 Maintainer 刷新。
 - 工作状态、操作流程、约束、原因或历史记录：移出 SNAPSHOT 后按对应类型判断。
 
-**CLAUDE.md**
+**AGENTS.md**
 
 永不自动修改。只能报告 `SUGGEST-REVIEW` 或 `SUGGEST-MERGE`。
 

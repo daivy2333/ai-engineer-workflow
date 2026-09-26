@@ -11,9 +11,9 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 上下文恢复时依次读取：
 
-1. `CLAUDE.md`
-2. `.claude/docs/SNAPSHOT.md`
-3. `.claude/docs/tasks.md`
+1. `AGENTS.md`
+2. `.agents/docs/SNAPSHOT.md`
+3. `.agents/docs/tasks.md`
 4. `openspec list`
 5. 与问题相关的 M/R/I、changes、change 内 Evidence 或持久化产物
 
@@ -25,19 +25,19 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 
 | 内容 | 路径 | 写入者 |
 |---|---|---|
-| 公共规则 | `CLAUDE.md` | `openspec-init` 或人工 |
-| 当前项目描述 | `.claude/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
-| Milestone roadmap | `.claude/docs/tasks.md` | `openspec-milestone-planner` |
-| 全局任务和状态 | `.claude/docs/tasks.md` | `openspec-docs-maintainer` |
-| 项目模型 | `openspec/specs/project-model/spec.md` | `openspec-docs-maintainer` |
-| 参考索引 | `openspec/specs/references/spec.md` | `openspec-docs-maintainer` |
-| 改进候选 | `openspec/specs/improvements/spec.md` | `openspec-docs-maintainer` |
+| 公共规则 | `AGENTS.md` | `openspec-init` 或人工 |
+| 当前项目描述 | `.agents/docs/SNAPSHOT.md` | `openspec-docs-maintainer` |
+| Milestone roadmap | `.agents/docs/tasks.md` | `openspec-milestone-planner` |
+| 全局任务和状态 | `.agents/docs/tasks.md` | `openspec-docs-maintainer` |
+| 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
+| 参考索引 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
+| 改进候选 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
 | 行为规格 | `openspec/specs/<domain>/spec.md` | `openspec-docs-maintainer` 收尾合并 |
 | 活跃变更 | `openspec/changes/` | OpenSpec 集成与 plan/act |
 | Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act`，按需创建 |
-| 深度分析 | `.claude/analysis/` | `openspec-explorer` |
-| 操作手册 | `.claude/runbooks/` | `openspec-experience-recorder` |
-| 缺陷台账 | `.claude/issues/` | `openspec-experience-recorder` |
+| 深度分析 | `.agents/analysis/` | `openspec-explorer` |
+| 操作手册 | `.agents/runbooks/` | `openspec-experience-recorder` |
+| 缺陷台账 | `.agents/issues/` | `openspec-experience-recorder` |
 
 ## 路由
 

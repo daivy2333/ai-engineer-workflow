@@ -4,7 +4,7 @@ Runbook 和 Issue 按需创建，不生成空目录或占位文档。正文引�
 
 ## Runbook
 
-路径：`.claude/runbooks/<topic>.md`
+路径：`.agents/runbooks/<topic>.md`
 
 ```markdown
 # <操作名称>
@@ -47,7 +47,7 @@ Runbook 和 Issue 按需创建，不生成空目录或占位文档。正文引�
 
 ## Issue
 
-路径：`.claude/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增。
+路径：`.agents/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增。
 
 ```markdown
 # <缺陷标题>

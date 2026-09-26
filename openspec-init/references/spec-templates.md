@@ -1,6 +1,6 @@
-# OpenSpec spec 模板
+# 项目记忆与行为语料库模板
 
-记忆域使用 OpenSpec 支持的 Requirement 和 Scenario 结构。行为语料库按产品域组织，由 maintainer 在 change 收尾时合并增量规格。初始化后按项目事实填充，不创建占位条目。
+记忆文件使用扁平 markdown 台账。行为语料库按域组织，由 maintainer 在 change 收尾时合并增量规格。初始化后按项目事实填充，不创建占位条目。
 
 ## 目录
 
@@ -12,104 +12,39 @@
 
 ## Project Model
 
-路径：`openspec/specs/project-model/spec.md`
+路径：`.agents/memory/project-model.md`
 
 记录当前有效的开发约束：代码结构和贡献者必须遵守的跨模块规则，不是产品行为描述。条目使用 `Mxx`。
 
-分类可以是：
+分类：architecture、domain、quality、security、compatibility、runtime。
 
-- architecture
-- domain
-- quality
-- security
-- compatibility
-- runtime
-
-```markdown
-## Purpose
-
-记录当前有效的项目模型、边界和跨模块约束。
-
-## Requirements
-
-### Requirement: 项目模型可验证
-
-长期有效的跨模块约束 SHALL 记录范围、不变量、证据和状态。
-
-#### Scenario: 确认稳定约束
-
-- **WHEN** 已验证某项约束会影响多个模块或后续变更
-- **THEN** 使用递增 M 编号记录分类、范围、不变量、证据和状态
-```
+条目字段：分类、范围、不变量、证据、状态。
 
 ## References
 
-路径：`openspec/specs/references/spec.md`
+路径：`.agents/memory/references.md`
 
 只记录检索元数据，不复制目标正文。条目使用 `Rxx`。
 
-Change Evidence 位于所属 change 内，由 change 提供索引和归档入口，不登记 R。
+类型：analysis、external-doc、dependency、schema、benchmark、runbook、issue。
 
-类型可以是：
+条目字段：类型、路径或 URL、版本或日期、用途、状态。
 
-- analysis
-- external-doc
-- dependency
-- schema
-- benchmark
-- runbook
-- issue
-
-```markdown
-## Purpose
-
-索引项目依赖的内部产物和外部资料。
-
-## Requirements
-
-### Requirement: 参考可定位
-
-参考 SHALL 记录类型、路径或 URL、版本或日期、用途和状态。
-
-#### Scenario: 登记持久化产物
-
-- **WHEN** 新分析、Runbook 或 Issue 需要跨会话复用
-- **THEN** 使用递增 R 编号登记检索元数据
-```
+Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 
 ## Improvements
 
-路径：`openspec/specs/improvements/spec.md`
+路径：`.agents/memory/improvements.md`
 
-记录用户主动提供的未来工作方向，agent 不产生 I 候选。条目使用 `Ixx`。
+记录用户主动提供的模块级未来方向，agent 不产生 I 候选。条目使用 `Ixx`。
 
-```markdown
-## Purpose
-
-记录用户提供的未来工作方向。
-
-## Requirements
-
-### Requirement: 改进方向可评估
-
-改进方向 SHALL 包含方向、依据、影响和状态。
-
-#### Scenario: 登记用户方向
-
-- **WHEN** 用户明确提供某项未来工作方向且尚未批准实施
-- **THEN** 使用递增 I 编号记录方向、依据、影响和状态
-
-#### Scenario: 批准实施
-
-- **WHEN** 用户批准实施某方向
-- **THEN** 纳入 change 或 milestone 并把原条目标记 promoted
-```
+条目字段：方向、依据、影响、状态。批准实施时纳入 change 或 milestone，并把原条目标记 `promoted`。
 
 ## 行为语料库
 
 路径：`openspec/specs/<domain>/spec.md`
 
-记录已验收的系统当前行为，是行为权威描述。域按产品结构划分，与 project-model、references、improvements 三个记忆域共存于 `openspec/specs/`；行为域由 maintainer 在 change 收尾时合并增量规格创建和更新，不手工撰写，首次合并前不创建域文件。
+记录已验收的系统当前行为，是行为权威描述。域按产品结构划分；域文件由 maintainer 在 change 收尾时创建和更新，不手工撰写，首次合并前不创建文件。所有 spec 必须满足 OpenSpec 当前格式要求，并包含可验证 Scenario。
 
 条目使用 Requirement 和 Scenario 结构：
 
@@ -159,8 +94,8 @@ SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束�
 - 已承诺待办。
 - 阻塞。
 - 最近完成。
-- 与 OpenSpec changes 的同步规则。
+- 与 change 的同步规则。
 
 Milestone 与 change 数量不绑定。路线规划由 `openspec-milestone-planner` 负责，运行状态由 `openspec-docs-maintainer` 按用户指令同步。
 
-未批准的想法不进入 tasks。CLAUDE 不记录项目事实。
+未批准的想法不进入 tasks。AGENTS.md 不记录项目事实。

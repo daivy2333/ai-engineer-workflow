@@ -1,6 +1,6 @@
 ---
 name: openspec-compressor
-description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 CLAUDE、SNAPSHOT、tasks、M/R/I 和 analysis；不处理 Runbook、Issue、行为规格或 change Evidence。
+description: 原地压缩 OpenSpec 活跃文档，在不移动、不归档、不删除有效信息、不改变规则或状态的前提下减少重复表达。用于精简 AGENTS、SNAPSHOT、tasks、M/R/I 和 analysis；不处理 Runbook、Issue、行为规格或 change Evidence。
 ---
 
 # OpenSpec Compressor

@@ -27,7 +27,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 1. 用户确认前不移动、删除或归档。
 2. 逐条判断，不按整份文件粗略处理。
 3. Archive 和 Delete 前扫描交叉引用。
-4. `CLAUDE.md` 永不自动归档，只能建议审查。
+4. `AGENTS.md` 永不自动归档，只能建议审查。
 5. 进行中任务永不归档。
 6. 无法满足 Maintainer 正常收尾条件的 OpenSpec change 经用户确认后使用 OpenSpec 集成归档，不手工移动；正常完成的 change 交给 Maintainer 收尾。
 7. Archive 和 Compress-Archive 使用独立 carrier change。
@@ -139,7 +139,7 @@ M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Ru
 
 - 未确认就执行。
 - 归档进行中任务。
-- 自动改写或归档 `CLAUDE.md`。
+- 自动改写或归档 `AGENTS.md`。
 - 手工移动 OpenSpec change。
 - carrier 失败后删除源条目。
 - 把 Analysis、Runbook 或 Issue 放进 OpenSpec archive。

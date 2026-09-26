@@ -11,11 +11,11 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 | 文档 | 编号 |
 |---|---|
-| `.claude/docs/tasks.md` | `Txx`；已有 `MSxx` 的状态和 change 引用 |
-| `.claude/docs/SNAPSHOT.md` | 无 |
-| `openspec/specs/project-model/spec.md` | `Mxx` |
-| `openspec/specs/references/spec.md` | `Rxx` |
-| `openspec/specs/improvements/spec.md` | `Ixx` |
+| `.agents/docs/tasks.md` | `Txx`；已有 `MSxx` 的状态和 change 引用 |
+| `.agents/docs/SNAPSHOT.md` | 无 |
+| `.agents/memory/project-model.md` | `Mxx` |
+| `.agents/memory/references.md` | `Rxx` |
+| `.agents/memory/improvements.md` | `Ixx` |
 | `openspec/specs/<domain>/spec.md` | 行为规格（无编号） |
 
 ## 约束
@@ -104,7 +104,7 @@ Carrier 条目：
 Analysis：
 
 1. 从 R 条目定位 `archive/` 路径。
-2. 恢复到 `.claude/analysis/`。
+2. 恢复到 `.agents/analysis/`。
 3. 更新 R 路径和状态。
 4. 检查交叉引用。
 

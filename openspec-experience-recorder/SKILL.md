@@ -11,8 +11,8 @@ description: 根据已经发生且有证据的实施或运行过程，创建、�
 
 ## 职责
 
-- 创建、更新和恢复 `.claude/runbooks/` 中的 Runbook。
-- 创建、更新和恢复 `.claude/issues/` 中的 Issue。
+- 创建、更新和恢复 `.agents/runbooks/` 中的 Runbook。
+- 创建、更新和恢复 `.agents/issues/` 中的 Issue。
 - 从 Act Response、Plan Review、Explorer 报告、Evidence、命令输出、日志、时间线或现有产物提取事实。
 - 区分事实、推断和未确认项。
 - 为新建、实质更新或恢复的产物请求 R 登记或索引更新。
@@ -82,8 +82,8 @@ Issue 准入为有证据的实质缺陷（公共规则 › Plan 调查）。普�
 
 按格式文件精准创建或更新：
 
-- Runbook：`.claude/runbooks/<topic>.md`
-- Issue：`.claude/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增
+- Runbook：`.agents/runbooks/<topic>.md`
+- Issue：`.agents/issues/ISSxx-<topic>.md`，ISSxx 读取目录最大编号后递增
 
 更新 Runbook 时保留仍有效的边界和失败处理，并刷新验证日期、环境与证据。更新 Issue 时追加事件段和状态迁移记录（日期、原因、指针），不改写已发生的历史；close 和 reopen 只按用户指令执行。
 
