@@ -124,7 +124,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Verification Evidence**
 
-<命令或操作、每项不超过 20 行的决定性输出、退出码、支持的 Acceptance 和结论；采信既有结论时注明来源>
+<命令或操作、实际结果、支持的 Acceptance 和结论；采信既有结论时注明来源>
 
 **Persisted Evidence**
 
