@@ -49,7 +49,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 - Required behavior: <完成后可观察行为，含必须完成的接口、状态或错误语义变化>
 - Preserve: <必须保持的约束>
 - Forbidden: <不得修改或扩大的范围>
-- Test witness: <位置、RED 或变更前 GREEN、命令和预期结果>
+- First test: <位置、RED 或变更前 GREEN、命令和预期结果>
 - GREEN condition: <修改后通过条件>
 - Verification: <自动命令或人工步骤、通过条件和失败含义；人工步骤写最短操作与直接可观察结果>
 - Stop when: <契约失效或需要返回 Plan 的实质条件>
@@ -88,7 +88,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 ## Act Response
 
-- Status: pending
+- Status: <reported | blocked>
 
 **Implemented**
 
@@ -179,4 +179,4 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 - Plan 创建文件时把 `Plan Context` 状态设为 `draft`；Gate 2 全部通过或被用户明确豁免且计划获批后，最后改为 `ready`。未通过时保持 `draft`，不得交给 Act。
 - Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，但只展开当前 Iteration 和当前 Cycle。
 
-Cycle 的状态迁移、覆盖与冻结、Review Result 终态与重入、rework 与 replan 边界、阻塞恢复、Experience Candidates 授权和 Persisted Evidence 规则，按公共规则 › Iteration 与 Cycle 线程 执行；本文件不重复协议正文。
+Cycle 的状态迁移、覆盖与冻结、Review Result 最终结论与重入、rework 与 replan 边界、阻塞恢复、Experience Candidates 授权和 Persisted Evidence 规则，按公共规则 › Iteration 与 Cycle 线程 执行；本文件不重复协议正文。

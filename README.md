@@ -86,7 +86,7 @@ openspec-plan
   → 终止，等待用户审计
 openspec-act
   → 直接消费 Plan Context，不重新建立计划基线
-  → 每任务测试见证（公共规则 › TDD）
+  → 每任务先行测试（公共规则 › TDD）
   → Gate 3：每任务 Review（spec compliance + code quality）
   → Gate 4：新鲜或未失效的验证证据
   → Gate 5：阻塞与三次失败反思

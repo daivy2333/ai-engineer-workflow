@@ -172,7 +172,7 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 4. 不测试通过不提交。
 5. 不验证成功不声明。
 6. 三次失败必须反思。
-7. 不见测试见证不变更。
+7. 没有先行测试不变更。
 8. 不见场景缺口扫描不进设计。
 
 ## BDD
@@ -200,7 +200,7 @@ Plan 在制定任务前读取实际代码并记录：
 
 ## TDD
 
-铁律：`NO CHANGE WITHOUT TEST WITNESS`。
+铁律：先有测试，再有变更（NO CHANGE WITHOUT A PRIOR TEST）。
 
 - 新功能：测试定义期望，观察 RED，再实现 GREEN。
 - Bug：测试复现问题，观察 RED，再修复 GREEN。
@@ -259,23 +259,23 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写当前 Cycle 的 `Act Response`。
 - Act 每个 task 或 repair item 完成后执行 Gate 3；完整 diff 终审由 Plan Review 独立承担。
-- Act 不建立或复核 Plan 基线；直接按 ready 的 Plan Context 建立测试见证并实施。
+- Act 不建立或复核 Plan 基线；直接按 ready 的 Plan Context 建立先行测试并实施。
 - Act 可处理非实质局部差异并在 Response 记录；实质问题返回 Plan。
 - Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录自检发现、已修复内容和遗留 Minor 问题；没有发现时省略。
 - Act Response 记录有证据的 Runbook、Issue 候选；没有则写 `None`。
 - 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不落账；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
-- Act Response 状态允许 `pending → reported`、`pending → blocked`、用户解决阻塞后的 `blocked → pending`，以及 Plan 要求当前 Cycle 修复时的 `reported → pending`。
+- Act Response 状态为 `reported` 或 `blocked`；blocked 经用户解除后继续，完成时改为 `reported`。
 - 计划偏差或 `required` Evidence 不再满足白名单、必要性或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
-- Review 保持 `pending` 且没有后继 Cycle 时，Plan 和 Act 可分别覆盖自己的区域为最新完整状态；进入终态或创建后继 Cycle 后，Cycle 冻结。Plan Context 始终不可改写。
+- Review 保持 `pending` 且没有后继 Cycle 时，Plan 和 Act 可分别覆盖自己的区域为最新完整状态；得出最终结论或创建后继 Cycle 后，Cycle 冻结。Plan Context 始终不可改写。
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - Act 不得创建下一 Cycle 或下一 Iteration。
 - Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已采信的验证（公共规则 › 验证）。
 - Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
 - 既有 Acceptance 的有限修复仍受当前执行契约约束时，Plan 保持 Review Result 为 `pending` 并要求 Act 继续当前 Cycle；需要新执行契约时才创建 rework Cycle。
-- Review Result 的终态为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。
+- Review Result 的最终结论为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。
 - 连续两个 rework Cycle 未缩小同一 Acceptance gap 时重新检查 Plan、设计和需求假设；同一问题三次失败后不得创建第四次同类 Cycle。
 - 当前 Iteration 只有在 Review Result 为 `accepted` 后才能完成并展开 Map 中的下一 Iteration。
 - 展开后继 Iteration 时，Current Baseline 优先引用前一 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的代码表面。
@@ -301,7 +301,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 同一问题第三次失败。
 - 进入 rework 或 replan 时受影响的范围。
 
-两道检查不可默认：完成声明背后至少有一次真实运行（TDD 的 GREEN 即是）；Plan Review 独立阅读完整 diff，核对 Act 声明与代码一致，不以 Act 自检代替。修改前的测试见证按同一规则采信既有结论：覆盖未变化时，既有结论就是当前基线的合法观察，恢复阻塞和 rework 场景按此采信。
+两道检查不可默认：完成声明背后至少有一次真实运行（TDD 的 GREEN 即是）；Plan Review 独立阅读完整 diff，核对 Act 声明与代码一致，不以 Act 自检代替。修改前的先行测试按同一规则采信既有结论：覆盖未变化时，既有结论就是当前基线的合法观察，恢复阻塞和 rework 场景按此采信。
 
 验证通过一次即为通过；禁止自行重复运行已通过的验证以增强可靠性或信心，禁止重试直至通过。同一验证的重复仅适用于两种情形：计划在通过条件中写明判定方式的不稳定验证（时序、并发或已知不稳定类，如固定重复次数取结果），以及失败后判定是否偶发错误的一次复核；复核通过按通过处理，并在验证记录注明首跑失败。
 
