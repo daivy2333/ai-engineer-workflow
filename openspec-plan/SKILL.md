@@ -145,7 +145,7 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 5. 每个任务是否包含完整执行契约。
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
-8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
+8. Iteration Plan 是否覆盖全部任务并通过平衡审计，昂贵验证预算明确。
 9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个先行测试并执行。
 10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
 11. 验证是否直接证明目标行为，且没有身份型证据工程、判定层、自引用验证或为工具测试工具。
@@ -178,17 +178,10 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 
 全部满足才能交给 `openspec-act`：
 
-- 没有 `Missing` requirement。
-- 所有 `Simplified` requirement 已获用户批准。
-- 调查完整：当前实现、调用链、状态、测试和影响面都有证据。
+- Step 5 审查计划全部通过。
+- RTM 无 `Missing`，所有 `Simplified` 已获用户批准。
 - 设计闭合：行为差异、接口、错误语义和关键选择已经明确。
-- 任务可执行：每个任务都有代码位置、行为变化、先行测试和停止条件。
-- 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确，昂贵验证预算明确。
-- 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
-- 验证充分：覆盖全部已批准 scenario（含 sad path 和 edge case），每条为最简直接判定，任务类型对应的先行测试、修改后 GREEN、回归命令和通过条件能证明验收目标。
-- 验证没有用身份型证据工程或判定层替代目标行为（公共规则 › 行为约束）。
-- 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
-- change 的 tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
+- 当前 Cycle 与 change 的 tasks、specs、design 一致。
 - Persisted Evidence 模式明确；`required` 项满足白名单和必要性问题，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
@@ -203,7 +196,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 用户要求检查 Act 结果时：
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
-2. 独立阅读实际代码和 diff，检查 Act Response、Self-Review 和计划要求的 Evidence。
+2. 独立阅读实际代码和 diff（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、Self-Review 和计划要求的 Evidence。
 3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
 4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。

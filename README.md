@@ -87,7 +87,7 @@ openspec-plan
 openspec-act
   → 直接消费 Plan Context，不重新建立计划基线
   → 每任务先行测试（公共规则 › TDD）
-  → Gate 3：每任务 Review（spec compliance + code quality）
+  → Gate 3：每任务即时 Review（spec compliance + 会蔓延的缺陷）
   → Gate 4：Task Contract 验证全部满足
   → Gate 5：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
