@@ -46,10 +46,10 @@ Act Response 引用具体文件。没有保存需要时写 `None required`，不
 ## 规则
 
 - Plan 只声明通过白名单和必要性问题检查的证据要求，不生成实际证据。
-- Evidence 必须直接支持目标状态、输出、错误结果、协议结果或退出码；材料身份、来源匹配和时间顺序不能单独支持 Acceptance。
+- Evidence 必须直接支持目标状态、输出或错误结果；材料身份、来源匹配和时间顺序不能单独支持 Acceptance。
 - `required` 项只有在它直接支持 Acceptance 且满足上述条件时才构成 Gate 要求；无依据或无法安全采集时，Act 不收集并通过 Gate 5 以 `blocked` 返回 Plan Review。
 - Act 可保存计划外证据，但必须在 Cycle README 和 Act Response 中说明白名单理由。
-- Act Response 引用具体文件，不复制长日志；输出上限见公共规则 › 验证。
+- Act Response 引用具体文件，不复制长日志；输出只保留能判断结果的部分（公共规则 › 验证）。
 - Response 标记 `reported` 或 `blocked` 后，不静默覆盖已有证据。
 - 敏感信息必须脱敏，并注明脱敏范围。
 - Evidence 不登记 R，不单独 Artifact-Archive，随 change 一起归档。

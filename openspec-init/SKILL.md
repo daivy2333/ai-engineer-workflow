@@ -44,7 +44,6 @@ description: 初始化或升级项目规则、状态、change 和项目记忆体
    - 技术栈 context。
    - 语言要求。
    - proposal/specs/design/tasks 规则。
-3. 运行 OpenSpec specs 验证。
 
 平台专属 slash command 只能出现在适配说明中，不能成为 OpenSpec 生命周期的唯一入口。
 
@@ -86,7 +85,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` �
 完成前逐项验证：
 
 - OpenSpec CLI 可用。
-- specs validate 通过。
+- 生成的 openspec 产物结构满足当前格式要求。
 - `AGENTS.md` 只有一个公共规则来源。
 - `AGENTS.md` 不包含项目名称、技术栈、分支、路径现状或具体命令。
 - 公共读取规则要求复用当前会话中来源明确且未变化的体系上下文，并明确 Assistant 不替代代码调查或实际操作对象检查。
@@ -107,7 +106,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` �
 - change 目录支持逻辑 Iteration Plan；`rework-required` 和 `replan-required` 在同一 Iteration 内创建对应后继 Cycle，只有后者修改未完成计划。
 - tasks 支持 milestone roadmap，且 milestone 与 change 数量不绑定。
 - Cycle 格式支持声明 `none|required`；Evidence 按需创建且不登记 R，无效 `required` 进入 blocked Plan Review。
-- 公共规则 › 行为约束 的禁令已生成，Gate 只由目标行为、状态、输出、错误结果或退出码通过。
+- 公共规则 › 行为约束 的禁令已生成，Gate 只由目标行为、状态、输出或错误结果通过。
 - Cycle 格式能记录 `Review Result: pending → accepted | rework-required | replan-required`、Acceptance gap 和收敛状态。
 - Cycle 格式能记录 Experience Candidates，且候选不构成 Recorder 授权。
 - 活跃 change 通过 `openspec/changes/` 目录存在性表达，元数据由 OpenSpec 集成管理。

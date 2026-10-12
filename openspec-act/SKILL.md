@@ -16,7 +16,7 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-8. 使用当前环境可用的 OpenSpec 集成执行 apply 和 validate。
+8. 使用当前环境可用的 OpenSpec 集成执行 apply。
 9. 修改产品代码前建立测试见证。
 10. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。写入反馈后终止。
 
@@ -51,7 +51,7 @@ Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `
 
 任何完成声明都基于：
 
-1. 能证明声明的命令或操作，及其决定性输出（每项不超过 20 行，公共规则 › 验证）和退出码。
+1. 能证明声明的命令或操作，及其实际观察到的结果（公共规则 › 验证）。
 2. 证据支持结论后再声明；不因“更保险”追加等价命令、重复运行同一验证或扩大到无关测试。
 3. 采信产生后覆盖范围未变化的既有结论时注明来源（公共规则 › 验证）。
 
@@ -64,7 +64,6 @@ Plan Review 明确要求当前 Cycle 修复时，Act 先把 `Act Response` 从 `
 - API 调用。
 - UI 检查。
 - 配置加载。
-- OpenSpec validate。
 
 `none` 时把验证摘要写入 Act Response；`required` 时还要保存 Plan 指定的最小文件。
 
@@ -139,7 +138,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
    - 实际改动，含文件和符号。
    - 与计划的偏差及原因。
    - 自检发现、已修复内容和遗留 Minor 问题。
-   - 验证命令、输出和退出码。
+   - 验证命令与实际结果。
    - Persisted Evidence 路径，或 `None required`。
    - Experience Candidates，或整节省略。
    - 未解决问题。
@@ -174,7 +173,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 修改文件。
 - 任务级 Review 与自检结果。
 - 已修复发现和遗留 Minor 问题。
-- 验证命令、输出摘录和退出码。
+- 验证命令与实际结果摘录。
 - 当前 Iteration、Cycle 路径和 Act Response 状态。
 - `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
 - 恢复过阻塞时的 Blocker Resolution 和重跑 Gate。
