@@ -131,7 +131,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 1. 对照当前 Cycle 的 requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
 2. 修复计划范围内的 Critical 和 Important 问题；对每项修复重跑受影响的 Gate 3 和 Gate 4，未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
 3. 实质问题按 Gate 5 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
-4. Cycle 级验证按公共规则 › 验证 的递增范围执行；覆盖未变化的既有结论直接采信。
+4. Cycle 级验证按公共规则 › 验证 执行：单元与受影响范围随时，昂贵验证只在 Iteration Plan 预算的时机执行；覆盖未变化的既有结论直接采信。
 5. 按公共规则 › 验证 自检 change 结构。
 6. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 7. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
