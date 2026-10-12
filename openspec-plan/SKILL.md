@@ -103,7 +103,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 3：制定任务和 Iteration Plan
 
-按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、测试见证、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
+按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、先行测试、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
 背景、调查证据和 Implementation Guidance 不得给出与 Task Contract 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
 
@@ -122,7 +122,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 生成 Requirements Traceability Matrix：
 
-| Requirement | Task | Test Witness | Status |
+| Requirement | Task | First Test | Status |
 |---|---|---|---|
 | R1 | T1 | `test_name` | Covered |
 
@@ -146,7 +146,7 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计。
-9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个测试见证并执行。
+9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个先行测试并执行。
 10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
 11. 验证是否直接证明目标行为，且没有身份型证据工程、判定层、自引用验证或为工具测试工具。
 
@@ -182,10 +182,10 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 - 所有 `Simplified` requirement 已获用户批准。
 - 调查完整：当前实现、调用链、状态、测试和影响面都有证据。
 - 设计闭合：行为差异、接口、错误语义和关键选择已经明确。
-- 任务可执行：每个任务都有代码位置、行为变化、测试见证和停止条件。
+- 任务可执行：每个任务都有代码位置、行为变化、先行测试和停止条件。
 - 分轮合理：全部任务已分配，依赖有序，每轮工作量、稳定基线、验证和诊断边界明确，昂贵验证预算明确。
 - 追踪完整：requirement、scenario、design、task、代码和测试形成链路。
-- 验证充分：覆盖全部已批准 scenario（含 sad path 和 edge case），每条为最简直接判定，任务类型对应的测试见证、修改后 GREEN、回归命令和通过条件能证明验收目标。
+- 验证充分：覆盖全部已批准 scenario（含 sad path 和 edge case），每条为最简直接判定，任务类型对应的先行测试、修改后 GREEN、回归命令和通过条件能证明验收目标。
 - 验证没有用身份型证据工程或判定层替代目标行为（公共规则 › 行为约束）。
 - 没有需要 Act 决定的实质未知项或 TBD；非实质选择不阻塞。
 - change 的 tasks、specs、design、当前 Iteration 和当前 Cycle 一致。
@@ -256,4 +256,4 @@ Review 模式改为交付：
 
 ## 禁止
 
-- 覆盖 Plan Context、其他角色区域，或已经终结、已有后继产物的 Cycle。
+- 覆盖 Plan Context、其他角色区域，或已得出最终结论、已有后继产物的 Cycle。
