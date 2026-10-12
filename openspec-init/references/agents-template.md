@@ -27,9 +27,9 @@
 | 项目模型 | `.agents/memory/project-model.md` | `openspec-docs-maintainer` |
 | 参考 | `.agents/memory/references.md` | `openspec-docs-maintainer` |
 | 改进 | `.agents/memory/improvements.md` | `openspec-docs-maintainer` |
-| 行为规格 | `.agents/specs/<domain>.md` | `openspec-docs-maintainer` 收尾合并 |
-| 活跃变更 | `.agents/changes/` | plan、act |
-| Change Evidence | `.agents/changes/<change>/evidence/` | `openspec-act` |
+| 行为规格 | `openspec/specs/<domain>/spec.md` | `openspec-docs-maintainer` 收尾合并 |
+| 活跃变更 | `openspec/changes/` | plan、act |
+| Change Evidence | `openspec/changes/<change>/evidence/` | `openspec-act` |
 | 分析文档 | `.agents/analysis/` | `openspec-explorer` |
 | Runbook | `.agents/runbooks/` | `openspec-experience-recorder` |
 | Issue（缺陷台账） | `.agents/issues/` | `openspec-experience-recorder` |
@@ -193,7 +193,7 @@ Plan 在制定任务前读取实际代码并记录：
 - 入口、目标符号、调用者和被调用者。
 - 数据流、状态变化、错误和并发边界。
 - 现有测试、验证命令和基线结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可采信结论时运行基线验证。
-- 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
+- 相关域行为可引用 `openspec/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
 - 当前行为、目标行为和影响范围。
 
 影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。
