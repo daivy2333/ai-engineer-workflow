@@ -70,7 +70,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Verification**
 
-<逐 scenario 的最简直接判定：自动命令或人工步骤与通过依据，行为类 scenario 优先真实入口（公共规则 › 验证）；不得使用身份型证据工程或判定层替代行为验证>
+<逐 scenario 的最简直接判定：自动命令或人工步骤与通过依据，行为类 scenario 优先、跨特性或跨接口 scenario 必须走真实入口（公共规则 › 验证）；不得使用身份型证据工程或判定层替代行为验证>
 
 **Gate 2 Readiness**
 

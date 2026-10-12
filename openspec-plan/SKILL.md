@@ -29,6 +29,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - Happy Path。
 - Sad Path。
 - Edge Case。
+- 组合路径：两个以上特性的组合、声明与消费的配对、多步状态转换。
 - 错误处理、取消、超时、并发和兼容性要求。
 - 明确不做的内容。
 
@@ -148,7 +149,7 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计，昂贵验证预算明确。
 9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个先行测试并执行。
 10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
-11. 验证是否直接证明目标行为，且没有身份型证据工程、判定层、自引用验证或为工具测试工具。
+11. 验证是否直接证明目标行为，跨特性或跨接口的 scenario 是否有真实入口见证，且没有身份型证据工程、判定层、自引用验证或为工具测试工具。
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
