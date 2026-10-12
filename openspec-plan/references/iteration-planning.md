@@ -19,7 +19,7 @@ Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 - Tasks: T1, T2
 - Depends on: None
 - Stable baseline: <下一 Iteration 可依赖的结果>
-- Verification boundary: <本 Iteration 独立完成判据>
+- Verification boundary: <独立完成判据与昂贵验证（全量套件、端到端）的预算时机>
 - Diagnostic boundary: <失败时的排查范围>
 - Non-goals: <留给后续 Iteration 的内容>
 ```
