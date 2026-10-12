@@ -219,7 +219,7 @@ Plan 在制定任务前读取实际代码并记录：
 
 - Gate 1：需求、BDD、场景、范围和 change 获批。
 - Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪；非实质未知项不阻塞。
-- Gate 3：每个任务先 spec review，后 code review。
+- Gate 3：每任务即时 Review，拦住 spec 偏离和会蔓延的缺陷；表面质量由 Plan Review 终审。
 - Gate 4：Task Contract 的验证全部满足，完成声明基于真实运行或采信未失效结论。
 - Gate 5：阻塞即停；三次失败后反思。
 
