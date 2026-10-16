@@ -12,6 +12,7 @@ Use the observed symptom to select the next evidence, not the fix.
 - Artifact bytes differ from runtime bytes
 - MMIO access fault or wrong register
 - SMP-only divergence
+- User payload faults under a custom kernel or loader
 
 ## Breakpoint or probe does not hit
 
@@ -67,8 +68,11 @@ Record:
 - Page-table root and translation.
 - Page or region permissions and memory type.
 - Whether the fault occurred during a context or address-space switch.
+- Whether the saved PC and the fault-address register name the same instruction.
 
 Do not treat the fault address and instruction address as interchangeable.
+
+A non-canonical fault address, or one that repeats the saved PC's low bits with garbage above, is a hallmark of intermittent delivery pollution on some cores. When the two disagree, distrust the fault address, keep the saved PC, and record the behavior as a platform constraint.
 
 ## Backtrace or return path is wrong
 
@@ -125,3 +129,11 @@ Capture each CPU or hart:
 - Shared function pointers or return storage.
 
 Single-core debugger success does not prove SMP correctness. Halting all cores can also hide the race.
+
+## User payload faults under a custom kernel or loader
+
+When a user-space process faults under your own kernel and the only witness is a serial fault line (pc, fault address, sp, ra), read log-only-fault-reconciliation.md:
+
+- Attribute each address to the program or the dynamic interpreter base before disassembling; the two have different load bases.
+- Cross-check the saved PC against the fault address and the disassembly before trusting the trap frame; a mismatch means the fault-address register is polluted on this core.
+- Extract the binary read-only from the filesystem image, and keep diagnostic rebuilds to logging-level changes only.

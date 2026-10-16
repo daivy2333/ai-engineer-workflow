@@ -23,6 +23,10 @@ Use this skill to debug Rust kernel and embedded failures where std, process iso
    - Prefer exact versions for local kernel-adjacent crates when registry updates are unsafe.
    - Do not update unrelated dependencies while debugging a runtime fault.
 
+4. Watch host-test toolchains.
+   - A crate excluded from the workspace builds its host tests with the workspace root toolchain file, not the crate's local settings; check the root toolchain before blaming the crate.
+   - Test binaries that contain absolute-address relocations (percpu data, static base symbols) must not be linked as PIE; use a non-PIE link or a static relocation model, or the binary crashes on load.
+
 ## Runtime Fault Triage
 
 - Load/store/AMO fault: inspect address translation, memory attributes, MMIO mapping, alignment, and access width.
