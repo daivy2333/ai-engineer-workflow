@@ -1,11 +1,13 @@
 ---
 name: os-kernel-development
-description: Plan, implement, review, or debug operating-system kernel work. Use when working on kernel subsystems such as boot, memory management, scheduler, syscall, VFS, drivers, interrupt handling, platform support, or user-process loading, or any cross-subsystem change that needs layered gates, minimal repros, and regression evidence. Make sure to invoke this skill whenever the task touches a kernel subsystem, even if the user does not name the subsystem directly and only describes an unstable kernel, a panic, a fault, or a driver that misbehaves.
+description: Plan, implement, review, or debug operating-system kernel work. Use when working on kernel subsystems such as boot, memory management, scheduler, syscall, VFS, drivers, interrupt handling, platform support, or user-process loading, or any cross-subsystem change that needs layered gates, minimal repros, build-failure classification, and regression evidence. Make sure to invoke this skill whenever the task touches a kernel subsystem, even if the user does not name the subsystem directly and only describes an unstable kernel, a panic, a fault, or a driver that misbehaves.
 ---
 
 # OS Kernel Development
 
 Use this skill for kernel work where a bug or feature crosses boot, memory, tasks, filesystems, drivers, interrupts, or user space. Keep the work layered and measurable.
+
+For build-failure classification, staged landing of multi-commit work, or deciding whether your change introduced a failure, read [references/build-regression-triage.md](references/build-regression-triage.md).
 
 ## Workflow
 
@@ -57,6 +59,7 @@ Use this skill for kernel work where a bug or feature crosses boot, memory, task
 ## Debugging Rules
 
 - Reduce the failure before adding features.
+- Answer whether your change introduced the failure before debugging the failure itself; classify build failures by final exit code and the earliest decisive layer, not by the loudest warning (see [references/build-regression-triage.md](references/build-regression-triage.md)).
 - Check constants, feature gates, and platform selection before suspecting deep logic.
 - Treat QEMU, simulator, and real board as separate evidence classes.
 - Treat single-hart success as insufficient for SMP claims.

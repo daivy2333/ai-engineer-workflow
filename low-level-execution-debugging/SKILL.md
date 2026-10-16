@@ -1,6 +1,6 @@
 ---
 name: low-level-execution-debugging
-description: Debug low-level runtime execution by reconciling source intent, ELF and linker layout, loaded memory, runtime PC, symbols, disassembly, address translation, and MMIO addresses. Use for kernels, bootloaders, firmware, and embedded targets when breakpoints or probes do not hit, execution reaches an unexpected address, traps or illegal instructions occur, stack traces look wrong, symbols do not match memory, link and load addresses differ, or GDB, LLDB, QEMU, JTAG, or OpenOCD evidence is needed.
+description: Debug low-level runtime execution by reconciling source intent, ELF and linker layout, loaded memory, runtime PC, symbols, disassembly, address translation, and MMIO addresses. Use for kernels, bootloaders, firmware, embedded targets, and user-space payloads under your own kernel or loader — when breakpoints or probes do not hit, execution reaches an unexpected address, traps or illegal instructions occur, stack traces look wrong, symbols do not match memory, link and load addresses differ, only a serial fault line is available as the witness, or GDB, LLDB, QEMU, JTAG, or OpenOCD evidence is needed.
 ---
 
 # Low-Level Execution Debugging
@@ -13,6 +13,7 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
 - For a live debugger, QEMU monitor, or hardware probe, read [references/debugger-evidence.md](references/debugger-evidence.md).
 - For symptom-specific branches, read [references/failure-patterns.md](references/failure-patterns.md).
 - For RISC-V, x86-64, AArch64, or Arm details, read [references/architecture-checks.md](references/architecture-checks.md).
+- For a fault witnessed only by a serial log line — typically a user payload under your own kernel — read [references/log-only-fault-reconciliation.md](references/log-only-fault-reconciliation.md).
 
 ## Workflow
 

@@ -139,12 +139,13 @@ Evidence 属于 change，不登记 R。普通验证结果写在 Act Response，�
 
 | Skill | 职责 |
 |---|---|
-| `os-kernel-development` | 通用内核开发、评审与跨子系统调试 |
-| `low-level-execution-debugging` | 对照 ELF、运行地址、反汇编和实际控制流排查底层故障 |
-| `async-driver-development` | IRQ、DMA、异步队列、wakeup 和 completion |
+| `os-kernel-development` | 通用内核开发、评审、构建失败分层归因与跨子系统调试 |
+| `low-level-execution-debugging` | 对照 ELF、运行地址、反汇编和实际控制流排查底层故障，含仅日志行见证的用户态 fault 判读 |
+| `async-driver-development` | IRQ、DMA、异步队列、wakeup、completion、恢复语义与 SMP |
+| `host-test-debugging` | host 测试二进制的状态取证与间歇失败归因 |
 | `no-std-rust-debugging` | no_std Rust 构建、链接、MMIO、trap 和 ELF |
-| `qemu-kernel-debugging` | QEMU 启动、设备、IRQ、回归和证据边界 |
-| `real-board-bringup` | 真机 boot、MMIO、clock、reset、IRQ 和 workload |
+| `qemu-kernel-debugging` | QEMU 启动、设备、IRQ、证据采集、离线注入、回归和证据边界 |
+| `real-board-bringup` | 真机可逆 bring-up、boot、MMIO、clock、reset、IRQ、DMA 和 workload |
 
 ### 通用技能
 
@@ -155,7 +156,7 @@ Evidence 属于 change，不登记 R。普通验证结果写在 Act Response，�
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 20 个技能。OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
+当前仓库共 21 个技能。OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
 ## 安装
 
