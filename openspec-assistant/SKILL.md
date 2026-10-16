@@ -6,7 +6,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 # OpenSpec Assistant
 
 只读建立项目上下文。发现需要写入时，路由到对应 skill，不代替它执行。
-
+默认输出规范按照betteroutput，若没读取，请读取
 ## 读取顺序
 
 上下文恢复时依次读取：

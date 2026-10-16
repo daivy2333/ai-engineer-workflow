@@ -102,6 +102,10 @@ cargo build --release
 ./target/release/rtsql --version
 ```
 
+Verify the database as a whole from a source checkout:
+
+`cargo test --test e2e_test -- --test-threads=1` runs the end-to-end journey suite: real CLI subprocesses that walk whole user journeys (lifecycle, import, crash recovery, indexes, locking, cross-database, encryption, large values, analytics, output shapes, error surfaces). It is the fastest way to verify that the database works as a whole.
+
 ## Resolve a database
 
 A database argument follows two rules:
@@ -147,13 +151,13 @@ It creates no `.db`, `.wal`, or `.checkpoint` file, `close()` and `checkpoint()`
 |---|---|---|
 | `new` | `rtsql new demo` | Create an empty database; fails if the target already exists. This is the only creation channel for a missing database. |
 | `list` | `rtsql list` | Enumerate `$RTSQL_HOME/db/*.db` without opening the files. |
-| `schema` | `rtsql schema demo` | Print user-table DDL. |
+| `schema` | `rtsql schema demo` | Print user-table DDL (column types render as standard names: `INTEGER`, `TEXT`, `FLOAT`, `BOOLEAN`, `DATE`, `TIMESTAMP`). |
 | `dump` | `rtsql dump demo > demo.sql` | Export SQL text (`CREATE TABLE` + `INSERT` rows). A missing or damaged data-page chain is reported on stderr (see Behavioral notes) while the reachable part is still exported. |
 | `restore` | `rtsql restore demo-restored demo.sql` | Load a dump into an existing, still-empty target database (create it with `new` first); `-` reads the dump from stdin. |
 | `import` | `rtsql import demo people people.csv --csv` | Load a CSV file into a table (`--csv` required). The target table may already exist (header must match its column names) or it is auto-created from the CSV header with inferred types. `-` reads the CSV from stdin. Rows commit one by one. |
 | `delete` | `rtsql delete demo --dry-run` | Remove a database file and its `.wal`/`.checkpoint` sidecars and report each file. `--dry-run` previews only; a locked file is refused with exit `4`. |
 | `checkpoint` | `rtsql checkpoint demo` | Force a checkpoint: truncate the WAL and advance the checkpoint site so committed data is stable — the clean sync point before an external backup or file handoff. Prints one confirmation line; a clean database reports `no pending work` and still exits `0`. A missing database is exit `1`; a lock conflict waits out `--busy-timeout` and then exits `4`. |
-| `check` | `rtsql check demo` | Read-only structural integrity scan (page census, catalog, data/overflow chains, index trees). One line per finding with its page and cause; a clean database prints a single confirmation. Exit `0` clean, `1` on error-level findings (informational findings do not change the code), `4` lock conflict, `5` wrong key; `:memory:` and `--readonly` combinations are usage errors (`2`). Never repairs or modifies the file; a database with pending WAL is refused at open (exit `1`) — open it read-write once to recover, then check. `--format` is accepted and ignored. |
+| `check` | `rtsql check demo` | Read-only structural integrity scan (page census, catalog, data/overflow chains, index trees). One line per finding with its page and cause; a clean database prints a single confirmation. Exit `0` clean, `1` on error-level findings (informational findings do not change the code), `4` lock conflict, `5` wrong key; `:memory:` and `--readonly` combinations are usage errors (`2`). Never repairs or modifies the file; a database with pending WAL is refused at open (exit `1`) — open it read-write once to recover, then check; the recovering open needs no writes of its own, since a read-write close truncates a WAL that held transaction records. `--format` is accepted and ignored. |
 | `stats` | `rtsql stats demo people` | Per-column row count, null rate, distinct count, min/max, numeric percentiles. |
 | `sample` | `rtsql sample demo people 5` | Reservoir sample of N rows; default 10, `N` of `0` or a non-integer is a usage error. |
 | `profile` | `rtsql profile demo people --top 10` | Frequent values for String columns; default top 5, maximum 20. |
@@ -188,8 +192,10 @@ Per-code action guidance is in Select output and handle failures.
 - `dump` runs a data-page chain integrity precheck for each user table. When a table's page chain ends before the catalog-persisted tail page, one warning line goes to stderr — naming the table, the catalog tail page, and the chain end — while the reachable rows are still exported. stdout stays pure SQL and the exit code stays `0`.
 - `dump` renders `PRIMARY KEY` in the exported DDL only when the primary-key column is declared `INTEGER` (the only form the engine enforces). Dumps produced by older versions that embed a non-integer `... PRIMARY KEY` DDL fail `restore` on a new database (plan-time refusal, exit 3) — that declaration was never enforced; re-dump with the current version or edit the DDL.
 - `rtsql check <db>` scans the whole file read-only: it never repairs, never writes, and leaves the file byte-identical. After a crash recovery the data chain can legitimately terminate on a page ahead of the persisted catalog tail (the replay advances the tail in memory only); `check` reports that as an informational line (`benign after crash recovery`) without changing the exit code, while a chain that ends before the persisted tail is an error.
-- `SELECT` resolves `FROM` table aliases across all clauses: qualified references such as `u.id` work in `SELECT`, `ON`, `WHERE`, `GROUP BY`, aggregate arguments, and `ORDER BY`; an unknown qualifier is a plan-time error.
-- Long values are transparent: a row value larger than the single-page inline capacity (~4KB) is stored through overflow page chains with no artificial limit. `INSERT`/`UPDATE`/`SELECT`, `dump`/`restore`, and `import` round-trip oversized values unchanged (the internal switch between the ≤65535-byte and long-string representations is invisible to users), and crash recovery, `DROP TABLE`/`TRUNCATE`, encrypted databases, `:memory:`, and read-only sessions handle them the same way. The one visible bound: a `DEFAULT` literal lives in the catalog's in-page column row (~4KB), so an oversized default is refused at `CREATE TABLE` with the existing page-full error, while written values have no such limit.
+- `SELECT` resolves `FROM` table aliases across all clauses: qualified references such as `u.id` work in `SELECT`, `ON`, `WHERE`, `GROUP BY`, aggregate arguments, and `ORDER BY` — including qualified sort keys on `JOIN` bases, with or without a `WHERE` clause; an unknown qualifier is a plan-time error.
+- Long values are transparent: a row value larger than the single-page inline capacity (~4KB) is stored through overflow page chains with no artificial limit. `INSERT`/`UPDATE`/`SELECT`, `dump`/`restore`, and `import` round-trip oversized values unchanged (the internal switch between the ≤65535-byte and long-string representations is invisible to users), and crash recovery, `DROP TABLE`/`TRUNCATE`, encrypted databases, `:memory:`, and read-only sessions handle them the same way. The one visible bound: a `DEFAULT` literal lives in the catalog's in-page column row (~4KB), so an oversized default is refused at plan time with `DEFAULT type mismatch: column '<name>': DEFAULT value is too large for the catalog page capacity` — before the table exists, with no side effects — while written values have no such limit.
+- Schema changes are durable at the statement boundary: a successful `CREATE TABLE`, `CREATE INDEX`, `CREATE VIEW`, `ALTER TABLE ADD COLUMN`, or `CREATE TABLE AS SELECT` writes its catalog pages to disk before the statement returns (the `__tables` row lands last, as the commit point), so a process killed at any later instant still finds the schema on reopen, and WAL replay recovers the rows. The remaining crash windows are `DROP` statements (whose page release is checkpoint-based) and DDL on encrypted databases (whose WAL and checkpoint sidecars are plaintext by design); after either, verify with `rtsql check <db>` or prefer `dump` / `restore` for backups.
+- Errors that carry a SQLSTATE class name the code in CLI output: text formats append ` [SQLSTATE xxxx]` to the stderr error line, and `--format json` reports the error as a single-line JSON object on stderr carrying a `sqlstate` field (omitted when the error has no class). Exit codes are unchanged.
 
 ## Execute SQL
 
@@ -246,9 +252,9 @@ Beyond the examples above, the engine implements a practical relational core:
 
 | Area | Supported |
 |---|---|
-| Read | `INNER`/`LEFT`/`RIGHT`/`FULL` joins; `SELECT DISTINCT`; `UNION [ALL]`/`INTERSECT`/`EXCEPT`; non-recursive `WITH` (CTE); scalar and `IN` subqueries, correlated included; `CASE`/`COALESCE`/`CAST`; `LIKE`/`IN`/`BETWEEN`/`IS NULL`; `ORDER BY` by output alias or qualified name; `FROM` table aliases in every clause; expressions without `FROM` (`SELECT 1+1`) |
+| Read | `INNER`/`LEFT`/`RIGHT`/`FULL` joins; `SELECT DISTINCT`; `UNION [ALL]`/`INTERSECT`/`EXCEPT`; non-recursive `WITH` (CTE); scalar and `IN` subqueries, correlated included — scalar subqueries serve in `WHERE` comparisons and the select list (a multi-row result is refused with `Subquery returns multiple rows`, an empty result compares as `NULL`, and they stay refused inside a `JOIN` base `WHERE`); set operations inside a `FROM` derived table (`FROM (SELECT … UNION SELECT …) u`), while `IN`/`EXISTS` subqueries keep refusing them; `CASE`/`COALESCE`/`CAST`; `LIKE`/`IN`/`BETWEEN`/`IS NULL`; `ORDER BY` by output alias or qualified name, qualified sort keys on `JOIN` bases included; `FROM` table aliases in every clause; expressions without `FROM` (`SELECT 1+1`) |
 | Aggregate | `COUNT`/`SUM`/`AVG`/`MIN`/`MAX` (each with `DISTINCT`), `group_concat`, `GROUP BY` expressions and aliases, `HAVING`. Aggregates nest inside SELECT value expressions (`SELECT MAX(id) + 1`, `COALESCE(MAX(id), 0)`), `HAVING` conditions (`HAVING MAX(id) + 1 > 2`), and aggregate-query `ORDER BY` keys (`ORDER BY MAX(v)`); a select list can mix aggregates with plain constants (`SELECT MAX(id), 1`), and the same aggregate call appearing several times shares one output column. Still refused at plan time: aggregates inside `WHERE` or `JOIN ... ON`, aggregate nesting (`MAX(MIN(x))`), and a non-aggregated column reference without `GROUP BY` |
-| Write | `UPDATE` and `DELETE`; subset-column `INSERT` with `DEFAULT`; `ON CONFLICT DO NOTHING` / `DO UPDATE SET`; `REPLACE INTO`; writes are type-checked against column declarations before any row changes, and declared `DEFAULT` literals are validated the same way at plan time (a FLOAT column upgrades an integer literal; a DATE/TIMESTAMP column parses the string; other mismatches refuse the statement with zero side effects). `UPDATE ... SET` accepts several assignments at once and full value expressions on the right-hand side — column references evaluate against the row's old values as one snapshot (`SET v = v + 1`; `SET a = a + 1, b = a` reads the old `a`), plus arithmetic, `CAST`, `CASE`, `COALESCE`, and scalar functions. Aggregate calls and subqueries on the right-hand side are refused at plan time |
+| Write | `UPDATE` and `DELETE`; subset-column `INSERT` with `DEFAULT`; `ON CONFLICT DO NOTHING` / `DO UPDATE SET`; `REPLACE INTO`; writes are type-checked against column declarations before any row changes, and declared `DEFAULT` literals are validated the same way at plan time (a FLOAT column upgrades an integer literal; a DATE/TIMESTAMP column parses the string; other mismatches refuse the statement with zero side effects). `UPDATE ... SET` accepts several assignments at once and full value expressions on the right-hand side — column references evaluate against the row's old values as one snapshot (`SET v = v + 1`; `SET a = a + 1, b = a` reads the old `a`), plus arithmetic, `CAST`, `CASE`, `COALESCE`, and scalar functions. Aggregate calls and subqueries on the right-hand side are refused at plan time. Omitting `WHERE` runs `UPDATE`/`DELETE` over every row — per-row gates (type, `NOT NULL`, key-column, collision precheck) and unique/secondary index maintenance apply as usual, a mid-statement failure rolls back all rows the statement wrote, and `affected_rows` is the actual row count; `TRUNCATE` remains the physical-release alternative |
 | Schema | `CREATE TABLE` with `NOT NULL`, an `INTEGER` `PRIMARY KEY`, and single-column `INTEGER` `UNIQUE` — these are enforced at write time. `UNIQUE` on a non-integer column or a composite `UNIQUE` is refused at plan time (declare them as refused rather than silently unenforced), and an explicit non-integer `PRIMARY KEY` is refused at plan time — declare `INTEGER` when you need an enforced key (databases created before this rule keep working: their non-integer primary-key tables open, read, and dump normally, with the DDL rendered without `PRIMARY KEY` so `dump` → `restore` round-trips them). `ALTER TABLE ADD/DROP COLUMN`; `TRUNCATE TABLE`; `CREATE`/`DROP INDEX`; `CREATE`/`DROP VIEW` (views are read-only — DML on a view is refused); `DROP TABLE` |
 | Types | `INTEGER`, `FLOAT`, `TEXT`, `BOOLEAN`, `DATE`, `TIMESTAMP`, with date functions such as `now`, `date_trunc`, `datediff` |
 | Functions | String: `upper`, `lower`, `length`, `substr`, `replace`, `trim`; math: `abs`, `round`, `floor`, `ceil`; date/time: `now`, `date`, `year`, `month`, `day`, `hour`, `minute`, `second`, `date_trunc`, `datediff`. Arguments are strictly typed with no implicit conversion; unregistered function names are refused at plan time |
@@ -267,7 +273,7 @@ rtsql list
 rtsql schema demo
 ```
 
-`new` creates an empty database and fails if the target already exists. `list` enumerates `$RTSQL_HOME/db/*.db` without opening the listed databases. `schema` prints user-table DDL.
+`new` creates an empty database and fails if the target already exists. `list` enumerates `$RTSQL_HOME/db/*.db` without opening the listed databases. `schema` prints user-table DDL, with column types rendered as standard names (`INTEGER`, `TEXT`, `FLOAT`, `BOOLEAN`, `DATE`, `TIMESTAMP`).
 
 ### Evolve schema
 
@@ -283,7 +289,7 @@ rtsql demo "EXPLAIN SELECT id FROM people WHERE name = 'Ada'"
 
 - `ALTER TABLE` accepts one operation per statement. `ADD COLUMN` appends at the tail; existing rows read back the declared `DEFAULT` or NULL (`NOT NULL` without `DEFAULT` is refused on a non-empty table); the declared `DEFAULT` is validated against the column type exactly like `CREATE TABLE` (a FLOAT column upgrades an integer literal, a DATE/TIMESTAMP column parses the string, other mismatches are refused with the table unchanged). `DROP COLUMN` rewrites the table in one implicit transaction — all rows or none — and refuses a column referenced by an index or the last remaining column.
 - `TRUNCATE` empties a table and releases its data pages immediately, keeping the definition and index definitions (indexes rebuild empty).
-- `CREATE INDEX` builds a secondary index on a single integer column (non-unique; `UNIQUE` comes from the column constraint) and backfills existing rows; `DROP INDEX` removes it.
+- `CREATE INDEX` builds a secondary index on a single integer column (non-unique; `UNIQUE` comes from the column constraint) and backfills existing rows; `DROP INDEX` removes it. An equality predicate on the indexed column is served automatically, and the row set always matches a full table scan exactly — same rows, no duplicates, no misses — at any table size, including after restart and crash recovery.
 - `EXPLAIN SELECT` prints the plan tree without executing the query.
 
 ### Dump and restore
@@ -302,7 +308,7 @@ rtsql new demo-stdin
 rtsql dump demo | rtsql restore demo-stdin -
 ```
 
-A restore target must be empty. Dump files contain SQL and row data in plaintext; protect them as plaintext database exports.
+A restore target must be empty. The exported DDL renders column types with the same standard names (`INTEGER`, `TEXT`, `FLOAT`, `BOOLEAN`, `DATE`, `TIMESTAMP`), so a `dump` → `restore` round-trip reproduces the declarations. Dump files contain SQL and row data in plaintext; protect them as plaintext database exports.
 
 ### Import CSV
 
@@ -392,6 +398,8 @@ rtsql --format table demo "SELECT id, name, age FROM people"
 
 Without `--format`, an interactive terminal receives a table and redirected output receives JSON.
 
+Under `--format json`, multi-statement output is JSONL — one standalone JSON object per statement line — and a successful DDL statement reports `{"affected_rows":0}`, like any other zero-row statement.
+
 | Exit code | Meaning | Action |
 |---:|---|---|
 | 0 | Success | Continue |
@@ -438,7 +446,7 @@ Read-only sessions never write: they skip recovery and checkpoint, and they refu
 
 Two refusals are specific to read-only opens:
 
-- Exit code `1` with a message naming pending WAL: the database has unreplayed `.wal` records. Open it once without `--readonly` to complete recovery, then retry read-only. The refusal leaves every file unchanged.
+- Exit code `1` with a message naming pending WAL: the database has unreplayed `.wal` records. Open it once without `--readonly` to complete recovery, then retry read-only — replay happens at open and the read-write close truncates a WAL that held transaction records, so the recovering session only needs to run a read such as `SELECT 1`. The refusal leaves every file unchanged.
 - Exit code `2`: `--readonly` was combined with a subcommand. `--readonly` belongs to the main command; subcommands keep their read-write open.
 
 An encrypted database opens read-only with `--key` as usual. A read-write session excludes readers and other writers, and a read-only session excludes a read-write one; conflicts wait out the busy-timeout budget and are reported as exit code `4` only when the budget is exhausted.
