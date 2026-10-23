@@ -69,7 +69,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 已承诺工作写 tasks 或 change。
 - 当前开发约束写 M。
 - 长期选择及其理由保留在 change 的 design，随 change 归档。
-- 系统当前行为写 specs 语料库。
+- 系统当前行为写 specs 规格库。
 - 指针和检索元数据写 R。
 - 用户提供且未承诺的方向写 I；批准后纳入 change 或 milestone 并标记 `promoted`。
 - 可复用的构建、测试和其他命令行操作流程写 Runbook。

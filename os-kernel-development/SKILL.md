@@ -7,16 +7,16 @@ description: Plan, implement, review, or debug operating-system kernel work. Use
 
 Use this skill for kernel work where a bug or feature crosses boot, memory, tasks, filesystems, drivers, interrupts, or user space. Keep the work layered and measurable.
 
-For build-failure classification, staged landing of multi-commit work, or deciding whether your change introduced a failure, read [references/build-regression-triage.md](references/build-regression-triage.md).
+For build-failure classification, staged integration of multi-commit work, or deciding whether your change introduced a failure, read [references/build-regression-triage.md](references/build-regression-triage.md).
 
 ## Workflow
 
 1. Locate the layer.
    - Identify whether the task belongs to boot, platform, memory, tasking, interrupt, driver, VFS, syscall, user loader, or workload.
-   - Do not debug a higher layer until the lower layer has a fresh witness.
+   - Do not debug a higher layer until the lower layer has fresh evidence.
    - Record the first layer where evidence stops.
 
-2. Build a current-state witness.
+2. Capture the current state.
    - Read the relevant design docs, specs, or local architecture notes.
    - Inspect the actual symbols and callers before editing.
    - Record the commands that currently pass or fail.
@@ -30,7 +30,7 @@ For build-failure classification, staged landing of multi-commit work, or decidi
 
 4. Validate by dependency order.
    - Build check.
-   - Boot or unit witness.
+   - Boot or unit evidence.
    - Subsystem smoke.
    - Cross-subsystem integration.
    - Workload or benchmark.

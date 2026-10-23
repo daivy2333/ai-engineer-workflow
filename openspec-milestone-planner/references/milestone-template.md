@@ -13,7 +13,7 @@
 - Dependencies: <MSxx 或 None>
 - Scope: <包含的能力范围与工作类别>
 - Non-goals: <推迟到其他阶段的内容>
-- Stable baseline: <后续工作可依赖的状态>
+- Stable result: <后续工作可依赖的状态>
 - Related changes: <已有 change 或 None>
 ```
 

@@ -22,5 +22,5 @@ How to test real driver and queue logic on the host, before any guest or board r
 ## Determinism discipline
 
 - Isolate tests from process-global state: a shared registry used by parallel tests turns failures intermittent and unattributable.
-- Deterministic witnesses: single-threaded runs repeated ×100, and known-unaffected subsets run in parallel ×100. A failure that always passes on isolated rerun is nondeterminism, not a product regression — attribute before counting (see the host-test-debugging skill).
+- Deterministic replays: single-threaded runs repeated ×100, and known-unaffected subsets run in parallel ×100. A failure that always passes on isolated rerun is nondeterminism, not a product regression — attribute before counting (see the host-test-debugging skill).
 - Known flakes are tracked separately and never silently excluded from a run.

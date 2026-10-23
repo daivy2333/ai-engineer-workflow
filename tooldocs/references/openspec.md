@@ -60,11 +60,11 @@ changes/<change>/
 
 Plan 将 Persisted Evidence 设为 `none` 或 `required`。`none` 时验证结果写在 Act Response，保留能判断结果的部分；`required` 只用于用户要求、无法低成本复现、一次性环境、Issue/Blocker 现场或不可摘要的决定性结构。若 `required` 在执行时不再合法或可采集，Act 以 `blocked` 返回 Plan，不强行收集。禁止完整日志目录、源码副本和完整测试输出。Evidence 属于 change，不登记 R，随 change 归档。
 
-本仓库一切判定以实际为准：只用目标状态、输出和错误结果等真实运行的可观察结果证明行为。禁止为了验证、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、peer/host pin、source/worktree freeze、artifact manifest、日志 Hash 链、时间顺序证明及其审计工具；这些材料身份信息不能替代行为验证。产品 requirement 明确要求的认证、完整性校验或多会话协议仍按目标行为规划和测试。
+本仓库一切判定以实际为准：只用目标状态、输出和错误结果等真实运行的可观察结果证明行为。禁止为了验证、鉴定测试、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、peer/host pin、source/worktree freeze、artifact manifest、日志 Hash 链、时间顺序证明及其审计工具；这些材料身份信息不能替代行为验证。产品 requirement 明确要求的认证、完整性校验或多会话协议仍按目标行为规划和测试。
 
-本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan Context 从 `draft` 开始，Gate 2 通过或明确豁免且计划获批后变为 `ready`。有限修复由 Plan 保持 Review Result 为 `pending` 并反馈给 Act，在当前 Cycle 覆盖各自最新状态；需要新执行契约时才进入 `rework-required` 并增加同目录 Cycle，计划边界变化则进入 `replan-required`。
+本仓库把 Iteration 定义为 change Map 中的逻辑工作单元，把 Cycle 定义为该 Iteration 内的一次 Plan、Act、Review 执行闭环。Plan Context 从 `draft` 开始，Gate 2 通过或用户明确跳过且计划获批后变为 `ready`。有限修复由 Plan 保持 Review Result 为 `pending` 并反馈给 Act，在当前 Cycle 覆盖各自最新状态；需要新执行依据时才进入 `rework-required` 并增加同目录 Cycle，计划边界变化则进入 `replan-required`。
 
-上下文按职责传递：Assistant 恢复 OpenSpec 体系文档，Explorer 调查实际代码，Plan 复用探索结果并只补查缺失或失效事实，再把 Act 所需内容直接写入自包含 Plan Context。Act 不回读 Explorer 或重新建立计划基线，只读取当前 Cycle、目标代码和测试。局部实现差异和不影响 Acceptance 的 Minor finding 记录后继续；需要改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 时才阻塞。
+上下文按职责传递：Assistant 恢复 OpenSpec 体系文档，Explorer 调查实际代码，Plan 复用探索结果并只补查缺失或失效事实，再把 Act 所需内容直接写入自包含 Plan Context。Act 不回读 Explorer 或重新建立计划，只读取当前 Cycle、目标代码和测试。局部实现差异和不影响 Acceptance 的 Minor finding 记录后继续；需要改变行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 时才阻塞。
 
 ---
 
@@ -177,7 +177,7 @@ openspec templates [--schema <name>]               # 查看各产物模板路径
 - 多个修改可并行不冲突
 - 审阅效率高
 
-**没有行为变化的修改**：`openspec validate` 拒绝没有 delta 的 change。纯重构、工具或文档类修改在该 change 的 `.openspec.yaml` 中写 `skip_specs: true` 显式豁免，不为通过验证编造需求；归档这类修改时也可用 `openspec archive --skip-specs` 跳过规格合并。
+**没有行为变化的修改**：`openspec validate` 拒绝没有 delta 的 change。纯重构、工具或文档类修改在该 change 的 `.openspec.yaml` 中写 `skip_specs: true` 显式跳过，不为通过验证编造需求；归档这类修改时也可用 `openspec archive --skip-specs` 跳过规格合并。
 
 ---
 

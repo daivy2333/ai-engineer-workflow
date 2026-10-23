@@ -14,7 +14,7 @@ Capture discipline and diagnosis workflows for QEMU runs of a kernel under test,
 
 - Keep the commands, decisive output lines, terminal markers, and exit codes that prove the behavior under test. Long raw logs stay outside the evidence set and are referenced by path when needed.
 - Identity material (hashes, manifests) is not evidence of behavior; add it only when a specific process explicitly requires it.
-- Guest tools can lie about the subsystem under test: a shell reporting `Connection refused` or an unsupported ioctl does not prove the dataplane is down when the kernel lacks that tool's surface. Judge by probe snapshots and wire captures, not by stock tooling.
+- Guest tools can mislead about the subsystem under test: a shell reporting `Connection refused` or an unsupported ioctl does not prove the dataplane is down when the kernel lacks that tool's surface. Judge by probe snapshots and wire captures, not by stock tooling.
 
 ## Offline payload injection
 

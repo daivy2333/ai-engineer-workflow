@@ -35,7 +35,7 @@ Full command recipes and the dead-end catalog live in the reference. The workflo
 The full discipline lives in the reference. The workflow:
 
 1. Signal check: an intermittent failure that always passes on isolated rerun is nondeterminism, not a product regression. Panics inside third-party data structures and allocator or signal crashes indicate real memory unsafety underneath, not assertion noise.
-2. Build deterministic witnesses: single-threaded runs repeated ×100 and known-unaffected subsets run in parallel ×100. These runs adjudicate; the flaky full suite cannot adjudicate itself.
+2. Build deterministic replays: single-threaded runs repeated ×100 and known-unaffected subsets run in parallel ×100. These runs decide; the flaky full suite cannot decide itself.
 3. Isolate by dimension: per-test loops rank failure rates; comparing subsets that share a suspected process-global against subsets that do not implicates the shared state.
 4. Run control groups before blaming the current change: byte-revert the product diff and rerun; statistically indistinguishable failure rates mean the race predates the change.
 5. Record the attribution with its data. A failure counts only in the bucket the data supports: product regression, pre-existing race, or known flake.
@@ -52,5 +52,5 @@ The full discipline lives in the reference. The workflow:
 - Do not debug at source-line level when inlining or layout hides the truth; stop at instruction or body-line breakpoints and print fields.
 - Do not print collections element by element; print the whole slice in one expression.
 - Do not set watchpoints before the target memory is mapped.
-- Do not rerun a flaky suite until it passes and call it green; deterministic witnesses and attribution are the path to a defensible claim.
+- Do not rerun a flaky suite until it passes and call it green; deterministic replays and attribution are the path to a defensible claim.
 - Do not treat a matching control group as proof of safety; it bounds the blame, it does not fix the race.

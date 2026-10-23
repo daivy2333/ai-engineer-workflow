@@ -7,7 +7,7 @@ Iteration = 逻辑工作单元，进入 change 的 Iteration Plan
 Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 ```
 
-返工不自动产生新 Iteration。只有目标、范围、依赖、验证契约或验收边界发生实质变化时，才调整 Iteration Plan，并在当前 Iteration 建立后继 replan Cycle。
+返工不自动产生新 Iteration。只有目标、范围、依赖、验证方式或验收边界发生实质变化时，才调整 Iteration Plan，并在当前 Iteration 建立后继 replan Cycle。
 
 ## Iteration Plan
 
@@ -18,7 +18,7 @@ Cycle     = 一次执行尝试，只存在于所属 Iteration 目录
 
 - Tasks: T1, T2
 - Depends on: None
-- Stable baseline: <下一 Iteration 可依赖的结果>
+- Stable result: <下一 Iteration 可依赖的结果>
 - Verification boundary: <独立完成判据与昂贵验证（全量套件、端到端）的预算时机>
 - Diagnostic boundary: <失败时的排查范围>
 - Non-goals: <留给后续 Iteration 的内容>
@@ -42,7 +42,7 @@ openspec/changes/<change>/iterations/
 
 ## 平衡审计
 
-每个 Iteration 应形成一个内聚结果，具有足够工作量、稳定基线、独立验证和明确诊断范围。
+每个 Iteration 应形成一个内聚结果，具有足够工作量、稳定结果、独立验证和明确诊断范围。
 
 - 只有局部步骤、单项测试或观测，完成后不能形成稳定结果时，与相邻 Iteration 合并。
 - 包含多个可独立验收结果、不同故障域或无关验证时拆分。
@@ -58,9 +58,9 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 | 发现 | Review Result | 后续动作 |
 |---|---|---|
 | 既有 Acceptance 未满足，但修复仍受当前 Plan Context 约束，不需要新的执行上下文 | 保持 `pending` | Plan 在 Review 给出当前 Cycle 修复意见；不创建后继 Cycle |
-| 实现不达标、Act 偏离计划，或 Plan 遗漏需要新的 Current-State Evidence、repair item、Task Contract 或 Gate 2 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
+| 实现不达标、Act 偏离计划，或 Plan 遗漏需要新的 Current-State Evidence、repair item、Task Definition 或 Gate 2 | `rework-required` | 在同一 Iteration 目录创建下一 Cycle；Iteration Plan 不变 |
 | 只有不阻塞 Acceptance 的 Minor finding | `accepted` | 记录 finding；范围外实质缺陷报告为 Issue 候选（公共规则 › Iteration 与 Cycle 线程）；按职责决定是否另建后续 task，不强制返工 |
-| 目标、范围、依赖、requirement、设计、验证契约或验收边界需要改变 | `replan-required` | 停止普通返工；更新 change 和未完成 Iteration Plan，再创建后继 replan Cycle |
+| 目标、范围、依赖、requirement、设计、验证方式或验收边界需要改变 | `replan-required` | 停止普通返工；更新 change 和未完成 Iteration Plan，再创建后继 replan Cycle |
 | Acceptance 已满足且没有阻塞项 | `accepted` | 完成当前 Iteration；存在后续 Iteration 时只展开下一个 |
 
 判断问题：
@@ -70,9 +70,9 @@ Plan Review 先判断发现是否阻塞当前 Iteration 的既有 Acceptance：
 ```
 
 答案为“是”时留在当前 Iteration；答案为“否”时不得以返工名义扩大当前 Cycle。
-范围或验证契约变化必须使用 `replan-required`，不得伪装为普通返工。
+范围或验证方式变化必须使用 `replan-required`，不得伪装为普通返工。
 
-当前 Cycle 修复与 rework Cycle 的边界不是文件数、代码行数或预计时间，而是 Act 是否需要新的自包含执行契约。Plan Review 已能给出有限修复目标，且原 Task Contract（含变更面）、不变量和验证方法仍足以约束 Act 时，留在当前 Cycle；需要重新调查、拆分 repair item、建立新基线或重新通过 Gate 2 时，创建 rework Cycle。
+当前 Cycle 修复与 rework Cycle 的边界不是文件数、代码行数或预计时间，而是 Act 是否需要新的自包含执行依据。Plan Review 已能给出有限修复目标，且原 Task Definition（含变更范围）、不变量和验证方法仍足以约束 Act 时，留在当前 Cycle；需要重新调查、拆分 repair item、重新建立执行依据或重新通过 Gate 2 时，创建 rework Cycle。
 
 `Review Result` 初始为 `pending`。Plan 写完 Review、所需计划更新和后继产物并验证后，最后将它改为最终结论；写入失败时保持 `pending`。
 
@@ -80,13 +80,13 @@ Review 重入时，若 `Review Result` 仍为 `pending`，但 `Next Cycle` 或 `
 
 ## 当前 Cycle 修复
 
-Plan 判断有限修复可由当前执行契约覆盖时：
+Plan 判断有限修复可由当前执行依据覆盖时：
 
 1. 覆盖当前 `Plan Review` 为最新完整审查，填写具体 Findings、Acceptance Gaps 和 Evidence；`Iteration Plan Update`、`Next Cycle`、`Next Iteration` 均为 `None`。
 2. 最后在 `Follow-up Decision` 明确要求 Act 在当前 Cycle 修复，`Review Result` 保持 `pending`。该字段写完前，`reported` 的 Act 不得恢复。
-3. Act 恢复当前 Cycle，只读取最新 Review 和修复所需的任务局部上下文，按当前契约建立先行测试并实施。
+3. Act 恢复当前 Cycle，只读取最新 Review 和修复所需的任务局部上下文，按当前执行依据建立先行测试并实施。
 4. Act 完成后覆盖 `Act Response` 为当前 Cycle 的最新完整快照，再改为 `reported`；Plan 随后覆盖 Review 并重新判断。
-5. 覆盖前若已有当前 Cycle 反馈，比较 Acceptance Gaps 是否缩小：缩小且剩余修复仍受当前契约约束时可以继续；未缩小、扩大或需要新执行契约时改为 rework。Act 的实际修复尝试仍受 Gate 5 约束。
+5. 覆盖前若已有当前 Cycle 反馈，比较 Acceptance Gaps 是否缩小：缩小且剩余修复仍受当前执行依据约束时可以继续；未缩小、扩大或需要新执行依据时改为 rework。Act 的实际修复尝试仍受 Gate 5 约束。
 
 覆盖与冻结的适用条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
@@ -95,7 +95,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 `rework-required` 时：
 
 1. 为每项 Acceptance gap 建立本地 repair item，并映射到原 task、requirement、证据和来源 Cycle。repair item 可使用 `T2-R1` 形式，但不作为新的全局 change task，也不修改 Iteration Map。
-2. 在当前 Iteration 目录创建下一 Cycle 文件，记录父 Cycle、偏差分类、Acceptance gap、继承范围、repair item、当前代码基线、验证方法和停止条件。
+2. 在当前 Iteration 目录创建下一 Cycle 文件，记录父 Cycle、偏差分类、Acceptance gap、继承范围、repair item、当前代码状态、验证方法和停止条件。
 3. Plan 根据父 Cycle、Act Response 和当前代码补齐 Acceptance gap 所需的 Current-State Evidence，并重新通过 Gate 2；不重复调查未变化范围。父 Cycle 已 PASS 且材料未变的 Gate 2 维度引用父 Cycle 结论，只补 Acceptance gap 涉及的维度。新 Cycle 仍直接写入 Act 所需事实，不要求 Act 回读父 Cycle。
 4. Act 和 Plan 分别填写新 Cycle 的 Act Response 与 Plan Review；旧 Cycle 不改写。
 5. 连续两个 rework Cycle 未缩小同一 Acceptance gap 时，按公共规则 › Iteration 与 Cycle 线程 重新检查 Plan、设计和需求假设；同一问题连续失败三次按公共规则 › 三次失败 停止。
@@ -109,7 +109,7 @@ Plan 判断有限修复可由当前执行契约覆盖时：
 3. Replan Cycle 使用更新后的全局 task，不创建 rework repair item；Plan Context 从 `draft` 开始并重新通过 Gate 2 后变为 `ready`。
 4. 当前 Iteration 在 replan Cycle 获得 `accepted` 前保持未完成；后续 Iteration 只保留在修订后的 Map 中。
 
-Act 因 `required` Evidence 不再满足白名单、必要性或可采集性而阻塞时，Plan Review 将其分类为 `PLAN-INVALID` 或 `NEW-EVIDENCE`，使用 `replan-required` 修正 Evidence 契约，不要求 Act 按原计划继续收集。父 Cycle 的无效 `required` 由该 Review 和 `Next Cycle` 形成的 replan 链替代，正常收尾不再要求为它补建 Evidence。
+Act 因 `required` Evidence 不再满足白名单、必要性或可采集性而阻塞时，Plan Review 将其分类为 `PLAN-INVALID` 或 `NEW-EVIDENCE`，使用 `replan-required` 修正 Evidence 要求，不要求 Act 按原计划继续收集。父 Cycle 的无效 `required` 由该 Review 和 `Next Cycle` 形成的 replan 链替代，正常收尾不再要求为它补建 Evidence。
 
 ## 推进下一 Iteration
 
@@ -120,4 +120,4 @@ Act 因 `required` Evidence 不再满足白名单、必要性或可采集性而�
 3. `rework-required` 只创建同目录的下一 Cycle。
 4. `replan-required` 调整未完成的 Iteration Plan，并创建同目录的下一 replan Cycle；已交接的 Cycle 文件保持不可变。
 
-展开后继 Iteration 时，Plan Context 的 Current Baseline 优先引用当前 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的表面。
+展开后继 Iteration 时，Plan Context 的 Starting point 优先引用当前 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的代码。

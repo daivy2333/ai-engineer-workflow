@@ -5,14 +5,14 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 # OpenSpec Act
 
-完成当前逻辑 Iteration 中当前 Cycle 的实施、验证和反馈。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已显式豁免并留下记录。
+完成当前逻辑 Iteration 中当前 Cycle 的实施、验证和反馈。前置条件是 `openspec-plan` 的 Gate 1、Gate 2 已通过，或用户已明确跳过并留下记录。
 
 ## 前置规则
 
 1. 按公共规则 › 读取顺序 复用体系上下文；公共规则缺失时先读取 `AGENTS.md`。
 2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending`、没有后继 Cycle 的 Cycle，完整读取当前 Cycle。Act Response 应尚未填写、为有明确当前 Cycle 修复意见的 `reported`，或为已获用户恢复指令的 `blocked`。
-3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行契约约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/R/I、Explorer Analysis、change 基线或 Cycle 模板。
-4. 按 Task Contract 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
+3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行依据约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/R/I、Explorer Analysis、change 计划产物或 Cycle 模板。
+4. 按 Task Definition 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
 5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
 6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
 7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
@@ -27,23 +27,23 @@ Plan Review 明确要求当前 Cycle 修复时，Act 恢复当前 Cycle，只消
 `Plan Context: ready` 即执行授权。对每个 OpenSpec task 或 repair item 执行：
 
 1. 标记任务进行中。
-2. 按 Task Contract 的 First test 建立先行测试（公共规则 › TDD）。
-3. 按任务执行契约做满足当前任务的最小改动。
+2. 按 Task Definition 的 First test 建立先行测试（公共规则 › TDD）。
+3. 按 Task Definition 做满足当前任务的最小改动。
 4. 运行并验证 GREEN，必要时重构并保持 GREEN。
 5. 执行 Gate 3 和 Gate 4。
 6. Gate 4 通过后才能标记完成。
-7. 无法按契约建立或运行先行测试，或先行测试不能证明目标且必须改变测试策略时，执行阻塞交接并返回 Plan。
+7. 无法按 Task Definition 建立或运行先行测试，或先行测试不能证明目标且必须改变测试策略时，执行阻塞交接并返回 Plan。
 
-不要修改计划范围外的代码。目标文件或符号发生可直接定位的移动、等价局部实现与计划建议不同，或验证命令可作等价调整时，只要不构成公共规则定义的实质问题，即可在契约内处理并记录到 `Deviations from Plan`。
+不要修改计划范围外的代码。目标文件或符号发生可直接定位的移动、等价局部实现与计划建议不同，或验证命令可作等价调整时，只要不构成公共规则定义的实质问题，即可在执行依据范围内处理并记录到 `Deviations from Plan`。
 
-只有差异使 Task Contract 无法执行，或继续工作会构成实质问题时，才执行阻塞交接并终止。
+只有差异使 Task Definition 无法执行，或继续工作会构成实质问题时，才执行阻塞交接并终止。
 
 ## Gate 3：Task Review
 
 每个任务完成 GREEN 后执行一次 review，覆盖两类检查：
 
 - Spec compliance：requirement、scenario 和目标行为完整实现；计划列出的文件、符号、调用者和错误路径均已处理；不变量、兼容性和禁止修改项未被破坏；先行测试符合任务类型，修改后 GREEN 能证明目标行为或行为保持；Gate 证据覆盖任务的通过条件。
-- Code quality：diff 没有计划外修改；错误、边界、状态和资源生命周期正确；没有新增警告；测试不会因错误原因通过；没有身份型证据机制或判定层（公共规则 › 行为约束）。
+- Code quality：diff 没有计划外修改；错误、边界、状态和资源生命周期正确；没有新增警告；测试不会因错误原因通过；没有身份证明机制或判定层（公共规则 › 行为约束）。
 
 命名、局部结构、死代码、重复实现等不蔓延的表面问题由 Plan Review 统一终审。
 
@@ -51,7 +51,7 @@ Plan Review 明确要求当前 Cycle 修复时，Act 恢复当前 Cycle，只消
 
 ## Gate 4：Verified Completion
 
-Gate 4 的判据：Task Contract 的 Verification 全部满足，完成声明基于真实运行或采信未失效结论（公共规则 › 验证）。
+Gate 4 的判据：Task Definition 的 Verification 全部满足，完成声明基于真实运行或沿用未失效结论（公共规则 › 验证）。
 
 任一验证失败或无法运行时，任务不得标记完成；可修复的回到 Phase 3 循环，其余按 Gate 5 处理。
 
@@ -73,7 +73,7 @@ Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只�
 
 Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性或当前可采集性时，不收集；按 Gate 5 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
-不得为 Evidence 新增身份型证据机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制。
+不得为 Evidence 新增身份证明机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制。
 
 决定保存 Evidence 后，完整读取并遵守 [references/evidence-format.md](references/evidence-format.md) 的目录、记录和归档规则。没有保存需要时不创建目录；计划外 Evidence 在 Act Response 说明理由。
 
@@ -85,15 +85,15 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 
 - 缺失依赖：可按项目声明的方式本地补齐（lockfile、包管理器、项目文档步骤）时，先本地修复一次；补齐失败，或涉及系统状态、全局工具链、项目未声明的依赖时才阻塞。
 - 当前状态验证失败，完成定向排查后原因仍未知。
-- Task Contract 无法覆盖达到既有 Acceptance 所需的工作。
-- 实际代码与契约存在实质冲突，或继续实施会构成实质问题。
+- Task Definition 无法覆盖达到既有 Acceptance 所需的工作。
+- 实际代码与 Task Definition 存在实质冲突，或继续实施会构成实质问题。
 - `required` Evidence 不再满足白名单、必要性或当前可采集性。
 - 同一验证点连续失败 3 次。
 - 同一问题连续修复 3 次仍未解决。
 
 三次失败后按公共规则 › 三次失败 反思，不开始第四次同类尝试。
 
-非实质差异不命中 Gate 5。Act 在契约内处理并记录，不建立 Blocker Handoff。
+非实质差异不命中 Gate 5。Act 在执行依据范围内处理并记录，不建立 Blocker Handoff。
 
 ### 阻塞交接
 
@@ -118,8 +118,8 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 1. 读取 Blocker Handoff、已有 Evidence 和工作区状态。
 2. 确认当前 Cycle 没有后继 Cycle，`Review Result` 仍为 `pending`。
 3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
-4. 记录用户指令、解决办法或豁免、风险、恢复点和所需验证。
-5. 对恢复点之后将要修改且既有先行测试已失效的 task 重新建立先行测试；工作区自阻塞前结论产生后未变化的部分直接采信既有先行测试并注明来源，再从恢复点继续。
+4. 记录用户指令、解决办法或接受的风险、恢复点和所需验证。
+5. 对恢复点之后将要修改且既有先行测试已失效的 task 重新建立先行测试；工作区自阻塞前结论产生后未变化的部分直接沿用既有先行测试并注明来源，再从恢复点继续。
 
 不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
 
@@ -127,10 +127,10 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 
 当前 Cycle 的全部 task 或 repair item 正常完成后：
 
-1. 对照当前 Cycle 的 requirements、scenarios、Task Contracts、Invariants 和 Non-goals。
+1. 对照当前 Cycle 的 requirements、scenarios、Task Definitions、Invariants 和 Non-goals。
 2. 修复计划范围内的 Critical 和 Important 问题；对每项修复重跑受影响的 Gate 3 和 Gate 4，未受影响且覆盖范围未变化的验证结论引用上一轮 Response。
-3. 实质问题按 Gate 5 阻塞并返回 Plan；其他局部问题在契约内处理或记录。
-4. Cycle 级验证按公共规则 › 验证 执行：单元与受影响范围随时，昂贵验证只在 Iteration Plan 预算的时机执行；覆盖未变化的既有结论直接采信。
+3. 实质问题按 Gate 5 阻塞并返回 Plan；其他局部问题在执行依据范围内处理或记录。
+4. Cycle 级验证按公共规则 › 验证 执行：单元与受影响范围随时，昂贵验证只在 Iteration Plan 预算的时机执行；覆盖未变化的既有结论直接沿用。
 5. 按公共规则 › 验证 自检 change 结构。
 6. initial 或 replan Cycle 更新所属 Iteration 状态时，只读取 change `tasks.md` 中对应 task 的必要上下文；rework Cycle 只记录本地 repair item 状态，不新增全局 task。
 7. 首次报告填写当前 Cycle 的 `Act Response`；当前 Cycle 修复后覆盖整个 Response，使其成为包含原实施和最新修复的完整当前状态，不追加逐轮历史：
@@ -158,7 +158,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 1. 每个计划任务是否都有状态和证据？
 2. 所有跳过步骤是否记录原因？
 3. Gate 3-5 是否逐项通过或明确阻塞？
-4. 完成声明是否有新鲜输出？
+4. 完成声明是否有当次运行的真实输出？
 5. `Act Response` 是否与实际代码和证据一致？
 6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
 7. 自检发现是否没有未解决的 Critical 或 Important 问题？
@@ -196,4 +196,4 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 未经用户明确授权调用 Experience Recorder。
 - 归档 change、清理分支或执行其他生命周期收尾。
 - 覆盖 Plan Context 或填写 Plan Review。
-- 自行补全 Plan 遗漏的设计或扩大变更面。
+- 自行补全 Plan 遗漏的设计或扩大变更范围。

@@ -45,7 +45,7 @@ Use this skill to debug real hardware by building evidence in layers. Do not sta
    - Prove repeated interrupts, not just one. A single-shot interrupt usually means a status-clear or completion step is wrong.
    - For write-to-clear or clear-on-read causes: snapshot before acking, accumulate causes across one IRQ, and exclude echo or null-cause claims with a classifier.
    - Masking windows drop edge or MSI events: mask after a trigger, treat masks as a loss budget, and re-check after unmask. Latched level sources need an ack-by-read consumer; some reset defaults hold clears (hold-in-clear) and must be released explicitly.
-   - Keep handler logs small and gated; apply a storm budget so a misbehaving source cannot wedge the console.
+   - Keep handler logs small and gated; apply a storm budget so a misbehaving source cannot flood the console.
 
 7. DMA and memory gate.
    - Before any dataplane: define the exclusive DMA arena, address translation, cache maintenance ordering (publish before submit, reclaim before reuse), and wrap or boundary checks.
@@ -77,7 +77,7 @@ Trusting reference material:
 - Keep negative samples from the reference as review counterexamples; never merge foreign framework code wholesale into the project.
 - Reference material provides expectations and explanations. Board-observed facts — register reads, PHY identity, link state — remain the evidence.
 
-Board-adjudicated facts: when the board contradicts the manual (a trap value intermittently polluted, a mask window dropping events, a trigger bit that needs a companion register), record it as a platform constraint with its observing evidence, and code against the board, not the manual.
+When the board contradicts the manual (a trap value intermittently corrupted, a mask window dropping events, a trigger bit that needs a companion register), record the board-observed fact as a platform constraint with its observing evidence, and code against the board, not the manual.
 
 ## Failure Triage
 
@@ -87,7 +87,7 @@ Board-adjudicated facts: when the board contradicts the manual (a trap value int
 - One interrupt only: inspect device status clear and EOI or complete.
 - Interrupt storm: inspect cause-clear order, mask windows, and echo claims.
 - Replug or link instability: verify the event path is still live (a latched level source can go permanently silent after one missed event), then gate state, then DMA liveness.
-- Faults only on some cores: inspect cluster or core-type asymmetry before blaming the code. When the saved PC is correct but the fault address looks polluted, try eager population of executable pages and record the topology hazard.
+- Faults only on some cores: inspect cluster or core-type asymmetry before blaming the code. When the saved PC is correct but the fault address looks corrupted, try eager population of executable pages and record the topology hazard.
 - Workload hangs: step back to register, interrupt, queue, and wakeup gates.
 - Performance oddity: compare against physical line rate or bus limit, not simulator numbers.
 
@@ -98,4 +98,4 @@ Board-adjudicated facts: when the board contradicts the manual (a trap value int
 - Label skipped gates with concrete blockers.
 - Do not call a skipped shell, rootfs, or storage path a driver failure.
 - Do not claim SMP validation until the workload actually ran on the relevant harts.
-- Record board-adjudicated facts as durable platform constraints.
+- Record board facts that override the manual as durable platform constraints.

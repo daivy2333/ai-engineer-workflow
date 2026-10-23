@@ -24,7 +24,7 @@
 | Codex | `~/.agents/skills/` |
 | OpenCode | `~/.config/opencode/skills/`，或复用上述任一目录 |
 
-技能组是用户级资产，项目仓库只承载 `.agents/` 下的数据：`docs/`（SNAPSHOT、tasks）、`memory/`（项目记忆）、`analysis/`、`runbooks/`、`issues/`，以及 `openspec/` 下的 `changes/`（变更）、`specs/`（行为语料库）和 change 内 Evidence。初始化不向项目写入技能或模板副本；能运行体系技能即证明技能组已装载。
+技能组是用户级资产，项目仓库只承载 `.agents/` 下的数据：`docs/`（SNAPSHOT、tasks）、`memory/`（项目记忆）、`analysis/`、`runbooks/`、`issues/`，以及 `openspec/` 下的 `changes/`（变更）、`specs/`（行为规格库）和 change 内 Evidence。初始化不向项目写入技能或模板副本；能运行体系技能即证明技能组已装载。
 
 目标项目以 `AGENTS.md` 保存公共规则；change 的创建、验证和归档使用 OpenSpec 集成完成，其余工作流不依赖外部 CLI 工具。
 
@@ -69,7 +69,7 @@ plan/act 维护当前 OpenSpec change
 ```text
 openspec-milestone-planner
   → 读取项目目标、状态和已有分析
-  → 建立阶段成果、依赖、稳定基线和故障边界
+  → 建立阶段成果、依赖、稳定结果和故障边界
   → 聚合过细阶段，拆分过重阶段
   → 用户批准后写入 tasks 的 MSxx
   → 终止，不创建 change
@@ -79,16 +79,16 @@ openspec-plan
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
   → 定义行为变化、完整任务和 Iteration Plan
-  → 按稳定基线、验证与诊断边界平衡每个逻辑 Iteration
+  → 按稳定结果、验证与诊断边界平衡每个逻辑 Iteration
   → 只写入当前 Cycle，Plan Context 先设为 draft，并声明 Persisted Evidence：none|required
   → Gate 2：Execution Readiness
-  → Gate 通过或明确豁免且计划获批后，将 Plan Context 改为 ready
+  → Gate 通过或用户明确跳过且计划获批后，将 Plan Context 改为 ready
   → 终止，等待用户审计
 openspec-act
-  → 直接消费 Plan Context，不重新建立计划基线
+  → 直接消费 Plan Context，不重新建立计划
   → 每任务先行测试（公共规则 › TDD）
   → Gate 3：每任务即时 Review（spec compliance + 会蔓延的缺陷）
-  → Gate 4：Task Contract 验证全部满足
+  → Gate 4：Task Definition 验证全部满足
   → Gate 5：阻塞与三次失败反思
   → 计划偏差时写 blocked Response 和 Blocker Handoff
   → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 Cycle
@@ -105,10 +105,10 @@ openspec-experience-recorder
   → 终止，不修改 change 或项目记忆
 openspec-plan
   → 检查实际代码、blocked/reported Response 和证据
-  → 分类 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据
-  → 当前执行契约足以约束有限修复：覆盖 Review 并让 Act 继续当前 Cycle
+  → 分类 Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据
+  → 当前执行依据足以约束有限修复：覆盖 Review 并让 Act 继续当前 Cycle
   → accepted：完成当前逻辑 Iteration，按 Map 展开下一 Iteration
-  → rework-required：需要新执行契约时，在同一 Iteration 目录创建 rework Cycle，不修改 Map
+  → rework-required：需要新执行依据时，在同一 Iteration 目录创建 rework Cycle，不修改 Map
   → replan-required：更新 change 和 Iteration Plan，在同一 Iteration 创建 replan Cycle
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
@@ -126,7 +126,7 @@ Assistant 只恢复 OpenSpec 体系文档上下文。当前会话已读取且未
 | References | 只保存检索元数据 | `Rxx` |
 | Improvements | 用户提供的未来工作方向 | `Ixx` |
 | 行为规格 | 验收过的系统当前行为，收尾时合并增量 | `openspec/specs/<domain>/spec.md` |
-| Milestones | 项目路线、稳定基线和阶段边界 | `MSxx` |
+| Milestones | 项目路线、稳定结果和阶段边界 | `MSxx` |
 | Tasks | 已承诺工作 | `Txx` |
 | Analysis | 调查、实验和评估正文 | `.agents/analysis/` |
 | Runbooks | 已验证、可重复或高风险的操作 | `.agents/runbooks/` |
@@ -140,7 +140,7 @@ Evidence 属于 change，不登记 R。普通验证结果写在 Act Response，�
 | Skill | 职责 |
 |---|---|
 | `os-kernel-development` | 通用内核开发、评审、构建失败分层归因与跨子系统调试 |
-| `low-level-execution-debugging` | 对照 ELF、运行地址、反汇编和实际控制流排查底层故障，含仅日志行见证的用户态 fault 判读 |
+| `low-level-execution-debugging` | 对照 ELF、运行地址、反汇编和实际控制流排查底层故障，含仅有日志行证据时用户态 fault 的分析 |
 | `async-driver-development` | IRQ、DMA、异步队列、wakeup、completion、恢复语义与 SMP |
 | `host-test-debugging` | host 测试二进制的状态取证与间歇失败归因 |
 | `no-std-rust-debugging` | no_std Rust 构建、链接、MMIO、trap 和 ELF |
@@ -181,13 +181,13 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台�
 - 非必要不增加流程。新增规则、Gate、状态、迁移或授权例外前，先说明删除它会导致哪个具体错误行为、它改变哪个决策；说明不了就不加。跨 Skill 生效的规则只在权威位置保留一份正文，其余位置按名引用。
 - OpenSpec 技能体系更新无需兼容旧体系，按当前目标直接更新。
 - 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
-- 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有落点，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱防线是否有其他角色检查点兜底，语义变化是否与去重分离并声明损失。
+- 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有适用规则，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱的检查是否有其他角色检查点作为后备，语义变化是否与去重分离并声明损失。
 - 体系更新按可独立回滚的批次提交；发现执行退化时，优先把检查点指针恢复为局部规则，不整体回退。
-- 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。一切判定以实际为准：结论来自真实运行的可观察结果，不得为判定新增脚本、封装命令、专用参数或判定层。
-- 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明“这是同一次运行”，也不得为解决证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
-- 发现上述身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，随后重新运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
+- 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为身份识别字段、匹配条件、拒绝条件或 Acceptance 的替代证据。一切判定以实际为准：结论来自真实运行的可观察结果，不得为判定新增脚本、封装命令、专用参数或判定层。
+- 禁止为构建、测试、鉴定测试、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其采集、审计、鉴定工具和专用测试。不得叠加多个身份机制证明“这是同一次运行”，也不得为解决证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份证明机制处理。
+- 发现上述身份证明机制时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，随后重新运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
 - change 的创建、验证和归档使用 OpenSpec 集成完成，结构检查由技能内自检清单与 OpenSpec 集成自身执行；其余工作流不依赖外部 CLI 工具。
-- 验证结论在其覆盖范围未变化时可以采信复用。采信方做只读基线检查并注明来源；结论矛盾、输出可疑、覆盖不足或用户要求独立复现时重跑。重复运行相同材料不构成审计；验证通过一次即为通过，不自行重复运行以增强可靠性。
+- 验证结论在其覆盖范围未变化时可以直接沿用。沿用前做只读检查并注明来源；结论矛盾、输出可疑、覆盖不足或用户要求独立复现时重跑。重复运行相同材料不构成审计；验证通过一次即为通过，不自行重复运行以增强可靠性。
 - OpenSpec Skill 复用当前会话中来源明确且未变化的上下文，只补读缺失信息和实际操作对象；不得因 Skill 切换重复恢复项目状态。
 - `AGENTS.md` 只保存公共执行规范，不记录项目现状。
 - 当前项目描述写入 SNAPSHOT，任务状态写入 tasks。
@@ -195,7 +195,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台�
 - milestone roadmap 写入 tasks，使用 `MSxx`，不与 change 数量绑定。
 - change 的 `tasks.md` 预先规划全部逻辑 Iteration，Map 不记录执行尝试次数。
 - 每个逻辑 Iteration 使用 `iterations/<III-title>/` 目录；首次执行写入 `000-initial.md`，后继执行写入同目录的 rework 或 replan Cycle。
-- 有限修复沿用当前执行契约和 Cycle；需要新执行契约时使用 `rework-required`，且不修改 Iteration Map；`replan-required` 调整目标、范围、依赖、验证契约或验收边界。
+- 有限修复沿用当前执行依据和 Cycle；需要新执行依据时使用 `rework-required`，且不修改 Iteration Map；`replan-required` 调整目标、范围、依赖、验证方式或验收边界。
 - change 的按需证据写入 `evidence/<III-title>/<CCC-title>/`，与 Iteration/Cycle 层级对齐。
 - `SKILL.md` 只保留自身流程和不可违反的差异。
 - 长阈值表、模板和协议放入 `references/`，按需读取。

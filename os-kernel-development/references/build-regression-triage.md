@@ -9,7 +9,7 @@ Judge by three facts, in this order: the exact command, the final exit code, and
 - Final exit 0 with the artifact produced: PASS. Earlier warnings from the environment — a read-only package home, no network, auto-install notes — are noise and do not downgrade the result.
 - Final nonzero with product diagnostics (compile, link, or test errors): product FAIL, even when environment warnings appeared earlier. Fix the product layer; the environment did not cause it.
 - Final nonzero with only environment refusals (permissions, EPERM, missing hardware, sandbox blocks) and no product layer reached: environment-blocked. Keep the command and exit code, and ask for a same-command rerun in a normal environment.
-- The command does not match the product — wrong target, wrong feature set, wrong platform config: invalid witness. It is neither PASS nor product FAIL and does not count toward a failure streak. Re-run with the project's real product command.
+- The command does not match the product — wrong target, wrong feature set, wrong platform config: invalid evidence. It is neither PASS nor product FAIL and does not count toward a failure streak. Re-run with the project's real product command.
 
 Find the earliest layer that decided the outcome: command choice → dependency probe → compile → link → objcopy or artifact check. Classify with the earliest decisive layer, not the loudest warning.
 
@@ -31,11 +31,11 @@ Before debugging a failure that appeared after a large uncommitted change, answe
 5. Verify restore completeness against the snapshot before dropping the stash; a stash dropped too early is recoverable through fsck or reflog before any other git write. If a stash pop conflicts mid-restore, extract both index stages (`git show :2:<path>` and `:3:<path>`), restore the intended staged/unstaged boundary with index surgery (`git update-index --cacheinfo`), and verify restored line counts against pre-edit values.
 6. This pass is attribution, not debugging: when every block passes alone and the combination fails, the failure is an interaction — change dimension (feature combinations), do not keep bisecting the same axis.
 
-## Landing multi-commit work
+## Integrating multi-commit work
 
-- Never apply a whole branch at once. Split by dependency order, not commit order: the measurement or witness layer first (it provides the baseline the rest is judged against), minimal fixes second, contract or interface convergence third, pure trait or API signature changes last (they depend on stabilized internals).
+- Never apply a whole branch at once. Split by dependency order, not commit order: the measurement or evidence layer first (it provides the baseline the rest is judged against), minimal fixes second, contract or interface convergence third, pure trait or API signature changes last (they depend on stabilized internals).
 - Gate every step: compile, lint, boot or run, and the deltas the step claims. A step that regresses past the agreed tolerance stops the sequence and gets its own diagnosis.
-- Keep the source branch until the landing is complete; it is the rollback point.
+- Keep the source branch until the integration is complete; it is the rollback point.
 
 ## Parallel host-test pollution
 

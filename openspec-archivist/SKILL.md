@@ -42,7 +42,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 - 目标 Analysis、Runbook、Issue 及其 R 索引
 - 与目标有关的活跃 change 和 `openspec list` 结果
 
-Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive 或 Delete 前对目标正文、活动状态和交叉引用的新鲜检查。
+Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive 或 Delete 前对目标正文、活动状态和交叉引用的重新检查。
 
 ### Step 2：解析
 
@@ -111,7 +111,7 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive �
 7. Stale-Warn。
 8. Artifact-Archive：删除文件，R 编号保留，R 路径改为 `git show <hash>:<原路径>`，状态标 `[ARCHIVED YYYY-MM-DD]`。
 
-全程只读 git（`rev-parse`、`diff`、`show`）；归档动作是文件删除和墓碑，由用户自己的提交落史。条目内容与最近提交不一致时，先请用户提交再归档。
+全程只读 git（`rev-parse`、`diff`、`show`）；归档动作是文件删除和墓碑，由用户自己的提交保留在历史中。条目内容与最近提交不一致时，先请用户提交再归档。
 
 ## Gate 2：验证
 

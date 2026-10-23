@@ -1,6 +1,6 @@
 # Log-Only Fault Reconciliation
 
-Reconcile a fault when the only witness is a serial log line — typically a user-space process faulting under your own kernel or loader, on hardware with no debugger attachment. The address-ledger discipline from address-reconciliation.md still applies; here the runtime witness is one printed line and the artifact is extracted from a filesystem image.
+Reconcile a fault when the only evidence is a serial log line — typically a user-space process faulting under your own kernel or loader, on hardware with no debugger attachment. The address-ledger discipline from address-reconciliation.md still applies; here the runtime evidence is one printed line and the artifact is extracted from a filesystem image.
 
 ## Secure the artifacts
 
@@ -25,9 +25,9 @@ The fault line names pc, fault address, sp, and ra. Attribute each address indep
 
 ## Trust checks on the trap frame
 
-- Canonical-address check first (for example SV39: address bits above the VA width must all equal the sign bit). A non-canonical fault address indicates a polluted or synthesized value.
+- Canonical-address check first (for example SV39: address bits above the VA width must all equal the sign bit). A non-canonical fault address indicates a corrupted or synthesized value.
 - For an instruction page fault, the saved PC and the fault address should name the same instruction. A mismatch means the fault-address register is unreliable on this core: distrust the fault address, keep the saved PC, and record the core behavior as a platform constraint.
-- A fault address that repeats the saved PC's low bits with garbage in the high bits is a hallmark of intermittent delivery pollution on some cores — reconcile bytes before symbols before blaming memory management.
+- A fault address that repeats the saved PC's low bits with garbage in the high bits is a hallmark of intermittent delivery corruption on some cores — reconcile bytes before symbols before blaming memory management.
 
 ## Failure handling
 

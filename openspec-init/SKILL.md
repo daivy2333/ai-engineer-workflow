@@ -59,7 +59,7 @@ description: 初始化或升级项目规则、状态、change 和项目记忆体
 
 公共规则只存在于 `AGENTS.md`，不创建单独的规则文件。
 
-`openspec/specs/` 是行为语料库，按域由 maintainer 在 change 收尾时合并增量规格创建，init 不创建占位域文件；所有 spec 必须满足 OpenSpec 当前格式要求，并包含可验证 Scenario。
+`openspec/specs/` 是行为规格库，按域由 maintainer 在 change 收尾时合并增量规格创建，init 不创建占位域文件；所有 spec 必须满足 OpenSpec 当前格式要求，并包含可验证 Scenario。
 
 `.agents/analysis/`、`.agents/runbooks/` 和 `.agents/issues/` 是按需产物目录。没有内容时不创建占位文件。
 
@@ -98,7 +98,7 @@ Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` �
 - milestone-planner 负责 `MSxx` 的路线结构，Maintainer 只同步其运行状态。
 - 活跃项目记忆使用 `M/R/I` 编号，位于 `.agents/memory/`。
 - 三个记忆文件存在且字段结构完整，条目可检索。
-- 行为语料库位于 `openspec/specs/`，首次合并前不创建文件。
+- 行为规格库位于 `openspec/specs/`，首次合并前不创建文件。
 - skill frontmatter 只使用三端共同字段 `name` 和 `description`。
 - 所有引用文件存在。
 - 本 skill 能运行即证明技能组已装载；项目内不生成技能副本，装载入口由 README 的安装说明提供。

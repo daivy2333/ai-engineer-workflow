@@ -31,10 +31,10 @@ Rules for drivers that must survive device reset, link flap, hot removal, or tra
 ## Terminal publication
 
 - Waiters blocked on an object that is being reset receive a terminal error at the recovery boundary; they must not hang waiting on an epoch that will never complete.
-- A flush pending across a reset aborts; the abort reaches the requester, it is not swallowed.
+- A flush pending across a reset aborts; the abort reaches the requester, it is not dropped.
 
 ## Measurement discipline
 
-- Before declaring quiescence, run a settle phase: all activity counters stay flat for a fixed window, then freeze and read them as the quiet witness. A protocol close can trail visible completion by several packets; measuring too early reports a false active state.
+- Before declaring quiescence, run a settle phase: all activity counters stay flat for a fixed window, then freeze and read them as evidence of quiescence. A protocol close can trail visible completion by several packets; measuring too early reports a false active state.
 - Scope recovery claims by evidence class — emulator, simulator, real board.
 - A repair cycle that does not shrink the gap means the recovery model or design assumption is wrong — re-examine the model instead of retrying the same fix.
