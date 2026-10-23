@@ -62,6 +62,7 @@ maintainer 写状态、项目记忆、检索索引，收尾时合并行为规格
 compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
+不改变功能语义的轻量修改不经 change 直接执行
 ```
 
 开发流程：
