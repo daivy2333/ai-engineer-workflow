@@ -48,7 +48,7 @@ Read the references that match the work:
    - Layer generations across queue, link, and waiter state; rebuild queues in place on reset; discard late completions by epoch; release DMA backing only with proof of quiesce.
 
 7. Gate each step.
-   - Add a current-state witness before editing: affected symbols, callers, fields, and validation commands.
+   - Capture the current state before editing: affected symbols, callers, fields, and validation commands.
    - Merge by dependency order: observability, correctness fix, ownership cleanup, contract change, optimization.
    - Run compile checks after each step.
    - Run functional tests before performance tests; prove recovery before long-run claims.
@@ -84,7 +84,7 @@ Packet or descriptor driver:
 - Prove nonblocking read/write behavior.
 - Prove flush/drain does not return early and does not hang; a ticketed flush closes or aborts with a terminal result.
 - Prove recovery: reset and link-flap matrices, late completions discarded by epoch, no double reclaim, no permanent Pending, backing retained while quiesce is unproven.
-- Prove quiet with a settle phase: counters must stay flat for a fixed window before they are frozen as the quiet witness.
+- Prove quiet with a settle phase: counters must stay flat for a fixed window before they are frozen as evidence of quiescence.
 - Stress concurrent read/write and drain on SMP hardware when cross-hart state exists.
 - Drive queue and ownership logic through a host fixture (fake transport, device-side completion simulation) before guest or board runs.
 - Capture raw logs for true-board results.

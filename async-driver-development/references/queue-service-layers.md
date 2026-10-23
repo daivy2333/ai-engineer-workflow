@@ -17,7 +17,7 @@ A wake that skips the queue task (IRQ waking the runner or a socket directly) le
 
 - Fixed capacity per direction. A slot cycles through owned-by-device, completed-unreclaimed, and owned-by-stack states; the ledger is the single completion authority.
 - Publish, reap, refill, wrap: publish prepared buffers, reap completions, refill only freed slots, wrap with modular indices. Validate ring indices and lengths against capacity before trusting device-written metadata.
-- Full does not overwrite: a full RX or TX side applies typed backpressure (drop-class, retry-class, or wait-class) and never clobbers live slots.
+- Full does not overwrite: a full RX or TX side applies typed backpressure (drop-class, retry-class, or wait-class) and never overwrites live slots.
 - Reclaim is single-owner and single-pass. Double reclaim and missed reclaim are the two ledger invariants to test explicitly.
 - Errors classify per slot (bad frame, invalid metadata, timeout) and never abort the ledger; capacity and conservation counts must stay explicable on every error path.
 
@@ -37,7 +37,7 @@ A wake that skips the queue task (IRQ waking the runner or a socket directly) le
 - Queue ownership, backpressure, and completion semantics are defined against the queue interface, not the bus. Transport adapters live at probe, IRQ routing, and DMA/cache boundaries only.
 - Device IRQ control seam: read_cause, ack, mask, rearm, snapshot counters, wake the owner. Nothing else runs in interrupt context.
 - On event-suppressing transports (used-event/avail-event notification), rearm is separate from unmask and requires its own recheck; suppressed notifications behave like level-triggered readiness — poll once after rearm before sleeping.
-- One handler per device IRQ beats a multiplexed global hook: a handler bound to one IRQ cannot eat or ack another device's events. Registration results are checked at init.
+- One handler per device IRQ beats a multiplexed global hook: a handler bound to one IRQ cannot consume or ack another device's events. Registration results are checked at init.
 
 ## Cause and mask semantics
 

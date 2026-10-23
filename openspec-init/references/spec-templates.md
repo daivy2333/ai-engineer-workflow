@@ -1,13 +1,13 @@
-# 项目记忆与行为语料库模板
+# 项目记忆与行为规格库模板
 
-记忆文件使用扁平 markdown 台账。行为语料库按域组织，由 maintainer 在 change 收尾时合并增量规格。初始化后按项目事实填充，不创建占位条目。
+记忆文件使用扁平 markdown 台账。行为规格库按域组织，由 maintainer 在 change 收尾时合并增量规格。初始化后按项目事实填充，不创建占位条目。
 
 ## 目录
 
 - Project Model
 - References
 - Improvements
-- 行为语料库
+- 行为规格库
 - 状态文档
 
 ## Project Model
@@ -40,7 +40,7 @@ Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 
 条目字段：方向、依据、影响、状态。批准实施时纳入 change 或 milestone，并把原条目标记 `promoted`。
 
-## 行为语料库
+## 行为规格库
 
 路径：`.agents/specs/<domain>.md`
 
@@ -67,7 +67,7 @@ Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 - 合并冲突（同名不同义、增量与域文件矛盾）时停止并请求用户决定。
 - archivist 归档的异常 change 不合并。
 
-计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入语料库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，缺陷写 Issue。
+计划外的已验证行为事实作为 spec 候选，随下一个相关 change 进入规格库；无法表达为行为要求的事实写 analysis，可重复操作写 Runbook，缺陷写 Issue。
 
 ## 状态文档
 
@@ -86,7 +86,7 @@ SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束�
 `tasks.md` 记录：
 
 - milestone roadmap，使用 `MSxx`。
-- 每个 milestone 的成果、稳定基线和依赖。
+- 每个 milestone 的成果、稳定结果和依赖。
 - 进行中。
 - 已承诺待办。
 - 阻塞。

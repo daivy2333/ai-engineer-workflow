@@ -1,6 +1,6 @@
 ---
 name: low-level-execution-debugging
-description: Debug low-level runtime execution by reconciling source intent, ELF and linker layout, loaded memory, runtime PC, symbols, disassembly, address translation, and MMIO addresses. Use for kernels, bootloaders, firmware, embedded targets, and user-space payloads under your own kernel or loader — when breakpoints or probes do not hit, execution reaches an unexpected address, traps or illegal instructions occur, stack traces look wrong, symbols do not match memory, link and load addresses differ, only a serial fault line is available as the witness, or GDB, LLDB, QEMU, JTAG, or OpenOCD evidence is needed.
+description: Debug low-level runtime execution by reconciling source intent, ELF and linker layout, loaded memory, runtime PC, symbols, disassembly, address translation, and MMIO addresses. Use for kernels, bootloaders, firmware, embedded targets, and user-space payloads under your own kernel or loader — when breakpoints or probes do not hit, execution reaches an unexpected address, traps or illegal instructions occur, stack traces look wrong, symbols do not match memory, link and load addresses differ, only a serial fault line is available as evidence, or GDB, LLDB, QEMU, JTAG, or OpenOCD evidence is needed.
 ---
 
 # Low-Level Execution Debugging
@@ -13,7 +13,7 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
 - For a live debugger, QEMU monitor, or hardware probe, read [references/debugger-evidence.md](references/debugger-evidence.md).
 - For symptom-specific branches, read [references/failure-patterns.md](references/failure-patterns.md).
 - For RISC-V, x86-64, AArch64, or Arm details, read [references/architecture-checks.md](references/architecture-checks.md).
-- For a fault witnessed only by a serial log line — typically a user payload under your own kernel — read [references/log-only-fault-reconciliation.md](references/log-only-fault-reconciliation.md).
+- For a fault evidenced only by a serial log line — typically a user payload under your own kernel — read [references/log-only-fault-reconciliation.md](references/log-only-fault-reconciliation.md).
 
 ## Workflow
 
@@ -36,7 +36,7 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
    - Record symbol start, symbol size, instruction bytes, and offsets.
    - Prefer instruction-level evidence over source-line assumptions.
 
-4. Capture the runtime witness.
+4. Capture the runtime state.
    - Halt at the earliest safe point that preserves the failure.
    - Record PC, SP, frame or return registers, status, privilege, trap cause, fault address, CPU or hart, and task when available.
    - Read raw bytes and decoded instructions around PC.
@@ -98,5 +98,5 @@ Use this skill to prove which instructions a CPU executed and how their runtime 
 - Treating a breakpoint miss as proof that code did not execute.
 - Trusting a backtrace after trap entry, stack corruption, or context switch without checking frame rules.
 - Reading MMIO through a debugger without accounting for side effects.
-- Flashing, resetting, or patching the target before preserving the failing witness.
+- Flashing, resetting, or patching the target before preserving the failure evidence.
 - Applying a fix before the first unexplained execution edge is located.

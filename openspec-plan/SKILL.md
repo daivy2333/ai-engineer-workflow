@@ -10,7 +10,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 ## 前置规则
 
 1. 按公共规则 › 读取顺序 复用体系上下文，只补读当前模式缺失的体系文档；独立调用时按需建立。
-2. 新计划先消费当前会话中的 Explorer 结论、相关 Analysis，以及后继 Iteration 对应的前一 Iteration 最终 Act Response 和 accepted Review；检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有可采信输入时由 Plan 完成所需调查。
+2. 新计划先消费当前会话中的 Explorer 结论、相关 Analysis，以及后继 Iteration 对应的前一 Iteration 最终 Act Response 和 accepted Review；检查捕获 revision、工作区变化、适用范围和未知项，只补查缺失或失效的实现事实。没有可沿用的输入时由 Plan 完成所需调查。
 3. Review 模式只读取当前 Cycle、实际代码、diff、Act Response 和要求的 Evidence；发现涉及体系约束时才补读对应权威文档，不执行新计划模式的全量恢复。
 4. 若项目缺少 `AGENTS.md` 或 `.agents/` 结构，先使用 `openspec-init`。
 5. 使用当前环境的任务追踪能力记录 Phase、Gate 和跳过项。
@@ -52,7 +52,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 可观察结果。
 - 失败结果或边界条件。
 
-### Step 4：建立需求基线和 change
+### Step 4：确认需求并创建 change
 
 创建 `.agents/changes/<name>/` 目录并生成或完善：
 
@@ -73,15 +73,15 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - change 目录存在。
 - 用户批准需求和范围。
 
-用户显式要求跳过 Gate 1 时，将原话和风险写入 proposal；不要静默豁免。
+用户显式要求跳过 Gate 1 时，将原话和风险写入 proposal；不要静默跳过。
 
 ## Phase 2：INVESTIGATE AND PLAN
 
 ### Step 1：调查当前实现
 
-制定计划前，先按前置规则 2 整理可采信输入，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
+制定计划前，先按前置规则 2 整理可沿用的输入，再读取实际代码补齐本次需求所缺的 Current-State Evidence：
 
-- 入口、目标符号、调用者与被调用者、数据流、状态变化、错误和并发边界、现有测试、夹具、验证命令和基线结论按公共规则 › Plan 调查 记录；补跑基线时记录命令与实际结果。
+- 入口、目标符号、调用者与被调用者、数据流、状态变化、错误和并发边界、现有测试、夹具、验证命令和已有验证结论按公共规则 › Plan 调查 记录；补跑变更前验证时记录命令与实际结果。
 - 追踪动态调用边，记录状态所有权，检查取消、超时和资源生命周期。
 - 检查相关 M/R/I、活跃 change 和兼容性约束。
 - 列出影响实现的未知项；只有实质未知项才阻塞。
@@ -98,22 +98,22 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 - 记录关键技术选择、替代方案和选择理由；选择理由随 change 归档，是长期决策的权威记录。
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
-- 验证设计直接观察目标状态、输出或错误结果，逐 scenario 选择最简直接判定（公共规则 › 验证），不建立身份型证据系统或判定层（公共规则 › 行为约束）。
+- 验证设计直接观察目标状态、输出或错误结果，逐 scenario 选择最简直接判定（公共规则 › 验证），不建立身份证明机制或判定层（公共规则 › 行为约束）。
 
-影响契约语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
+影响接口或错误语义的选择不得留作 TBD。非实质选择可留给 Act；无法通过只读调查解决的实质问题才阻塞 Gate 2 并请求用户决定。
 
 ### Step 3：制定任务和 Iteration Plan
 
-按 Cycle 模板为每个单一范围的任务填写 Task Contract：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、先行测试、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
+按 Cycle 模板为每个单一范围的任务填写 Task Definition：映射 requirement/scenario，明确依赖、目标位置、当前与目标行为、必须保持和禁止修改的边界、先行测试、GREEN、验证和停止条件。默认用 Act Response 保存 Gate 结果；Gate、测试或 Review 的数量不能成为创建 Evidence 的理由。
 
-背景、调查证据和 Implementation Guidance 不得给出与 Task Contract 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
+背景、调查证据和 Implementation Guidance 不得给出与 Task Definition 冲突的指令，也不规定非实质实现选择（公共规则 › Iteration 与 Cycle 线程）。
 
-不得规划身份型证据工程或判定层（公共规则 › 行为约束）。产品 requirement 明确要求的认证、完整性校验或多会话协议作为目标行为进入 requirement、scenario 和 Acceptance。
+不得规划身份证明机制或判定层（公共规则 › 行为约束）。产品 requirement 明确要求的认证、完整性校验或多会话协议作为目标行为进入 requirement、scenario 和 Acceptance。
 
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
 - 每个任务只归属一个 Iteration，并满足依赖顺序。
-- 每个 Iteration 记录阶段结果、稳定基线、验证边界（含昂贵验证的预算时机）、诊断边界和 Non-goals。
+- 每个 Iteration 记录阶段结果、稳定结果、验证边界（含昂贵验证的预算时机）、诊断边界和 Non-goals。
 - 对每个 Iteration 执行聚合和拆分审计，避免过碎或过重。
 - 只展开第一个 Iteration 目录及其 `000-initial.md`；后续 Iteration 此时不创建目录或 Cycle 文件。
 
@@ -127,7 +127,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 |---|---|---|---|
 | R1 | T1 | `test_name` | Covered |
 
-Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、Task Contract 的 Targets 和 change `tasks.md` 承载，不进矩阵。
+Scenario、Design、代码位置和 Iteration 分别由场景草图、design、Task Definition 的 Targets 和 change `tasks.md` 承载，不进矩阵。
 
 状态规则：
 
@@ -142,14 +142,14 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 1. 是否存在 TBD/TODO。
 2. 是否有未批准的需求裁剪。
 3. tasks、specs、design 是否互相一致。
-4. Current-State Evidence 是否来自实际代码和新鲜基线。
-5. 每个任务是否包含完整执行契约。
+4. Current-State Evidence 是否来自实际代码和当次验证结果。
+5. 每个任务是否包含完整的执行依据。
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
 8. Iteration Plan 是否覆盖全部任务并通过平衡审计，昂贵验证预算明确。
 9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个先行测试并执行。
-10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定契约语义。
-11. 验证是否直接证明目标行为，跨特性或跨接口的 scenario 是否有真实入口见证，且没有身份型证据工程、判定层、自引用验证或为工具测试工具。
+10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定接口或错误语义。
+11. 验证是否直接证明目标行为，跨特性或跨接口的 scenario 是否经真实入口验证，且没有身份证明机制、判定层、自引用验证或为工具测试工具。
 
 ### Step 6：创建首个 Iteration 和 Cycle
 
@@ -163,8 +163,8 @@ Scenario、Design、Code Surface 和 Iteration 分别由场景草图、design、
 
 - 状态先写为 `draft`。
 - Cycle 范围、目标和背景。
-- Investigation Facts：当前基线、Current-State Evidence、代码与关键路径。
-- Task Contracts（含变更面和行为变化）、共享不变量、非目标、RTM、Acceptance 和 Verification。
+- Investigation Facts：当前起点、Current-State Evidence、代码与关键路径。
+- Task Definitions（含变更范围和行为变化）、共享不变量、非目标、RTM、Acceptance 和 Verification。
 - Gate 2 结论、风险、`Persisted Evidence` 模式和后续任务边界。
 
 Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
@@ -186,11 +186,11 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 - Persisted Evidence 模式明确；`required` 项满足白名单和必要性问题，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
-Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `WAIVED` 及证据。全部 `PASS`，或用户明确承担全部 `WAIVED` 风险后，Gate 2 才能通过。
+Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `SKIPPED` 及证据。全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险后，Gate 2 才能通过。
 
 用户显式要求跳过 Gate 2 时，将原话和未检查风险写入 proposal。
 
-Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计划后，`Plan Context` 才能按 Cycle 模板 › 写入规则 离开 `draft`。Gate 未通过时不得交给 Act。
+Gate 2 全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险并批准计划后，`Plan Context` 才能按 Cycle 模板 › 写入规则 离开 `draft`。Gate 未通过时不得交给 Act。
 
 ## 实施反馈 Review
 
@@ -198,20 +198,20 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `WAIVED` 风险并批准计�
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
 2. 独立阅读实际代码和 diff（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、Self-Review 和计划要求的 Evidence。
-3. Act 已报告且覆盖范围未失效的验证结论直接采信并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
-4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接采信；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
+3. Act 已报告且覆盖范围未失效的验证结论直接沿用并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
+4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接沿用；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
-6. 在 Findings 记录偏差原因：Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据。
+6. 在 Findings 记录偏差原因：Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据。
    - 非实质 finding 不阻塞。
    - 实质问题或既有 Acceptance 未满足才构成阻塞 finding。
-   - 当前 change 范围外的实质缺陷作为 Issue 候选报告，不落账（公共规则 › Iteration 与 Cycle 线程）。
-   - 发现身份型证据工程时，把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
+   - 当前 change 范围外的实质缺陷作为 Issue 候选报告，只报告不登记（公共规则 › Iteration 与 Cycle 线程）。
+   - 发现身份证明机制时，把删除机制及其专用接口、fixture、测试和工具列为修复目标，再要求 Act 以目标行为重新验证；不得要求 Act 完善该框架。
 7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据和 Acceptance Gaps。
-8. 有限修复受当前执行契约约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
+8. 有限修复受当前执行依据约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
 9. 当前 Cycle 修复完成后重新 Review。`Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复有明确当前 Cycle 反馈的 `reported` Cycle，或已解决阻塞的 `blocked` Cycle。
 10. 输出结果后终止，等待用户审计和下一步指令。
 
-不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行契约的有限修复留在当前 Cycle。
+不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行依据的有限修复留在当前 Cycle。
 
 Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按公共规则 › Iteration 与 Cycle 线程 执行。
 
@@ -227,7 +227,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按
 - change 路径。
 - 当前 Iteration、Cycle 路径和编号。
 - Persisted Evidence 模式和 `required` 项，或 `none`。
-- Gate 1、Gate 2 结论、BLOCKED/WAIVED 项和证据。
+- Gate 1、Gate 2 结论、BLOCKED/SKIPPED 项和证据。
 - 所有显式跳过项及原因。
 
 Review 模式改为交付：

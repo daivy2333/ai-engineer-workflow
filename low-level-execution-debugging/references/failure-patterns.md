@@ -72,7 +72,7 @@ Record:
 
 Do not treat the fault address and instruction address as interchangeable.
 
-A non-canonical fault address, or one that repeats the saved PC's low bits with garbage above, is a hallmark of intermittent delivery pollution on some cores. When the two disagree, distrust the fault address, keep the saved PC, and record the behavior as a platform constraint.
+A non-canonical fault address, or one that repeats the saved PC's low bits with garbage above, is a hallmark of intermittent delivery corruption on some cores. When the two disagree, distrust the fault address, keep the saved PC, and record the behavior as a platform constraint.
 
 ## Backtrace or return path is wrong
 
@@ -132,8 +132,8 @@ Single-core debugger success does not prove SMP correctness. Halting all cores c
 
 ## User payload faults under a custom kernel or loader
 
-When a user-space process faults under your own kernel and the only witness is a serial fault line (pc, fault address, sp, ra), read log-only-fault-reconciliation.md:
+When a user-space process faults under your own kernel and the only evidence is a serial fault line (pc, fault address, sp, ra), read log-only-fault-reconciliation.md:
 
 - Attribute each address to the program or the dynamic interpreter base before disassembling; the two have different load bases.
-- Cross-check the saved PC against the fault address and the disassembly before trusting the trap frame; a mismatch means the fault-address register is polluted on this core.
+- Cross-check the saved PC against the fault address and the disassembly before trusting the trap frame; a mismatch means the fault-address register is corrupted on this core.
 - Extract the binary read-only from the filesystem image, and keep diagnostic rebuilds to logging-level changes only.

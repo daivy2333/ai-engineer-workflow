@@ -69,7 +69,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 已承诺工作写 tasks 或 change。
 - 当前开发约束写 M。
 - 长期选择及其理由保留在 change 的 design，随 change 归档。
-- 系统当前行为写 specs 语料库。
+- 系统当前行为写 specs 规格库。
 - 指针和检索元数据写 R。
 - 用户提供且未承诺的方向写 I；批准后纳入 change 或 milestone 并标记 `promoted`。
 - 可复用的构建、测试和其他命令行操作流程写 Runbook。
@@ -81,11 +81,11 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
 - 检查编号唯一且递增。
 - 检查已收尾 change 的增量规格已合并到 `.agents/specs/`。
+- 已收尾 change 的删除可检索定位（`git log -S '<change 名>'`）。
 - 检查 I 与 tasks/change 没有重复活跃工作。
 - 检查 Runbook、Issue 和 analysis 有 R 索引。
 - 收尾 change 的 Plan Review 或 Act Response 存在未处理 Issue 候选时报告（不阻塞、不写入）。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
-- 已收尾 change 的删除可检索定位（`git log -S '<change 名>'`）。
 - 报告修改文件、编号和条目。
 
 ## 恢复归档条目

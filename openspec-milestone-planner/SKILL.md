@@ -5,7 +5,7 @@ description: 将项目目标规划为工作量适中、可独立验证和排障�
 
 # OpenSpec Milestone Planner
 
-规划项目阶段，不执行具体 change。让每个 milestone 形成可复用的稳定基线，同时避免阶段过重或过碎。
+规划项目阶段，不执行具体 change。让每个 milestone 形成可复用的稳定结果，同时避免阶段过重或过碎。
 
 开始前完整读取：
 
@@ -16,11 +16,11 @@ description: 将项目目标规划为工作量适中、可独立验证和排障�
 
 - 读取项目目标、SNAPSHOT、tasks、M/R 和已有 analysis。
 - 创建、拆分、合并、排序尚未执行的 `MSxx`。
-- 定义阶段成果、工作范围和稳定基线。
+- 定义阶段成果、工作范围和稳定结果。
 - 只在用户批准后写入 `.agents/docs/tasks.md`。
 - 不要求 Explorer、Plan、Act 或 Maintainer 生成专用交接。
 - 不调用其他 skill，不创建 OpenSpec change，不修改产品代码。
-- 不替代 `openspec-plan` 的 BDD、实现调查、设计和 Task Contract。
+- 不替代 `openspec-plan` 的 BDD、实现调查、设计和 Task Definition。
 - 不替代 `openspec-docs-maintainer` 同步运行状态和 change 结果。
 - 不替代 `openspec-archivist` 处理已完成或被替代条目的生命周期。
 
@@ -46,7 +46,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 
 - 需要获得的阶段成果。
 - 成果之间的依赖关系。
-- 每个阶段完成后可依赖的稳定基线。
+- 每个阶段完成后可依赖的稳定结果。
 - 明确推迟到后续阶段的内容。
 
 未关闭 Issue 作为排期候选输入。
@@ -55,7 +55,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 
 ## Phase 3：BALANCE
 
-按 [references/decomposition-rules.md](references/decomposition-rules.md) 对每个候选 milestone 执行聚合和拆分审计。合并不能独立形成稳定基线的局部步骤；拆分包含多个独立成果或故障域的阶段。不要用固定文件数、代码行数或 change 数量代替判断。
+按 [references/decomposition-rules.md](references/decomposition-rules.md) 对每个候选 milestone 执行聚合和拆分审计。合并不能独立形成稳定结果的局部步骤；拆分包含多个独立成果或故障域的阶段。不要用固定文件数、代码行数或 change 数量代替判断。
 
 ## Phase 4：APPROVE
 
@@ -63,7 +63,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 
 - milestone 顺序和依赖。
 - 每项阶段成果与工作量依据。
-- 稳定基线。
+- 稳定结果。
 - Non-goals。
 - 合并与拆分理由。
 - 尚未解决的规划缺口。
@@ -91,7 +91,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 - 每个 milestone 是否只形成一个阶段成果？
 - 是否能独立验证，不依赖后续 milestone？
 - 失败时是否有明确排查范围？
-- 是否形成后续工作可依赖的稳定基线？
+- 是否形成后续工作可依赖的稳定结果？
 - 是否保留 Non-goals 和拆分信号？
 - 依赖是否完整且无环？
 - 是否没有修改 Explorer、Plan、Act 或 change？
@@ -118,6 +118,6 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 - 把多个独立成果或故障域塞进同一 milestone。
 - 把测试、观测和排障能力统一推迟到路线末端。
 - 预先规定 milestone 必须对应一个 change。
-- 为后续 Plan 编写实现细节、代码符号或测试契约。
+- 为后续 Plan 编写实现细节、代码符号或测试方案。
 - 未经批准写入 tasks。
 - 静默改写运行中或历史 milestone。

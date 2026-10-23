@@ -11,11 +11,11 @@ Decide whether an intermittent host-test failure is a product regression, a pre-
 | Allocator corruption reports, SIGSEGV, SIGABRT | Real memory unsafety underneath, never mere assertion noise |
 | A known flake reproducing again | Track it under its recorded policy; do not re-litigate it per run |
 
-## Deterministic witnesses
+## Deterministic replays
 
 - Single-threaded reruns of the failing subset, repeated ×100.
 - A known-unaffected subset run in parallel, repeated ×100, proves the harness itself is not the flake.
-- These runs are the trusted baseline: the flaky full suite cannot adjudicate itself, and a single full-suite pass proves nothing.
+- These runs are the trusted baseline: the flaky full suite cannot decide itself, and a single full-suite pass proves nothing.
 
 ## Dimension isolation
 

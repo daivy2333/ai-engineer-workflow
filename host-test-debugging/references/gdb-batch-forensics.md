@@ -60,5 +60,5 @@ Dump the same field set at two stops (first `run`, then `continue`): the delta i
 
 ## Stop rules
 
-- Three failed rounds at the same phase: change phase or failure witness (the three-strike rule).
+- Three failed rounds at the same phase: change phase or failure evidence (the three-strike rule).
 - A hang with no panic and no exit after a breakpoint hit usually means a command list aborted: rerun with a flat `-ex` sequence before suspecting the test.

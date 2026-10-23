@@ -28,17 +28,17 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 **Investigation Facts**
 
-- Current Baseline: <revision、当前实现、已有能力、已知限制和基线验证结果；可引用未失效的既有结论并注明来源>
+- Starting point: <revision、当前实现、已有能力、已知限制和变更前的验证结果；可引用未失效的既有结论并注明来源>
 - Current-State Evidence: <Plan 已确认且与实施直接相关的入口、目标符号、调用者、被调用者、动态边、状态、错误路径和测试入口；可引用 Explorer 来源，但不得要求 Act 回读才能执行>
 - Code and Critical Path: <文件、模块、符号及其职责；入口、调用链、数据流、状态变化和外部影响>
 
 **Implementation Guidance**
 
-<建议顺序、必要技术细节和关键取舍；不重复 Task Contract>
+<建议顺序、必要技术细节和关键取舍；不重复 Task Definition>
 
-**Task Contracts**
+**Task Definitions**
 
-Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required behavior 和 Preserve/Forbidden 共同表达变更面与责任边界。对每个 initial/replan task 或 rework repair item 使用：
+Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Required behavior 和 Preserve/Forbidden 共同表达变更范围与责任边界。对每个 initial/replan task 或 rework repair item 使用：
 
 ### <Task/Repair ID>: <可验证结果>
 
@@ -52,9 +52,9 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 - First test: <位置、RED 或变更前 GREEN、命令和预期结果>
 - GREEN condition: <修改后通过条件>
 - Verification: <自动命令或人工步骤、通过条件和失败含义；人工步骤写最短操作与直接可观察结果>
-- Stop when: <契约失效或需要返回 Plan 的实质条件>
+- Stop when: <执行依据失效或需要返回 Plan 的实质条件>
 
-变量名、辅助函数拆分和等价局部控制流不写入契约，除非它们影响可观察行为或责任边界。
+变量名、辅助函数拆分和等价局部控制流不写入 Task Definition，除非它们影响可观察行为或责任边界。
 
 **Invariants**
 
@@ -70,11 +70,11 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Verification**
 
-<逐 scenario 的最简直接判定：自动命令或人工步骤与通过依据，行为类 scenario 优先、跨特性或跨接口 scenario 必须走真实入口（公共规则 › 验证）；不得使用身份型证据工程或判定层替代行为验证>
+<逐 scenario 的最简直接判定：自动命令或人工步骤与通过依据，行为类 scenario 优先、跨特性或跨接口 scenario 必须走真实入口（公共规则 › 验证）；不得使用身份证明机制或判定层替代行为验证>
 
 **Gate 2 Readiness**
 
-<一行结论；只逐项列 BLOCKED/WAIVED 及证据。检查项清单见 openspec-plan 的 Gate 2>
+<一行结论；只逐项列 BLOCKED/SKIPPED 及证据。检查项清单见 openspec-plan 的 Gate 2>
 
 **Persisted Evidence**
 
@@ -84,7 +84,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Risks and Notes**
 
-<条件性风险、非实质未知项、WAIVED 项和额外注意事项；不得把需要 Act 决定契约语义的问题留在此处>
+<条件性风险、非实质未知项、跳过项和额外注意事项；不得把需要 Act 决定接口或错误语义的问题留在此处>
 
 ## Act Response
 
@@ -112,7 +112,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 <未恢复时整节省略；用户要求继续时追加：>
 
-- User instruction: <用户提供的事实、办法或风险豁免>
+- User instruction: <用户提供的事实、办法或接受的风险>
 - Resolution: <阻塞如何解除>
 - Accepted risk: <已接受风险或 None>
 - Resume point: <恢复的 task / step>
@@ -124,7 +124,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Verification Evidence**
 
-<命令或操作、实际结果、支持的 Acceptance 和结论；采信既有结论时注明来源>
+<命令或操作、实际结果、支持的 Acceptance 和结论；沿用既有结论时注明来源>
 
 **Persisted Evidence**
 
@@ -144,7 +144,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Findings**
 
-<基于代码、diff 和验证证据的发现；区分阻塞 Acceptance 与非阻塞 Minor finding，偏差原因（Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据）并入本节>
+<基于代码、diff 和验证证据的发现；区分阻塞 Acceptance 与非阻塞 Minor finding，偏差原因（Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据）并入本节>
 
 **Acceptance Gaps**
 
@@ -152,7 +152,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Evidence**
 
-<文件、符号、命令和输出；采信 Act Response 未失效结论时注明来源>
+<文件、符号、命令和输出；沿用 Act Response 未失效结论时注明来源>
 
 **Follow-up Decision**
 
@@ -160,7 +160,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 
 **Iteration Plan Update**
 
-<仅 `replan-required` 填写目标、范围、依赖、验证契约或验收边界变化；没有则整节省略>
+<仅 `replan-required` 填写目标、范围、依赖、验证方式或验收边界变化；没有则整节省略>
 
 **Next Cycle**
 
@@ -176,7 +176,7 @@ Task Contract 是 Act 的任务级执行依据，其 Targets、Current/Required 
 模板结构与目录命名：
 
 - Plan 创建 Iteration 目录和 Cycle 文件；Iteration 目录使用 `<III-title>/`，Cycle 文件使用 `<CCC-title>.md`，两级编号都从 `000` 递增。
-- Plan 创建文件时把 `Plan Context` 状态设为 `draft`；Gate 2 全部通过或被用户明确豁免且计划获批后，最后改为 `ready`。未通过时保持 `draft`，不得交给 Act。
+- Plan 创建文件时把 `Plan Context` 状态设为 `draft`；Gate 2 全部通过或被用户明确跳过且计划获批后，最后改为 `ready`。未通过时保持 `draft`，不得交给 Act。
 - Plan 在 change `tasks.md` 中规划全部逻辑 Iteration，但只展开当前 Iteration 和当前 Cycle。
 
 Cycle 的状态迁移、覆盖与冻结、Review Result 最终结论与重入、rework 与 replan 边界、阻塞恢复、Experience Candidates 授权和 Persisted Evidence 规则，按公共规则 › Iteration 与 Cycle 线程 执行；本文件不重复协议正文。

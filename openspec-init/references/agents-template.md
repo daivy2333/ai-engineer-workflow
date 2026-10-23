@@ -38,11 +38,11 @@
 
 - 新会话：assistant 读取 AGENTS.md → SNAPSHOT → tasks → active changes，并按问题补充相关 M/R/I 和持久化产物。
 - 当前会话中来源明确、细节仍可用且读取后未变化的信息直接复用；Skill 切换本身不触发重复读取。
-- 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新鲜运行证据时，才重新读取对应权威来源。
+- 后续 Skill 只补读当前任务缺失的信息和实际操作对象。只有概括而缺少所需细节、来源可能变化或需要新的运行证据时，才重新读取对应权威来源。
 - Assistant 只恢复体系文档上下文，不替代 Explorer 的代码调查、Plan 的实现调查或各 Skill 对实际操作对象的检查。
 - 探索：复用体系上下文 → 读取目标代码和测试 → 形成即时结论或 Analysis。
 - 计划：复用 Explorer 的当前会话结论或 Analysis → 只补查缺失或失效的实现事实 → 形成自包含 Plan Context。
-- 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划基线。
+- 实施：当前 Iteration 的最新 Cycle → 目标代码和测试 → 按需 Evidence → act；不回读 Assistant 或 Explorer 来重建计划。
 - 实现 Review：当前 Cycle → 实际代码、Act Response 和要求的 Evidence → plan。
 - 操作任务：相关 Runbook。
 - 缺陷查询与复盘：issues → analysis → project-model → specs → improvements/change。
@@ -100,11 +100,11 @@
 - SNAPSHOT 只描述项目现在是什么：项目身份、组成、支持范围和仓库现场。
 - SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录。
 - 其他文档只引用 SNAPSHOT，不复制当前项目描述。
-- 项目路线、稳定基线和阶段边界写 tasks，编号 `MSxx`。
+- 项目路线、稳定结果和阶段边界写 tasks，编号 `MSxx`。
 - 已承诺工作写 tasks 或 change。
 - 当前开发约束写 project-model，编号 `Mxx`。
 - 长期选择及其理由写 change 的 `design.md`，随 change 归档。
-- 系统当前行为写 specs 语料库；maintainer 在 change 收尾时合并增量规格。
+- 系统当前行为写 specs 规格库；maintainer 在 change 收尾时合并增量规格。
 - 指针和检索元数据写 references，编号 `Rxx`。
 - 用户提供且未承诺的方向写 improvements，编号 `Ixx`。
 - 可复用的构建、测试和其他命令行操作流程写入 Runbook。
@@ -121,12 +121,12 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 ## 记录边界
 
 - Model 只保存当前开发约束，不保存选择历史和行为描述。
-- 语料库只保存验收过的行为；计划外的已验证结论沉淀在 analysis，可表达为行为要求的事实随下一个 change 进入语料库。
+- 规格库只保存验收过的行为；计划外的已验证结论保留在 analysis，可表达为行为要求的事实随下一个 change 进入规格库。
 - Reference 不复制目标正文。
 - Improvement 只保存用户提供的未承诺方向；批准后纳入 change 或 milestone，标记 `promoted`。
 - Milestone Planner 创建和调整 `planned`、`ready` 的 `MSxx`；Maintainer 只同步运行状态和 change 引用。
 - Tasks 不保存未批准想法。
-- 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 准入为实质缺陷（› Plan 调查）。
+- 普通测试失败、预期 RED 和 Minor finding 不创建 Issue；Issue 只收录实质缺陷（› Plan 调查）。
 - 一次性命令不创建 Runbook。
 - Runbook 和 Issue 不由 Compressor 改写。
 - 普通验证结果写 Act Response；没有持久化要求时不创建 Evidence 占位目录。
@@ -145,9 +145,9 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 - 修改任务只包含用户明确要求和完成结果不可缺少的必要后果。候选工作无法关联到用户目标、已批准 requirement、Acceptance 或可达代码和数据时，不实施。
 - 增加用户未点名的工作前依次确认：用户是否要求；是否是完成结果的必要条件；哪些可达代码、数据、用户决定、法律、平台或验收证据证明必要；省略后是否会导致当前任务失败。任一项无法成立时停止扩展。
 - 必要后果可以包含调用者、夹具、测试、可访问性、安全、兼容性和迁移，但必须有当前任务的可达证据。目标是最小正确结果，不是最少文件或最少代码。
-- 验证只证明目标行为。环境、命令、版本和 revision 可以定位现场，但不得成为握手字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
-- 禁止为构建、测试、Qualification、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其 capture、audit、qualification 工具和专用测试。不得叠加多个身份机制证明同一次运行，也不得为证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份型证据工程处理。
-- 发现身份型证据工程时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，再运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
+- 验证只证明目标行为。环境、命令、版本和 revision 可以定位现场，但不得成为身份识别字段、匹配条件、拒绝条件或 Acceptance 的替代证据。
+- 禁止为构建、测试、鉴定测试、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其采集、审计、鉴定工具和专用测试。不得叠加多个身份机制证明同一次运行，也不得为证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份证明机制处理。
+- 发现身份证明机制时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，再运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
 - 跨 Skill 生效的规则只在本文件保留一份正文，其他位置按名引用。
 - 对已确认需要实施的工作，在同样满足 Acceptance 的方案中，依次优先复用项目已有实现、使用语言或平台原生能力、使用已有依赖，最后才新增最小必要代码或依赖；不为尚未发生的需求扩大当前实现。
 - 证据足以支持当前结论后停止搜索、测试和 Review。可选改进仅在有助于用户决策时报告，不纳入当前实现。
@@ -193,8 +193,8 @@ Plan 在制定任务前读取实际代码并记录：
 
 - 入口、目标符号、调用者和被调用者。
 - 数据流、状态变化、错误和并发边界。
-- 现有测试、验证命令和基线结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可采信结论时运行基线验证。
-- 相关域行为可引用 `.agents/specs/` 语料库；语料库与实际代码矛盾时记入未知项。
+- 现有测试、验证命令和已有验证结果；Explorer 或前序 Iteration 已实际运行且覆盖范围未变化的结果直接引用，只在缺少可沿用的结论时运行变更前验证。
+- 相关域行为可引用 `.agents/specs/` 规格库；规格库与实际代码矛盾时记入未知项。
 - 当前行为、目标行为和影响范围。
 
 影响行为、接口或错误语义、状态所有权、架构、范围、测试策略或 Acceptance 的问题属于实质问题；局部命名、辅助函数拆分、等价控制流、可直接定位的路径变化和非阻塞 Minor finding 不属于实质问题。Plan 通过 Gate 2 阻塞实质未知项，非实质选择可留给 Act。
@@ -221,10 +221,10 @@ Plan 在制定任务前读取实际代码并记录：
 - Gate 1：需求、BDD、场景、范围和 change 获批。
 - Gate 2：调查、设计、任务分轮、追踪和当前轮验证均达到执行就绪；非实质未知项不阻塞。
 - Gate 3：每任务即时 Review，拦住 spec 偏离和会蔓延的缺陷；表面质量由 Plan Review 终审。
-- Gate 4：Task Contract 的验证全部满足，完成声明基于真实运行或采信未失效结论。
+- Gate 4：Task Definition 的验证全部满足，完成声明基于真实运行或沿用未失效结论。
 - Gate 5：阻塞即停；三次失败后反思。
 
-Gate BLOCK 必须记录原因。用户显式豁免必须保留原话和风险。
+Gate BLOCK 必须记录原因。用户显式跳过必须保留原话和风险。
 
 ## 任务批次与续跑边界
 
@@ -254,18 +254,18 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - 每个任务只归属一个 Iteration；首个与后续 Iteration 使用相同的聚合、拆分标准。
 - Rework Cycle 使用 `001-rework.md` 等本地编号完成既有 Acceptance，不修改 Iteration Map；Replan Cycle 使用同一目录的后继编号执行修订后的计划。两者都不占用全局 Iteration 编号。
 - Plan 只写 Cycle 的 `Plan Context` 和 `Plan Review`。
-- Plan Context 包含所属 Iteration、Cycle 类型、Investigation Facts（当前基线、Current-State Evidence、代码与关键路径）、行为变化、任务或 repair item 契约（含变更面）和停止条件；状态在创建时为 `draft`，Gate 2 通过或明确豁免且计划获批后才改为 `ready`。
-- Plan Context 必须自包含 Act 所需的实现事实和契约，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文；引用可以保留证据来源，但 Act 不得被要求沿引用链回读。
-- Task Contract 是 Act 的任务级执行依据；背景和调查证据不得给出与契约冲突的重复指令。
+- Plan Context 包含所属 Iteration、Cycle 类型、Investigation Facts（当前起点、Current-State Evidence、代码与关键路径）、行为变化、任务或 repair item 执行依据（含变更范围）和停止条件；状态在创建时为 `draft`，Gate 2 通过或用户明确跳过且计划获批后才改为 `ready`。
+- Plan Context 必须自包含 Act 所需的实现事实和执行依据，不以 Assistant、Explorer、Analysis 或前序 Cycle 的引用代替必要正文；引用可以保留证据来源，但 Act 不得被要求沿引用链回读。
+- Task Definition 是 Act 的任务级执行依据；背景和调查证据不得给出与 Task Definition 冲突的重复指令。
 - Plan 把 Persisted Evidence 明确设为 `none` 或 `required`；`required` 项映射到 Gate 和通过条件。
 - Act 只写当前 Cycle 的 `Act Response`。
 - Act 每个 task 或 repair item 完成后执行 Gate 3；完整 diff 终审由 Plan Review 独立承担。
-- Act 不建立或复核 Plan 基线；直接按 ready 的 Plan Context 建立先行测试并实施。
+- Act 不制定或复核计划；直接按 ready 的 Plan Context 建立先行测试并实施。
 - Act 可处理非实质局部差异并在 Response 记录；实质问题返回 Plan。
 - Act 修复当前 Cycle 计划范围内的问题；新设计或范围问题返回 Plan。
 - Act Response 记录自检发现、已修复内容和遗留 Minor 问题；没有发现时省略。
 - Act Response 记录有证据的 Runbook、Issue 候选；没有则写 `None`。
-- 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不落账；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
+- 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不登记；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
 - Act Response 状态为 `reported` 或 `blocked`；blocked 经用户解除后继续，完成时改为 `reported`。
 - 计划偏差或 `required` Evidence 不再满足白名单、必要性或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
 - 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
@@ -273,36 +273,36 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - Act 不得创建下一 Cycle 或下一 Iteration。
-- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已采信的验证（公共规则 › 验证）。
-- Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、基线变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
-- 既有 Acceptance 的有限修复仍受当前执行契约约束时，Plan 保持 Review Result 为 `pending` 并要求 Act 继续当前 Cycle；需要新执行契约时才创建 rework Cycle。
+- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已沿用的验证（公共规则 › 验证）。
+- Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
+- 既有 Acceptance 的有限修复仍受当前执行依据约束时，Plan 保持 Review Result 为 `pending` 并要求 Act 继续当前 Cycle；需要新执行依据时才创建 rework Cycle。
 - Review Result 的最终结论为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。
 - 连续两个 rework Cycle 未缩小同一 Acceptance gap 时重新检查 Plan、设计和需求假设；同一问题三次失败后不得创建第四次同类 Cycle。
 - 当前 Iteration 只有在 Review Result 为 `accepted` 后才能完成并展开 Map 中的下一 Iteration。
-- 展开后继 Iteration 时，Current Baseline 优先引用前一 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的代码表面。
+- 展开后继 Iteration 时，Starting point 优先引用前一 Iteration 最终 Act Response 的改动、验证结论和 accepted Review，只补查本次需求新涉及的代码。
 
 ## 验证
 
 完成声明基于真实运行：写明执行的命令或操作，以及实际观察到的结果；输出长时只保留能判断结果的部分。
 
-单元测试与受影响范围的验证随时进行。昂贵验证——全量测试套件、真机端到端等——按 Iteration 预算：每个 Iteration 一次，时机由 Plan 写入 Iteration Plan；replan 修订验证契约时重新预算。异常定向审计和用户显式要求复现不占预算。现有结果足以判断 Acceptance 后停止。
+单元测试与受影响范围的验证随时进行。昂贵验证——全量测试套件、真机端到端等——按 Iteration 预算：每个 Iteration 一次，时机由 Plan 写入 Iteration Plan；replan 修订验证方式时重新预算。异常定向审计和用户显式要求复现不占预算。现有结果足以判断 Acceptance 后停止。
 
-端到端验证单独成类：输入由系统真实产生（上游产物、磁盘文件、stdin），断言用户实际所见（退出码、输出、磁盘状态）；单元测试自己构造输入、观察单元内部。触发条件涉及两个以上特性、经过至少一层外部接口、或跨越多步状态转换的 scenario，验证必须走真实入口——实际运行命令、实际调用或实际启动；其余行为类 scenario 优先真实入口。Iteration 是否把端到端纳入稳定基线判据，由 Plan 按项目成本决定并写入 Iteration Plan。
+端到端验证单独成类：输入由系统真实产生（上游产物、磁盘文件、stdin），断言用户实际所见（退出码、输出、磁盘状态）；单元测试自己构造输入、观察单元内部。触发条件涉及两个以上特性、经过至少一层外部接口、或跨越多步状态转换的 scenario，验证必须走真实入口——实际运行命令、实际调用或实际启动；其余行为类 scenario 优先真实入口。Iteration 是否把端到端纳入完成判据，由 Plan 按项目成本决定并写入 Iteration Plan。
 
-一切判定以实际为准：结论来自被测对象真实运行的可观察结果，不来自叙述；不得为判定新增脚本、封装命令、专用参数或判定层，实际输出需要过滤时使用现成通用工具的单步管道。在同样满足判定的方案中依次选择：已有测试命令 > 项目原生能力 > 通用工具单步管道 > 在项目测试框架内新增测试代码；判定逻辑不得放在项目测试框架之外。人工验证仅用于自动命令无法判定的情形：计划写明最短操作步骤和每步直接可观察的结果，所见即判定；结果由执行人以一句话记入验证记录，不要求填表、截图留档或汇总工具；未执行的人工项不得计入完成声明。发现判定层时删除该层、改为直接判定并重新运行验证；产品 requirement 明确要求的自检或校验输出属于目标行为，不适用本句。
+一切判定以实际为准：结论来自被测对象真实运行的可观察结果，不来自叙述；不得为判定新增脚本、封装命令、专用参数或判定层，实际输出需要过滤时使用现成通用工具的单步管道。在同样满足判定的方案中依次选择：已有测试命令 > 项目原生能力 > 通用工具单步管道 > 在项目测试框架内新增测试代码；判定逻辑不得放在项目测试框架之外。人工验证仅用于自动命令无法判定的情形：计划写明最短操作步骤和每步直接可观察的结果，所见即判定；结果由执行人以一句话记入验证记录，不要求填表、截图保存或汇总工具；未执行的人工项不得计入完成声明。发现判定层时删除该层、改为直接判定并重新运行验证；产品 requirement 明确要求的自检或校验输出属于目标行为，不适用本句。
 
-上下文和环境默认可信：本会话真实运行过、或产生后覆盖范围未变化的验证结论直接采信；Gate 按默认结论通过，不逐项记录证据。采信时在自己的 Review 或 Response 中注明来源和结论，不复制长输出，不创建 Evidence。
+上下文和环境默认可信：本会话真实运行过、或产生后覆盖范围未变化的验证结论直接沿用；Gate 按默认结论通过，不逐项记录证据。沿用时在自己的 Review 或 Response 中注明来源和结论，不复制长输出，不创建 Evidence。
 
 出现以下异常时，只针对疑点定向审计，不重跑全量：
 
 - 结论与代码、diff 或其他证据矛盾，或输出可疑。
-- 被覆盖的代码表面在结论产生后发生变化（只读 git 检查）。
-- 当前步骤失败或行为偏离契约。
+- 被覆盖的代码在结论产生后发生变化（只读 git 检查）。
+- 当前步骤失败或行为偏离执行依据。
 - 用户显式要求独立复现。
 - 同一问题第三次失败。
 - 进入 rework 或 replan 时受影响的范围。
 
-两道检查不可默认：完成声明背后至少有一次真实运行（TDD 的 GREEN 即是）；Plan Review 独立阅读完整 diff，核对 Act 声明与代码一致，不以 Act 自检代替。修改前的先行测试按同一规则采信既有结论：覆盖未变化时，既有结论就是当前基线的合法观察，恢复阻塞和 rework 场景按此采信。
+两道检查不可默认：完成声明背后至少有一次真实运行（TDD 的 GREEN 即是）；Plan Review 独立阅读完整 diff，核对 Act 声明与代码一致，不以 Act 自检代替。修改前的先行测试按同一规则沿用既有结论：覆盖未变化时，既有结论就是变更前的合法观察，恢复阻塞和 rework 场景按此沿用。
 
 验证通过一次即为通过；禁止自行重复运行已通过的验证以增强可靠性或信心，禁止重试直至通过。同一验证的重复仅适用于两种情形：计划在通过条件中写明判定方式的不稳定验证（时序、并发或已知不稳定类，如固定重复次数取结果），以及失败后判定是否偶发错误的一次复核；复核通过按通过处理，并在验证记录注明首跑失败。
 
@@ -336,7 +336,7 @@ change 结构自检覆盖：tasks 状态与实际完成一致，specs、design �
 1. 每一步是否有状态？
 2. 跳过项是否有原因？
 3. Gate 是否逐项通过或阻塞？
-4. 完成声明是否有新鲜证据？
+4. 完成声明是否有当次运行的证据？
 5. 最终报告前是否检查任务状态？
 ```
 
