@@ -34,6 +34,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 创建、更新或恢复 Runbook、Issue | `openspec-experience-recorder` |
 | 更新状态、M/R/I，收尾时合并行为规格，同步指定 change 结果，或正常收尾最终 `Review Result: accepted` 的 change | `openspec-docs-maintainer` |
 | 宏观或微观探索，回答或生成分析文档 | `openspec-explorer` |
+| goal 式指令，要求自动推进工作流 | `openspec-autopilot` |
 | 原地压缩表达 | `openspec-compressor` |
 | 清理无法满足正常收尾条件的 change，或处理归档、删除、墓碑 | `openspec-archivist` |
 
