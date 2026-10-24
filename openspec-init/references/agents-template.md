@@ -47,6 +47,7 @@
 - 操作任务：相关 Runbook。
 - 缺陷查询与复盘：issues → analysis → project-model → specs → improvements/change。
 - 查询：assistant。
+- goal 自动推进：autopilot 读产物状态并派发子代理，读取顺序同 assistant。
 - 路线规划：milestone-planner。
 - 日常文档写入：docs-maintainer。
 
@@ -61,6 +62,7 @@
 - `openspec-explorer`：宏观或微观探索；输出即时回答或 `.agents/analysis/`。
 - `openspec-compressor`：原地压缩，不改变状态。
 - `openspec-archivist`：清理无法满足正常收尾条件的 change，并处理其他生命周期清理和归档墓碑。
+- `openspec-autopilot`：goal 驱动调度；只读产物状态并派发白名单子代理推进工作流，自身不写入。
 
 ## 阶段边界
 
@@ -76,6 +78,8 @@
 - Maintainer 由用户直接调用时刷新 SNAPSHOT；Explorer、Recorder 的限定 R 登记不刷新 SNAPSHOT。
 - Maintainer 直接调用时除 SNAPSHOT 外只修改用户点名内容；限定 R 登记只修改 references。
 - Act 完成不构成 Recorder 授权；只有用户单独请求或预先明确授权串联时才执行 Recorder。
+- Autopilot 接收 goal 指令即构成目标范围内阶段推进的显式授权：授权随派发注入，白名单技能的用户批准检查点在注入范围内视为批准且不降低检查标准，超出 goal 范围视为未批准。
+- Autopilot 自身不写入；子代理间的自动调用（Explorer、Recorder 的限定 R 登记）由 Autopilot 中转派发。
 - 除上述例外，用户明确授权串联时才可继续下一阶段。
 - Explorer 的结论是 Plan 可复用的调查输入。Plan 负责检查适用性、补齐缺口并把必要事实写入当前 Cycle；Act 不沿引用链回读 Explorer Analysis。
 

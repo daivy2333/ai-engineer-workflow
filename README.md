@@ -50,6 +50,7 @@
 | `openspec-explorer` | 宏观或微观探索，输出即时回答或分析文档 |
 | `openspec-compressor` | 活跃文档原地压缩，不改变状态 |
 | `openspec-archivist` | 生命周期判断、无法正常收尾的 change 清理、归档、删除和墓碑 |
+| `openspec-autopilot` | 接收 goal 指令，读产物状态并派发白名单子代理自动推进工作流 |
 
 职责规则：
 
@@ -62,6 +63,7 @@ maintainer 写状态、项目记忆、检索索引，收尾时合并行为规格
 compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
+autopilot 只读状态并派发子代理，goal 指令即范围内阶段推进授权
 不改变功能语义的轻量修改不经 change 直接执行
 ```
 
@@ -157,7 +159,7 @@ Evidence 属于 change，不登记 R。普通验证结果写在 Act Response，�
 | `knowledge-teacher` | 理论推导、代码实践和分层教学 |
 | `tooldocs` | 定位已有工具手册 |
 
-当前仓库共 21 个技能。OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
+当前仓库共 22 个技能。OpenSpec CLI 与文件格式说明见 [tooldocs/references/openspec.md](tooldocs/references/openspec.md)。
 
 ## 安装
 
