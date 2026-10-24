@@ -113,7 +113,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
 - 每个任务只归属一个 Iteration，并满足依赖顺序。
-- 每个 Iteration 记录阶段结果、稳定结果、验证边界（含昂贵验证的预算时机）、诊断边界和 Non-goals。
+- 每个 Iteration 记录阶段结果、稳定结果、验证边界（含高开销验证的预算时机）、诊断边界和 Non-goals。
 - 对每个 Iteration 执行聚合和拆分审计，避免过碎或过重。
 - 只展开第一个 Iteration 目录及其 `000-initial.md`；后续 Iteration 此时不创建目录或 Cycle 文件。
 
@@ -146,7 +146,7 @@ Scenario、Design、代码位置和 Iteration 分别由场景草图、design、T
 5. 每个任务是否包含完整的执行依据。
 6. 调用者、影响范围和测试入口是否已经定位。
 7. 是否修改了无关范围。
-8. Iteration Plan 是否覆盖全部任务并通过平衡审计，昂贵验证预算明确。
+8. Iteration Plan 是否覆盖全部任务并通过平衡审计，高开销验证预算明确。
 9. 只读取公共规则和当前 Cycle 的新 Act，是否无需回读 Assistant、Explorer、Analysis、前序 Cycle 或其他规划资料，无需重新调查或设计，就能建立第一个先行测试并执行。
 10. 非实质未知项是否留在 Risks and Notes，且不会迫使 Act 决定接口或错误语义。
 11. 验证是否直接证明目标行为，跨特性或跨接口的 scenario 是否经真实入口验证，且没有身份证明机制、判定层、自引用验证或为工具测试工具。
