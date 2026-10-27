@@ -10,7 +10,7 @@ goal 驱动的调度器，衍生自 assistant 的只读身份。接收 goal 指�
 ## 前置规则
 
 1. 按公共规则 › 读取顺序 复用体系上下文；读取顺序与 assistant 相同：`AGENTS.md` → SNAPSHOT → tasks → `openspec list` → 相关产物。
-2. 自身不写入任何文件，不创建交接产物或执行日志；所有写入由子代理完成。对话中的实时汇报和最终汇总不构成写入。
+2. 自身不写入任何文件，不创建交接产物或执行日志；所有写入由子代理完成。worktree 目录的创建和删除属于派发资源操作，不视为产物写入。对话中的实时汇报和最终汇总不构成写入。
 3. 派发结果只以产物状态字段判定（Plan Context、Act Response、Review Result、Next Cycle/Iteration、R 登记、MSxx、分析文档）；不以子代理自述汇报代替。
 4. 只派发白名单技能：explorer、milestone-planner、plan、act、docs-maintainer、experience-recorder、通用执行者。archivist 和 compressor 永不派发。
 5. 使用当前环境的任务追踪能力记录派发批次、结果和终止原因。
@@ -36,7 +36,7 @@ goal 驱动的调度器，衍生自 assistant 的只读身份。接收 goal 指�
 
 1. 装载指令：读取用户级技能目录中对应技能的 `SKILL.md` 及其必读 references，按其执行。
 2. goal 注入：goal 原文与授权声明。
-3. 状态定位：change 路径、当前 Iteration/Cycle、产物路径等本次执行所需定位。
+3. 状态定位：该 change 的 worktree 路径或主仓库路径、change 路径、当前 Iteration/Cycle、产物路径等本次执行所需定位。
 4. 并行事实：同批存在其他子代理时注入必要事实（如"另一 change 正在实施中"，供 plan 检查工作区变化）。
 
 goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工作）派发通用执行者，按 [references/executor-template.md](references/executor-template.md) 注入，不经 change。
@@ -78,9 +78,10 @@ goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工�
 
 1. 无依赖边的工作单元才可并行；有依赖的按序等待。
 2. 写入对象不相交才可同批派发；并行约束按派发单元装载技能的写入对象并集计算，多技能派发只把并行单元变粗，不放宽约束。固定约束：
-   - 含实施类技能（act、通用执行者）的派发全局串行，同一时刻至多一个；并行修改共享工作区会破坏测试基线和 TDD 判定。
+   - 每个 change 的派发使用该 change 的独立 worktree（仓库外 `<仓库>-changes/<name>`，检出 `changes/<change-name>` 分支）；同一 change 串行，不同 change 在各自 worktree 并行。worktree 在派发该 change 首个子代理前创建，change 收尾或废弃后的下一批派发前删除。
+   - explorer、recorder、milestone-planner 写项目级产物，在主仓库工作区执行（公共规则 › Iteration 与 Cycle 线程）。
+   - 通用执行者（主分支轻量工作）与 docs-maintainer 的主分支写入全局串行，主分支工作区同一时刻只承载一个派发。
    - docs-maintainer 的写入（tasks、SNAPSHOT、specs、M/R/I）合并到批次边界串行执行。
-   - explorer（各自 analysis 文档）、不同 change 的 plan、recorder 正文写作可并行。
 3. 批次循环：读状态 → 派一批（不超过并发上限）→ 等整批完成 → 重读状态再派。不因批内局部结果中途加派。
 4. 派发后产物无变化视为无效派发，计入失败计数。
 
@@ -107,7 +108,7 @@ goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工�
 
 ## 禁止
 
-- 写入或修改任何文件；所有写入由子代理完成。
+- 写入或修改任何产物文件；所有产物写入由子代理完成，worktree 调度资源除外。
 - 执行任何技能工作；只读状态并派发。
 - 派发 archivist、compressor，或执行生命周期清理。
 - 走 Blocker Resolution 分支；blocked 一律经 plan Review 处理。
