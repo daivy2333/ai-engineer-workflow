@@ -85,7 +85,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - 检查 Runbook、Issue 和 analysis 有 R 索引。
 - 收尾 change 的 Plan Review 或 Act Response 存在未处理 Issue 候选时报告（不阻塞、不写入）。
 - 检查每个仍有效的 `required` Iteration/Cycle Evidence 目录和 Cycle README 可定位。被后续 `replan-required` Review 明确替代的无效 `required` 不要求 Evidence 目录，但必须能从父 Cycle 定位偏差分类和 `Next Cycle`。`none` 的 Cycle 不要求 Evidence 目录。
-- 收尾后检查 change 分支已删除，主分支不残留该 change 的未收尾目录。
+- 收尾后检查 change 分支已删除，`openspec/changes/` 下不再有该 change 目录。
 - 报告修改文件、编号和条目。
 
 ## 恢复归档条目

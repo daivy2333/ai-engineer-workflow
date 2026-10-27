@@ -78,9 +78,9 @@ goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工�
 
 1. 无依赖边的工作单元才可并行；有依赖的按序等待。
 2. 写入对象不相交才可同批派发；并行约束按派发单元装载技能的写入对象并集计算，多技能派发只把并行单元变粗，不放宽约束。固定约束：
-   - 每个 change 的派发使用该 change 的独立 worktree（仓库外 `<仓库>-changes/<name>`，检出 `changes/<change-name>` 分支）；同一 change 串行，不同 change 在各自 worktree 并行。worktree 在派发该 change 首个子代理前创建，change 收尾或废弃后的下一批派发前删除。
-   - explorer、recorder、milestone-planner 写项目级产物，在主仓库工作区执行（公共规则 › Iteration 与 Cycle 线程）。
-   - 通用执行者（主分支轻量工作）与 docs-maintainer 的主分支写入全局串行，主分支工作区同一时刻只承载一个派发。
+   - 每个 change 的派发使用该 change 的独立 worktree（仓库外 `<仓库>-changes/<change-name>`，检出 `changes/<change-name>` 分支）；同一 change 串行，不同 change 在各自 worktree 并行。worktree 在派发该 change 首个子代理前创建，change 收尾或废弃后的下一批派发前删除。
+   - explorer、recorder、milestone-planner 写项目级产物，在主仓库工作区执行（公共规则 › Iteration 与 Cycle 线程）；产物文件互不相同时可并行。
+   - 通用执行者（主分支轻量工作）与 docs-maintainer 共用主分支工作区，全局串行执行。
    - docs-maintainer 的写入（tasks、SNAPSHOT、specs、M/R/I）合并到批次边界串行执行。
 3. 批次循环：读状态 → 派一批（不超过并发上限）→ 等整批完成 → 重读状态再派。不因批内局部结果中途加派。
 4. 派发后产物无变化视为无效派发，计入失败计数。

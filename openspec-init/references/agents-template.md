@@ -265,7 +265,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 在 Act Response 状态确定后，在 change 分支上提交本 Cycle 的全部改动。
 - Maintainer 在 change 分支上完成规格合并、归档和状态同步后，以 `--no-ff` merge 合回主分支并删除该分支；收尾授权覆盖 merge 动作。
 - 无法正常收尾的 change，Archivist 只把 change 文档取到主分支归档，再删除该分支；代码不进入主分支，提交由用户完成。
-- analysis、Runbook、Issue、M/R/I、tasks、SNAPSHOT 等项目级产物的独立写入发生在主分支；change 分支上只写 change 自身产物与收尾同步。
+- analysis、Runbook、Issue、M/R/I 以及 tasks 和 SNAPSHOT 均为项目级产物，其独立写入发生在主分支；change 分支上只写 change 自身产物与收尾同步。
 - 分支操作不使用 rebase、force-push 等历史改写。
 - Plan 在 change `tasks.md` 中把全部任务分配到工作量适中、可独立验证和诊断的 Iteration，只展开当前 Iteration 目录和当前 Cycle。
 - 每个 change 从 `iterations/000-initial/000-initial.md` 开始；每个后续 Iteration 也从本目录的 `000-initial.md` 开始。

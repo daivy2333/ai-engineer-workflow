@@ -54,7 +54,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 4：确认需求并创建 OpenSpec change
 
-创建 change 目录时同步建立并切换到分支 `changes/<change-name>`，本 change 的产物和代码在分支上演进；基点默认主分支，依赖另一活跃 change 时提请用户决定（公共规则 › Iteration 与 Cycle 线程）。
+创建 change 目录时同步建立并切换到分支 `changes/<change-name>`（公共规则 › Iteration 与 Cycle 线程）；依赖另一活跃 change 作为基点时提请用户决定。
 
 使用可用的 OpenSpec 集成生成或完善：
 
