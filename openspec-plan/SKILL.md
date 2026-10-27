@@ -54,6 +54,8 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 ### Step 4：确认需求并创建 OpenSpec change
 
+创建 change 目录时同步建立并切换到分支 `changes/<change-name>`，本 change 的产物和代码在分支上演进；基点默认主分支，依赖另一活跃 change 时提请用户决定（公共规则 › Iteration 与 Cycle 线程）。
+
 使用可用的 OpenSpec 集成生成或完善：
 
 - `proposal.md`
@@ -197,7 +199,7 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险并批�
 用户要求检查 Act 结果时：
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
-2. 独立阅读实际代码和 diff（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、Self-Review 和计划要求的 Evidence。
+2. 独立阅读实际代码和 diff，diff 以 change 分支的 merge-base 到 HEAD 为界（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、Self-Review 和计划要求的 Evidence。
 3. Act 已报告且覆盖范围未失效的验证结论直接沿用并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
 4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接沿用；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。

@@ -11,14 +11,15 @@ description: 按已批准的 OpenSpec 计划和当前 Cycle 上下文执行 TDD�
 
 1. 按公共规则 › 读取顺序 复用体系上下文；公共规则缺失时先读取 `AGENTS.md`。
 2. 找到当前逻辑 Iteration 中最新且 `Plan Context` 为 `ready`、`Review Result` 为 `pending`、没有后继 Cycle 的 Cycle，完整读取当前 Cycle。Act Response 应尚未填写、为有明确当前 Cycle 修复意见的 `reported`，或为已获用户恢复指令的 `blocked`。
-3. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行依据约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/R/I、Explorer Analysis、change 计划产物或 Cycle 模板。
-4. 按 Task Definition 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
-5. 读取 `Persisted Evidence` 模式和全部 `required` 项。
-6. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
-7. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
-8. 使用当前环境可用的 OpenSpec 集成执行 apply。
-9. 修改产品代码前建立先行测试。
-10. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。写入反馈后终止。
+3. 实施在 change 分支上进行（公共规则 › Iteration 与 Cycle 线程）；不在该分支时先切换。派发指令指定工作区路径时以指令为准。
+4. 只执行当前 Plan Context 列出的 task、repair item，或 Plan Review 明确要求且仍受当前执行依据约束的有限修复。不要为实施重新读取 SNAPSHOT、全局 tasks、M/R/I、Explorer Analysis、change 计划产物或 Cycle 模板。
+5. 按 Task Definition 读取目标代码和测试所需的局部上下文；不重新调查调用链、影响范围或 Current-State Evidence。
+6. 读取 `Persisted Evidence` 模式和全部 `required` 项。
+7. 模式为 `required`，或决定主动保存证据时，完整读取 [references/evidence-format.md](references/evidence-format.md)。
+8. 使用当前环境的任务追踪能力记录每个 Phase、Task、Gate 和跳过项。
+9. 使用当前环境可用的 OpenSpec 集成执行 apply。
+10. 修改产品代码前建立先行测试。
+11. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。写入反馈后终止。
 
 Plan Review 明确要求当前 Cycle 修复时，Act 恢复当前 Cycle，只消费最新 Review，不恢复已被覆盖的文字历史。缺少具体修复目标、Acceptance gap、证据或验证依据时不恢复，返回 Plan 补全 Review。
 
@@ -107,7 +108,8 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 6. 按需保存 `act-added / BLOCKED` Evidence；简单偏差写 `None required`。
 7. 填写 Act Response 的 `Blocker Handoff` 和证据引用。
 8. 将 Act Response 状态改为 `blocked`。
-9. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
+9. 在 change 分支上提交当前全部改动（公共规则 › Iteration 与 Cycle 线程）。
+10. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
 
 状态流转按公共规则 › Iteration 与 Cycle 线程 执行。
 
@@ -142,7 +144,8 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
    - Experience Candidates，或整节省略。
    - 未解决问题。
 8. 将 `Act Response` 状态改为 `reported`。
-9. 终止并等待用户审计。
+9. 在 change 分支上提交本 Cycle 的全部改动（公共规则 › Iteration 与 Cycle 线程）。
+10. 终止并等待用户审计。
 
 不得填写 `Plan Review`，不得创建下一 Cycle 或下一 Iteration。
 
