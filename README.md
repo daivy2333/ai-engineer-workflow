@@ -79,6 +79,7 @@ openspec-milestone-planner
 
 openspec-plan
   → 复用 Explorer 已完成的代码调查，只补查缺失或失效事实
+  → 创建 change，同步建立并切换到 changes/<change-name> 分支
   → Gate 1：需求与 BDD
   → 调查实际代码、调用链、状态、测试和影响面
   → 定义行为变化、完整任务和 Iteration Plan
@@ -99,6 +100,7 @@ openspec-act
   → 修复计划内发现并重跑受影响 Gate
   → 按 Plan 要求或实际需要保存 change 内 Evidence
   → 填写 Act Response
+  → 状态确定后在 change 分支提交本 Cycle 改动
   → 终止，等待用户审计
 openspec-experience-recorder
   → 由用户单独请求，或在 Act 前预先授权串联
@@ -115,6 +117,7 @@ openspec-plan
   → replan-required：更新 change 和 Iteration Plan，在同一 Iteration 创建 replan Cycle
 openspec-docs-maintainer
   → 仅按用户指令同步或收尾
+  → 收尾在 change 分支完成规格合并与归档后，以 merge 合回主分支并删除分支
 ```
 
 技能完成不构成下一阶段授权。Plan 和 Act 交付后停止，只提示下一项能力。Explorer 和 Experience Recorder 可在产物验证后自动调用 Maintainer 登记对应 R；该例外不授权其他维护，也不增加审计 Gate。
@@ -186,6 +189,7 @@ OpenCode 官方要求技能名在所有发现目录中保持唯一。同一台�
 - 在职责边界清晰、功能正确的前提下，以最少必要的上下文、指令和流程表达目标。更新技能体系时优先合并、替换或删除重复内容，不叠加等价指令、Gate 或中间产物。
 - 更新体系前按四类问题审计，任一无法回答不合并：职责——被改规则的触发情形是否仍有适用规则，被移除职责是否有承接者；文件——留存文件是否仍有不可替代职能和读取者；权责——规则正文是否只有一个权威位置且指针可检索；能力——被削弱的检查是否有其他角色检查点作为后备，语义变化是否与去重分离并声明损失。
 - 体系更新按可独立回滚的批次提交；发现执行退化时，优先把检查点指针恢复为局部规则，不整体回退。
+- change 在 `changes/<change-name>` 分支上实施，收尾以 merge commit 合回主分支并删除分支；分支、merge 和 commit 状态不构成验证证据，不使用 rebase、force-push 等历史改写。
 - 验证只证明目标行为。环境、命令、版本和 revision 可以用于定位现场，但不得成为身份识别字段、匹配条件、拒绝条件或 Acceptance 的替代证据。一切判定以实际为准：结论来自真实运行的可观察结果，不得为判定新增脚本、封装命令、专用参数或判定层。
 - 禁止为构建、测试、鉴定测试、Evidence 或运行归属新增 Hash/指纹、revision pin、run-id、session/execution ID、peer/host pin、source/index/worktree freeze、artifact manifest、日志 Hash 链、`TIME_ORDER` 时间证明及其采集、审计、鉴定工具和专用测试。不得叠加多个身份机制证明“这是同一次运行”，也不得为解决证据工具自身造成的变化增加排除路径或二级验证。验证辅助代码一旦需要独立协议、CLI、fixture、负向测试或审计器，即按身份证明机制处理。
 - 发现上述身份证明机制时，删除机制及其专用协议字段、CLI、构建宏、fixture、测试和工具，随后重新运行目标行为验证；不得通过补测试或补审计链保留它。产品 requirement 明确要求的认证、完整性校验或多会话协议属于目标行为，不适用本条。
