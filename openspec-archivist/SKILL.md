@@ -28,7 +28,7 @@ Archivist 不日常维护 tasks、SNAPSHOT 或 M/R/I。
 3. Archive 和 Delete 前扫描交叉引用。
 4. `AGENTS.md` 永不自动归档，只能建议审查。
 5. 进行中任务永不归档。
-6. 无法满足 Maintainer 正常收尾条件的 OpenSpec change 经用户确认后使用 OpenSpec 集成归档，不手工移动；正常完成的 change 交给 Maintainer 收尾。
+6. 无法满足 Maintainer 正常收尾条件的 OpenSpec change 经用户确认后使用 OpenSpec 集成归档，不手工移动；正常完成的 change 交给 Maintainer 收尾。change 使用分支时，先在主分支从 change 分支取回 change 目录文档（`git checkout <branch> -- openspec/changes/<name>`），归档后删除该分支；代码不进入主分支，提交由用户完成（公共规则 › Iteration 与 Cycle 线程）。
 7. 活跃文档的表达压缩交给 compressor。
 8. Change Evidence 不执行 Artifact-Archive，不登记 R，随所属 change 由 OpenSpec 集成归档。
 
@@ -111,7 +111,7 @@ Assistant 的既有上下文可以缩小候选范围，但不能代替 Archive �
 7. Stale-Warn。
 8. Artifact-Archive：删除文件，R 编号保留，R 路径改为 `git show <hash>:<原路径>`，状态标 `[ARCHIVED YYYY-MM-DD]`。
 
-全程只读 git（`rev-parse`、`diff`、`show`）；归档动作是文件删除和墓碑，由用户自己的提交保留在历史中。条目内容与最近提交不一致时，先请用户提交再归档。
+git 操作限定为只读命令（`rev-parse`、`diff`、`show`）和废弃 change 的文档取回；归档动作是文件删除和墓碑，不执行提交，由用户自己的提交保留在历史中。条目内容与最近提交不一致时，先请用户提交再归档。
 
 ## Gate 2：验证
 
@@ -137,4 +137,4 @@ M/R/I、tasks 和 Analysis 的恢复请求交给 `openspec-docs-maintainer`。Ru
 - 把 Analysis、Runbook 或 Issue 放进 OpenSpec change。
 - 脱离所属 change 单独移动、压缩或登记 Evidence。
 - 全量覆盖源文档。
-- 执行 git 提交、分支或历史改写操作。
+- 执行 git 提交，或 rebase、force-push 等历史改写操作。
