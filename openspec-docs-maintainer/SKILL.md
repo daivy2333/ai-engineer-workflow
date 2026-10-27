@@ -61,7 +61,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 - recorder 自动登记：只处理本次 Runbook 或 Issue 的 R 候选或索引更新，去重后写入 references。
 - explorer 其他交接：M 候选仅在用户明确要求时去重和写入。
 - recorder 其他交接：M 候选仅在用户明确要求时去重和写入。
-- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None`，且公共规则 › 验证 预算的收尾验证已通过或已在 Iteration Plan 声明跳过的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `openspec/specs/`；`.openspec.yaml` 标记 `skip_specs: true` 的 change 没有增量规格，跳过合并。两种情况都经 OpenSpec 集成归档，并同步 tasks 与 SNAPSHOT。收尾动作在 change 分支上完成后，以 `--no-ff` merge 合回主分支并删除该分支；收尾授权覆盖 merge 动作（公共规则 › Iteration 与 Cycle 线程）。Evidence 随 change 归档，不单独移动或登记 R。
+- change 收尾：用户明确要求收尾或归档即构成该动作授权。只处理全部 tasks 完成、Iteration Plan 无剩余任务，最新 Cycle 同时满足 `Plan Context Status: ready`、`Act Response Status: reported`、`Review Result: accepted`、`Next Cycle: None` 和 `Next Iteration: None`，且公共规则 › 验证 预算的收尾验证已通过或已在 Iteration Plan 声明跳过的正常完成 change；其他 change 清理由 `openspec-archivist` 判断。确认全部合法 `required` Evidence 存在后，先把该 change 的增量规格合并到 `openspec/specs/`；`.openspec.yaml` 标记 `skip_specs: true` 的 change 没有增量规格，跳过合并。两种情况都经 OpenSpec 集成归档，并同步 tasks 与 SNAPSHOT。收尾动作在 change 分支上完成并提交后，以 `--no-ff` merge 合回主分支并删除该分支；收尾授权覆盖 merge 动作（公共规则 › Iteration 与 Cycle 线程）。Evidence 随 change 归档，不单独移动或登记 R。
 
 路由规则：
 

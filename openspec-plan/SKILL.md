@@ -77,6 +77,8 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 
 用户显式要求跳过 Gate 1 时，将原话和风险写入 proposal；不要静默跳过。
 
+Gate 1 通过或显式跳过后，把 change 产物提交到 change 分支（公共规则 › Iteration 与 Cycle 线程）。
+
 ## Phase 2：INVESTIGATE AND PLAN
 
 ### Step 1：调查当前实现
@@ -194,6 +196,8 @@ Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `SKIPPED` 及证据。全部
 
 Gate 2 全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险并批准计划后，`Plan Context` 才能按 Cycle 模板 › 写入规则 离开 `draft`。Gate 未通过时不得交给 Act。
 
+`Plan Context` 离开 `draft` 后，把 change 产物提交到 change 分支（公共规则 › Iteration 与 Cycle 线程）。
+
 ## 实施反馈 Review
 
 用户要求检查 Act 结果时：
@@ -211,7 +215,8 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险并批�
 7. 按 [references/iteration-planning.md](references/iteration-planning.md) 判断当前 Cycle 修复或 `accepted | rework-required | replan-required`，并在 `Plan Review` 记录结论、证据和 Acceptance Gaps。
 8. 有限修复受当前执行依据约束时，覆盖 Review 为最新完整反馈，保持 `Review Result: pending`，在 `Follow-up Decision` 明确要求当前 Cycle 修复，且不创建后继产物。否则按该引用创建 rework/replan Cycle，或在 `accepted` 后展开下一 Iteration；`accepted` 且没有剩余 Iteration 时记录 `Next Iteration: None`。
 9. 当前 Cycle 修复完成后重新 Review。`Review Result` 不再是 `pending`，或后继 Cycle 已创建后，不再恢复旧 Cycle；此前用户可要求 Act 恢复有明确当前 Cycle 反馈的 `reported` Cycle，或已解决阻塞的 `blocked` Cycle。
-10. 输出结果后终止，等待用户审计和下一步指令。
+10. 在 change 分支上提交本次 Review 与后继产物（公共规则 › Iteration 与 Cycle 线程）。
+11. 输出结果后终止，等待用户审计和下一步指令。
 
 不要为风格偏好、局部命名、等价实现方式、可直接修正的路径变化或不阻塞 Acceptance 的 Minor finding 创建修复。记录 finding 并返回 `accepted`。阻塞 Acceptance 但无需新执行依据的有限修复留在当前 Cycle。
 

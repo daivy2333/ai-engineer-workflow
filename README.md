@@ -87,6 +87,7 @@ openspec-plan
   → 只写入当前 Cycle，Plan Context 先设为 draft，并声明 Persisted Evidence：none|required
   → Gate 2：Execution Readiness
   → Gate 通过或用户明确跳过且计划获批后，将 Plan Context 改为 ready
+  → change 获批与置 ready 后分别把产物提交到 change 分支
   → 终止，等待用户审计
 openspec-act
   → 直接消费 Plan Context，不重新建立计划
