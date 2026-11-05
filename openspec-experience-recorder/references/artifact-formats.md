@@ -71,7 +71,7 @@ Runbook 和 Issue 按需创建，不生成空目录或占位文档。正文引�
 
 ## 处置
 
-<关联 change、MSxx 或用户决定；关闭时保留原因和指针：scheduled → MSxx | fixed → change | declined；reopen 追加记录>
+<关联 change、MSxx 或用户决定；关闭时保留原因和指针：scheduled → MSxx | fixed → change | fixed → 轻量修复（复现测试位置或提交）| declined；reopen 追加记录>
 
 ## 证据
 
