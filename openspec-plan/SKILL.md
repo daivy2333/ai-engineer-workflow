@@ -18,6 +18,7 @@ description: 为已采用 OpenSpec 的新功能、Bug 修复或重构完成需�
 7. 不因任务小而裁剪用户需求；篇幅随任务伸缩，不取消 BDD、完整性检查或变更追踪。
 8. Skill 完成不构成下一阶段授权（公共规则 › 阶段边界）。输出交接信息后终止，等待用户决定。
 9. 制定 change 计划或 Review Cycle 前，完整读取 [references/iteration-planning.md](references/iteration-planning.md)；创建 Cycle 文件前完整读取 [references/cycle-template.md](references/cycle-template.md)。
+10. 用户或派发指令要求把新需求或已登记 Issue 并入活跃 change 时：更新 proposal、specs、design 与 change `tasks.md` 的未完成 Iteration Plan，为并入工作建立 requirement 映射并规划新 Iteration；当前 Cycle 与已交接 Cycle 不改写，新 Iteration 按依赖顺序展开并通过 Gate 2。
 
 ## Phase 1：CLARIFY
 

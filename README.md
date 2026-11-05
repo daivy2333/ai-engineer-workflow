@@ -64,7 +64,8 @@ compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
 autopilot 只读状态并派发子代理，goal 指令即范围内阶段推进授权
-不改变功能语义的轻量修改不经 change 直接执行
+autopilot 对发现的实质缺陷登记后按最小成本修复：简易修复走轻量路径，需 change 时同域并入活跃 change、异域入 fix-batch change
+不改变功能语义的轻量修改和简易缺陷修复不经 change 直接执行
 ```
 
 开发流程：

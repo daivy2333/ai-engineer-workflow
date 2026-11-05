@@ -21,13 +21,14 @@ goal 驱动的调度器，衍生自 assistant 的只读身份。接收 goal 指�
 2. 把 goal 拆成工作单元，用三处现成依赖声明构建依赖图：tasks 中 `MSxx` 的 Dependencies、change 内 Iteration Plan 的 Depends on、Task Definition 的 Depends on。调度器不发明并行，只消费依赖图。
 3. 把 goal 完成翻译成当次可检查的产物条件（如"目标主题分析文档存在且登记 R、tasks 出现对应 MSxx"）。完成判定因 goal 而异，由当次解析生成，不硬编码；终止时以产物为准。
 4. goal 含归档、删除、墓碑等生命周期清理时拒绝该部分，提示用户单独调用 archivist。
-5. 确定并发上限：默认 3，goal 明确要求时可覆盖。
+5. 执行中登记的实质缺陷按最小成本路径修复：满足公共规则 › 轻量工作 简易缺陷修复条件时走通用执行者；不满足时同域缺陷并入活跃 change 增补 Iteration，异域缺陷或无活跃 change 时并入或新建 fix-batch change。能用既有产物承载不新建，能一个 Iteration 完成不建新 change，能满足简易修复条件不进 plan-act。
+6. 确定并发上限：默认 3，goal 明确要求时可覆盖。
 
 ## 授权语义
 
 1. goal 指令构成目标范围内阶段推进的显式授权（公共规则 › 阶段边界）。
 2. 授权随派发注入，不修改各技能正文。子代理视角中，派发指令转达的 goal 指令即为"用户"。
-3. 授权声明固定语义：goal 指令构成本次执行中"用户批准"检查点的批准；批准不降低检查标准，区别于跳过（公共规则 › Gate）；涉及扩大 goal 范围时视为未批准，子代理停止并回报。
+3. 授权声明固定语义：goal 指令构成本次执行中"用户批准"检查点的批准；批准不降低检查标准，区别于跳过（公共规则 › Gate）；涉及扩大 goal 范围时视为未批准，子代理停止并回报。例外：执行中登记的实质缺陷按最小成本路径修复属于 goal 范围（goal 解析 5）。
 4. 子代理无法自动调用其他技能时（explorer、recorder 的限定 R 登记），把请求返回给 autopilot，由 autopilot 派发对应 docs-maintainer 子代理；子代理之间不直接调用。
 
 ## 子代理派发
@@ -59,7 +60,8 @@ goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工�
 | goal 缺少分析、探索或调查主题 | explorer |
 | goal 含 MS 规划，roadmap 缺失或需调整 | milestone-planner |
 | goal 需要行为变更但无活跃 change | plan（新建 change）|
-| goal 含未解决的 Issue | plan（以 Issue 证据为需求来源建 change）|
+| goal 含未解决的 Issue，或执行中新登记 Issue 待修复 | 通用执行者（先按公共规则 › 轻量工作 简易缺陷修复条件处理；不满足时回报"需要 change"）|
+| Issue 待修复且通用执行者回报"需要 change" | plan（同域并入活跃 change 增补 Iteration；异域或无活跃 change 并入或新建 fix-batch change）|
 | 最新 Cycle `Plan Context: draft` | plan（完成计划）|
 | 最新 Cycle `ready` 且 Act Response 未填写，或 Review 要求当前 Cycle 修复 | act |
 | `Act Response: reported` 且 `Review Result: pending` | plan（Review）|
@@ -67,8 +69,9 @@ goal 中的轻量工作项（不改变功能语义，公共规则 › 轻量工�
 | `rework-required` / `replan-required` 且 Next Cycle 已 `ready` | act |
 | `accepted` 且 tasks 尚有未展开的后续 Iteration | plan（展开下一 Iteration）|
 | `accepted`、`Next Iteration: None` 且全部 task 完成 | docs-maintainer（收尾）|
-| 收尾前存在 Experience Candidates | experience-recorder |
-| Issue 关联的 change 已收尾、Issue 待关 | experience-recorder（close，处置指针 fixed → change）|
+| Plan Review 或 Act Response 报告 Issue 候选 | experience-recorder（登记）|
+| 收尾前存在 Runbook 类 Experience Candidates | experience-recorder |
+| Issue 已修复待关（关联 change 已收尾或轻量修复完成）| experience-recorder（close，处置指针 fixed → change 或 fixed → 轻量修复）|
 | 子代理返回 R 登记请求 | docs-maintainer（限定登记）|
 | goal 含轻量工作项 | 通用执行者 |
 
