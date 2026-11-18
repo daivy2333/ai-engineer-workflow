@@ -49,10 +49,10 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 ### 2. UPDATE
 
-- 任务：维护进行中、待办、阻塞和最近完成，并保留 change 来源。
-- Milestone 状态：按用户指令同步 `active`、`blocked`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
-- 快照：对照当前 Git 状态刷新项目描述字段，不记录同步元数据。
-- 模型：记录当前有效的开发约束、范围、证据和状态。
+- 任务：维护 MSxx 运行状态和 change 来源；完成叙事只写对应 `MSxx` 的 Status，不设文件级汇总段。
+- Milestone 状态：按用户指令同步 `active`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
+- 快照：对照当前 Git 状态刷新项目描述字段，不记录同步元数据，不复制其他文档的内容清单。
+- 模型：记录用户发布的现行项目规范、范围、证据和状态。
 - 行为规格：change 收尾时把 ADDED/MODIFIED/REMOVED 增量应用到 `openspec/specs/<domain>/spec.md`；域文件不存在则创建；合并冲突时停止并请求用户决定；archivist 归档的 change 不合并。
 - 参考：只登记类型、路径或 URL、版本或日期、用途和状态。
 - 改进：记录用户提供的方向、依据、影响和状态。
@@ -65,7 +65,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 路由规则：
 
-- 当前项目描述写 SNAPSHOT，只包括项目身份、组成、支持范围和仓库现场。
+- 当前项目描述写 SNAPSHOT，只包括项目身份、组成、支持范围和仓库现场，不复制其他文档的内容清单。
 - 已承诺工作写 tasks 或 change。
 - 当前开发约束写 M。
 - 长期选择及其理由保留在 change 的 design，随 change 归档。
@@ -78,7 +78,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 ### 3. VERIFY
 
 - 运行 `git diff --check`。
-- 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因或历史记录。
+- 直接调用时检查 SNAPSHOT 没有工作状态、操作流程、约束、原因、历史记录或其他文档的内容清单。
 - 检查编号唯一且递增。
 - 检查已收尾 change 的增量规格已合并到 `openspec/specs/`；`skip_specs` 的 change 无增量，不要求合并。
 - 检查 I 与 tasks/change 没有重复活跃工作。

@@ -99,28 +99,16 @@
 
 ## 通用能力
 
-流程描述使用能力语义：
-
-| 语义 | 要求 |
-|---|---|
-| 任务追踪 | 记录 Phase、Task、Gate、状态和非迁移步骤的跳过原因 |
-| 用户决策 | 对需求、风险和不可逆动作取得明确选择 |
-| 文件读取 | 完整读取所选规则和引用 |
-| 精准编辑 | 只修改相关片段 |
-| 命令执行 | 保留命令与实际结果 |
-| 并行委托 | 仅在环境支持且任务可独立时使用 |
-| 变更文件操作 | 用 OpenSpec 集成、目录创建和引用扫描完成 change 生命周期 |
-
-平台工具名只是适配，不改变上述语义。
+流程描述使用能力语义——任务追踪（记录 Phase、Task、Gate、状态和跳过原因）、用户决策（对需求、风险和不可逆动作取得明确选择）、文件读取（完整读取所选规则和引用）、精准编辑、命令执行（保留命令与实际结果）、并行委托（环境支持且任务可独立时使用）、变更文件操作（经 OpenSpec 集成完成 change 生命周期）。平台工具名只是适配，不改变上述语义。
 
 ## 信息路由
 
 - SNAPSHOT 只描述项目现在是什么：项目身份、组成、支持范围和仓库现场。
-- SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录。
+- SNAPSHOT 不保存工作状态、操作流程、约束、原因或历史记录，也不复制其他文档的内容清单（如规格域列表、任务清单、条目摘要）；此类信息只在各自权威文档，SNAPSHOT 最多留链接。
 - 其他文档只引用 SNAPSHOT，不复制当前项目描述。
-- 项目路线、稳定结果和阶段边界写 tasks，编号 `MSxx`。
+- 项目路线、稳定结果和阶段边界写 tasks，编号 `MSxx`；完成叙事只写对应 `MSxx` 的 Status 一处，不设文件级汇总段。
 - 已承诺工作写 tasks 或 change。
-- 当前开发约束写 project-model，编号 `Mxx`。
+- 项目规范写 project-model，编号 `Mxx`：用户发布、约束 agent 在本项目工作方式与倾向的规则；速查索引、路径表等检索元数据属 R，不设 M。
 - 长期选择及其理由写 change 的 `design.md`，随 change 归档。
 - 系统当前行为写 specs 规格库；maintainer 在 change 收尾时合并增量规格。
 - 指针和检索元数据写 references，编号 `Rxx`。
@@ -138,7 +126,8 @@ Analysis、Iteration、Cycle、Act Response、Evidence 和 Issue 可以保留采
 
 ## 记录边界
 
-- Model 只保存当前开发约束，不保存选择历史和行为描述。
+- Model 只保存用户发布的现行项目规范，不保存选择历史、行为描述或检索索引。
+- tasks 的进行中、待办和阻塞由 MSxx Status 与活跃 change 表达，不设独立状态段；完成叙事只保留在对应 `MSxx` 的 Status。
 - 规格库只保存验收过的行为；计划外的已验证结论保留在 analysis，可表达为行为要求的事实随下一个 change 进入规格库。
 - Reference 不复制目标正文。
 - Improvement 只保存用户提供的未承诺方向；批准后纳入 change 或 milestone，标记 `promoted`。
@@ -294,8 +283,8 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act Response 记录有证据的 Runbook、Issue 候选；没有则写 `None`。
 - 当前 change 范围外的实质缺陷，Plan 在 Plan Review 或计划交付中、Act 在 Act Response 中作为 Issue 候选报告，只报告不登记；Issue 的建立、关闭与重开由 Recorder 按用户指令执行。
 - Act Response 状态为 `reported` 或 `blocked`；blocked 经用户解除后继续，完成时改为 `reported`。
-- 计划偏差或 `required` Evidence 不再满足白名单、必要性或可采集性时，Act 写 Blocker Handoff，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
-- 用户解决阻塞并要求继续时，Act 追加 Blocker Resolution，保留原 Blocker Handoff，再恢复当前 Cycle。
+- 计划偏差或 `required` Evidence 不再满足白名单、必要性或可采集性时，Act 写阻塞交接，将 Response 改为 `blocked`，并按需保存 `act-added / BLOCKED` Evidence。
+- 用户解决阻塞并要求继续时，Act 追加阻塞恢复，保留原阻塞交接，再恢复当前 Cycle。
 - Review 保持 `pending` 且没有后继 Cycle 时，Plan 和 Act 可分别覆盖自己的区域为最新完整状态；得出最终结论或创建后继 Cycle 后，Cycle 冻结。Plan Context 始终不可改写。
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
@@ -337,7 +326,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 
 命令顺序由当前工作流状态和实际结果表达，时间戳只能辅助诊断。Hash、revision、run-id、peer、manifest、时间顺序一致以及分支、merge、commit 状态均不能使 Gate 通过；没有目标状态、输出、错误结果等实际行为证据时，验证结论为失败。
 
-Persisted Evidence 默认 `none`。设为 `required` 前必须说明它支持哪个 Acceptance、为什么 Act Response 不够、为什么无法低成本重跑，以及缺少它会阻止哪个决定；任一项无法回答时保持 `none`。禁止保存完整日志目录、源码副本或完整测试套件输出。
+Persisted Evidence 默认省略（`none`，无需论证）。设为 `required` 前四问必须有答案：支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定；任一项无法回答时保持省略。禁止保存完整日志目录、源码副本或完整测试套件输出。
 
 禁止使用“应该、大概、基本完成”替代证据。
 

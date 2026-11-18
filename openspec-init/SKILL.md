@@ -72,7 +72,7 @@ Analysis 由 `openspec-explorer` 创建。Runbook 和 Issue 由 `openspec-experi
 - 重建 `.agents/docs/SNAPSHOT.md`。
 - 创建或合并 `.agents/docs/tasks.md`。
 
-SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
+SNAPSHOT 记录当前项目描述，不记录工作状态、操作流程、约束、原因或历史，不复制其他文档的内容清单。tasks 支持 `MSxx` roadmap、`Txx` 任务、运行状态和 change 来源。
 
 Cycle 文件由 `openspec-plan` 按其技能内模板创建，`.agents/docs/` 下不设 templates 目录，不生成模板副本。Evidence 位于 `openspec/changes/<change>/evidence/`，按 Iteration/Cycle 分层并由 Act 按需创建；初始化时不创建占位目录。
 

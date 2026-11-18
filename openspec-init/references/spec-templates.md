@@ -14,7 +14,7 @@
 
 路径：`.agents/memory/project-model.md`
 
-记录当前有效的开发约束：代码结构和贡献者必须遵守的跨模块规则，不是产品行为描述。条目使用 `Mxx`。
+项目规范：用户发布、约束 agent 在本项目工作方式与倾向的规则（如全量测试分批串行执行），不是产品行为描述。新 M 由用户指令建立或修订，agent 只在结果中列候选。速查索引、路径表等检索元数据属 R，不设 M。
 
 分类：architecture、domain、quality、security、compatibility、runtime。
 
@@ -26,7 +26,7 @@
 
 只记录检索元数据，不复制目标正文。条目使用 `Rxx`。
 
-类型：analysis、external-doc、dependency、schema、benchmark、runbook、issue。
+类型：analysis、external-doc、dependency、schema、benchmark、runbook、issue、change-archive（归档 change 的检索指针）。
 
 条目字段：类型、路径或 URL、版本或日期、用途、状态。
 
@@ -81,17 +81,14 @@ Change Evidence 位于所属 change 内，随 change 归档，不登记 R。
 - 当前分支和工作区状态。
 - 其他权威文档的链接，不复制其摘要。
 
-SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束、原因和历史记录由对应文档保存。
+SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束、原因和历史记录由对应文档保存；其他文档的内容清单（如规格域列表）同样不入 SNAPSHOT，只留链接。
 
 `tasks.md` 记录：
 
-- milestone roadmap，使用 `MSxx`。
-- 每个 milestone 的成果、稳定结果和依赖。
-- 进行中。
-- 已承诺待办。
-- 阻塞。
-- 最近完成。
+- milestone roadmap，使用 `MSxx`，含成果、稳定结果和依赖。
 - 与 change 的同步规则。
+
+tasks 只承载路线和承诺状态：完成叙事只写在对应 `MSxx` 的 Status，不设文件级汇总段；进行中、待办和阻塞由 MSxx Status 与活跃 change 表达，不设独立段。
 
 Milestone 与 change 数量不绑定。路线规划由 `openspec-milestone-planner` 负责，运行状态由 `openspec-docs-maintainer` 按用户指令同步。
 
