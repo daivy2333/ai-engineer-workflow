@@ -13,8 +13,8 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 **Cycle Scope**
 
 - Change tasks: <本逻辑 Iteration 的 task ID>
-- Acceptance gaps: <本 Cycle 必须关闭的既有验收缺口；initial 写 None>
-- Repair items: <T2-R1 等本地 repair item；initial 和 replan 写 None>
+- Acceptance gaps: <仅 rework/replan 写：本 Cycle 必须关闭的既有验收缺口；initial 省略本行>
+- Repair items: <仅 rework 写：T2-R1 等本地 repair item；initial 和 replan 省略本行>
 - Inherited scope: <继续有效的 requirement、task 和约束>
 - Excluded scope: <不属于当前 Iteration 的新需求、清理或其他工作>
 
@@ -24,7 +24,7 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 **Background**
 
-<rework 和 replan 记录需求来源、历史问题和本 Cycle 原因；initial 没有新增背景时整节省略>
+<仅 rework 和 replan 写：需求来源、历史问题和本 Cycle 原因；initial 不设本节>
 
 **Investigation Facts**
 
@@ -32,9 +32,9 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 - Current-State Evidence: <Plan 已确认且与实施直接相关的入口、目标符号、调用者、被调用者、动态边、状态、错误路径和测试入口；可引用 Explorer 来源，但不得要求 Act 回读才能执行>
 - Code and Critical Path: <文件、模块、符号及其职责；入口、调用链、数据流、状态变化和外部影响>
 
-**Implementation Guidance**
+**Implementation Guidance**（可选）
 
-<建议顺序、必要技术细节和关键取舍；不重复 Task Definition>
+<只在存在 Task Definition 之外的顺序、禁令或关键取舍时写，不重复 Task Definition；没有则整节省略>
 
 **Task Definitions**
 
@@ -60,10 +60,6 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 
 <不得破坏的行为、兼容性和架构约束>
 
-**Non-goals**
-
-<本 Cycle 不处理的内容；rework 不得扩大原 Iteration 范围>
-
 **Acceptance**
 
 <可观察验收条件及 requirement、scenario、design、task、代码和测试映射；跨任务行为语义写在此处或 Invariants>
@@ -76,11 +72,11 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 
 <一行结论；只逐项列 BLOCKED/SKIPPED 及证据。检查项清单见 openspec-plan 的 Gate 2>
 
-**Persisted Evidence**
+**Persisted Evidence**（可选）
 
-- Mode: none | required
+- Mode: required
 
-<`none` 表示 Act Response 足以承载验证结果；`required` 时逐项列出 Acceptance、Act Response 不足原因、不可低成本重跑原因、缺失时受阻决定、文件和通过条件>
+<默认省略本节（Act Response 足以承载验证结果，无需论证）。只有满足公共规则 Evidence 白名单且四问——支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定——都有答案时才设为 required，并逐项列出文件和通过条件>
 
 **Risks and Notes**
 
@@ -90,15 +86,15 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 
 - Status: <reported | blocked>
 
-**Implemented**
+### 实际改动
 
 <实际完成内容；含修改的文件、符号和作用>
 
-**Deviations from Plan**
+### 与计划的偏差
 
 <偏差、原因和影响；没有则整节省略>
 
-**Blocker Handoff**
+### 阻塞交接
 
 <正常完成整节省略；blocked 时填写：>
 
@@ -108,33 +104,27 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 - Remaining work: <已完成与未开始任务、工作区状态一行>
 - Resume condition: <当前 Cycle 可恢复的条件；需 Review 时说明>
 
-**Blocker Resolution**
+### 阻塞恢复
 
-<未恢复时整节省略；用户要求继续时追加：>
+<常规出路是 Plan Review（rework/replan）。仅当用户直接给出事实、办法或接受风险并明确要求继续当前 Cycle 时追加：记录用户指令、恢复点和需重跑的验证；保留原阻塞交接>
 
-- User instruction: <用户提供的事实、办法或接受的风险>
-- Resolution: <阻塞如何解除>
-- Accepted risk: <已接受风险或 None>
-- Resume point: <恢复的 task / step>
-- Required verification: <恢复前后需要重跑的 Gate>
-
-**Self-Review**
+### 自检
 
 <自检发现、已修复内容和遗留 Minor 问题；没有发现则整节省略>
 
-**Verification Evidence**
+### 验证
 
 <命令或操作、实际结果、支持的 Acceptance 和结论；沿用既有结论时注明来源>
 
-**Persisted Evidence**
+### Persisted Evidence
 
-<`None required`，或 `../../evidence/<III-title>/<CCC-title>/README.md` 及所列文件>
+<默认整节省略；设为 required 时写 `../../evidence/<III-title>/<CCC-title>/README.md` 及所列文件>
 
-**Experience Candidates**
+### Experience Candidates
 
-<没有候选则整节省略；有候选时记录类型、主题、证据和满足产物门槛的原因>
+<没有候选时整节省略，不写 None；有候选时记录类型、主题、证据和满足产物门槛的原因>
 
-**Remaining Issues**
+### 未解决问题
 
 <未解决问题；没有则整节省略>
 
@@ -148,7 +138,7 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 
 **Acceptance Gaps**
 
-<未满足的既有 Acceptance 及证据；没有则整节省略>
+<未满足的既有 Acceptance 及证据；没有则整节删除，不写"无">
 
 **Evidence**
 

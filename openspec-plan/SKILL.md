@@ -101,6 +101,7 @@ Gate 1 通过或显式跳过后，把 change 产物提交到 change 分支（公
 - 明确输入、输出、状态、错误和兼容性语义。
 - 列出需要修改、保持和明确禁止修改的责任边界。
 - 记录关键技术选择、替代方案和选择理由；选择理由随 change 归档，是长期决策的权威记录。
+- design 推荐骨架：背景 / 目标与非目标 / 决定（Dn，含备选方案与理由）/ 风险 / 回滚；结构随任务伸缩，不强制。
 - 按条件处理并发、数据迁移、安全、性能和多平台风险。
 - 给出实现顺序及其依赖原因。
 - 验证设计直接观察目标状态、输出或错误结果，逐 scenario 选择最简直接判定（公共规则 › 验证），不建立身份证明机制或判定层（公共规则 › 行为约束）。
@@ -128,17 +129,13 @@ Gate 1 通过或显式跳过后，把 change 产物提交到 change 分支（公
 
 生成 Requirements Traceability Matrix：
 
-| Requirement | Task | First Test | Status |
-|---|---|---|---|
-| R1 | T1 | `test_name` | Covered |
+| Requirement | Task | First Test |
+|---|---|---|
+| R1 | T1 | `test_name` |
 
 Scenario、Design、代码位置和 Iteration 分别由场景草图、design、Task Definition 的 Targets 和 change `tasks.md` 承载，不进矩阵。
 
-状态规则：
-
-- `Covered`：需求、场景、设计、任务、代码位置和测试形成可验证链路。
-- `Simplified`：存在需求简化，必须获得用户批准；在行内标注。
-- `Missing`：任一必要映射缺失，Gate 2 失败。
+矩阵规则一行承载：任一 requirement 缺少 task 或先行测试映射即 Gate 2 失败；存在需求简化必须获得用户批准并标注在对应行内。
 
 ### Step 5：审查计划
 
@@ -169,14 +166,12 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 - 状态先写为 `draft`。
 - Cycle 范围、目标和背景。
 - Investigation Facts：当前起点、Current-State Evidence、代码与关键路径。
-- Task Definitions（含变更范围和行为变化）、共享不变量、非目标、RTM、Acceptance 和 Verification。
-- Gate 2 结论、风险、`Persisted Evidence` 模式和后续任务边界。
+- Task Definitions（含变更范围和行为变化）、共享不变量、RTM、Acceptance 和 Verification。
+- Gate 2 结论、风险、`required` Evidence（如有）和后续任务边界。
 
 Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
-`none` 表示命令、实际结果、修改文件和符号写入 Act Response 即可（公共规则 › 验证）。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）的情形才能设为 `required`。
-
-每个 `required` 项按公共规则 › 验证 说明必要性，并按 Cycle 模板列出文件和通过条件；任一问题无答案时使用 `none`。Plan 不创建 `evidence/` 或实际证据文件。
+Persisted Evidence 默认省略本节（`none`：命令、实际结果、修改文件和符号写入 Act Response 即可，无需论证）。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）且四问——支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定——都有答案时才设 `required`，并按 Cycle 模板列出文件和通过条件。Plan 不创建 `evidence/` 或实际证据文件。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
@@ -188,7 +183,7 @@ Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 �
 - RTM 无 `Missing`，所有 `Simplified` 已获用户批准。
 - 设计闭合：行为差异、接口、错误语义和关键选择已经明确。
 - 当前 Cycle 与 change 的 tasks、specs、design 一致。
-- Persisted Evidence 模式明确；`required` 项满足白名单和必要性问题，并映射到 Gate 和验收条件。
+- Persisted Evidence 默认省略（none）；设 `required` 的项满足白名单和四问，并映射到 Gate 和验收条件。
 - 用户批准计划。
 
 Gate 2 结论记一行；只逐项列 `BLOCKED` 或 `SKIPPED` 及证据。全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险后，Gate 2 才能通过。
@@ -204,9 +199,9 @@ Gate 2 全部 `PASS`，或用户明确承担全部 `SKIPPED` 项的风险并批�
 用户要求检查 Act 结果时：
 
 1. 读取 `reported` 或 `blocked` Cycle 的 `Plan Context` 和 `Act Response`，确认其所属逻辑 Iteration 和 `Review Result` 仍为 `pending`。若中断前已写入后继 Cycle 或 Iteration，先验证并复用，不重复创建。
-2. 独立阅读实际代码和 diff，diff 以 change 分支的 merge-base 到 HEAD 为界（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、Self-Review 和计划要求的 Evidence。
-3. Act 已报告且覆盖范围未失效的验证结论直接沿用并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的 Self-Review 只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
-4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接沿用；审查集中在 Blocker Handoff、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
+2. 独立阅读实际代码和 diff，diff 以 change 分支的 merge-base 到 HEAD 为界（含 Gate 3 留下的命名、死代码、局部结构等表面检查），检查 Act Response、自检和计划要求的 Evidence。
+3. Act 已报告且覆盖范围未失效的验证结论直接沿用并注明来源，Plan 只补跑 Act 未覆盖的检查；出现公共规则 › 验证 列出的重跑情形时重跑，并把差异记入 Findings。Act 的自检只作为输入，不得代替 Plan 对代码和 Acceptance 的独立检查。
+4. 状态为 `blocked` 时，已完成且验证结论未失效的任务直接沿用；审查集中在阻塞交接、部分实现、工作区状态和按需存在的 BLOCKED Evidence。
 5. `required` 时检查 `evidence/<iteration>/<cycle>/README.md` 和所列文件；`none` 时不得仅因 Evidence 目录不存在提出问题。
 6. 在 Findings 记录偏差原因：Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据。
    - 非实质 finding 不阻塞。
@@ -234,7 +229,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按
 - change tasks 中的 Iteration Plan 和平衡审计结果。
 - change 路径。
 - 当前 Iteration、Cycle 路径和编号。
-- Persisted Evidence 模式和 `required` 项，或 `none`。
+- `required` Evidence 项，或默认省略。
 - Gate 1、Gate 2 结论、BLOCKED/SKIPPED 项和证据。
 - 所有显式跳过项及原因。
 

@@ -35,7 +35,7 @@ Plan Review 明确要求当前 Cycle 修复时，Act 恢复当前 Cycle，只消
 6. Gate 4 通过后才能标记完成。
 7. 无法按 Task Definition 建立或运行先行测试，或先行测试不能证明目标且必须改变测试策略时，执行阻塞交接并返回 Plan。
 
-不要修改计划范围外的代码。目标文件或符号发生可直接定位的移动、等价局部实现与计划建议不同，或验证命令可作等价调整时，只要不构成公共规则定义的实质问题，即可在执行依据范围内处理并记录到 `Deviations from Plan`。
+不要修改计划范围外的代码。目标文件或符号发生可直接定位的移动、等价局部实现与计划建议不同，或验证命令可作等价调整时，只要不构成公共规则定义的实质问题，即可在执行依据范围内处理并记录到与计划的偏差。
 
 只有差异使 Task Definition 无法执行，或继续工作会构成实质问题时，才执行阻塞交接并终止。
 
@@ -72,7 +72,7 @@ Gate 4 的判据：Task Definition 的 Verification 全部满足，完成声明�
 
 Evidence 使用 `openspec/changes/<change>/evidence/<iteration>/<cycle>/`。只有满足公共规则白名单的情形才创建（公共规则 › Iteration 与 Cycle 线程）。
 
-Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性或当前可采集性时，不收集；按 Gate 5 填写 Blocker Handoff，把 Act Response 改为 `blocked` 并交给 Plan Review。
+Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写了 `required` 都不能单独构成保存理由。`required` 不满足白名单、必要性或当前可采集性时，不收集；按 Gate 5 填写阻塞交接，把 Act Response 改为 `blocked` 并交给 Plan Review。
 
 不得为 Evidence 新增身份证明机制（公共规则 › 行为约束）。Evidence 输出改变 worktree 或现场时，只记录该限制。
 
@@ -106,7 +106,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 4. 列出已完成、部分完成和未开始的任务。
 5. 记录修改文件、工作区状态和已通过的 Gate。
 6. 按需保存 `act-added / BLOCKED` Evidence；简单偏差写 `None required`。
-7. 填写 Act Response 的 `Blocker Handoff` 和证据引用。
+7. 填写 Act Response 的阻塞交接和证据引用。
 8. 将 Act Response 状态改为 `blocked`。
 9. 在 change 分支上提交当前全部改动（公共规则 › Iteration 与 Cycle 线程）。
 10. 终止并说明恢复条件。用户可以解决阻塞，或调用 `openspec-plan`。
@@ -115,15 +115,13 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
 
 **恢复阻塞**
 
-用户补充事实、给出解决办法或接受风险，并明确要求继续时：
+blocked 的常规出路是 Plan Review（rework/replan）。仅当用户直接给出事实、办法或接受风险并明确要求继续当前 Cycle 时才走恢复：
 
-1. 读取 Blocker Handoff、已有 Evidence 和工作区状态。
-2. 确认当前 Cycle 没有后继 Cycle，`Review Result` 仍为 `pending`。
-3. 在 Act Response 追加 `Blocker Resolution`，保留原 Blocker Handoff。
-4. 记录用户指令、解决办法或接受的风险、恢复点和所需验证。
-5. 对恢复点之后将要修改且既有先行测试已失效的 task 重新建立先行测试；工作区自阻塞前结论产生后未变化的部分直接沿用既有先行测试并注明来源，再从恢复点继续。
+1. 确认当前 Cycle 没有后继 Cycle，`Review Result` 仍为 `pending`。
+2. 在 Act Response 追加阻塞恢复，记录用户指令、恢复点和需重跑的验证；保留原阻塞交接。
+3. 对恢复点之后将要修改且既有先行测试已失效的 task 重新建立先行测试；工作区自阻塞前结论产生后未变化的部分直接沿用既有先行测试并注明来源，再从恢复点继续。
 
-不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。若用户指令改变目标、范围、requirement、设计或测试策略，说明当前 Plan 无法覆盖的具体差异，再交给 Plan；阻塞状态本身不是拒绝理由。
+不得只因 Cycle 曾被标记为 `blocked` 而拒绝恢复。用户指令改变目标、范围、requirement、设计或测试策略时，说明 Plan 无法覆盖的差异并交回 Plan；阻塞状态本身不是拒绝理由。
 
 ## Phase 4：REPORT
 
@@ -140,7 +138,7 @@ Gate 数量、以后可能有用、便于审计、输出较长或 Plan 单纯写
    - 与计划的偏差及原因。
    - 自检发现、已修复内容和遗留 Minor 问题。
    - 验证命令与实际结果。
-   - Persisted Evidence 路径，或 `None required`。
+   - Persisted Evidence 路径；未设 required 时整节省略。
    - Experience Candidates，或整节省略。
    - 未解决问题。
 8. 将 `Act Response` 状态改为 `reported`。
@@ -158,14 +156,11 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 ## 完成前检查
 
-1. 每个计划任务是否都有状态和证据？
-2. 所有跳过步骤是否记录原因？
-3. Gate 3-5 是否逐项通过或明确阻塞？
-4. 完成声明是否有当次运行的真实输出？
-5. `Act Response` 是否与实际代码和证据一致？
-6. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
-7. 自检发现是否没有未解决的 Critical 或 Important 问题？
-8. Experience Candidates 是否已记录证据或明确省略？
+公共规则 › 完成前五问 覆盖任务状态、跳过原因、Gate、完成声明证据和最终报告检查；本 skill 另查：
+
+1. `Act Response` 是否与实际代码和证据一致？
+2. 所有 `required` Evidence 是否存在，或对应 Gate 已明确阻塞？
+3. Experience Candidates 是否已记录证据或明确省略？
 
 任一答案为否，不得声明完成。
 
@@ -177,8 +172,8 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 - 已修复发现和遗留 Minor 问题。
 - 验证命令与实际结果摘录。
 - 当前 Iteration、Cycle 路径和 Act Response 状态。
-- `blocked` 时的 Blocker Handoff 和 Evidence，或 `None required`。
-- 恢复过阻塞时的 Blocker Resolution 和重跑 Gate。
+- `blocked` 时的阻塞交接和 Evidence，或无。
+- 恢复过阻塞时的阻塞恢复记录和重跑 Gate。
 - Persisted Evidence 路径，或未创建的原因。
 - Experience Candidates 及其证据，或 `None`。
 - 跳过项和阻塞项。
@@ -192,7 +187,7 @@ Experience Candidates 只记录可能满足以下条件的实施经验：
 
 ## 禁止
 
-- Self-Review 存在未解决的 Critical 或 Important 问题时标记 `reported`。
+- 自检存在未解决的 Critical 或 Important 问题时标记 `reported`。
 - 用户已解决阻塞并要求继续时，仅因旧状态为 `blocked` 而拒绝恢复。
 - 修改全局任务、SNAPSHOT 或项目记忆。
 - 调用 Maintainer、Plan 或 Archivist。
