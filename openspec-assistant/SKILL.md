@@ -29,6 +29,7 @@ description: 只读恢复和查询 OpenSpec 的规则、状态、任务、变更
 | 规划、拆分、合并或重排 milestones | `openspec-milestone-planner` |
 | 不改变功能语义的修改 | 不经 change 直接执行（公共规则 › 轻量工作） |
 | 需求与计划 | `openspec-plan` |
+| 已登记 Issue 待修复 | 满足公共规则 › 轻量工作 简易缺陷修复条件时直接执行；否则 `openspec-plan`（按最小成本路径并入或新建 change） |
 | 实施、验证、填写 Act Response | `openspec-act` |
 | Review 实现、反馈当前 Cycle 修复、生成 rework/replan Cycle 或展开下一逻辑 Iteration | `openspec-plan` |
 | 创建、更新或恢复 Runbook、Issue | `openspec-experience-recorder` |

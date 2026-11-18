@@ -236,7 +236,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按
 Review 模式改为交付：
 
 - 实际代码和证据的检查结果。
-- Blocker Handoff 的处理结果，或正常完成说明。
+- 阻塞交接的处理结果，或正常完成说明。
 - 当前 Cycle 的 `Review Result`。
 - Acceptance Gaps、收敛判断和 Iteration Plan 是否保持不变。
 - 当前 Cycle 修复意见，或无需当前 Cycle 修复。

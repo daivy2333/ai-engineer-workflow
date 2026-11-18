@@ -93,6 +93,7 @@
   - 修改限于单一目标文件和符号。
   - 活跃 change 的变更范围不涉及目标文件；涉及时按 change 处理。
 - 修复后行为偏离既有规格，或规格未覆盖该行为时，不属于简易缺陷修复，必须建 change 经 delta 合并规格。
+- 简易缺陷修复条件不满足时，缺陷按最小成本路径进入 change：同域缺陷并入活跃 change 增补 Iteration，异域缺陷或无活跃 change 时并入或新建 fix-batch change；能用既有产物承载不新建，能一个 Iteration 完成不建新 change。
 - 功能语义的判定沿用 › Plan 调查 的实质问题定义：影响行为、接口、错误语义、状态所有权、架构、范围、测试策略或 Acceptance 即改变功能语义。
 - specs 是功能语义的权威记录，直接修改 `openspec/specs/` 不属于轻量工作。
 - 纯文档、注释和格式修改无从建立先行测试，不适用"没有先行测试不变更"；涉及代码的轻量修改按 TDD 的重构分支执行：改前 GREEN，改后 GREEN；简易缺陷修复按 Bug 分支执行：复现 RED，修复 GREEN。
@@ -289,7 +290,7 @@ agent 可执行的测试和 Review 不形成边界。验证失败时保留当前
 - Act 只在用户明确要求、结果无法低成本复现、一次性环境即将消失、Issue/Blocker 需要保留现场，或摘要会丢失决定性结构时创建 `evidence/<iteration>/<cycle>/`。
 - Evidence 目录与 Iteration/Cycle 层级一致，随 change 归档，不登记 R。
 - Act 不得创建下一 Cycle 或下一 Iteration。
-- Plan Review 必须检查代码和证据，不以 Act Self-Review 代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已沿用的验证（公共规则 › 验证）。
+- Plan Review 必须检查代码和证据，不以 Act 自检代替独立检查；独立检查指独立阅读代码与 diff、核对 Act Response 声明与代码一致，不包含重复运行已沿用的验证（公共规则 › 验证）。
 - Plan Review 把偏差分类为 Plan 遗漏、Plan 错误、Act 偏离、现状变化或新证据，并区分阻塞 Acceptance 与非阻塞 Minor finding。
 - 既有 Acceptance 的有限修复仍受当前执行依据约束时，Plan 保持 Review Result 为 `pending` 并要求 Act 继续当前 Cycle；需要新执行依据时才创建 rework Cycle。
 - Review Result 的最终结论为 `accepted | rework-required | replan-required`；Plan 写完 Review 和后继产物后最后更新。`rework-required` 不修改 Map；`replan-required` 调整计划并创建同一 Iteration 的 replan Cycle。

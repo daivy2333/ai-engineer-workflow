@@ -64,7 +64,7 @@ compressor 只改表达密度
 archivist 只处理生命周期
 plan/act 维护当前 OpenSpec change
 autopilot 只读状态并派发子代理，goal 指令即范围内阶段推进授权
-autopilot 对发现的实质缺陷登记后按最小成本修复：简易修复走轻量路径，需 change 时同域并入活跃 change、异域入 fix-batch change
+实质缺陷登记后按最小成本修复（公共规则 › 轻量工作）：简易修复走轻量路径，需 change 时同域并入活跃 change、异域入 fix-batch change
 不改变功能语义的轻量修改和简易缺陷修复不经 change 直接执行
 ```
 
@@ -96,8 +96,8 @@ openspec-act
   → Gate 3：每任务即时 Review（spec compliance + 会蔓延的缺陷）
   → Gate 4：Task Definition 验证全部满足
   → Gate 5：阻塞与三次失败反思
-  → 计划偏差时写 blocked Response 和 Blocker Handoff
-  → 用户解决阻塞后记录 Blocker Resolution 并恢复当前 Cycle
+  → 计划偏差时写 blocked Response 和阻塞交接
+  → 用户解决阻塞后记录阻塞恢复并继续当前 Cycle
   → 按需保存 act-added / BLOCKED Evidence
   → 修复计划内发现并重跑受影响 Gate
   → 按 Plan 要求或实际需要保存 change 内 Evidence

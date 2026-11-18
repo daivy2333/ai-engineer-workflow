@@ -64,7 +64,7 @@
 
 **tasks**
 
-- `planned`、`ready`、`active` 和 `blocked` milestone：Keep。
+- `planned`、`ready` 和 `active` milestone：Keep。
 - 已完成 milestone：按时间和引用判断 Keep 或 Archive。
 - 被替代 milestone：保留替代编号；按引用判断 Keep 或 Archive。
 - 进行中和阻塞项：Keep。

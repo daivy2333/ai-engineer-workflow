@@ -38,7 +38,7 @@ Milestone 与 change 不绑定数量。一个 milestone 可以由一个或多个
 
 Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止；不要求 Explorer 扩展职责，也不自行深挖代码。
 
-明确本次允许调整的 roadmap 范围。默认不改写 `active`、`blocked`、`completed` 或 `superseded` milestone。
+明确本次允许调整的 roadmap 范围。默认不改写 `active`、`completed` 或 `superseded` milestone。
 
 ## Phase 2：MODEL
 
@@ -49,7 +49,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 - 每个阶段完成后可依赖的稳定结果。
 - 明确推迟到后续阶段的内容。
 
-未关闭 Issue 作为排期候选输入。
+未关闭 Issue 作为排期候选输入；纳入时写入 MSxx 的 Consumes。
 
 先建立依赖关系，再分配编号。不要按目录、团队、工种或时间段机械切分。
 
@@ -78,7 +78,7 @@ Analysis 是可选依据。缺少足够信息时，列出规划缺口并停止�
 2. 保留现有 `Txx`、change 状态和用户无关内容。
 3. 新建 milestone 使用 `planned` 或 `ready`。
 4. 只调整用户批准范围内的 `planned` 和 `ready` 条目。
-5. milestone 条目可引用消耗的 ISSxx。
+5. milestone 条目用 Consumes 记录消耗的 ISSxx / Ixx，用 Split signals 记录执行中的拆分或并回信号。
 6. 检查依赖无环，所有依赖编号存在。
 7. 检查目标覆盖，没有无依据的阶段。
 8. 运行 `git diff --check` 并审查完整 diff。
