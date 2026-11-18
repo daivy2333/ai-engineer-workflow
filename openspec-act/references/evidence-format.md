@@ -1,6 +1,6 @@
 # Change Evidence 格式
 
-Evidence 是 change 内按需保存、会改变验收或恢复决定且无法用 Act Response 充分表达的实施事实。普通验证结果写入 Act Response；Gate、测试、Review 数量和长输出本身不构成持久化理由。Persisted Evidence 默认省略（`none`，无需论证）；设 `required` 前四问必须有答案——支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定。
+Evidence 是 change 内按需保存、会改变验收或恢复决定且无法用 Act Response 充分表达的实施事实。普通验证结果写入 Act Response；Gate、测试、Review 数量和长输出本身不构成持久化理由。Persisted Evidence 默认省略（`none`，无需论证）；设 `required` 前必须能回答公共规则 › 验证 的四问。
 
 Evidence 只保存目标行为结果；环境信息只用于解释适用范围，不能作为 Acceptance 证据（公共规则 › 行为约束）。
 

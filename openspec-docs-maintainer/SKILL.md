@@ -49,7 +49,7 @@ description: 维护 OpenSpec 的 SNAPSHOT、任务与 milestone 状态、M/R/I�
 
 ### 2. UPDATE
 
-- 任务：维护 MSxx 运行状态和 change 来源；完成叙事只写对应 `MSxx` 的 Status，不设文件级汇总段。
+- 任务：维护 MSxx 运行状态和 change 来源；完成叙事只写对应 `MSxx` 的 Status。
 - Milestone 状态：按用户指令同步 `active`、`completed`、`superseded` 和已有 change 引用，不拆分、合并或重写路线。
 - 快照：对照当前 Git 状态刷新项目描述字段，不记录同步元数据，不复制其他文档的内容清单。
 - 模型：记录用户发布的现行项目规范、范围、证据和状态。

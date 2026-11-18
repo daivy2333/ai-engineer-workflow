@@ -88,7 +88,7 @@ SNAPSHOT 只描述项目现在是什么。工作状态、操作流程、约束�
 - milestone roadmap，使用 `MSxx`，含成果、稳定结果和依赖。
 - 与 change 的同步规则。
 
-tasks 只承载路线和承诺状态：完成叙事只写在对应 `MSxx` 的 Status，不设文件级汇总段；进行中、待办和阻塞由 MSxx Status 与活跃 change 表达，不设独立段。
+tasks 只承载路线和承诺状态：完成叙事只写在对应 `MSxx` 的 Status；进行中、待办和阻塞由 MSxx Status 与活跃 change 表达，不设独立段或文件级汇总段。
 
 Milestone 与 change 数量不绑定。路线规划由 `openspec-milestone-planner` 负责，运行状态由 `openspec-docs-maintainer` 按用户指令同步。
 

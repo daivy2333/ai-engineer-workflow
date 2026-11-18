@@ -34,7 +34,7 @@ Plan 创建 Cycle 文件时使用本模板。每个 Cycle 文件位于 change �
 
 **Implementation Guidance**（可选）
 
-<只在存在 Task Definition 之外的顺序、禁令或关键取舍时写，不重复 Task Definition；没有则整节省略>
+<只在存在 Task Definition 未覆盖的顺序、禁令或关键取舍时写；没有则整节省略>
 
 **Task Definitions**
 
@@ -76,7 +76,7 @@ Task Definition 是 Act 的任务级执行依据，其 Targets、Current/Require
 
 - Mode: required
 
-<默认省略本节（Act Response 足以承载验证结果，无需论证）。只有满足公共规则 Evidence 白名单且四问——支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定——都有答案时才设为 required，并逐项列出文件和通过条件>
+<默认省略本节（Act Response 足以承载验证结果，无需论证）。只有满足公共规则 Evidence 白名单且能回答公共规则 › 验证 的四问时才设为 required，并逐项列出文件和通过条件>
 
 **Risks and Notes**
 

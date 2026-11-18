@@ -135,7 +135,7 @@ Gate 1 通过或显式跳过后，把 change 产物提交到 change 分支（公
 
 Scenario、Design、代码位置和 Iteration 分别由场景草图、design、Task Definition 的 Targets 和 change `tasks.md` 承载，不进矩阵。
 
-矩阵规则一行承载：任一 requirement 缺少 task 或先行测试映射即 Gate 2 失败；存在需求简化必须获得用户批准并标注在对应行内。
+任一 requirement 缺少 task 或先行测试映射即 Gate 2 失败；存在需求简化必须获得用户批准并标注在对应行内。
 
 ### Step 5：审查计划
 
@@ -171,7 +171,7 @@ openspec/changes/<change>/iterations/000-initial/000-initial.md
 
 Plan Context 的自包含要求按公共规则 › Iteration 与 Cycle 线程 执行。
 
-Persisted Evidence 默认省略本节（`none`：命令、实际结果、修改文件和符号写入 Act Response 即可，无需论证）。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）且四问——支持哪个 Acceptance、Act Response 为何不够、为何无法低成本重跑、缺失会阻止哪个决定——都有答案时才设 `required`，并按 Cycle 模板列出文件和通过条件。Plan 不创建 `evidence/` 或实际证据文件。
+Persisted Evidence 默认省略（`none`：命令、实际结果、修改文件和符号写入 Act Response 即可，无需论证）。只有满足公共规则 Evidence 白名单（公共规则 › Iteration 与 Cycle 线程）且能回答公共规则 › 验证 的四问时才设 `required`，并按 Cycle 模板列出文件和通过条件。Plan 不创建 `evidence/` 或实际证据文件。
 
 交接后不得改写 `Plan Context`。后续反馈使用 Cycle Review 流程。
 
@@ -229,7 +229,7 @@ Plan Context 始终不可改写。当前活跃 Cycle 的覆盖与冻结条件按
 - change tasks 中的 Iteration Plan 和平衡审计结果。
 - change 路径。
 - 当前 Iteration、Cycle 路径和编号。
-- `required` Evidence 项，或默认省略。
+- `required` Evidence 项；无则不列。
 - Gate 1、Gate 2 结论、BLOCKED/SKIPPED 项和证据。
 - 所有显式跳过项及原因。
 
