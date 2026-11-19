@@ -119,7 +119,7 @@ Gate 1 通过或显式跳过后，把 change 产物提交到 change 分支（公
 把全部任务写入 change 的 `tasks.md`，再按引用规则规划逻辑 Iteration：
 
 - 每个任务只归属一个 Iteration，并满足依赖顺序。
-- 每个 Iteration 记录阶段结果、稳定结果、验证边界（含收尾验证分级与高开销验证预算）、诊断边界和 Non-goals。
+- 每个 Iteration 记录阶段结果、稳定结果、验证边界（含收尾验证分级）、诊断边界和 Non-goals。
 - 对每个 Iteration 执行聚合和拆分审计，避免过碎或过重。
 - 只展开第一个 Iteration 目录及其 `000-initial.md`；后续 Iteration 此时不创建目录或 Cycle 文件。
 
